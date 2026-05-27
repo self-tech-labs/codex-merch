@@ -2,7 +2,11 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {generateArtworkImage} from './adapters/openai-images.mjs';
 import {searchRecentPosts} from './adapters/x-api.mjs';
-import {upsertShopifyProductSet} from './adapters/shopify-admin.mjs';
+import {
+  listShopifyPublications,
+  publishShopifyResource,
+  upsertShopifyProductSet,
+} from './adapters/shopify-admin.mjs';
 import {
   getPrintfulSyncProductByExternalId,
   updatePrintfulSyncVariant,
@@ -151,6 +155,71 @@ test('Printful adapter retries rate-limited requests', async () => {
 
     assert.equal(result.result.id, 77);
     assert.equal(calls, 2);
+  } finally {
+    restore();
+  }
+});
+
+test('Shopify adapter exchanges client credentials and publishes resources', async () => {
+  let tokenRequests = 0;
+  const restore = mockFetch(async (url, init = {}) => {
+    if (String(url).includes('/admin/oauth/access_token')) {
+      tokenRequests += 1;
+      const body = new URLSearchParams(String(init.body));
+      assert.equal(body.get('grant_type'), 'client_credentials');
+      assert.equal(body.get('client_id'), 'client-id');
+      assert.equal(body.get('client_secret'), 'client-secret');
+      return jsonResponse({access_token: 'client-token', expires_in: 86400});
+    }
+
+    if (String(url).includes('/admin/api/')) {
+      assert.equal(init.headers['X-Shopify-Access-Token'], 'client-token');
+      const body = JSON.parse(init.body);
+      if (body.query.includes('publications')) {
+        return jsonResponse({
+          data: {
+            publications: {
+              nodes: [{id: 'gid://shopify/Publication/1', name: 'codex-merch'}],
+            },
+          },
+        });
+      }
+
+      if (body.query.includes('publishablePublish')) {
+        assert.equal(body.variables.id, 'gid://shopify/Product/1');
+        assert.equal(body.variables.publicationId, 'gid://shopify/Publication/1');
+        return jsonResponse({
+          data: {
+            publishablePublish: {
+              publishable: {publishedOnPublication: true},
+              userErrors: [],
+            },
+          },
+        });
+      }
+    }
+
+    throw new Error(`Unexpected fetch: ${url}`);
+  });
+
+  const env = {
+    PUBLIC_STORE_DOMAIN: 'example.myshopify.com',
+    SHOPIFY_CLIENT_ID: 'client-id',
+    SHOPIFY_CLIENT_SECRET: 'client-secret',
+  };
+
+  try {
+    const publications = await listShopifyPublications(env);
+    assert.equal(publications[0].name, 'codex-merch');
+    const result = await publishShopifyResource(
+      {
+        resourceId: 'gid://shopify/Product/1',
+        publicationId: 'gid://shopify/Publication/1',
+      },
+      env,
+    );
+    assert.equal(result.publishable.publishedOnPublication, true);
+    assert.equal(tokenRequests, 1);
   } finally {
     restore();
   }

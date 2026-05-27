@@ -1488,7 +1488,7 @@ async function runUploadAssets(args) {
     return;
   }
 
-  requireEnv(['PUBLIC_STORE_DOMAIN', 'SHOPIFY_ADMIN_ACCESS_TOKEN']);
+  requireEnv(['PUBLIC_STORE_DOMAIN']);
   const {createStagedUploadTarget, uploadToStagedTarget} = await import(
     './adapters/shopify-admin.mjs'
   );
@@ -1551,7 +1551,7 @@ async function runShopifyUpsert(args) {
     return;
   }
 
-  requireEnv(['PUBLIC_STORE_DOMAIN', 'SHOPIFY_ADMIN_ACCESS_TOKEN']);
+  requireEnv(['PUBLIC_STORE_DOMAIN']);
   const {upsertShopifyProductSet} = await import('./adapters/shopify-admin.mjs');
 
   for (const payload of payloads) {
@@ -1719,7 +1719,7 @@ async function persistMockupsFromTask(product, task) {
 
   if (!urls.length) return;
 
-  requireEnv(['PUBLIC_STORE_DOMAIN', 'SHOPIFY_ADMIN_ACCESS_TOKEN']);
+  requireEnv(['PUBLIC_STORE_DOMAIN']);
   const {createShopifyFiles, waitForShopifyFilesReady} = await import(
     './adapters/shopify-admin.mjs'
   );
@@ -1773,13 +1773,34 @@ async function runPublish(args) {
         slug: product.slug,
         approvedAt: product.approval?.approvedAt,
         nextStatus: 'published',
+        publication:
+          readArg(args, '--publication', process.env.SHOPIFY_PUBLICATION_NAME || 'codex-merch'),
       })),
     );
     return;
   }
 
-  requireEnv(['PUBLIC_STORE_DOMAIN', 'SHOPIFY_ADMIN_ACCESS_TOKEN']);
-  const {upsertShopifyProductSet} = await import('./adapters/shopify-admin.mjs');
+  requireEnv(['PUBLIC_STORE_DOMAIN']);
+  const {
+    findShopifyPublication,
+    listShopifyPublications,
+    publishShopifyResource,
+    upsertShopifyProductSet,
+  } = await import('./adapters/shopify-admin.mjs');
+  const publicationName = readArg(
+    args,
+    '--publication',
+    process.env.SHOPIFY_PUBLICATION_NAME || 'codex-merch',
+  );
+  const publications = await listShopifyPublications();
+  const publication = findShopifyPublication(publications, publicationName);
+  if (!publication) {
+    throw new Error(
+      `Shopify publication "${publicationName}" not found. Available: ${publications
+        .map((item) => item.name)
+        .join(', ')}`,
+    );
+  }
 
   for (const product of selected) {
     const base = baseForProduct(bases, product);
@@ -1791,10 +1812,25 @@ async function runPublish(args) {
       identifier: productSetIdentifier(product),
       synchronous: true,
     });
+    await publishShopifyResource({
+      resourceId: product.shopify.productId,
+      publicationId: publication.id,
+    });
+    product.shopify.publication = {
+      id: publication.id,
+      name: publication.name,
+      publishedAt: new Date().toISOString(),
+    };
   }
 
   await writeProducts(products);
-  printJson(selected.map((product) => ({slug: product.slug, status: workflowStatus(product)})));
+  printJson(
+    selected.map((product) => ({
+      slug: product.slug,
+      status: workflowStatus(product),
+      publication: product.shopify.publication,
+    })),
+  );
 }
 
 async function main() {

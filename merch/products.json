@@ -679,7 +679,7 @@
     "id": "drop-010-research-deployment-co",
     "slug": "research-deployment-co-sweatshirt",
     "title": "Research & Deployment Co. Cotton Sweatshirt",
-    "status": "mockups_ready",
+    "status": "published",
     "category": "Codex",
     "description": "A cut-and-sew cotton sweatshirt built as a quiet research-lab uniform: cream pinstripes, small chest systems, sleeve waves, and restrained deployment typography.",
     "meme": {
@@ -875,6 +875,11 @@
         "mockup_4": "https://cdn.shopify.com/s/files/1/1078/8487/2029/files/research-deployment-co-sweatshirt-mockup-4_ac19bd83-5579-41e2-92a3-da964b365e1c.jpg?v=1779910563",
         "mockup_5": "https://cdn.shopify.com/s/files/1/1078/8487/2029/files/research-deployment-co-sweatshirt-mockup-5_92044225-dd70-4806-b5c3-68c7cd23ee89.jpg?v=1779910563",
         "mockup_6": "https://cdn.shopify.com/s/files/1/1078/8487/2029/files/research-deployment-co-sweatshirt-mockup-6_6f6d2c07-9c15-4ac8-8688-20dfc988c8e1.jpg?v=1779910563"
+      },
+      "publication": {
+        "id": "gid://shopify/Publication/369259643229",
+        "name": "codex-merch",
+        "publishedAt": "2026-05-27T20:11:03.810Z"
       }
     },
     "printful": {
@@ -1028,8 +1033,8 @@
       "Cream all-over cotton sweatshirt concept with thin black pinstripes, small blue research label on left chest, compact abstract Codex-native knot on right chest, centered Research & Deployment Co. typography, tribal waveform sleeve systems, quiet upper-back statement, premium negative space."
     ],
     "workflow": {
-      "status": "mockups_ready",
-      "updatedAt": "2026-05-27T19:41:56.547Z"
+      "status": "published",
+      "updatedAt": "2026-05-27T20:11:02.899Z"
     },
     "baseProduct": "printful-aop-cotton-sweatshirt-white",
     "artDirector": {
@@ -1082,8 +1087,8 @@
       }
     },
     "approval": {
-      "approvedAt": null,
-      "approvedBy": null,
+      "approvedAt": "2026-05-27T20:11:02.377Z",
+      "approvedBy": "elliot",
       "notes": ""
     }
   },

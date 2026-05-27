@@ -1,21 +1,93 @@
+const TOKEN_REFRESH_BUFFER_MS = 60_000;
+let clientCredentialsToken = null;
+let clientCredentialsTokenKey = null;
+let clientCredentialsTokenExpiresAt = 0;
+
+function normalizeStoreDomain(env = process.env) {
+  const raw = env.PUBLIC_STORE_DOMAIN || env.SHOPIFY_SHOP;
+  if (!raw) return null;
+
+  const host = raw
+    .replace(/^https?:\/\//, '')
+    .replace(/\/$/, '')
+    .replace(/\.myshopify\.com$/, '');
+
+  return `${host}.myshopify.com`;
+}
+
 export function requireShopifyAdminEnv(env = process.env) {
-  const missing = ['PUBLIC_STORE_DOMAIN', 'SHOPIFY_ADMIN_ACCESS_TOKEN'].filter(
-    (key) => !env[key],
-  );
+  const storeDomain = normalizeStoreDomain(env);
+  const hasClientCredentials = env.SHOPIFY_CLIENT_ID && env.SHOPIFY_CLIENT_SECRET;
+  const missing = [];
+  if (!storeDomain) missing.push('PUBLIC_STORE_DOMAIN');
+  if (!env.SHOPIFY_ADMIN_ACCESS_TOKEN && !hasClientCredentials) {
+    missing.push('SHOPIFY_ADMIN_ACCESS_TOKEN or SHOPIFY_CLIENT_ID/SHOPIFY_CLIENT_SECRET');
+  }
 
   if (missing.length) {
     throw new Error(`Missing required env vars: ${missing.join(', ')}`);
   }
 
   return {
-    storeDomain: env.PUBLIC_STORE_DOMAIN,
-    token: env.SHOPIFY_ADMIN_ACCESS_TOKEN,
+    storeDomain,
+    token: env.SHOPIFY_ADMIN_ACCESS_TOKEN || null,
+    clientId: env.SHOPIFY_CLIENT_ID || null,
+    clientSecret: env.SHOPIFY_CLIENT_SECRET || null,
     apiVersion: env.SHOPIFY_ADMIN_API_VERSION || '2026-04',
   };
 }
 
+export async function getShopifyAdminAccessToken(env = process.env) {
+  const context = requireShopifyAdminEnv(env);
+  if (!context.clientId || !context.clientSecret) return context.token;
+
+  const cacheKey = `${context.storeDomain}:${context.clientId}`;
+  if (
+    clientCredentialsToken &&
+    clientCredentialsTokenKey === cacheKey &&
+    Date.now() < clientCredentialsTokenExpiresAt - TOKEN_REFRESH_BUFFER_MS
+  ) {
+    return clientCredentialsToken;
+  }
+
+  const response = await fetch(
+    `https://${context.storeDomain}/admin/oauth/access_token`,
+    {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        grant_type: 'client_credentials',
+        client_id: context.clientId,
+        client_secret: context.clientSecret,
+      }),
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      `Shopify Admin token request failed (${response.status}): ${await response.text()}`,
+    );
+  }
+
+  const payload = await response.json();
+  if (!payload.access_token) {
+    throw new Error(`Shopify Admin token response missing access_token`);
+  }
+
+  clientCredentialsToken = payload.access_token;
+  clientCredentialsTokenKey = cacheKey;
+  clientCredentialsTokenExpiresAt =
+    Date.now() + Number(payload.expires_in || 86400) * 1000;
+
+  return clientCredentialsToken;
+}
+
 export async function shopifyAdminGraphql(query, variables, env = process.env) {
-  const {storeDomain, token, apiVersion} = requireShopifyAdminEnv(env);
+  const {storeDomain, apiVersion} = requireShopifyAdminEnv(env);
+  const token = await getShopifyAdminAccessToken(env);
   const response = await fetch(
     `https://${storeDomain}/admin/api/${apiVersion}/graphql.json`,
     {
@@ -40,6 +112,61 @@ export async function shopifyAdminGraphql(query, variables, env = process.env) {
   }
 
   return result;
+}
+
+export async function listShopifyPublications(env = process.env) {
+  const query = `#graphql
+    query CodexMerchPublications {
+      publications(first: 50) {
+        nodes {
+          id
+          name
+        }
+      }
+    }
+  `;
+
+  const result = await shopifyAdminGraphql(query, {}, env);
+  return result.data?.publications?.nodes || [];
+}
+
+export function findShopifyPublication(publications, name) {
+  const normalizedName = String(name || '').trim().toLowerCase();
+  return publications.find(
+    (publication) => publication.name.toLowerCase() === normalizedName,
+  );
+}
+
+export async function publishShopifyResource(
+  {resourceId, publicationId},
+  env = process.env,
+) {
+  const mutation = `#graphql
+    mutation CodexMerchPublish($id: ID!, $publicationId: ID!) {
+      publishablePublish(id: $id, input: {publicationId: $publicationId}) {
+        publishable {
+          publishedOnPublication(publicationId: $publicationId)
+        }
+        userErrors {
+          field
+          message
+        }
+      }
+    }
+  `;
+
+  const result = await shopifyAdminGraphql(
+    mutation,
+    {id: resourceId, publicationId},
+    env,
+  );
+  const payload = result.data?.publishablePublish;
+  const errors = payload?.userErrors || [];
+  if (errors.length) {
+    throw new Error(`Shopify publish user errors: ${JSON.stringify(errors)}`);
+  }
+
+  return payload;
 }
 
 export async function upsertShopifyProductSet(
