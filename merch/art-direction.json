@@ -1,0 +1,61 @@
+{
+  "$schema": "./art-direction.schema.json",
+  "name": "Codex Supply House",
+  "sourceUrl": "https://supplyco.openai.com/",
+  "checkedAt": "2026-05-26",
+  "positioning": "Original Codex-native merch with a tech-culture supply-store feel: current meme energy, skater/drop culture, SF engineering lore, ASCII/computing language, sports-kit references, and collectible ephemera.",
+  "pillars": [
+    "Gen Z internet-native humor without copying posts or screenshots",
+    "drop-culture and skater graphics: bold marks, sticker-bomb density, varsity/jersey numbering, utilitarian labels",
+    "SF engineering and lab culture: terminal UI, diagrams, build logs, shipping labels, transit/warehouse cues",
+    "geek/pop artifacts: ASCII, collectible cards, macro keys, football/soccer jersey language, badges, caps, sticker packs",
+    "tribal team identity: codename energy, club insignia, inside-joke uniforms, crew symbols"
+  ],
+  "visualRules": [
+    "Make the artwork feel like an original cult merch drop, not a corporate logo tee.",
+    "Favor high-contrast black/white with one sharp accent color unless the Printful technique allows broader color.",
+    "Use bold composition, hard edges, chunky typography zones, diagrams, badges, ASCII fragments, terminal glyphs, or jersey-number logic.",
+    "Prefer concise symbols and systems over literal screenshots, public figures, or copied social posts.",
+    "Keep exact readable slogans out of the generated image; local composition owns final text.",
+    "Do not copy OpenAI Supply Co product names, layouts, official logos, Supreme branding, or protected brand marks.",
+    "Do not use the words OpenAI, ChatGPT, GPT, Sora, Supreme, Nike, Adidas, or team logos unless explicitly cleared later.",
+    "For standard placement printing, do not create a garment/product photo or ecommerce mockup; create standalone print artwork only.",
+    "For All-Over Cotton, think like an apparel art director: garment silhouette, sleeve story, chest scale, back scale, cuffs, seams, labels, and customer-facing mockup all matter."
+  ],
+  "referenceScreenshots": [
+    "merch/reference/art-direction/supplyco-screenshots/01-market-grid.png",
+    "merch/reference/art-direction/supplyco-screenshots/02-polo-cardigan.png",
+    "merch/reference/art-direction/supplyco-screenshots/03-research-deployment-polo.png",
+    "merch/reference/art-direction/supplyco-screenshots/04-black-hoodie-sleeve.png",
+    "merch/reference/art-direction/supplyco-screenshots/05-blue-lab-long-sleeve.png"
+  ],
+  "aopGarmentRules": [
+    "Use sparse, premium garment composition over dense poster collage.",
+    "Large quiet fabric fields are allowed and preferred when supported by one strong motif.",
+    "Sleeves should have intentional vertical or wrapped systems, not duplicated front artwork.",
+    "A small chest mark, restrained center typography, or upper-back wordmark can be used, but it must be panel-aware.",
+    "Use original Codex-native marks only; never copy Supply Co layouts or official OpenAI marks."
+  ],
+  "motifBank": [
+    "ASCII border fragments",
+    "terminal prompt glyphs",
+    "build number labels",
+    "warehouse/supply tags",
+    "fictional team crests",
+    "football jersey numbering",
+    "sticker-sheet density",
+    "collectible-card framing",
+    "diagram arrows and callouts",
+    "SF fog/transit/grid references",
+    "skate sticker marks",
+    "debug console warnings"
+  ],
+  "negativePromptRules": [
+    "No official OpenAI logos or marks.",
+    "No Supreme box logo or direct parody of protected streetwear marks.",
+    "No copied Supply Co product artwork or product names.",
+    "No celebrity, public figure, athlete, or real team likeness.",
+    "No X.com screenshots, usernames, or verbatim posts.",
+    "No dense tiny text that must be readable from the image model."
+  ]
+}

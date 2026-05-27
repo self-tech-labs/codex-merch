@@ -224,10 +224,10 @@ export default [
   },
   ...compat.extends('plugin:jest/recommended').map((config) => ({
     ...config,
-    files: ['**/*.test.*'],
+    files: ['**/*.{test,spec}.{js,jsx,ts,tsx}'],
   })),
   {
-    files: ['**/*.test.*'],
+    files: ['**/*.{test,spec}.{js,jsx,ts,tsx}'],
     plugins: {
       jest,
     },

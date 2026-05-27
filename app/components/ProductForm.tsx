@@ -6,14 +6,18 @@ import type {
 } from '@shopify/hydrogen/storefront-api-types';
 import {AddToCartButton} from './AddToCartButton';
 import {useAside} from './Aside';
-import type {ProductFragment} from 'storefrontapi.generated';
+
+type SelectedVariant = {
+  id: string;
+  availableForSale: boolean;
+} | null;
 
 export function ProductForm({
   productOptions,
   selectedVariant,
 }: {
   productOptions: MappedProductOptions[];
-  selectedVariant: ProductFragment['selectedOrFirstAvailableVariant'];
+  selectedVariant: SelectedVariant;
 }) {
   const navigate = useNavigate();
   const {open} = useAside();
@@ -112,7 +116,6 @@ export function ProductForm({
                 {
                   merchandiseId: selectedVariant.id,
                   quantity: 1,
-                  selectedVariant,
                 },
               ]
             : []

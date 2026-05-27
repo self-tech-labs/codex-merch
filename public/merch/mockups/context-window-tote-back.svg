@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 900" role="img" aria-label="Context Window Tote back mockup">
+  <rect width="900" height="900" fill="#f6f6f6"/>
+  
+  <g transform="translate(210 170)">
+    <path d="M170 120c6-92 270-92 276 0" fill="none" stroke="#111" stroke-width="24" stroke-linecap="round"/>
+    <path d="M72 154h472l-42 548H114z" fill="#ebe1cf" stroke="#1b1b1b" stroke-width="7" stroke-linejoin="round"/>
+    <rect x="148" y="286" width="320" height="204" fill="#f8f8f8" stroke="#111" stroke-width="4"/>
+    <text x="308" y="350" text-anchor="middle" fill="#111" font-family="monospace" font-size="46" font-weight="700">CONTEXT</text>
+    <text x="308" y="410" text-anchor="middle" fill="#111" font-family="monospace" font-size="46" font-weight="700">WINDOW</text>
+    <text x="308" y="462" text-anchor="middle" fill="#111" font-family="monospace" font-size="28">128K?</text>
+  </g>
+</svg>

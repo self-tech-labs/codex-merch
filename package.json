@@ -1,5 +1,5 @@
 {
-  "name": "",
+  "name": "codex-merch",
   "private": true,
   "sideEffects": false,
   "version": "2026.4.2",
@@ -10,7 +10,22 @@
     "preview": "shopify hydrogen preview --build",
     "lint": "eslint --no-error-on-unmatched-pattern .",
     "typecheck": "react-router typegen && tsc --noEmit",
-    "codegen": "shopify hydrogen codegen && react-router typegen"
+    "test": "node --test scripts/*.test.mjs",
+    "codegen": "shopify hydrogen codegen && react-router typegen",
+    "merch:new": "node scripts/merch.mjs new",
+    "merch:validate": "node scripts/merch.mjs validate",
+    "merch:research:x": "node scripts/merch.mjs research:x",
+    "merch:generate-artwork": "node scripts/merch.mjs generate-artwork",
+    "merch:compose-print-file": "node scripts/merch.mjs compose-print-file",
+    "merch:compose-print-files": "node scripts/merch.mjs compose-print-files",
+    "merch:upload-assets": "node scripts/merch.mjs upload-assets",
+    "merch:mockups": "node scripts/merch.mjs mockups",
+    "merch:printful:sync": "node scripts/merch.mjs printful:sync",
+    "merch:shopify:upsert": "node scripts/merch.mjs shopify:upsert",
+    "merch:sync:printful": "node scripts/merch.mjs sync:printful",
+    "merch:sync:shopify": "node scripts/merch.mjs sync:shopify",
+    "merch:publish": "node scripts/merch.mjs publish",
+    "merch:generate-mockups": "node scripts/generate-mockups.mjs"
   },
   "prettier": "@shopify/prettier-config",
   "dependencies": {
@@ -55,6 +70,7 @@
     "globals": "^15.14.0",
     "graphql-config": "^5.0.3",
     "prettier": "^3.4.2",
+    "sharp": "^0.34.5",
     "typescript": "^5.9.2",
     "vite": "^8.0.1"
   },

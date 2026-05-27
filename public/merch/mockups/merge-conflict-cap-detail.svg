@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 900" role="img" aria-label="Merge Conflict Cap detail mockup">
+  <rect width="900" height="900" fill="#f6f6f6"/>
+  
+  <g transform="translate(150 275)">
+    <path d="M82 242c42-154 380-182 504 0H82z" fill="#101010" stroke="#252525" stroke-width="7"/>
+    <path d="M576 244c86 8 154 42 172 82-118 18-222 6-312-36z" fill="#101010" stroke="#252525" stroke-width="7"/>
+    <rect x="224" y="198" width="220" height="70" rx="0" fill="#f7f7f7"/>
+    <text x="334" y="243" text-anchor="middle" fill="#111" font-family="monospace" font-size="28" font-weight="700">CONFLICT</text>
+    <text x="334" y="292" text-anchor="middle" fill="#ddd" font-family="monospace" font-size="21">&lt;&lt;&lt;&lt;&lt;&lt;&lt;</text>
+  </g>
+</svg>

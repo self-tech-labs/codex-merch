@@ -1,0 +1,1059 @@
+[
+  {
+    "id": "drop-001-rate-limit-reset",
+    "slug": "rate-limit-reset-long-sleeve",
+    "title": "Rate Limit Reset Long Sleeve",
+    "status": "generated",
+    "category": "Codex",
+    "description": "A black long sleeve for the moment when the queue clears and everyone pretends they were patient.",
+    "meme": {
+      "source": "User-provided prompt inspired by public Codex rate-limit jokes",
+      "brief": "Reset button energy, terminal typography, no public-figure likeness, no copied social screenshot.",
+      "rightsNote": "Parody concept only. Do not use real names, likenesses, official marks, or verbatim X screenshots without clearance.",
+      "xQuery": "",
+      "xSources": []
+    },
+    "shopify": {
+      "handle": "rate-limit-reset-long-sleeve",
+      "price": "42.00",
+      "currency": "USD",
+      "tags": [
+        "codex",
+        "long-sleeve",
+        "rate-limit"
+      ],
+      "variantId": null,
+      "productId": null,
+      "variants": [],
+      "fileUrls": {},
+      "mockupFileUrls": {}
+    },
+    "printful": {
+      "productId": null,
+      "variantIds": [],
+      "technique": "DTG",
+      "placements": [
+        {
+          "area": "front",
+          "file": "assets/print/rate-limit-reset-front.png"
+        },
+        {
+          "area": "right_sleeve",
+          "file": "assets/print/rate-limit-reset-sleeve.png"
+        }
+      ],
+      "syncProductId": null,
+      "mockupTaskKey": null,
+      "syncVariants": []
+    },
+    "assets": {
+      "artwork": "assets/artwork/rate-limit-reset.png",
+      "mockups": [
+        "merch/mockups/rate-limit-reset-long-sleeve-front.svg",
+        "merch/mockups/rate-limit-reset-long-sleeve-back.svg",
+        "merch/mockups/rate-limit-reset-long-sleeve-detail.svg"
+      ],
+      "printFiles": [
+        {
+          "placement": "front",
+          "path": "assets/print/rate-limit-reset-front.png"
+        },
+        {
+          "placement": "right_sleeve",
+          "path": "assets/print/rate-limit-reset-sleeve.png"
+        }
+      ]
+    },
+    "prompts": [
+      "Original terminal-inspired print artwork for a black long sleeve shirt: reset button energy, high-contrast graphic composition, clean edges, no logos, no copied tweet UI, standalone artwork only."
+    ],
+    "workflow": {
+      "status": "generated",
+      "updatedAt": "2026-05-26T13:42:12.616Z"
+    },
+    "baseProduct": "bella-canvas-3501-black",
+    "approval": {
+      "approvedAt": null,
+      "approvedBy": null,
+      "notes": ""
+    }
+  },
+  {
+    "id": "drop-002-gpt-55-mode",
+    "slug": "gpt-55-mode-crewneck",
+    "title": "GPT-5.5 Mode Crewneck",
+    "status": "draft",
+    "category": "GPT-5.5",
+    "description": "A heavyweight crewneck for speculative model lore and late-night changelog refreshes.",
+    "meme": {
+      "source": "User-provided prompt inspired by speculative GPT-5.5 jokes",
+      "brief": "Mythical next-model energy, sharp monochrome graphic, no official OpenAI brand assets.",
+      "rightsNote": "Avoid official model branding treatments and any protected OpenAI marks unless approved.",
+      "xQuery": "",
+      "xSources": []
+    },
+    "shopify": {
+      "handle": "gpt-55-mode-crewneck",
+      "price": "58.00",
+      "currency": "USD",
+      "tags": [
+        "crewneck",
+        "gpt-55",
+        "codex"
+      ],
+      "variantId": null,
+      "productId": null,
+      "variants": [],
+      "fileUrls": {},
+      "mockupFileUrls": {}
+    },
+    "printful": {
+      "productId": null,
+      "variantIds": [],
+      "technique": "DTG",
+      "placements": [
+        {
+          "area": "front",
+          "file": "assets/print/gpt-55-mode-front.png"
+        }
+      ],
+      "syncProductId": null,
+      "mockupTaskKey": null,
+      "syncVariants": []
+    },
+    "assets": {
+      "artwork": "assets/artwork/gpt-55-mode.png",
+      "mockups": [
+        "merch/mockups/gpt-55-mode-crewneck-front.svg",
+        "merch/mockups/gpt-55-mode-crewneck-back.svg",
+        "merch/mockups/gpt-55-mode-crewneck-detail.svg"
+      ],
+      "printFiles": [
+        {
+          "placement": "front",
+          "path": "assets/print/gpt-55-mode-front.png"
+        }
+      ]
+    },
+    "prompts": [
+      "Black crewneck print artwork with gothic monochrome GPT-5.5 MODE graphic, clean ecommerce photo, no official logos."
+    ],
+    "workflow": {
+      "status": "draft",
+      "updatedAt": "2026-05-26T00:00:00.000Z"
+    },
+    "baseProduct": "bella-canvas-3001-black",
+    "approval": {
+      "approvedAt": null,
+      "approvedBy": null,
+      "notes": ""
+    }
+  },
+  {
+    "id": "drop-003-context-window",
+    "slug": "context-window-tote",
+    "title": "Context Window Tote",
+    "status": "draft",
+    "category": "Utility",
+    "description": "A canvas tote sized for too much context and one emergency snack.",
+    "meme": {
+      "source": "Original Codex workflow joke",
+      "brief": "Oversized context-window label, simple black ink on natural tote.",
+      "rightsNote": "Original copy and layout. Safe for publication after final design review.",
+      "xQuery": "",
+      "xSources": []
+    },
+    "shopify": {
+      "handle": "context-window-tote",
+      "price": "28.00",
+      "currency": "USD",
+      "tags": [
+        "tote",
+        "context",
+        "codex"
+      ],
+      "variantId": null,
+      "productId": null,
+      "variants": [],
+      "fileUrls": {},
+      "mockupFileUrls": {}
+    },
+    "printful": {
+      "productId": null,
+      "variantIds": [],
+      "technique": "DTG",
+      "placements": [
+        {
+          "area": "front",
+          "file": "assets/print/context-window-front.png"
+        }
+      ],
+      "syncProductId": null,
+      "mockupTaskKey": null,
+      "syncVariants": []
+    },
+    "assets": {
+      "artwork": "assets/artwork/context-window.png",
+      "mockups": [
+        "merch/mockups/context-window-tote-front.svg",
+        "merch/mockups/context-window-tote-back.svg",
+        "merch/mockups/context-window-tote-detail.svg"
+      ],
+      "printFiles": [
+        {
+          "placement": "front",
+          "path": "assets/print/context-window-front.png"
+        }
+      ]
+    },
+    "prompts": [
+      "Natural canvas tote print artwork with black CONTEXT WINDOW typography, minimalist standalone print artwork."
+    ],
+    "workflow": {
+      "status": "draft",
+      "updatedAt": "2026-05-26T00:00:00.000Z"
+    },
+    "baseProduct": null,
+    "approval": {
+      "approvedAt": null,
+      "approvedBy": null,
+      "notes": ""
+    }
+  },
+  {
+    "id": "drop-004-merge-conflict",
+    "slug": "merge-conflict-cap",
+    "title": "Merge Conflict Cap",
+    "status": "draft",
+    "category": "Codex",
+    "description": "Low-profile cap for people who read both sides before choosing incoming changes.",
+    "meme": {
+      "source": "Original developer workflow joke",
+      "brief": "Small embroidered conflict marker motif, readable from product tile distance.",
+      "rightsNote": "Original copy and simple typographic motif. Avoid repository or company logos.",
+      "xQuery": "",
+      "xSources": []
+    },
+    "shopify": {
+      "handle": "merge-conflict-cap",
+      "price": "32.00",
+      "currency": "USD",
+      "tags": [
+        "cap",
+        "merge-conflict",
+        "codex"
+      ],
+      "variantId": null,
+      "productId": null,
+      "variants": [],
+      "fileUrls": {},
+      "mockupFileUrls": {}
+    },
+    "printful": {
+      "productId": null,
+      "variantIds": [],
+      "technique": "Embroidery",
+      "placements": [
+        {
+          "area": "front",
+          "file": "assets/print/merge-conflict-front.png"
+        }
+      ],
+      "syncProductId": null,
+      "mockupTaskKey": null,
+      "syncVariants": []
+    },
+    "assets": {
+      "artwork": "assets/artwork/merge-conflict.png",
+      "mockups": [
+        "merch/mockups/merge-conflict-cap-front.svg",
+        "merch/mockups/merge-conflict-cap-back.svg",
+        "merch/mockups/merge-conflict-cap-detail.svg"
+      ],
+      "printFiles": [
+        {
+          "placement": "front",
+          "path": "assets/print/merge-conflict-front.png"
+        }
+      ]
+    },
+    "prompts": [
+      "Black low-profile cap with compact embroidered MERGE CONFLICT marker, print artwork, no logos."
+    ],
+    "workflow": {
+      "status": "draft",
+      "updatedAt": "2026-05-26T00:00:00.000Z"
+    },
+    "baseProduct": null,
+    "approval": {
+      "approvedAt": null,
+      "approvedBy": null,
+      "notes": ""
+    }
+  },
+  {
+    "id": "drop-005-latency-hoodie",
+    "slug": "latency-hoodie",
+    "title": "Latency Hoodie",
+    "status": "draft",
+    "category": "Runtime",
+    "description": "A hoodie for waiting on the good answer instead of the fast one.",
+    "meme": {
+      "source": "Original model-runtime joke",
+      "brief": "Front chest mark plus large back timing chart, black garment, high contrast.",
+      "rightsNote": "Original chart language. Do not reference internal or confidential performance data.",
+      "xQuery": "",
+      "xSources": []
+    },
+    "shopify": {
+      "handle": "latency-hoodie",
+      "price": "68.00",
+      "currency": "USD",
+      "tags": [
+        "hoodie",
+        "latency",
+        "runtime"
+      ],
+      "variantId": null,
+      "productId": null,
+      "variants": [],
+      "fileUrls": {},
+      "mockupFileUrls": {}
+    },
+    "printful": {
+      "productId": null,
+      "variantIds": [],
+      "technique": "DTFlex",
+      "placements": [
+        {
+          "area": "front",
+          "file": "assets/print/latency-hoodie-front.png"
+        },
+        {
+          "area": "back",
+          "file": "assets/print/latency-hoodie-back.png"
+        }
+      ],
+      "syncProductId": null,
+      "mockupTaskKey": null,
+      "syncVariants": []
+    },
+    "assets": {
+      "artwork": "assets/artwork/latency-hoodie.png",
+      "mockups": [
+        "merch/mockups/latency-hoodie-front.svg",
+        "merch/mockups/latency-hoodie-back.svg",
+        "merch/mockups/latency-hoodie-detail.svg"
+      ],
+      "printFiles": [
+        {
+          "placement": "front",
+          "path": "assets/print/latency-hoodie-front.png"
+        },
+        {
+          "placement": "back",
+          "path": "assets/print/latency-hoodie-back.png"
+        }
+      ]
+    },
+    "prompts": [
+      "Black hoodie print artwork with white LATENCY graphic and timing chart on back, clean standalone print artwork."
+    ],
+    "workflow": {
+      "status": "draft",
+      "updatedAt": "2026-05-26T00:00:00.000Z"
+    },
+    "baseProduct": "bella-canvas-3001-black",
+    "approval": {
+      "approvedAt": null,
+      "approvedBy": null,
+      "notes": ""
+    }
+  },
+  {
+    "id": "drop-006-sticker-pack",
+    "slug": "codex-sticker-pack",
+    "title": "Codex Sticker Pack",
+    "status": "draft",
+    "category": "Stickers",
+    "description": "A sticker sheet for laptops that have seen too many diffs.",
+    "meme": {
+      "source": "Original Codex utility icons and phrases",
+      "brief": "Sticker sheet with terminal phrases, context meter, reset button, diff markers.",
+      "rightsNote": "Original phrases only. Do not include official logos or copied social media screenshots.",
+      "xQuery": "",
+      "xSources": []
+    },
+    "shopify": {
+      "handle": "codex-sticker-pack",
+      "price": "14.00",
+      "currency": "USD",
+      "tags": [
+        "stickers",
+        "codex",
+        "accessory"
+      ],
+      "variantId": null,
+      "productId": null,
+      "variants": [],
+      "fileUrls": {},
+      "mockupFileUrls": {}
+    },
+    "printful": {
+      "productId": null,
+      "variantIds": [],
+      "technique": "DTG",
+      "placements": [
+        {
+          "area": "front",
+          "file": "assets/print/codex-sticker-pack.png"
+        }
+      ],
+      "syncProductId": null,
+      "mockupTaskKey": null,
+      "syncVariants": []
+    },
+    "assets": {
+      "artwork": "assets/artwork/codex-sticker-pack.png",
+      "mockups": [
+        "merch/mockups/codex-sticker-pack-front.svg",
+        "merch/mockups/codex-sticker-pack-back.svg",
+        "merch/mockups/codex-sticker-pack-detail.svg"
+      ],
+      "printFiles": [
+        {
+          "placement": "front",
+          "path": "assets/print/codex-sticker-pack.png"
+        }
+      ]
+    },
+    "prompts": [
+      "White sticker sheet with black terminal-inspired Codex meme stickers, clean standalone print artwork, no logos."
+    ],
+    "workflow": {
+      "status": "draft",
+      "updatedAt": "2026-05-26T00:00:00.000Z"
+    },
+    "baseProduct": null,
+    "approval": {
+      "approvedAt": null,
+      "approvedBy": null,
+      "notes": ""
+    }
+  },
+  {
+    "id": "drop-007-ascii-ultras",
+    "slug": "ascii-ultras-long-sleeve",
+    "title": "ASCII Ultras Long Sleeve",
+    "status": "generated",
+    "category": "Runtime",
+    "description": "A black long sleeve for terminal loyalists, fake club chants, and build-window superstition.",
+    "meme": {
+      "source": "Original Codex/SF engineering culture concept",
+      "brief": "Fictional supporter-club energy for people who live in terminals: ASCII banners, debug chants, jersey-number logic, no real team marks.",
+      "rightsNote": "Original team/club concept. Do not use real sports-team marks, official OpenAI marks, copied X posts, or public-figure likenesses.",
+      "xQuery": "",
+      "xSources": []
+    },
+    "shopify": {
+      "handle": "ascii-ultras-long-sleeve",
+      "price": "48.00",
+      "currency": "USD",
+      "tags": [
+        "codex",
+        "long-sleeve",
+        "ascii",
+        "runtime"
+      ],
+      "variantId": null,
+      "productId": null,
+      "variants": [],
+      "fileUrls": {},
+      "mockupFileUrls": {}
+    },
+    "printful": {
+      "productId": null,
+      "variantIds": [],
+      "technique": "DTG",
+      "placements": [
+        {
+          "area": "front",
+          "file": "assets/print/ascii-ultras-front.png"
+        },
+        {
+          "area": "right_sleeve",
+          "file": "assets/print/ascii-ultras-sleeve.png"
+        }
+      ],
+      "textLayer": "ASCII ULTRAS",
+      "syncProductId": null,
+      "mockupTaskKey": null,
+      "syncVariants": []
+    },
+    "assets": {
+      "artwork": "assets/artwork/ascii-ultras.png",
+      "mockups": [
+        "merch/mockups/ascii-ultras-long-sleeve-front.svg",
+        "merch/mockups/ascii-ultras-long-sleeve-back.svg",
+        "merch/mockups/ascii-ultras-long-sleeve-detail.svg"
+      ],
+      "printFiles": [
+        {
+          "placement": "front",
+          "path": "assets/print/ascii-ultras-front.png"
+        },
+        {
+          "placement": "right_sleeve",
+          "path": "assets/print/ascii-ultras-sleeve.png"
+        }
+      ]
+    },
+    "prompts": [
+      "Original black long sleeve print artwork with fictional terminal supporter-club insignia, ASCII scarf border energy, bold crest geometry, debug-console glyphs, one acid green accent, standalone artwork only."
+    ],
+    "workflow": {
+      "status": "generated",
+      "updatedAt": "2026-05-26T15:23:23.936Z"
+    },
+    "baseProduct": "bella-canvas-3501-black",
+    "approval": {
+      "approvedAt": null,
+      "approvedBy": null,
+      "notes": ""
+    }
+  },
+  {
+    "id": "drop-008-p99-away-kit",
+    "slug": "p99-away-kit-long-sleeve",
+    "title": "P99 Away Kit Long Sleeve",
+    "status": "generated",
+    "category": "Runtime",
+    "description": "A long sleeve for the slow-but-correct answer, styled like a fake away kit from the latency league.",
+    "meme": {
+      "source": "Original model-runtime and sports-kit concept",
+      "brief": "Football jersey language for latency lore: fake squad number, timing graph, infrastructure labels, no real clubs or athletes.",
+      "rightsNote": "Original runtime joke. Do not use real club marks, athlete likenesses, official OpenAI marks, copied charts, or confidential performance data.",
+      "xQuery": "",
+      "xSources": []
+    },
+    "shopify": {
+      "handle": "p99-away-kit-long-sleeve",
+      "price": "48.00",
+      "currency": "USD",
+      "tags": [
+        "codex",
+        "long-sleeve",
+        "latency",
+        "jersey"
+      ],
+      "variantId": null,
+      "productId": null,
+      "variants": [],
+      "fileUrls": {},
+      "mockupFileUrls": {}
+    },
+    "printful": {
+      "productId": null,
+      "variantIds": [],
+      "technique": "DTG",
+      "placements": [
+        {
+          "area": "front",
+          "file": "assets/print/p99-away-kit-front.png"
+        },
+        {
+          "area": "right_sleeve",
+          "file": "assets/print/p99-away-kit-sleeve.png"
+        }
+      ],
+      "textLayer": "P99 AWAY KIT",
+      "syncProductId": null,
+      "mockupTaskKey": null,
+      "syncVariants": []
+    },
+    "assets": {
+      "artwork": "assets/artwork/p99-away-kit.png",
+      "mockups": [
+        "merch/mockups/p99-away-kit-long-sleeve-front.svg",
+        "merch/mockups/p99-away-kit-long-sleeve-back.svg",
+        "merch/mockups/p99-away-kit-long-sleeve-detail.svg"
+      ],
+      "printFiles": [
+        {
+          "placement": "front",
+          "path": "assets/print/p99-away-kit-front.png"
+        },
+        {
+          "placement": "right_sleeve",
+          "path": "assets/print/p99-away-kit-sleeve.png"
+        }
+      ]
+    },
+    "prompts": [
+      "Original black long sleeve print artwork inspired by fictional football away-kit graphics, latency timing arcs, bold squad-number geometry, terminal labels, SF fog grid texture, one electric blue accent, standalone artwork only."
+    ],
+    "workflow": {
+      "status": "generated",
+      "updatedAt": "2026-05-26T15:27:27.173Z"
+    },
+    "baseProduct": "bella-canvas-3501-black",
+    "approval": {
+      "approvedAt": null,
+      "approvedBy": null,
+      "notes": ""
+    }
+  },
+  {
+    "id": "drop-009-token-market",
+    "slug": "token-market-long-sleeve",
+    "title": "Token Market Long Sleeve",
+    "status": "generated",
+    "category": "Codex",
+    "description": "A supply-counter long sleeve for context-window shoppers and anyone rationing tokens like streetwear inventory.",
+    "meme": {
+      "source": "Original Codex supply-counter concept",
+      "brief": "Street-market supply tag meets developer token economy: receipt grids, inventory stickers, macro-key labels, no copied brand marks.",
+      "rightsNote": "Original supply-counter concept. Avoid official marks, copied packaging, real retailer branding, X screenshots, and protected streetwear layouts.",
+      "xQuery": "",
+      "xSources": []
+    },
+    "shopify": {
+      "handle": "token-market-long-sleeve",
+      "price": "48.00",
+      "currency": "USD",
+      "tags": [
+        "codex",
+        "long-sleeve",
+        "tokens",
+        "supply"
+      ],
+      "variantId": null,
+      "productId": null,
+      "variants": [],
+      "fileUrls": {},
+      "mockupFileUrls": {}
+    },
+    "printful": {
+      "productId": null,
+      "variantIds": [],
+      "technique": "DTG",
+      "placements": [
+        {
+          "area": "front",
+          "file": "assets/print/token-market-front.png"
+        },
+        {
+          "area": "right_sleeve",
+          "file": "assets/print/token-market-sleeve.png"
+        }
+      ],
+      "textLayer": "TOKEN MARKET",
+      "syncProductId": null,
+      "mockupTaskKey": null,
+      "syncVariants": []
+    },
+    "assets": {
+      "artwork": "assets/artwork/token-market.png",
+      "mockups": [
+        "merch/mockups/token-market-long-sleeve-front.svg",
+        "merch/mockups/token-market-long-sleeve-back.svg",
+        "merch/mockups/token-market-long-sleeve-detail.svg"
+      ],
+      "printFiles": [
+        {
+          "placement": "front",
+          "path": "assets/print/token-market-front.png"
+        },
+        {
+          "placement": "right_sleeve",
+          "path": "assets/print/token-market-sleeve.png"
+        }
+      ]
+    },
+    "prompts": [
+      "Original black long sleeve print artwork with fictional tech supply-market graphics, receipt grid, inventory stickers, macro-key symbols, skater sticker density, one safety orange accent, standalone artwork only."
+    ],
+    "workflow": {
+      "status": "generated",
+      "updatedAt": "2026-05-26T15:31:26.046Z"
+    },
+    "baseProduct": "bella-canvas-3501-black",
+    "approval": {
+      "approvedAt": null,
+      "approvedBy": null,
+      "notes": ""
+    }
+  },
+  {
+    "id": "drop-010-research-deployment-co",
+    "slug": "research-deployment-co-sweatshirt",
+    "title": "Research & Deployment Co. Cotton Sweatshirt",
+    "status": "generated",
+    "category": "Codex",
+    "description": "A cut-and-sew cotton sweatshirt built as a quiet research-lab uniform: cream pinstripes, small chest systems, sleeve waves, and restrained deployment typography.",
+    "meme": {
+      "source": "Original Codex apparel concept",
+      "brief": "All-over cotton sweatshirt inspired by research-lab uniforms, quiet streetwear, skater restraint, and panel-aware sleeve waves. Make it feel like a real garment, not a poster.",
+      "rightsNote": "Original apparel system. Do not copy Supply Co products, official OpenAI marks, protected streetwear logos, real team marks, screenshots, usernames, or public-figure likenesses.",
+      "xQuery": "",
+      "xSources": []
+    },
+    "shopify": {
+      "handle": "research-deployment-co-sweatshirt",
+      "price": "88.00",
+      "currency": "USD",
+      "tags": [
+        "codex",
+        "sweatshirt",
+        "all-over-cotton",
+        "research"
+      ],
+      "variantId": null,
+      "productId": null,
+      "variants": [],
+      "fileUrls": {},
+      "mockupFileUrls": {}
+    },
+    "printful": {
+      "productId": null,
+      "variantIds": [
+        33963,
+        33964,
+        33965,
+        33966,
+        33967,
+        33968,
+        33969,
+        33970,
+        33971,
+        33972,
+        33973
+      ],
+      "technique": "All-Over Cotton",
+      "placements": [
+        {
+          "area": "front",
+          "file": "assets/print/research-deployment-co-front_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "back",
+          "file": "assets/print/research-deployment-co-back_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "left_sleeve",
+          "file": "assets/print/research-deployment-co-left_sleeve_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "right_sleeve",
+          "file": "assets/print/research-deployment-co-right_sleeve_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "label_panel",
+          "file": "assets/print/research-deployment-co-label_panel_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "label_inside",
+          "file": "assets/print/research-deployment-co-label_inside_dtfabric.png",
+          "width": 375,
+          "height": 150
+        }
+      ],
+      "textLayer": "Research & Deployment Co.",
+      "syncProductId": null,
+      "mockupTaskKey": null,
+      "syncVariants": []
+    },
+    "assets": {
+      "artwork": "assets/artwork/research-deployment-co-concept.png",
+      "mockups": [
+        "assets/mockups/research-deployment-co-front.png",
+        "assets/mockups/research-deployment-co-back.png",
+        "assets/mockups/research-deployment-co-patterns.png"
+      ],
+      "printFiles": [
+        {
+          "placement": "front",
+          "path": "assets/print/research-deployment-co-front_dtfabric.png"
+        },
+        {
+          "placement": "back",
+          "path": "assets/print/research-deployment-co-back_dtfabric.png"
+        },
+        {
+          "placement": "left_sleeve",
+          "path": "assets/print/research-deployment-co-left_sleeve_dtfabric.png"
+        },
+        {
+          "placement": "right_sleeve",
+          "path": "assets/print/research-deployment-co-right_sleeve_dtfabric.png"
+        },
+        {
+          "placement": "label_panel",
+          "path": "assets/print/research-deployment-co-label_panel_dtfabric.png"
+        },
+        {
+          "placement": "label_inside",
+          "path": "assets/print/research-deployment-co-label_inside_dtfabric.png"
+        }
+      ]
+    },
+    "prompts": [
+      "Cream all-over cotton sweatshirt concept with thin black pinstripes, small blue research label on left chest, compact abstract Codex-native knot on right chest, centered Research & Deployment Co. typography, tribal waveform sleeve systems, quiet upper-back statement, premium negative space."
+    ],
+    "workflow": {
+      "status": "generated",
+      "updatedAt": "2026-05-26T19:43:46.252Z"
+    },
+    "baseProduct": "printful-aop-cotton-sweatshirt-white",
+    "artDirector": {
+      "mode": "supervised-aop-cotton",
+      "aopSpec": {
+        "garmentFirst": true,
+        "basePattern": "pinstripe",
+        "palette": {
+          "fabric": "#f2eee3",
+          "ink": "#171717",
+          "muted": "#b8afa1",
+          "accent": "#0047ff"
+        },
+        "front": {
+          "primaryText": "Research & Deployment Co.",
+          "chestLabel": "10 YEARS OF RESEARCH",
+          "mark": "C/DX",
+          "subline": "FIELD NOTES / SAN FRANCISCO"
+        },
+        "back": {
+          "statement": "Research after deployment",
+          "subline": "MODEL WORKSHOP / CUT AND SEWN"
+        },
+        "sleeves": {
+          "motif": "tribal-wave",
+          "leftText": "Research Lab Co.",
+          "rightText": "Deploy Systems",
+          "caption": "COTTON BUILD"
+        },
+        "label": {
+          "line": "RESEARCH / DEPLOYMENT"
+        }
+      },
+      "review": {
+        "accepted": true,
+        "score": 92,
+        "reviewer": "codex-aop-art-director-validator",
+        "checkedAt": "2026-05-26T19:40:05.755Z",
+        "referenceScreenshots": [
+          "merch/reference/art-direction/supplyco-screenshots/01-market-grid.png",
+          "merch/reference/art-direction/supplyco-screenshots/02-polo-cardigan.png",
+          "merch/reference/art-direction/supplyco-screenshots/03-research-deployment-polo.png",
+          "merch/reference/art-direction/supplyco-screenshots/04-black-hoodie-sleeve.png",
+          "merch/reference/art-direction/supplyco-screenshots/05-blue-lab-long-sleeve.png"
+        ],
+        "findings": [
+          "Accepted: garment-first AOP cotton plan with panel-specific sleeves, front, back, label panel, and inside label.",
+          "Accepted: production files can be composed from exact Printful cotton sweatshirt panel dimensions."
+        ]
+      }
+    },
+    "approval": {
+      "approvedAt": null,
+      "approvedBy": null,
+      "notes": ""
+    }
+  },
+  {
+    "id": "drop-011-terminal-ritual",
+    "slug": "terminal-ritual-sweatshirt",
+    "title": "Terminal Ritual Cotton Sweatshirt",
+    "status": "generated",
+    "category": "Runtime",
+    "description": "A dark all-over cotton sweatshirt with tone-on-tone grid fabric, sleeve glyph rituals, small chest marks, and a quiet back statement for late-night builders.",
+    "meme": {
+      "source": "Original Codex runtime culture concept",
+      "brief": "All-over cotton sweatshirt for build rituals and terminal crews: dark cotton field, restrained glyph sleeves, small chest identity, subtle back signal. Avoid poster logic.",
+      "rightsNote": "Original runtime/apparel concept. Avoid official marks, copied product layouts, X screenshots, protected brand language, public figures, and real team insignia.",
+      "xQuery": "",
+      "xSources": []
+    },
+    "shopify": {
+      "handle": "terminal-ritual-sweatshirt",
+      "price": "88.00",
+      "currency": "USD",
+      "tags": [
+        "codex",
+        "sweatshirt",
+        "all-over-cotton",
+        "runtime"
+      ],
+      "variantId": null,
+      "productId": null,
+      "variants": [],
+      "fileUrls": {},
+      "mockupFileUrls": {}
+    },
+    "printful": {
+      "productId": null,
+      "variantIds": [
+        33963,
+        33964,
+        33965,
+        33966,
+        33967,
+        33968,
+        33969,
+        33970,
+        33971,
+        33972,
+        33973
+      ],
+      "technique": "All-Over Cotton",
+      "placements": [
+        {
+          "area": "front",
+          "file": "assets/print/terminal-ritual-front_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "back",
+          "file": "assets/print/terminal-ritual-back_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "left_sleeve",
+          "file": "assets/print/terminal-ritual-left_sleeve_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "right_sleeve",
+          "file": "assets/print/terminal-ritual-right_sleeve_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "label_panel",
+          "file": "assets/print/terminal-ritual-label_panel_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "label_inside",
+          "file": "assets/print/terminal-ritual-label_inside_dtfabric.png",
+          "width": 375,
+          "height": 150
+        }
+      ],
+      "textLayer": "Terminal Ritual Dept.",
+      "syncProductId": null,
+      "mockupTaskKey": null,
+      "syncVariants": []
+    },
+    "assets": {
+      "artwork": "assets/artwork/terminal-ritual-concept.png",
+      "mockups": [
+        "assets/mockups/terminal-ritual-front.png",
+        "assets/mockups/terminal-ritual-back.png",
+        "assets/mockups/terminal-ritual-patterns.png"
+      ],
+      "printFiles": [
+        {
+          "placement": "front",
+          "path": "assets/print/terminal-ritual-front_dtfabric.png"
+        },
+        {
+          "placement": "back",
+          "path": "assets/print/terminal-ritual-back_dtfabric.png"
+        },
+        {
+          "placement": "left_sleeve",
+          "path": "assets/print/terminal-ritual-left_sleeve_dtfabric.png"
+        },
+        {
+          "placement": "right_sleeve",
+          "path": "assets/print/terminal-ritual-right_sleeve_dtfabric.png"
+        },
+        {
+          "placement": "label_panel",
+          "path": "assets/print/terminal-ritual-label_panel_dtfabric.png"
+        },
+        {
+          "placement": "label_inside",
+          "path": "assets/print/terminal-ritual-label_inside_dtfabric.png"
+        }
+      ]
+    },
+    "prompts": [
+      "Dark all-over cotton sweatshirt concept with tone-on-tone utility grid, small terminal chest identity, subtle green research signal, vertical sleeve glyph stack, tribal wave movement on both sleeves, quiet back statement, premium negative space."
+    ],
+    "workflow": {
+      "status": "generated",
+      "updatedAt": "2026-05-26T19:47:33.191Z"
+    },
+    "baseProduct": "printful-aop-cotton-sweatshirt-white",
+    "artDirector": {
+      "mode": "supervised-aop-cotton",
+      "aopSpec": {
+        "garmentFirst": true,
+        "basePattern": "microgrid",
+        "palette": {
+          "fabric": "#171717",
+          "ink": "#eeeedf",
+          "muted": "#3b3b36",
+          "accent": "#b7ff36"
+        },
+        "front": {
+          "primaryText": "Terminal Ritual Dept.",
+          "chestLabel": "CODEX SYSTEMS",
+          "mark": "C/DX",
+          "subline": "BUILD LOG / NIGHT SHIFT"
+        },
+        "back": {
+          "statement": "Keep the loop alive",
+          "subline": "RUNTIME CREW / SAN FRANCISCO"
+        },
+        "sleeves": {
+          "motif": "tribal-wave",
+          "leftText": "Build Log",
+          "rightText": "Ship Loop",
+          "caption": "RUNTIME CREW"
+        },
+        "label": {
+          "line": "TERMINAL / RITUAL"
+        }
+      },
+      "review": {
+        "accepted": true,
+        "score": 92,
+        "reviewer": "codex-aop-art-director-validator",
+        "checkedAt": "2026-05-26T19:44:06.876Z",
+        "referenceScreenshots": [
+          "merch/reference/art-direction/supplyco-screenshots/01-market-grid.png",
+          "merch/reference/art-direction/supplyco-screenshots/02-polo-cardigan.png",
+          "merch/reference/art-direction/supplyco-screenshots/03-research-deployment-polo.png",
+          "merch/reference/art-direction/supplyco-screenshots/04-black-hoodie-sleeve.png",
+          "merch/reference/art-direction/supplyco-screenshots/05-blue-lab-long-sleeve.png"
+        ],
+        "findings": [
+          "Accepted: garment-first AOP cotton plan with panel-specific sleeves, front, back, label panel, and inside label.",
+          "Accepted: production files can be composed from exact Printful cotton sweatshirt panel dimensions."
+        ]
+      }
+    },
+    "approval": {
+      "approvedAt": null,
+      "approvedBy": null,
+      "notes": ""
+    }
+  }
+]

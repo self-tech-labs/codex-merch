@@ -1,0 +1,83 @@
+{
+  "$schema": "./customization-techniques.schema.json",
+  "sourceUrl": "https://www.printful.com/customization-techniques",
+  "checkedAt": "2026-05-26",
+  "techniques": {
+    "DTG": {
+      "summary": "Direct-to-garment printing on apparel.",
+      "bestFor": ["photos", "intricate details", "lots of colors"],
+      "promptRules": [
+        "Create full-color artwork suitable for direct-to-garment apparel printing.",
+        "Detailed illustrations, photo-like texture, and many colors are acceptable.",
+        "Do not request all-over coverage, seam-to-seam wrapping, embroidery texture, foil, puff ink, or metallic effects.",
+        "Keep important artwork inside the configured print area and away from garment seams, cuffs, collars, and edges.",
+        "Create standalone print artwork only, not an ecommerce product photo or garment mockup."
+      ]
+    },
+    "DTFlex": {
+      "summary": "Premium direct-to-film style printing with sharp detail, vivid color, and clean edges.",
+      "bestFor": ["photos", "extra detailed graphics", "fine art", "intricate fonts"],
+      "promptRules": [
+        "Create sharp, high-contrast print artwork with clean edges and durable direct-to-film style output.",
+        "Fine art, vivid color, and intricate graphic detail are acceptable.",
+        "Avoid all-over coverage, seam wrapping, distressed transparency halos, embroidery texture, foil, puff ink, or metallic effects.",
+        "Keep the design as a contained print graphic inside the configured placement area.",
+        "Create standalone print artwork only, not an ecommerce product photo or garment mockup."
+      ]
+    },
+    "Embroidery": {
+      "summary": "Thread embroidery on garments and accessories.",
+      "bestFor": ["text designs", "bold logos", "thick lines"],
+      "promptRules": [
+        "Create a simple embroidery-ready mark with bold shapes, thick lines, and limited detail.",
+        "Use flat color regions and avoid gradients, photographic detail, tiny text, thin strokes, halftones, and distressed texture.",
+        "Assume the final result is stitched thread, so keep the design compact and readable at small size.",
+        "Create standalone embroidery artwork only, not an ecommerce product photo or garment mockup."
+      ]
+    },
+    "Sublimation": {
+      "summary": "Full-product printing on ready-made products such as mugs, phone cases, and socks.",
+      "bestFor": ["patterns", "large-scale designs"],
+      "promptRules": [
+        "Create a repeatable or large-scale full-product design.",
+        "Avoid localized chest-print assumptions unless the selected base product explicitly supports that placement.",
+        "Keep critical text and faces away from trim, folds, and wrap edges.",
+        "Create standalone print artwork only, not an ecommerce product photo or garment mockup."
+      ]
+    },
+    "All-Over Cotton": {
+      "summary": "Printful All-over cotton / direct-to-fabric production for cotton cut-and-sew panels.",
+      "bestFor": ["soft-toned garment systems", "muted cotton streetwear", "custom sleeves", "panel-aware typographic placements"],
+      "promptRules": [
+        "Design the whole garment first: front body, back body, left sleeve, right sleeve, label panel, and inside label must feel like one apparel system.",
+        "Use cotton-appropriate soft or muted colors, matte texture, and water-based pigment ink assumptions.",
+        "Use full-panel backgrounds and intentional sleeves; do not paste one square poster onto the garment.",
+        "Keep important text, small marks, and logos away from seams, collars, cuffs, underarms, and panel edges.",
+        "Use large, low-detail shapes, pinstripes, waves, stripes, and restrained typography that can survive cut-and-sew registration variance.",
+        "Exact readable slogans and microcopy are rendered by local deterministic composition, not by the image model.",
+        "Create a garment design concept or panel artwork, not a stock ecommerce product photo."
+      ]
+    },
+    "All-Over Synthetic": {
+      "summary": "Cut-and-sew synthetic all-over printing with sharp detail and vibrant color.",
+      "bestFor": ["sharp contrast", "vivid colors", "detailed saturated designs", "custom sleeve and seam placements"],
+      "promptRules": [
+        "Create a vibrant all-over synthetic apparel pattern with sharp contrast and saturated color.",
+        "Design for cut-and-sew placement across panels, sleeves, hems, and seams.",
+        "Avoid single small chest-print layouts unless the selected base product explicitly supports them.",
+        "Keep important text away from seams and panel edges.",
+        "Create standalone print artwork only, not an ecommerce product photo or garment mockup."
+      ]
+    },
+    "Knitting": {
+      "summary": "Jacquard knitting directly into fabric.",
+      "bestFor": ["complex patterns", "up to four colors", "pixel-perfect graphics"],
+      "promptRules": [
+        "Create a knitwear-ready jacquard pattern using no more than four colors.",
+        "Use pixel-like hard edges and avoid gradients, photos, fine text, and transparent effects.",
+        "Design as fabric-integrated pattern artwork, not a printed ink layer.",
+        "Create standalone knit pattern artwork only, not an ecommerce product photo or garment mockup."
+      ]
+    }
+  }
+}

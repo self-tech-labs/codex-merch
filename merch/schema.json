@@ -1,0 +1,191 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Codex Meme Merch Product",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": [
+      "id",
+      "slug",
+      "title",
+      "status",
+      "workflow",
+      "meme",
+      "shopify",
+      "printful",
+      "assets",
+      "prompts"
+    ],
+    "properties": {
+      "id": {"type": "string"},
+      "slug": {"type": "string"},
+      "title": {"type": "string"},
+      "status": {
+        "enum": [
+          "draft",
+          "generated",
+          "shopify_draft",
+          "printful_imported",
+          "printful_synced",
+          "mockups_ready",
+          "approved",
+          "published",
+          "archived"
+        ]
+      },
+      "workflow": {
+        "type": "object",
+        "required": ["status"],
+        "properties": {
+          "status": {
+            "enum": [
+              "draft",
+              "generated",
+              "shopify_draft",
+              "printful_imported",
+              "printful_synced",
+              "mockups_ready",
+              "approved",
+              "published",
+              "archived"
+            ]
+          },
+          "updatedAt": {"type": "string"},
+          "lastError": {"type": ["string", "null"]}
+        }
+      },
+      "baseProduct": {"type": ["string", "null"]},
+      "category": {"type": "string"},
+      "description": {"type": "string"},
+      "meme": {
+        "type": "object",
+        "required": ["source", "brief", "rightsNote"],
+        "properties": {
+          "source": {"type": "string"},
+          "brief": {"type": "string"},
+          "rightsNote": {"type": "string"},
+          "xQuery": {"type": "string"},
+          "xSources": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "url", "authorUsername", "metrics"],
+              "properties": {
+                "id": {"type": "string"},
+                "url": {"type": "string"},
+                "authorUsername": {"type": "string"},
+                "authorVerified": {"type": "boolean"},
+                "createdAt": {"type": ["string", "null"]},
+                "lang": {"type": ["string", "null"]},
+                "matchedQuery": {"type": "string"},
+                "metrics": {
+                  "type": "object",
+                  "properties": {
+                    "replies": {"type": "number"},
+                    "reposts": {"type": "number"},
+                    "likes": {"type": "number"},
+                    "quotes": {"type": "number"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "shopify": {
+        "type": "object",
+        "required": ["handle", "price", "currency", "tags"],
+        "properties": {
+          "handle": {"type": "string"},
+          "price": {"type": "string"},
+          "currency": {"type": "string"},
+          "tags": {"type": "array", "items": {"type": "string"}},
+          "variantId": {"type": ["string", "null"]},
+          "productId": {"type": ["string", "null"]},
+          "variants": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {"type": "string"},
+                "externalId": {"type": "string"},
+                "sku": {"type": ["string", "null"]},
+                "selectedOptions": {"type": "array"}
+              }
+            }
+          },
+          "fileUrls": {"type": "object"},
+          "mockupFileUrls": {"type": "object"}
+        }
+      },
+      "printful": {
+        "type": "object",
+        "required": ["productId", "variantIds", "technique", "placements"],
+        "properties": {
+          "productId": {"type": ["number", "string", "null"]},
+          "syncProductId": {"type": ["number", "string", "null"]},
+          "mockupTaskKey": {"type": ["string", "null"]},
+          "variantIds": {"type": "array", "items": {"type": "number"}},
+          "syncVariants": {"type": "array"},
+          "technique": {
+            "enum": [
+              "DTG",
+              "DTFlex",
+              "Embroidery",
+              "Sublimation",
+              "All-Over Cotton",
+              "All-Over Synthetic",
+              "Knitting"
+            ]
+          },
+          "textLayer": {"type": "string"},
+          "placements": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["area", "file"],
+              "properties": {
+                "area": {"type": "string"},
+                "file": {"type": "string"},
+                "url": {"type": "string"},
+                "width": {"type": "number"},
+                "height": {"type": "number"},
+                "position": {"type": "object"}
+              }
+            }
+          }
+        }
+      },
+      "assets": {
+        "type": "object",
+        "required": ["artwork", "mockups"],
+        "properties": {
+          "artwork": {"type": "string"},
+          "printFiles": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["placement", "path"],
+              "properties": {
+                "placement": {"type": "string"},
+                "path": {"type": "string"},
+                "url": {"type": "string"},
+                "shopifyFileId": {"type": "string"}
+              }
+            }
+          },
+          "mockups": {"type": "array", "items": {"type": "string"}}
+        }
+      },
+      "approval": {
+        "type": "object",
+        "properties": {
+          "approvedAt": {"type": ["string", "null"]},
+          "approvedBy": {"type": ["string", "null"]},
+          "notes": {"type": "string"}
+        }
+      },
+      "prompts": {"type": "array", "items": {"type": "string"}}
+    }
+  }
+}
