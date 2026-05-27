@@ -212,3 +212,51 @@ export async function createShopifyFiles(files, env = process.env) {
 
   return payload.files;
 }
+
+export async function getShopifyFilesByIds(ids, env = process.env) {
+  if (!ids.length) return [];
+
+  const query = `#graphql
+    query CodexMerchFiles($ids: [ID!]!) {
+      nodes(ids: $ids) {
+        id
+        ... on MediaImage {
+          alt
+          fileStatus
+          image {
+            url
+          }
+        }
+        ... on GenericFile {
+          alt
+          fileStatus
+          url
+        }
+      }
+    }
+  `;
+
+  const result = await shopifyAdminGraphql(query, {ids}, env);
+  return result.data?.nodes?.filter(Boolean) || [];
+}
+
+export async function waitForShopifyFilesReady(
+  ids,
+  {attempts = 12, delayMs = 1500} = {},
+  env = process.env,
+) {
+  let files = [];
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    files = await getShopifyFilesByIds(ids, env);
+    const ready = files.every(
+      (file) =>
+        file?.fileStatus === 'READY' &&
+        (file?.image?.url || file?.url),
+    );
+
+    if (ready) return files;
+    await new Promise((resolve) => setTimeout(resolve, delayMs));
+  }
+
+  return files;
+}

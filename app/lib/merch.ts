@@ -93,7 +93,7 @@ export interface MerchProduct {
       placement: string;
       path: string;
       url?: string;
-      shopifyFileId?: string;
+      shopifyFileId?: string | null;
     }>;
     mockups: string[];
   };
@@ -105,7 +105,7 @@ export interface MerchProduct {
   prompts: string[];
 }
 
-export const merchProducts = products as MerchProduct[];
+export const merchProducts = products as unknown as MerchProduct[];
 
 export function getMerchProduct(handle: string) {
   return merchProducts.find(

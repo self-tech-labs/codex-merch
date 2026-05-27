@@ -81,6 +81,18 @@ export function setWorkflowStatus(product, status) {
   };
 }
 
+export function advanceWorkflowStatus(product, status) {
+  const currentIndex = workflowStatuses.indexOf(workflowStatus(product));
+  const nextIndex = workflowStatuses.indexOf(status);
+  if (nextIndex === -1) {
+    throw new Error(`Unsupported workflow status: ${status}`);
+  }
+
+  if (currentIndex === -1 || nextIndex > currentIndex) {
+    setWorkflowStatus(product, status);
+  }
+}
+
 export function validateProducts(products) {
   const errors = [];
   const seenSlugs = new Set();
@@ -185,16 +197,10 @@ export function printfulPayload(product) {
 export function productSetIdentifier(product) {
   if (product.shopify?.productId) return {id: product.shopify.productId};
 
-  return {
-    customId: {
-      namespace: 'codex_merch',
-      key: 'manifest_id',
-      value: product.id,
-    },
-  };
+  return {handle: product.shopify.handle};
 }
 
-export function shopifyProductSetInput(product, baseProduct) {
+export function shopifyProductSetInput(product, baseProduct, {includeFiles = true} = {}) {
   const status = workflowStatus(product) === 'published' ? 'ACTIVE' : 'DRAFT';
   const variants = baseProduct
     ? baseProduct.variants.map((variant) => ({
@@ -213,12 +219,14 @@ export function shopifyProductSetInput(product, baseProduct) {
         },
       ];
 
-  const files = shopifyMediaSources(product).map((source, index) => ({
-    originalSource: source,
-    alt: `${product.title} mockup ${index + 1}`,
-    filename: `${product.slug}-mockup-${index + 1}${extensionFromUrl(source)}`,
-    contentType: 'IMAGE',
-  }));
+  const files = includeFiles
+    ? shopifyMediaSources(product).map((source, index) => ({
+        originalSource: source,
+        alt: `${product.title} mockup ${index + 1}`,
+        filename: `${product.slug}-mockup-${index + 1}${extensionFromUrl(source)}`,
+        contentType: 'IMAGE',
+      }))
+    : [];
 
   return {
     handle: product.shopify.handle,
@@ -244,7 +252,7 @@ export function shopifyProductSetInput(product, baseProduct) {
           },
         ]
       : [{name: 'Title', position: 1, values: [{name: 'Default Title'}]}],
-    files,
+    ...(files.length ? {files} : {}),
     variants,
     metafields: [
       {
@@ -308,7 +316,7 @@ export function printfulMockupTaskPayload(product, baseProduct, options = {}) {
     files: printfulPlacementFiles(product, {...options, baseProduct}).map((file) => ({
       placement: file.mockupPlacement,
       image_url: file.url,
-      position: file.position || baseProduct.defaultPosition,
+      position: file.position || file.mockupPosition || baseProduct.defaultPosition,
     })),
   };
 }
@@ -548,7 +556,7 @@ function shopifyMediaSources(product) {
   const uploaded = Object.values(product.shopify?.mockupFileUrls || {}).filter(Boolean);
   if (uploaded.length) return uploaded;
 
-  return Object.values(product.shopify?.fileUrls || {}).filter(Boolean);
+  return [];
 }
 
 function printfulPlacementFiles(product, {allowLocal = false, baseProduct = null} = {}) {
@@ -576,8 +584,36 @@ function printfulPlacementFiles(product, {allowLocal = false, baseProduct = null
         (placement.area === 'front' ? 'front' : placement.area),
       url,
       position: placement.position,
+      mockupPosition: basePlacement?.mockupPosition,
     };
   });
+}
+
+function isTransientPrintTransferUrl(url) {
+  return (
+    typeof url === 'string' &&
+    url.includes('shopify-staged-uploads.storage.googleapis.com')
+  );
+}
+
+function clearTransientPrintTransferUrls(product) {
+  if (product.shopify?.fileUrls) {
+    for (const [placement, url] of Object.entries(product.shopify.fileUrls)) {
+      if (isTransientPrintTransferUrl(url)) {
+        delete product.shopify.fileUrls[placement];
+      }
+    }
+
+    if (!Object.keys(product.shopify.fileUrls).length) {
+      delete product.shopify.fileUrls;
+    }
+  }
+
+  for (const printFile of product.assets?.printFiles || []) {
+    if (isTransientPrintTransferUrl(printFile.url)) {
+      delete printFile.url;
+    }
+  }
 }
 
 function resolveBasePlacement(baseProduct, area, technique) {
@@ -1445,7 +1481,7 @@ async function runUploadAssets(args) {
         stagedUpload: {
           filename: path.basename(file.path),
           mimeType: mimeTypeFor(file.path),
-          resource: 'IMAGE',
+          resource: 'FILE',
         },
       })),
     );
@@ -1453,11 +1489,9 @@ async function runUploadAssets(args) {
   }
 
   requireEnv(['PUBLIC_STORE_DOMAIN', 'SHOPIFY_ADMIN_ACCESS_TOKEN']);
-  const {
-    createShopifyFiles,
-    createStagedUploadTarget,
-    uploadToStagedTarget,
-  } = await import('./adapters/shopify-admin.mjs');
+  const {createStagedUploadTarget, uploadToStagedTarget} = await import(
+    './adapters/shopify-admin.mjs'
+  );
 
   for (const file of files) {
     const fullPath = localPath(file.path);
@@ -1466,7 +1500,7 @@ async function runUploadAssets(args) {
     const target = await createStagedUploadTarget({
       filename: path.basename(file.path),
       mimeType,
-      resource: 'IMAGE',
+      resource: 'FILE',
       httpMethod: 'POST',
     });
 
@@ -1476,22 +1510,13 @@ async function runUploadAssets(args) {
       buffer,
     });
 
-    const [created] = await createShopifyFiles([
-      {
-        originalSource: target.resourceUrl,
-        contentType: imageContentType(mimeType),
-        filename: path.basename(file.path),
-        alt: `${file.product.title} ${file.placement} print file`,
-      },
-    ]);
-
-    const url = shopifyFileUrl(created) || target.resourceUrl;
+    const url = target.resourceUrl;
     file.product.shopify.fileUrls = file.product.shopify.fileUrls || {};
     file.product.shopify.fileUrls[file.placement] = url;
     for (const printFile of file.product.assets.printFiles || []) {
       if (printFile.placement === file.placement) {
         printFile.url = url;
-        printFile.shopifyFileId = created.id;
+        printFile.shopifyFileId = null;
       }
     }
   }
@@ -1506,6 +1531,7 @@ function shopifyFileUrl(file) {
 
 async function runShopifyUpsert(args) {
   const dryRun = hasFlag(args, '--dry-run');
+  const includeExistingMedia = hasFlag(args, '--include-media');
   const products = await readProducts();
   const bases = await readBaseProducts();
   const selected = selectProducts(products, args);
@@ -1513,7 +1539,9 @@ async function runShopifyUpsert(args) {
     const base = baseForProduct(bases, product);
     return {
       product,
-      input: shopifyProductSetInput(product, base),
+      input: shopifyProductSetInput(product, base, {
+        includeFiles: includeExistingMedia || !product.shopify.productId,
+      }),
       identifier: productSetIdentifier(product),
     };
   });
@@ -1543,7 +1571,7 @@ async function runShopifyUpsert(args) {
     payload.product.shopify.variantId =
       payload.product.shopify.variants[0]?.id || payload.product.shopify.variantId;
     if (workflowStatus(payload.product) !== 'published') {
-      setWorkflowStatus(payload.product, 'shopify_draft');
+      advanceWorkflowStatus(payload.product, 'shopify_draft');
     }
   }
 
@@ -1604,6 +1632,7 @@ async function runPrintfulSync(args) {
     }
 
     item.product.printful.syncVariants = updated;
+    clearTransientPrintTransferUrls(item.product);
     setWorkflowStatus(item.product, 'printful_synced');
   }
 
@@ -1657,6 +1686,12 @@ async function runMockups(args) {
       item.product.printful.mockupTaskKey = task.result?.task_key;
     }
 
+    if (task.result?.status === 'failed') {
+      throw new Error(
+        `${item.product.slug}: Printful mockup task failed: ${task.result.error || 'unknown error'}`,
+      );
+    }
+
     if (task.result?.status === 'completed') {
       await persistMockupsFromTask(item.product, task.result);
       setWorkflowStatus(item.product, 'mockups_ready');
@@ -1685,7 +1720,9 @@ async function persistMockupsFromTask(product, task) {
   if (!urls.length) return;
 
   requireEnv(['PUBLIC_STORE_DOMAIN', 'SHOPIFY_ADMIN_ACCESS_TOKEN']);
-  const {createShopifyFiles} = await import('./adapters/shopify-admin.mjs');
+  const {createShopifyFiles, waitForShopifyFilesReady} = await import(
+    './adapters/shopify-admin.mjs'
+  );
   const files = await createShopifyFiles(
     urls.map((url, index) => ({
       originalSource: url,
@@ -1695,7 +1732,10 @@ async function persistMockupsFromTask(product, task) {
     })),
   );
 
-  const uploaded = files.map(shopifyFileUrl).filter(Boolean);
+  const readyFiles = await waitForShopifyFilesReady(
+    files.map((file) => file.id).filter(Boolean),
+  );
+  const uploaded = (readyFiles.length ? readyFiles : files).map(shopifyFileUrl).filter(Boolean);
   if (uploaded.length) {
     product.assets.mockups = uploaded;
     product.shopify.mockupFileUrls = Object.fromEntries(
@@ -1706,6 +1746,7 @@ async function persistMockupsFromTask(product, task) {
 
 async function runPublish(args) {
   const approve = hasFlag(args, '--approve');
+  const includeExistingMedia = hasFlag(args, '--include-media');
   const approvedBy = readArg(args, '--by', 'codex');
   const products = await readProducts();
   const bases = await readBaseProducts();
@@ -1744,7 +1785,9 @@ async function runPublish(args) {
     const base = baseForProduct(bases, product);
     setWorkflowStatus(product, 'published');
     await upsertShopifyProductSet({
-      input: shopifyProductSetInput(product, base),
+      input: shopifyProductSetInput(product, base, {
+        includeFiles: includeExistingMedia || !product.shopify.productId,
+      }),
       identifier: productSetIdentifier(product),
       synchronous: true,
     });

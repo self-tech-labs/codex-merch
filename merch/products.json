@@ -25,7 +25,6 @@
       "variantId": null,
       "productId": null,
       "variants": [],
-      "fileUrls": {},
       "mockupFileUrls": {}
     },
     "printful": {
@@ -104,7 +103,6 @@
       "variantId": null,
       "productId": null,
       "variants": [],
-      "fileUrls": {},
       "mockupFileUrls": {}
     },
     "printful": {
@@ -175,7 +173,6 @@
       "variantId": null,
       "productId": null,
       "variants": [],
-      "fileUrls": {},
       "mockupFileUrls": {}
     },
     "printful": {
@@ -246,7 +243,6 @@
       "variantId": null,
       "productId": null,
       "variants": [],
-      "fileUrls": {},
       "mockupFileUrls": {}
     },
     "printful": {
@@ -317,7 +313,6 @@
       "variantId": null,
       "productId": null,
       "variants": [],
-      "fileUrls": {},
       "mockupFileUrls": {}
     },
     "printful": {
@@ -396,7 +391,6 @@
       "variantId": null,
       "productId": null,
       "variants": [],
-      "fileUrls": {},
       "mockupFileUrls": {}
     },
     "printful": {
@@ -468,7 +462,6 @@
       "variantId": null,
       "productId": null,
       "variants": [],
-      "fileUrls": {},
       "mockupFileUrls": {}
     },
     "printful": {
@@ -549,7 +542,6 @@
       "variantId": null,
       "productId": null,
       "variants": [],
-      "fileUrls": {},
       "mockupFileUrls": {}
     },
     "printful": {
@@ -630,7 +622,6 @@
       "variantId": null,
       "productId": null,
       "variants": [],
-      "fileUrls": {},
       "mockupFileUrls": {}
     },
     "printful": {
@@ -688,7 +679,7 @@
     "id": "drop-010-research-deployment-co",
     "slug": "research-deployment-co-sweatshirt",
     "title": "Research & Deployment Co. Cotton Sweatshirt",
-    "status": "generated",
+    "status": "mockups_ready",
     "category": "Codex",
     "description": "A cut-and-sew cotton sweatshirt built as a quiet research-lab uniform: cream pinstripes, small chest systems, sleeve waves, and restrained deployment typography.",
     "meme": {
@@ -708,14 +699,186 @@
         "all-over-cotton",
         "research"
       ],
-      "variantId": null,
-      "productId": null,
-      "variants": [],
-      "fileUrls": {},
-      "mockupFileUrls": {}
+      "variantId": "gid://shopify/ProductVariant/64810939220317",
+      "productId": "gid://shopify/Product/16226759704925",
+      "variants": [
+        {
+          "id": "gid://shopify/ProductVariant/64810939220317",
+          "externalId": "64810939220317",
+          "sku": "RESEARCH_DEPLOYMENT_CO_SWEATSHIRT_WHITE_2XS",
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "2XS"
+            }
+          ]
+        },
+        {
+          "id": "gid://shopify/ProductVariant/64810939253085",
+          "externalId": "64810939253085",
+          "sku": "RESEARCH_DEPLOYMENT_CO_SWEATSHIRT_WHITE_XS",
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "XS"
+            }
+          ]
+        },
+        {
+          "id": "gid://shopify/ProductVariant/64810939285853",
+          "externalId": "64810939285853",
+          "sku": "RESEARCH_DEPLOYMENT_CO_SWEATSHIRT_WHITE_S",
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "S"
+            }
+          ]
+        },
+        {
+          "id": "gid://shopify/ProductVariant/64810939318621",
+          "externalId": "64810939318621",
+          "sku": "RESEARCH_DEPLOYMENT_CO_SWEATSHIRT_WHITE_M",
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "M"
+            }
+          ]
+        },
+        {
+          "id": "gid://shopify/ProductVariant/64810939351389",
+          "externalId": "64810939351389",
+          "sku": "RESEARCH_DEPLOYMENT_CO_SWEATSHIRT_WHITE_L",
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "L"
+            }
+          ]
+        },
+        {
+          "id": "gid://shopify/ProductVariant/64810939384157",
+          "externalId": "64810939384157",
+          "sku": "RESEARCH_DEPLOYMENT_CO_SWEATSHIRT_WHITE_XL",
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "XL"
+            }
+          ]
+        },
+        {
+          "id": "gid://shopify/ProductVariant/64810939416925",
+          "externalId": "64810939416925",
+          "sku": "RESEARCH_DEPLOYMENT_CO_SWEATSHIRT_WHITE_2XL",
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "2XL"
+            }
+          ]
+        },
+        {
+          "id": "gid://shopify/ProductVariant/64810939449693",
+          "externalId": "64810939449693",
+          "sku": "RESEARCH_DEPLOYMENT_CO_SWEATSHIRT_WHITE_3XL",
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "3XL"
+            }
+          ]
+        },
+        {
+          "id": "gid://shopify/ProductVariant/64810939482461",
+          "externalId": "64810939482461",
+          "sku": "RESEARCH_DEPLOYMENT_CO_SWEATSHIRT_WHITE_4XL",
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "4XL"
+            }
+          ]
+        },
+        {
+          "id": "gid://shopify/ProductVariant/64810939515229",
+          "externalId": "64810939515229",
+          "sku": "RESEARCH_DEPLOYMENT_CO_SWEATSHIRT_WHITE_5XL",
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "5XL"
+            }
+          ]
+        },
+        {
+          "id": "gid://shopify/ProductVariant/64810939547997",
+          "externalId": "64810939547997",
+          "sku": "RESEARCH_DEPLOYMENT_CO_SWEATSHIRT_WHITE_6XL",
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "6XL"
+            }
+          ]
+        }
+      ],
+      "mockupFileUrls": {
+        "mockup_1": "https://cdn.shopify.com/s/files/1/1078/8487/2029/files/research-deployment-co-sweatshirt-mockup-1_516b84cb-8bed-4e53-ba52-a1694f79607e.jpg?v=1779910563",
+        "mockup_2": "https://cdn.shopify.com/s/files/1/1078/8487/2029/files/research-deployment-co-sweatshirt-mockup-2_5fb94327-8f06-4cdd-80fd-da38e89b270c.jpg?v=1779910563",
+        "mockup_3": "https://cdn.shopify.com/s/files/1/1078/8487/2029/files/research-deployment-co-sweatshirt-mockup-3_48597529-a2e2-40fc-8bec-3a915b6a2413.jpg?v=1779910563",
+        "mockup_4": "https://cdn.shopify.com/s/files/1/1078/8487/2029/files/research-deployment-co-sweatshirt-mockup-4_ac19bd83-5579-41e2-92a3-da964b365e1c.jpg?v=1779910563",
+        "mockup_5": "https://cdn.shopify.com/s/files/1/1078/8487/2029/files/research-deployment-co-sweatshirt-mockup-5_92044225-dd70-4806-b5c3-68c7cd23ee89.jpg?v=1779910563",
+        "mockup_6": "https://cdn.shopify.com/s/files/1/1078/8487/2029/files/research-deployment-co-sweatshirt-mockup-6_6f6d2c07-9c15-4ac8-8688-20dfc988c8e1.jpg?v=1779910563"
+      }
     },
     "printful": {
-      "productId": null,
+      "productId": 435255119,
       "variantIds": [
         33963,
         33964,
@@ -769,41 +932,95 @@
         }
       ],
       "textLayer": "Research & Deployment Co.",
-      "syncProductId": null,
-      "mockupTaskKey": null,
-      "syncVariants": []
+      "syncProductId": 435255119,
+      "mockupTaskKey": "gt-925696374",
+      "syncVariants": [
+        {
+          "externalId": "64810939220317",
+          "printfulVariantId": 33963
+        },
+        {
+          "externalId": "64810939253085",
+          "printfulVariantId": 33964
+        },
+        {
+          "externalId": "64810939285853",
+          "printfulVariantId": 33965
+        },
+        {
+          "externalId": "64810939318621",
+          "printfulVariantId": 33966
+        },
+        {
+          "externalId": "64810939351389",
+          "printfulVariantId": 33967
+        },
+        {
+          "externalId": "64810939384157",
+          "printfulVariantId": 33968
+        },
+        {
+          "externalId": "64810939416925",
+          "printfulVariantId": 33969
+        },
+        {
+          "externalId": "64810939449693",
+          "printfulVariantId": 33970
+        },
+        {
+          "externalId": "64810939482461",
+          "printfulVariantId": 33971
+        },
+        {
+          "externalId": "64810939515229",
+          "printfulVariantId": 33972
+        },
+        {
+          "externalId": "64810939547997",
+          "printfulVariantId": 33973
+        }
+      ]
     },
     "assets": {
       "artwork": "assets/artwork/research-deployment-co-concept.png",
       "mockups": [
-        "assets/mockups/research-deployment-co-front.png",
-        "assets/mockups/research-deployment-co-back.png",
-        "assets/mockups/research-deployment-co-patterns.png"
+        "https://cdn.shopify.com/s/files/1/1078/8487/2029/files/research-deployment-co-sweatshirt-mockup-1_516b84cb-8bed-4e53-ba52-a1694f79607e.jpg?v=1779910563",
+        "https://cdn.shopify.com/s/files/1/1078/8487/2029/files/research-deployment-co-sweatshirt-mockup-2_5fb94327-8f06-4cdd-80fd-da38e89b270c.jpg?v=1779910563",
+        "https://cdn.shopify.com/s/files/1/1078/8487/2029/files/research-deployment-co-sweatshirt-mockup-3_48597529-a2e2-40fc-8bec-3a915b6a2413.jpg?v=1779910563",
+        "https://cdn.shopify.com/s/files/1/1078/8487/2029/files/research-deployment-co-sweatshirt-mockup-4_ac19bd83-5579-41e2-92a3-da964b365e1c.jpg?v=1779910563",
+        "https://cdn.shopify.com/s/files/1/1078/8487/2029/files/research-deployment-co-sweatshirt-mockup-5_92044225-dd70-4806-b5c3-68c7cd23ee89.jpg?v=1779910563",
+        "https://cdn.shopify.com/s/files/1/1078/8487/2029/files/research-deployment-co-sweatshirt-mockup-6_6f6d2c07-9c15-4ac8-8688-20dfc988c8e1.jpg?v=1779910563"
       ],
       "printFiles": [
         {
           "placement": "front",
-          "path": "assets/print/research-deployment-co-front_dtfabric.png"
+          "path": "assets/print/research-deployment-co-front_dtfabric.png",
+          "shopifyFileId": null
         },
         {
           "placement": "back",
-          "path": "assets/print/research-deployment-co-back_dtfabric.png"
+          "path": "assets/print/research-deployment-co-back_dtfabric.png",
+          "shopifyFileId": null
         },
         {
           "placement": "left_sleeve",
-          "path": "assets/print/research-deployment-co-left_sleeve_dtfabric.png"
+          "path": "assets/print/research-deployment-co-left_sleeve_dtfabric.png",
+          "shopifyFileId": null
         },
         {
           "placement": "right_sleeve",
-          "path": "assets/print/research-deployment-co-right_sleeve_dtfabric.png"
+          "path": "assets/print/research-deployment-co-right_sleeve_dtfabric.png",
+          "shopifyFileId": null
         },
         {
           "placement": "label_panel",
-          "path": "assets/print/research-deployment-co-label_panel_dtfabric.png"
+          "path": "assets/print/research-deployment-co-label_panel_dtfabric.png",
+          "shopifyFileId": null
         },
         {
           "placement": "label_inside",
-          "path": "assets/print/research-deployment-co-label_inside_dtfabric.png"
+          "path": "assets/print/research-deployment-co-label_inside_dtfabric.png",
+          "shopifyFileId": null
         }
       ]
     },
@@ -811,8 +1028,8 @@
       "Cream all-over cotton sweatshirt concept with thin black pinstripes, small blue research label on left chest, compact abstract Codex-native knot on right chest, centered Research & Deployment Co. typography, tribal waveform sleeve systems, quiet upper-back statement, premium negative space."
     ],
     "workflow": {
-      "status": "generated",
-      "updatedAt": "2026-05-26T19:43:46.252Z"
+      "status": "mockups_ready",
+      "updatedAt": "2026-05-27T19:41:56.547Z"
     },
     "baseProduct": "printful-aop-cotton-sweatshirt-white",
     "artDirector": {
@@ -897,7 +1114,6 @@
       "variantId": null,
       "productId": null,
       "variants": [],
-      "fileUrls": {},
       "mockupFileUrls": {}
     },
     "printful": {

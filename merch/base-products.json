@@ -330,7 +330,15 @@
           "mockupPlacement": "front_dtfabric",
           "techniques": ["All-Over Cotton"],
           "width": 5037,
-          "height": 6600
+          "height": 6600,
+          "mockupPosition": {
+            "area_width": 1887,
+            "area_height": 2473,
+            "width": 1887,
+            "height": 2473,
+            "top": 0,
+            "left": 0
+          }
         },
         {
           "area": "back",
@@ -338,7 +346,15 @@
           "mockupPlacement": "back_dtfabric",
           "techniques": ["All-Over Cotton"],
           "width": 5037,
-          "height": 6600
+          "height": 6600,
+          "mockupPosition": {
+            "area_width": 1887,
+            "area_height": 2473,
+            "width": 1887,
+            "height": 2473,
+            "top": 0,
+            "left": 0
+          }
         },
         {
           "area": "left_sleeve",
@@ -346,7 +362,15 @@
           "mockupPlacement": "sleeve_left_dtfabric",
           "techniques": ["All-Over Cotton"],
           "width": 5037,
-          "height": 6600
+          "height": 6600,
+          "mockupPosition": {
+            "area_width": 2291,
+            "area_height": 3000,
+            "width": 2291,
+            "height": 3000,
+            "top": 0,
+            "left": 0
+          }
         },
         {
           "area": "right_sleeve",
@@ -354,7 +378,15 @@
           "mockupPlacement": "sleeve_right_dtfabric",
           "techniques": ["All-Over Cotton"],
           "width": 5037,
-          "height": 6600
+          "height": 6600,
+          "mockupPosition": {
+            "area_width": 2291,
+            "area_height": 3000,
+            "width": 2291,
+            "height": 3000,
+            "top": 0,
+            "left": 0
+          }
         },
         {
           "area": "label_panel",
@@ -362,7 +394,15 @@
           "mockupPlacement": "label_panel_dtfabric",
           "techniques": ["All-Over Cotton"],
           "width": 5037,
-          "height": 6600
+          "height": 6600,
+          "mockupPosition": {
+            "area_width": 2290,
+            "area_height": 3000,
+            "width": 2290,
+            "height": 3000,
+            "top": 0,
+            "left": 0
+          }
         },
         {
           "area": "label_inside",
@@ -370,7 +410,15 @@
           "mockupPlacement": "label_inside_dtfabric",
           "techniques": ["All-Over Cotton"],
           "width": 375,
-          "height": 150
+          "height": 150,
+          "mockupPosition": {
+            "area_width": 1656,
+            "area_height": 662,
+            "width": 1656,
+            "height": 662,
+            "top": 0,
+            "left": 0
+          }
         }
       ]
     }

@@ -120,3 +120,38 @@ test('Printful import-not-ready failure remains resumable', async () => {
     restore();
   }
 });
+
+test('Printful adapter retries rate-limited requests', async () => {
+  let calls = 0;
+  const restore = mockFetch(async () => {
+    calls += 1;
+    if (calls === 1) {
+      return new Response(
+        JSON.stringify({error: {reason: 'TooManyRequests'}}),
+        {
+          status: 429,
+          headers: {'Content-Type': 'application/json', 'Retry-After': '0'},
+        },
+      );
+    }
+
+    return jsonResponse({result: {id: 77}});
+  });
+
+  try {
+    const result = await updatePrintfulSyncVariant(
+      '123',
+      {variant_id: 4017, files: []},
+      {
+        PRINTFUL_TOKEN: 'printful',
+        PRINTFUL_STORE_ID: 'store',
+        PRINTFUL_MAX_RETRIES: '1',
+      },
+    );
+
+    assert.equal(result.result.id, 77);
+    assert.equal(calls, 2);
+  } finally {
+    restore();
+  }
+});

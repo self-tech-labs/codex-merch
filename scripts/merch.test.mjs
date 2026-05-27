@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
+  advanceWorkflowStatus,
   allowedTechniques,
   composePrintFilePlan,
   printfulMockupTaskPayload,
@@ -260,12 +261,23 @@ test('builds legacy dry-run Printful payloads', () => {
 });
 
 test('builds Shopify productSet input with draft status and codex metafields', () => {
-  const payload = shopifyProductSetInput(baseProduct, baseBlank);
+  const product = structuredClone(baseProduct);
+  product.assets.mockups = ['https://cdn.shopify.com/test-shirt-mockup.jpg'];
+  const payload = shopifyProductSetInput(product, baseBlank);
   assert.equal(payload.handle, 'test-shirt');
   assert.equal(payload.status, 'DRAFT');
   assert.equal(payload.productOptions.length, 2);
   assert.equal(payload.variants.length, 2);
+  assert.equal(payload.files.length, 1);
   assert.equal(payload.metafields[0].value, 'drop-test');
+});
+
+test('can omit Shopify media from productSet updates', () => {
+  const product = structuredClone(baseProduct);
+  product.assets.mockups = ['https://cdn.shopify.com/test-shirt-mockup.jpg'];
+  const payload = shopifyProductSetInput(product, baseBlank, {includeFiles: false});
+  assert.equal(payload.handle, 'test-shirt');
+  assert.equal('files' in payload, false);
 });
 
 test('keeps shopifyPayload backward-compatible', () => {
@@ -274,14 +286,8 @@ test('keeps shopifyPayload backward-compatible', () => {
   assert.equal(payload.metafields[0].value, 'drop-test');
 });
 
-test('uses manifest ID as productSet upsert identifier before Shopify ID exists', () => {
-  assert.deepEqual(productSetIdentifier(baseProduct), {
-    customId: {
-      namespace: 'codex_merch',
-      key: 'manifest_id',
-      value: 'drop-test',
-    },
-  });
+test('uses handle as productSet upsert identifier before Shopify ID exists', () => {
+  assert.deepEqual(productSetIdentifier(baseProduct), {handle: 'test-shirt'});
 });
 
 test('builds Printful sync variant payload from Shopify variant options', () => {
@@ -439,4 +445,16 @@ test('known Printful techniques and workflow states include MVP defaults', () =>
   assert.equal(allowedTechniques.has('Embroidery'), true);
   assert.equal(workflowStatuses.includes('mockups_ready'), true);
   assert.equal(workflowStatuses.includes('published'), true);
+});
+
+test('workflow advancement does not regress later states', () => {
+  const product = structuredClone(baseProduct);
+  product.status = 'mockups_ready';
+  product.workflow = {status: 'mockups_ready'};
+
+  advanceWorkflowStatus(product, 'shopify_draft');
+  assert.equal(product.workflow.status, 'mockups_ready');
+
+  advanceWorkflowStatus(product, 'published');
+  assert.equal(product.workflow.status, 'published');
 });

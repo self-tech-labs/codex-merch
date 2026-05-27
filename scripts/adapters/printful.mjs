@@ -1,4 +1,28 @@
 const PRINTFUL_API_BASE = 'https://api.printful.com';
+const DEFAULT_MAX_RETRIES = 3;
+
+function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
+function retryDelayMs(response, text, attempt, env) {
+  const configured = Number(env.PRINTFUL_RETRY_BASE_MS);
+  const baseMs = Number.isFinite(configured) && configured >= 0 ? configured : 1000;
+  const retryAfter = Number(response.headers.get('retry-after'));
+
+  if (Number.isFinite(retryAfter) && retryAfter >= 0) {
+    return retryAfter * 1000;
+  }
+
+  const secondsMatch = text.match(/after\s+(\d+)\s+seconds?/i);
+  if (secondsMatch) {
+    return Number(secondsMatch[1]) * 1000;
+  }
+
+  return baseMs * 2 ** attempt;
+}
 
 export function requirePrintfulEnv(env = process.env) {
   const missing = ['PRINTFUL_TOKEN', 'PRINTFUL_STORE_ID'].filter(
@@ -38,23 +62,35 @@ export async function createPrintfulSyncProduct(payload, env = process.env) {
 
 async function printfulRequest(path, {method = 'GET', body} = {}, env = process.env) {
   const {token, storeId} = requirePrintfulEnv(env);
-  const response = await fetch(`${PRINTFUL_API_BASE}${path}`, {
-    method,
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-      'X-PF-Store-Id': storeId,
-    },
-    body: body ? JSON.stringify(body) : undefined,
-  });
+  const configuredRetries = Number(env.PRINTFUL_MAX_RETRIES);
+  const maxRetries =
+    Number.isFinite(configuredRetries) && configuredRetries >= 0
+      ? configuredRetries
+      : DEFAULT_MAX_RETRIES;
 
-  if (!response.ok) {
-    throw new Error(
-      `Printful request failed (${response.status} ${path}): ${await response.text()}`,
-    );
+  for (let attempt = 0; attempt <= maxRetries; attempt += 1) {
+    const response = await fetch(`${PRINTFUL_API_BASE}${path}`, {
+      method,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'X-PF-Store-Id': storeId,
+      },
+      body: body ? JSON.stringify(body) : undefined,
+    });
+
+    if (response.ok) {
+      return response.json();
+    }
+
+    const text = await response.text();
+    if (response.status === 429 && attempt < maxRetries) {
+      await sleep(retryDelayMs(response, text, attempt, env));
+      continue;
+    }
+
+    throw new Error(`Printful request failed (${response.status} ${path}): ${text}`);
   }
-
-  return response.json();
 }
 
 export function externalIdPath(id) {
