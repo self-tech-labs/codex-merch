@@ -2061,11 +2061,42 @@ function printfulStoreProductId(response) {
   return product.id || product.product_id || product.sync_product_id || null;
 }
 
-function printfulStoreSyncVariantIds(response) {
-  const variants = response?.result?.sync_variants || response?.result?.variants || [];
-  return variants
+export function printfulStoreSyncVariantIds(response) {
+  return printfulStoreSyncVariants(response)
     .map((variant) => variant.id || variant.sync_variant_id)
     .filter((variantId) => Number.isFinite(Number(variantId)));
+}
+
+export function printfulStoreSyncVariants(response) {
+  const result = response?.result || {};
+  if (Array.isArray(result.sync_variants)) return result.sync_variants;
+  if (Array.isArray(result.variants)) return result.variants;
+  return [];
+}
+
+export function printfulPayloadWithSyncVariantIds(payload, response) {
+  const existingVariants = printfulStoreSyncVariants(response);
+  if (!existingVariants.length) return payload;
+
+  const byExternalId = new Map();
+  const byProviderVariantId = new Map();
+  for (const variant of existingVariants) {
+    const id = variant.id || variant.sync_variant_id;
+    if (!id) continue;
+    if (variant.external_id) byExternalId.set(String(variant.external_id), id);
+    if (variant.variant_id) byProviderVariantId.set(String(variant.variant_id), id);
+  }
+
+  return {
+    ...payload,
+    sync_variants: (payload.sync_variants || []).map((variant) => {
+      const id =
+        variant.id ||
+        byExternalId.get(String(variant.external_id || '')) ||
+        byProviderVariantId.get(String(variant.variant_id || ''));
+      return id ? {...variant, id} : variant;
+    }),
+  };
 }
 
 async function runPrintfulUpsert(args) {
@@ -2109,6 +2140,7 @@ async function runPrintfulUpsert(args) {
   requireEnv(['PRINTFUL_TOKEN', 'PRINTFUL_STORE_ID']);
   const {
     createPrintfulStoreProduct,
+    getPrintfulStoreProduct,
     getPrintfulStoreProductByExternalId,
     listPrintfulStoreProducts,
     updatePrintfulStoreProduct,
@@ -2126,12 +2158,18 @@ async function runPrintfulUpsert(args) {
     const ref = job.product.providerRefs.printful;
     let remoteProductId = ref.productId;
     let response;
+    let remoteProductResponse;
     let mode = remoteProductId ? 'updated' : 'created';
     let staleRef = false;
+    const updateRemoteProduct = async (productId, currentResponse = null) => {
+      const productResponse = currentResponse || (await getPrintfulStoreProduct(productId));
+      const payload = printfulPayloadWithSyncVariantIds(job.payload, productResponse);
+      return updatePrintfulStoreProduct(productId, payload);
+    };
 
     if (remoteProductId) {
       try {
-        response = await updatePrintfulStoreProduct(remoteProductId, job.payload);
+        response = await updateRemoteProduct(remoteProductId);
       } catch (error) {
         if (!isPrintfulNotFound(error)) throw error;
         staleRef = true;
@@ -2141,9 +2179,8 @@ async function runPrintfulUpsert(args) {
 
     if (!response && !remoteProductId) {
       try {
-        remoteProductId = printfulStoreProductId(
-          await getPrintfulStoreProductByExternalId(job.product.slug),
-        );
+        remoteProductResponse = await getPrintfulStoreProductByExternalId(job.product.slug);
+        remoteProductId = printfulStoreProductId(remoteProductResponse);
         mode = 'relinked-and-updated';
       } catch (error) {
         if (!isPrintfulNotFound(error)) throw error;
@@ -2153,7 +2190,7 @@ async function runPrintfulUpsert(args) {
     if (!response) {
       if (!remoteProductId) mode = 'created';
       response = remoteProductId
-        ? await updatePrintfulStoreProduct(remoteProductId, job.payload)
+        ? await updateRemoteProduct(remoteProductId, remoteProductResponse)
         : await createPrintfulStoreProduct(job.payload);
     }
 
@@ -2165,7 +2202,12 @@ async function runPrintfulUpsert(args) {
 
     ref.productId = productId;
     ref.variantIds = job.payload.sync_variants.map((variant) => variant.variant_id);
-    const syncVariantIds = printfulStoreSyncVariantIds(response);
+    let syncVariantIds = printfulStoreSyncVariantIds(response);
+    if (!syncVariantIds.length && productId) {
+      syncVariantIds = printfulStoreSyncVariantIds(
+        await getPrintfulStoreProduct(productId),
+      );
+    }
     if (syncVariantIds.length) ref.syncVariantIds = syncVariantIds;
 
     results.push({

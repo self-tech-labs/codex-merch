@@ -14,7 +14,9 @@ import {
   generationPreflight,
   parseNewProductArgs,
   printfulMockupTaskPayload,
+  printfulPayloadWithSyncVariantIds,
   printfulPayload,
+  printfulStoreSyncVariantIds,
   printfulTechniquePrompt,
   validateProducts,
   verifyPrintfulReadiness,
@@ -327,6 +329,46 @@ test('builds direct Printful payloads from commerce data', () => {
     payload.sync_variants[0].files[0].url,
     'https://merch.example/assets/print/test-shirt-front.png',
   );
+});
+
+test('extracts Printful sync variant IDs only from array responses', () => {
+  assert.deepEqual(
+    printfulStoreSyncVariantIds({
+      result: {id: 13, variants: 10},
+    }),
+    [],
+  );
+  assert.deepEqual(
+    printfulStoreSyncVariantIds({
+      result: {
+        sync_variants: [
+          {id: 123, variant_id: 4017},
+          {sync_variant_id: 124, variant_id: 4018},
+        ],
+      },
+    }),
+    [123, 124],
+  );
+});
+
+test('adds existing Printful sync variant IDs to update payloads', () => {
+  const payload = printfulPayload(baseProduct, baseBlank, {
+    siteUrl: 'https://merch.example',
+  });
+  const updatePayload = printfulPayloadWithSyncVariantIds(payload, {
+    result: {
+      sync_variants: [
+        {
+          id: 987,
+          external_id: 'test-shirt:4017',
+          variant_id: 4017,
+        },
+      ],
+    },
+  });
+
+  assert.equal(updatePayload.sync_variants[0].id, 987);
+  assert.equal(updatePayload.sync_variants[0].external_id, 'test-shirt:4017');
 });
 
 test('builds Printful mockup task payload using public site URLs', () => {
