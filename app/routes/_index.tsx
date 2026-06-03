@@ -1,14 +1,11 @@
 import {Link, useLoaderData, useSearchParams} from 'react-router';
 import type {Route} from './+types/_index';
-import {useAside} from '~/components/Aside';
 import {
   assetUrl,
   formatPrice,
   getMerchCategories,
-  isLiveShopifyConfigured,
-  isShopifyProductReady,
-  merchWorkflowStatus,
-  merchProducts,
+  getMerchProducts,
+  getPrimaryCustomerMockup,
   type MerchProduct,
 } from '~/lib/merch';
 
@@ -23,26 +20,17 @@ export const meta: Route.MetaFunction = () => {
   ];
 };
 
-export async function loader({context}: Route.LoaderArgs) {
-  const liveShopifyConfigured = isLiveShopifyConfigured(context.env);
-  const products = liveShopifyConfigured
-    ? await import('~/lib/shopify-catalog.server')
-        .then(({loadShopifyMerchCatalog}) =>
-          loadShopifyMerchCatalog(context.storefront),
-        )
-        .catch(() => merchProducts)
-    : merchProducts;
+export async function loader() {
+  const products = getMerchProducts();
 
   return {
     products,
     categories: getMerchCategories(products),
-    liveShopifyConfigured,
   };
 }
 
 export default function Homepage() {
-  const {products, categories, liveShopifyConfigured} =
-    useLoaderData<typeof loader>();
+  const {products, categories} = useLoaderData<typeof loader>();
   const [searchParams] = useSearchParams();
   const selectedCategory = searchParams.get('category');
   const filteredProducts = selectedCategory
@@ -53,7 +41,6 @@ export default function Homepage() {
     <div className="supply-page">
       <StoreRail
         categories={categories}
-        liveShopifyConfigured={liveShopifyConfigured}
         selectedCategory={selectedCategory}
       />
       <section className="product-grid" aria-label="Codex meme merch products">
@@ -67,24 +54,20 @@ export default function Homepage() {
 
 function StoreRail({
   categories,
-  liveShopifyConfigured,
   selectedCategory,
 }: {
   categories: string[];
-  liveShopifyConfigured: boolean;
   selectedCategory: string | null;
 }) {
-  const {open} = useAside();
-
   return (
     <aside className="store-rail" aria-label="Filters">
       <Link className="store-mark" to="/" aria-label="Codex Meme Merch home">
         <span>Codex</span>
         <span>Meme Merch</span>
       </Link>
-      <button className="rail-action" type="button" onClick={() => open('cart')}>
+      <Link className="rail-action" to="/cart">
         Cart
-      </button>
+      </Link>
       <nav className="rail-nav" aria-label="Product categories">
         <Link className={!selectedCategory ? 'active' : ''} to="/">
           All
@@ -100,36 +83,31 @@ function StoreRail({
         ))}
       </nav>
       <div className="rail-status">
-        <span>{liveShopifyConfigured ? 'Shopify live' : 'Manifest mode'}</span>
-        <span>Printful dry-run</span>
+        <span>Manifest catalog</span>
+        <span>Stripe checkout</span>
       </div>
       <p className="rail-note">
         Drops are created from Codex conversations, reviewed for rights, then
-        synced to Printful and Shopify.
+        routed to the configured production provider after checkout.
       </p>
     </aside>
   );
 }
 
 function ProductTile({product}: {product: MerchProduct}) {
-  const ready = isShopifyProductReady(product);
-  const primaryMockup = assetUrl(product.assets.mockups[0]);
-  const status = merchWorkflowStatus(product);
+  const primaryMockup = assetUrl(getPrimaryCustomerMockup(product));
 
   return (
     <article className="product-tile">
       <Link
         aria-label={`${product.title}, ${formatPrice(product)}`}
         prefetch="intent"
-        to={`/products/${product.shopify.handle}`}
+        to={`/products/${product.commerce.handle}`}
       >
         <img src={primaryMockup} alt="" loading="lazy" />
         <span className="tile-meta">
           <span>{product.title}</span>
           <span>{formatPrice(product)}</span>
-        </span>
-        <span className={ready ? 'tile-state synced' : 'tile-state'}>
-          {ready ? 'Synced' : status.replaceAll('_', ' ')}
         </span>
       </Link>
     </article>

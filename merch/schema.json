@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Codex Meme Merch Product",
+  "title": "Codex Merch Product",
   "type": "array",
   "items": {
     "type": "object",
@@ -11,8 +11,10 @@
       "status",
       "workflow",
       "meme",
-      "shopify",
-      "printful",
+      "commerce",
+      "production",
+      "providerRefs",
+      "signals",
       "assets",
       "prompts"
     ],
@@ -21,40 +23,19 @@
       "slug": {"type": "string"},
       "title": {"type": "string"},
       "status": {
-        "enum": [
-          "draft",
-          "generated",
-          "shopify_draft",
-          "printful_imported",
-          "printful_synced",
-          "mockups_ready",
-          "approved",
-          "published",
-          "archived"
-        ]
+        "enum": ["draft", "generated", "mockups_ready", "approved", "published", "archived"]
       },
       "workflow": {
         "type": "object",
         "required": ["status"],
         "properties": {
           "status": {
-            "enum": [
-              "draft",
-              "generated",
-              "shopify_draft",
-              "printful_imported",
-              "printful_synced",
-              "mockups_ready",
-              "approved",
-              "published",
-              "archived"
-            ]
+            "enum": ["draft", "generated", "mockups_ready", "approved", "published", "archived"]
           },
           "updatedAt": {"type": "string"},
           "lastError": {"type": ["string", "null"]}
         }
       },
-      "baseProduct": {"type": ["string", "null"]},
       "category": {"type": "string"},
       "description": {"type": "string"},
       "meme": {
@@ -63,70 +44,71 @@
         "properties": {
           "source": {"type": "string"},
           "brief": {"type": "string"},
-          "rightsNote": {"type": "string"},
-          "xQuery": {"type": "string"},
-          "xSources": {
+          "rightsNote": {"type": "string"}
+        }
+      },
+      "signals": {
+        "type": "object",
+        "required": ["profile", "queries", "sources"],
+        "properties": {
+          "profile": {"type": "string"},
+          "queries": {
             "type": "array",
             "items": {
               "type": "object",
-              "required": ["id", "url", "authorUsername", "metrics"],
+              "required": ["provider", "query"],
               "properties": {
-                "id": {"type": "string"},
-                "url": {"type": "string"},
-                "authorUsername": {"type": "string"},
-                "authorVerified": {"type": "boolean"},
-                "createdAt": {"type": ["string", "null"]},
-                "lang": {"type": ["string", "null"]},
-                "matchedQuery": {"type": "string"},
-                "metrics": {
-                  "type": "object",
-                  "properties": {
-                    "replies": {"type": "number"},
-                    "reposts": {"type": "number"},
-                    "likes": {"type": "number"},
-                    "quotes": {"type": "number"}
-                  }
-                }
+                "provider": {"type": "string"},
+                "query": {"type": "string"},
+                "maxResults": {"type": "number"}
               }
+            }
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["provider"],
+              "properties": {
+                "provider": {"type": "string"}
+              },
+              "additionalProperties": true
             }
           }
         }
       },
-      "shopify": {
+      "commerce": {
         "type": "object",
-        "required": ["handle", "price", "currency", "tags"],
+        "required": ["handle", "price", "currency", "tags", "variants"],
         "properties": {
           "handle": {"type": "string"},
           "price": {"type": "string"},
           "currency": {"type": "string"},
           "tags": {"type": "array", "items": {"type": "string"}},
-          "variantId": {"type": ["string", "null"]},
-          "productId": {"type": ["string", "null"]},
           "variants": {
             "type": "array",
             "items": {
               "type": "object",
+              "required": ["id", "sku", "color", "size", "providerVariantId", "selectedOptions"],
               "properties": {
                 "id": {"type": "string"},
-                "externalId": {"type": "string"},
-                "sku": {"type": ["string", "null"]},
+                "sku": {"type": "string"},
+                "color": {"type": "string"},
+                "size": {"type": "string"},
+                "providerVariantId": {"type": "number"},
+                "availableForSale": {"type": "boolean"},
                 "selectedOptions": {"type": "array"}
               }
             }
-          },
-          "fileUrls": {"type": "object"},
-          "mockupFileUrls": {"type": "object"}
+          }
         }
       },
-      "printful": {
+      "production": {
         "type": "object",
-        "required": ["productId", "variantIds", "technique", "placements"],
+        "required": ["provider", "baseProduct", "technique", "placements"],
         "properties": {
-          "productId": {"type": ["number", "string", "null"]},
-          "syncProductId": {"type": ["number", "string", "null"]},
-          "mockupTaskKey": {"type": ["string", "null"]},
-          "variantIds": {"type": "array", "items": {"type": "number"}},
-          "syncVariants": {"type": "array"},
+          "provider": {"type": "string"},
+          "baseProduct": {"type": ["string", "null"]},
           "technique": {
             "enum": [
               "DTG",
@@ -156,6 +138,21 @@
           }
         }
       },
+      "providerRefs": {
+        "type": "object",
+        "properties": {
+          "printful": {
+            "type": "object",
+            "required": ["productId", "variantIds"],
+            "properties": {
+              "productId": {"type": ["number", "string", "null"]},
+              "mockupTaskKey": {"type": ["string", "null"]},
+              "variantIds": {"type": "array", "items": {"type": "number"}}
+            }
+          }
+        },
+        "additionalProperties": true
+      },
       "assets": {
         "type": "object",
         "required": ["artwork", "mockups"],
@@ -169,8 +166,7 @@
               "properties": {
                 "placement": {"type": "string"},
                 "path": {"type": "string"},
-                "url": {"type": "string"},
-                "shopifyFileId": {"type": "string"}
+                "url": {"type": "string"}
               }
             }
           },

@@ -7,7 +7,6 @@
     "*.ts",
     "*.tsx",
     "*.d.ts",
-    ".graphqlrc.ts",
     ".react-router/types/**/*"
   ],
   "exclude": ["node_modules", "dist", "build", "packages/**/dist/**/*"],
@@ -25,12 +24,7 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "baseUrl": ".",
-    "types": [
-      "@shopify/oxygen-workers-types",
-      "react-router",
-      "@shopify/hydrogen/react-router-types",
-      "vite/client"
-    ],
+    "types": ["node", "react-router", "vite/client"],
     "paths": {
       "~/*": ["app/*"]
     },

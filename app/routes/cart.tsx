@@ -1,113 +1,100 @@
-import {useLoaderData, data, type HeadersFunction} from 'react-router';
+import {Link} from 'react-router';
 import type {Route} from './+types/cart';
-import type {CartQueryDataReturn} from '@shopify/hydrogen';
-import {CartForm} from '@shopify/hydrogen';
-import {CartMain} from '~/components/CartMain';
+import {
+  checkoutCartValue,
+  lineImage,
+  lineTitle,
+  money,
+  useCart,
+} from '~/lib/cart';
 
 export const meta: Route.MetaFunction = () => {
-  return [{title: `Hydrogen | Cart`}];
+  return [{title: 'Codex Meme Merch | Cart'}];
 };
 
-export const headers: HeadersFunction = ({actionHeaders}) => actionHeaders;
-
-export async function action({request, context}: Route.ActionArgs) {
-  const {cart} = context;
-
-  const formData = await request.formData();
-
-  const {action, inputs} = CartForm.getFormInput(formData);
-
-  if (!action) {
-    throw new Error('No action provided');
-  }
-
-  let status = 200;
-  let result: CartQueryDataReturn;
-
-  switch (action) {
-    case CartForm.ACTIONS.LinesAdd:
-      result = await cart.addLines(inputs.lines);
-      break;
-    case CartForm.ACTIONS.LinesUpdate:
-      result = await cart.updateLines(inputs.lines);
-      break;
-    case CartForm.ACTIONS.LinesRemove:
-      result = await cart.removeLines(inputs.lineIds);
-      break;
-    case CartForm.ACTIONS.DiscountCodesUpdate: {
-      const formDiscountCode = inputs.discountCode;
-
-      // User inputted discount code
-      const discountCodes = (
-        formDiscountCode ? [formDiscountCode] : []
-      ) as string[];
-
-      // Combine discount codes already applied on cart
-      discountCodes.push(...inputs.discountCodes);
-
-      result = await cart.updateDiscountCodes(discountCodes);
-      break;
-    }
-    case CartForm.ACTIONS.GiftCardCodesAdd: {
-      const formGiftCardCode = inputs.giftCardCode;
-
-      const giftCardCodes = (
-        formGiftCardCode ? [formGiftCardCode] : []
-      ) as string[];
-
-      result = await cart.addGiftCardCodes(giftCardCodes);
-      break;
-    }
-    case CartForm.ACTIONS.GiftCardCodesRemove: {
-      const appliedGiftCardIds = inputs.giftCardCodes as string[];
-      result = await cart.removeGiftCardCodes(appliedGiftCardIds);
-      break;
-    }
-    case CartForm.ACTIONS.BuyerIdentityUpdate: {
-      result = await cart.updateBuyerIdentity({
-        ...inputs.buyerIdentity,
-      });
-      break;
-    }
-    default:
-      throw new Error(`${action} cart action is not defined`);
-  }
-
-  const cartId = result?.cart?.id;
-  const headers = cartId ? cart.setCartId(result.cart.id) : new Headers();
-  const {cart: cartResult, errors, warnings} = result;
-
-  const redirectTo = formData.get('redirectTo') ?? null;
-  if (typeof redirectTo === 'string') {
-    status = 303;
-    headers.set('Location', redirectTo);
-  }
-
-  return data(
-    {
-      cart: cartResult,
-      errors,
-      warnings,
-      analytics: {
-        cartId,
-      },
-    },
-    {status, headers},
-  );
-}
-
-export async function loader({context}: Route.LoaderArgs) {
-  const {cart} = context;
-  return await cart.get();
-}
-
 export default function Cart() {
-  const cart = useLoaderData<typeof loader>();
+  const {displayLines, lines, removeLine, subtotal, updateQuantity} = useCart();
+  const currency = displayLines[0]?.product.commerce.currency || 'USD';
+  const fulfillmentProvider = displayLines[0]?.product.production.provider || 'printful';
+  const fulfillmentLabel =
+    fulfillmentProvider.charAt(0).toUpperCase() + fulfillmentProvider.slice(1);
 
   return (
-    <div className="cart">
-      <h1>Cart</h1>
-      <CartMain layout="page" cart={cart} />
+    <div className="cart-page">
+      <header className="cart-header">
+        <h1>Cart</h1>
+        <Link to="/">Continue shopping</Link>
+      </header>
+
+      {displayLines.length ? (
+        <div className="cart-layout">
+          <ul className="local-cart-lines" aria-label="Cart items">
+            {displayLines.map((line) => (
+              <li key={line.variantId} className="local-cart-line">
+                <img src={lineImage(line)} alt="" />
+                <div>
+                  <h2>{line.product.title}</h2>
+                  <p>{lineTitle(line)}</p>
+                  <p>{money(line.lineTotal, line.product.commerce.currency)}</p>
+                </div>
+                <div className="quantity-stepper">
+                  <button
+                    type="button"
+                    aria-label={`Reduce ${line.product.title} quantity`}
+                    onClick={() => updateQuantity(line.variantId, line.quantity - 1)}
+                  >
+                    -
+                  </button>
+                  <span>{line.quantity}</span>
+                  <button
+                    type="button"
+                    aria-label={`Increase ${line.product.title} quantity`}
+                    onClick={() => updateQuantity(line.variantId, line.quantity + 1)}
+                  >
+                    +
+                  </button>
+                </div>
+                <button
+                  className="cart-remove"
+                  type="button"
+                  onClick={() => removeLine(line.variantId)}
+                >
+                  Remove
+                </button>
+              </li>
+            ))}
+          </ul>
+
+          <aside className="checkout-panel">
+            <dl>
+              <div>
+                <dt>Subtotal</dt>
+                <dd>{money(subtotal, currency)}</dd>
+              </div>
+              <div>
+                <dt>Fulfillment</dt>
+                <dd>{fulfillmentLabel}</dd>
+              </div>
+            </dl>
+            <form action="/api/checkout" method="post">
+              <input
+                type="hidden"
+                name="cart"
+                value={checkoutCartValue(lines)}
+              />
+              <button type="submit">Checkout with Stripe</button>
+            </form>
+            <p>
+              Taxes and shipping are finalized in Stripe Checkout when configured.
+            </p>
+          </aside>
+        </div>
+      ) : (
+        <section className="cart-empty">
+          <h2>Your cart is empty.</h2>
+          <Link to="/">Browse drops</Link>
+        </section>
+      )}
     </div>
   );
 }

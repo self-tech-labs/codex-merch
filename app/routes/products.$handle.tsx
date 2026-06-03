@@ -1,15 +1,16 @@
 import {useState} from 'react';
 import {Link, useLoaderData} from 'react-router';
 import type {Route} from './+types/products.$handle';
-import {AddToCartButton} from '~/components/AddToCartButton';
-import {useAside} from '~/components/Aside';
+import {useCart} from '~/lib/cart';
 import {
   assetUrl,
+  defaultProductVariant,
   formatPrice,
+  getCustomerMockups,
   getMerchProduct,
-  isLiveShopifyConfigured,
-  isShopifyProductReady,
-  merchWorkflowStatus,
+  getProductVariants,
+  variantLabel,
+  type CommerceVariant,
   type MerchProduct,
 } from '~/lib/merch';
 
@@ -23,23 +24,11 @@ export const meta: Route.MetaFunction = ({data}) => {
   ];
 };
 
-export async function loader({params, context}: Route.LoaderArgs) {
+export async function loader({params}: Route.LoaderArgs) {
   const handle = params.handle;
   if (!handle) throw new Response('Missing product handle', {status: 400});
 
-  let product = getMerchProduct(handle);
-  if (isLiveShopifyConfigured(context.env)) {
-    const liveProduct = await import('~/lib/shopify-catalog.server')
-      .then(({loadShopifyMerchProduct}) =>
-        loadShopifyMerchProduct(context.storefront, handle),
-      )
-      .catch(() => null);
-
-    if (liveProduct) {
-      product = product ? mergeLiveProduct(product, liveProduct) : liveProduct;
-    }
-  }
-
+  const product = getMerchProduct(handle);
   if (!product) throw new Response('Product not found', {status: 404});
 
   return {product};
@@ -49,11 +38,17 @@ export default function Product() {
   const {product} = useLoaderData<typeof loader>();
   const [activeMockup, setActiveMockup] = useState(0);
   const [zoomed, setZoomed] = useState(false);
-  const mockups = product.assets.mockups;
+  const variants = getProductVariants(product);
+  const defaultVariant = defaultProductVariant(product);
+  const [selectedVariantId, setSelectedVariantId] = useState(
+    defaultVariant?.id || '',
+  );
+  const selectedVariant =
+    variants.find((variant) => variant.id === selectedVariantId) ||
+    defaultVariant;
+  const mockups = getCustomerMockups(product);
   const currentMockup = mockups[activeMockup] || mockups[0];
-  const ready = isShopifyProductReady(product);
-  const status = merchWorkflowStatus(product);
-  const {open} = useAside();
+  const {addLine} = useCart();
 
   return (
     <div className="product-page">
@@ -77,7 +72,7 @@ export default function Product() {
                 )
               }
             >
-              ←
+              {'<'}
             </button>
             <button
               className={zoomed ? 'mockup-frame zoomed' : 'mockup-frame'}
@@ -100,7 +95,7 @@ export default function Product() {
                 )
               }
             >
-              →
+              {'>'}
             </button>
           </div>
 
@@ -116,11 +111,7 @@ export default function Product() {
             <dl>
               <div>
                 <dt>Technique</dt>
-                <dd>{product.printful.technique}</dd>
-              </div>
-              <div>
-                <dt>Status</dt>
-                <dd>{ready ? status.replaceAll('_', ' ') : 'Manifest draft'}</dd>
+                <dd>{product.production.technique}</dd>
               </div>
               <div>
                 <dt>Price</dt>
@@ -129,26 +120,31 @@ export default function Product() {
             </dl>
           </div>
 
-          <SizeRow product={product} />
+          <SizeRow
+            onSelect={setSelectedVariantId}
+            selectedVariantId={selectedVariant?.id || ''}
+            variants={variants}
+          />
 
           <div className="product-actions">
-            {ready && product.shopify.variantId ? (
-              <AddToCartButton
-                lines={[
-                  {
-                    merchandiseId: product.shopify.variantId,
-                    quantity: 1,
-                  },
-                ]}
-                onClick={() => open('cart')}
-              >
-                Add to cart
-              </AddToCartButton>
-            ) : (
-              <button className="sync-disabled" type="button" disabled>
-                Sync to Shopify first
-              </button>
-            )}
+            <button
+              className="add-to-cart-button"
+              disabled={!selectedVariant}
+              type="button"
+              onClick={() => {
+                if (!selectedVariant) return;
+                addLine({
+                  productSlug: product.slug,
+                  variantId: selectedVariant.id,
+                  quantity: 1,
+                });
+              }}
+            >
+              Add to cart
+            </button>
+            <Link className="buy-link" to="/cart">
+              View cart
+            </Link>
           </div>
 
           <details className="rights-panel">
@@ -191,37 +187,44 @@ function MockupStrip({
   );
 }
 
-function mergeLiveProduct(manifest: MerchProduct, live: MerchProduct) {
-  return {
-    ...manifest,
-    status: live.status,
-    shopify: {
-      ...manifest.shopify,
-      ...live.shopify,
-    },
-    assets: {
-      ...manifest.assets,
-      mockups: live.assets.mockups.length
-        ? live.assets.mockups
-        : manifest.assets.mockups,
-    },
-  } satisfies MerchProduct;
-}
+function SizeRow({
+  onSelect,
+  selectedVariantId,
+  variants,
+}: {
+  onSelect: (variantId: string) => void;
+  selectedVariantId: string;
+  variants: CommerceVariant[];
+}) {
+  if (!variants.length) return null;
 
-function SizeRow({product}: {product: MerchProduct}) {
-  const isAccessory =
-    product.slug.includes('tote') ||
-    product.slug.includes('cap') ||
-    product.slug.includes('sticker');
-  const options = isAccessory ? ['OS'] : ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+  const sizeCounts = variants.reduce<Record<string, number>>(
+    (counts, variant) => {
+      counts[variant.size] = (counts[variant.size] || 0) + 1;
+      return counts;
+    },
+    {},
+  );
 
   return (
-    <div className="size-row" aria-label="Product options">
-      {options.map((option) => (
-        <button key={option} type="button" disabled>
-          {option}
-        </button>
-      ))}
+    <div className="size-row" aria-label="Size options">
+      {variants.map((variant) => {
+        const label = variantLabel(variant, sizeCounts[variant.size] > 1);
+        const isSelected = variant.id === selectedVariantId;
+
+        return (
+          <button
+            aria-label={`Choose size ${label}`}
+            aria-pressed={isSelected}
+            className={isSelected ? 'selected' : ''}
+            key={variant.id}
+            onClick={() => onSelect(variant.id)}
+            type="button"
+          >
+            {label}
+          </button>
+        );
+      })}
     </div>
   );
 }

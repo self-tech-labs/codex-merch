@@ -3,12 +3,12 @@ import assert from 'node:assert/strict';
 import {generateArtworkImage} from './adapters/openai-images.mjs';
 import {searchRecentPosts} from './adapters/x-api.mjs';
 import {
-  listShopifyPublications,
-  publishShopifyResource,
-  upsertShopifyProductSet,
-} from './adapters/shopify-admin.mjs';
-import {
-  getPrintfulSyncProductByExternalId,
+  confirmPrintfulOrder,
+  createPrintfulOrder,
+  createPrintfulMockupTask,
+  createPrintfulStoreProduct,
+  getPrintfulStoreProductByExternalId,
+  updatePrintfulStoreProduct,
   updatePrintfulSyncVariant,
 } from './adapters/printful.mjs';
 
@@ -27,7 +27,7 @@ function jsonResponse(body, status = 200) {
   });
 }
 
-test('mocked happy path calls X, OpenAI, Shopify, and Printful adapters', async () => {
+test('mocked happy path calls X, OpenAI, and Printful adapters', async () => {
   const calls = [];
   const restore = mockFetch(async (url, init = {}) => {
     calls.push({url: String(url), init});
@@ -43,32 +43,23 @@ test('mocked happy path calls X, OpenAI, Shopify, and Printful adapters', async 
       return jsonResponse({data: [{b64_json: Buffer.from('png').toString('base64')}]});
     }
 
-    if (String(url).includes('/admin/api/')) {
-      assert.equal(init.headers['X-Shopify-Access-Token'], 'shop-token');
-      return jsonResponse({
-        data: {
-          productSet: {
-            product: {
-              id: 'gid://shopify/Product/1',
-              handle: 'test-shirt',
-              status: 'DRAFT',
-              variants: {nodes: []},
-            },
-            productSetOperation: null,
-            userErrors: [],
-          },
-        },
-      });
-    }
-
-    if (String(url).includes('/sync/products/')) {
+    if (String(url).includes('/mockup-generator/create-task/')) {
       assert.equal(init.headers['X-PF-Store-Id'], 'store');
-      return jsonResponse({result: {sync_product: {id: 55}}});
+      assert.equal(init.method, 'POST');
+      return jsonResponse({result: {task_key: 'mockup-task'}});
     }
 
-    if (String(url).includes('/sync/variant/')) {
-      assert.equal(init.method, 'PUT');
-      return jsonResponse({result: {id: 77}});
+    if (String(url).endsWith('/orders')) {
+      assert.equal(init.headers['X-PF-Store-Id'], 'store');
+      assert.equal(init.method, 'POST');
+      const body = JSON.parse(init.body);
+      assert.equal(body.confirm, false);
+      return jsonResponse({result: {id: 55}});
+    }
+
+    if (String(url).endsWith('/orders/55/confirm')) {
+      assert.equal(init.method, 'POST');
+      return jsonResponse({result: {id: 55, status: 'confirmed'}});
     }
 
     throw new Error(`Unexpected fetch: ${url}`);
@@ -83,46 +74,24 @@ test('mocked happy path calls X, OpenAI, Shopify, and Printful adapters', async 
       {prompt: 'Original apparel artwork'},
       {OPENAI_API_KEY: 'openai-token'},
     );
-    await upsertShopifyProductSet(
-      {
-        input: {title: 'Test Shirt', handle: 'test-shirt'},
-        identifier: {customId: {namespace: 'codex_merch', key: 'manifest_id', value: '1'}},
-        synchronous: true,
-      },
-      {PUBLIC_STORE_DOMAIN: 'example.myshopify.com', SHOPIFY_ADMIN_ACCESS_TOKEN: 'shop-token'},
+    await createPrintfulMockupTask(
+      1418,
+      {variant_ids: [33966], files: []},
+      {PRINTFUL_TOKEN: 'printful', PRINTFUL_STORE_ID: 'store'},
     );
-    await getPrintfulSyncProductByExternalId('1', {
+    await createPrintfulOrder(
+      {confirm: false, recipient: {}, items: []},
+      {PRINTFUL_TOKEN: 'printful', PRINTFUL_STORE_ID: 'store'},
+    );
+    await confirmPrintfulOrder(55, {
       PRINTFUL_TOKEN: 'printful',
       PRINTFUL_STORE_ID: 'store',
     });
-    await updatePrintfulSyncVariant(
-      '123',
-      {variant_id: 4017, files: []},
-      {PRINTFUL_TOKEN: 'printful', PRINTFUL_STORE_ID: 'store'},
-    );
   } finally {
     restore();
   }
 
   assert.equal(calls.length, 5);
-});
-
-test('Printful import-not-ready failure remains resumable', async () => {
-  const restore = mockFetch(async () =>
-    jsonResponse({error: {message: 'Not found'}}, 404),
-  );
-
-  try {
-    await assert.rejects(
-      getPrintfulSyncProductByExternalId('missing', {
-        PRINTFUL_TOKEN: 'printful',
-        PRINTFUL_STORE_ID: 'store',
-      }),
-      /Printful request failed \(404/,
-    );
-  } finally {
-    restore();
-  }
 });
 
 test('Printful adapter retries rate-limited requests', async () => {
@@ -160,66 +129,59 @@ test('Printful adapter retries rate-limited requests', async () => {
   }
 });
 
-test('Shopify adapter exchanges client credentials and publishes resources', async () => {
-  let tokenRequests = 0;
+test('Printful native store product adapter uses Manual order API endpoints', async () => {
+  const calls = [];
   const restore = mockFetch(async (url, init = {}) => {
-    if (String(url).includes('/admin/oauth/access_token')) {
-      tokenRequests += 1;
-      const body = new URLSearchParams(String(init.body));
-      assert.equal(body.get('grant_type'), 'client_credentials');
-      assert.equal(body.get('client_id'), 'client-id');
-      assert.equal(body.get('client_secret'), 'client-secret');
-      return jsonResponse({access_token: 'client-token', expires_in: 86400});
-    }
-
-    if (String(url).includes('/admin/api/')) {
-      assert.equal(init.headers['X-Shopify-Access-Token'], 'client-token');
-      const body = JSON.parse(init.body);
-      if (body.query.includes('publications')) {
-        return jsonResponse({
-          data: {
-            publications: {
-              nodes: [{id: 'gid://shopify/Publication/1', name: 'codex-merch'}],
-            },
-          },
-        });
-      }
-
-      if (body.query.includes('publishablePublish')) {
-        assert.equal(body.variables.id, 'gid://shopify/Product/1');
-        assert.equal(body.variables.publicationId, 'gid://shopify/Publication/1');
-        return jsonResponse({
-          data: {
-            publishablePublish: {
-              publishable: {publishedOnPublication: true},
-              userErrors: [],
-            },
-          },
-        });
-      }
-    }
-
-    throw new Error(`Unexpected fetch: ${url}`);
+    calls.push({url: String(url), init});
+    assert.equal(init.headers.Authorization, 'Bearer printful');
+    assert.equal(init.headers['X-PF-Store-Id'], 'store');
+    return jsonResponse({result: {id: 88, sync_variants: [{id: 99}]}});
   });
 
-  const env = {
-    PUBLIC_STORE_DOMAIN: 'example.myshopify.com',
-    SHOPIFY_CLIENT_ID: 'client-id',
-    SHOPIFY_CLIENT_SECRET: 'client-secret',
-  };
+  try {
+    await createPrintfulStoreProduct(
+      {sync_product: {name: 'Test'}, sync_variants: []},
+      {PRINTFUL_TOKEN: 'printful', PRINTFUL_STORE_ID: 'store'},
+    );
+    await getPrintfulStoreProductByExternalId('test-shirt', {
+      PRINTFUL_TOKEN: 'printful',
+      PRINTFUL_STORE_ID: 'store',
+    });
+    await updatePrintfulStoreProduct(
+      88,
+      {sync_product: {name: 'Test'}, sync_variants: []},
+      {PRINTFUL_TOKEN: 'printful', PRINTFUL_STORE_ID: 'store'},
+    );
+  } finally {
+    restore();
+  }
+
+  assert.equal(calls[0].url, 'https://api.printful.com/store/products');
+  assert.equal(calls[0].init.method, 'POST');
+  assert.equal(
+    calls[1].url,
+    'https://api.printful.com/store/products/@test-shirt',
+  );
+  assert.equal(
+    calls[2].url,
+    'https://api.printful.com/store/products/88',
+  );
+  assert.equal(calls[2].init.method, 'PUT');
+});
+
+test('Printful failures remain resumable', async () => {
+  const restore = mockFetch(async () =>
+    jsonResponse({error: {message: 'Not found'}}, 404),
+  );
 
   try {
-    const publications = await listShopifyPublications(env);
-    assert.equal(publications[0].name, 'codex-merch');
-    const result = await publishShopifyResource(
-      {
-        resourceId: 'gid://shopify/Product/1',
-        publicationId: 'gid://shopify/Publication/1',
-      },
-      env,
+    await assert.rejects(
+      createPrintfulOrder(
+        {confirm: false, recipient: {}, items: []},
+        {PRINTFUL_TOKEN: 'printful', PRINTFUL_STORE_ID: 'store'},
+      ),
+      /Printful request failed \(404/,
     );
-    assert.equal(result.publishable.publishedOnPublication, true);
-    assert.equal(tokenRequests, 1);
   } finally {
     restore();
   }

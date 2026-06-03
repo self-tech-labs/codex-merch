@@ -1,11 +1,22 @@
-import {defineConfig} from 'vite';
-import {hydrogen} from '@shopify/hydrogen/vite';
-import {oxygen} from '@shopify/mini-oxygen/vite';
+import {cp} from 'node:fs/promises';
+import path from 'node:path';
+import {defineConfig, type Plugin} from 'vite';
 import {reactRouter} from '@react-router/dev/vite';
 import tailwindcss from '@tailwindcss/vite';
 
+function copyMerchAssets(): Plugin {
+  return {
+    name: 'copy-merch-assets',
+    async writeBundle() {
+      await cp(path.resolve('assets'), path.resolve('build/client/assets'), {
+        recursive: true,
+      });
+    },
+  };
+}
+
 export default defineConfig({
-  plugins: [tailwindcss(), hydrogen(), oxygen(), reactRouter()],
+  plugins: [tailwindcss(), reactRouter(), copyMerchAssets()],
   resolve: {
     tsconfigPaths: true,
   },
@@ -32,8 +43,5 @@ export default defineConfig({
         'react-router',
       ],
     },
-  },
-  server: {
-    allowedHosts: ['.tryhydrogen.dev'],
   },
 });

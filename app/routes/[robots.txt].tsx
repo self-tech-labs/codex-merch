@@ -24,10 +24,7 @@ ${generalDisallowRules({sitemapUrl})}
 # Google adsbot ignores robots.txt unless specifically named!
 User-agent: adsbot-google
 Disallow: /cart
-Disallow: /account
-Disallow: /search
-Allow: /search/
-Disallow: /search/?*
+Disallow: /api/
 
 User-agent: Nutch
 Disallow: /
@@ -48,31 +45,8 @@ Crawl-delay: 1
 `.trim();
 }
 
-/**
- * This function generates disallow rules that generally follow what Shopify's
- * Online Store has as defaults for their robots.txt
- */
 function generalDisallowRules({sitemapUrl}: {sitemapUrl?: string}) {
   return `Disallow: /cart
-Disallow: /account
-Disallow: /collections/*sort_by*
-Disallow: /*/collections/*sort_by*
-Disallow: /collections/*+*
-Disallow: /collections/*%2B*
-Disallow: /collections/*%2b*
-Disallow: /*/collections/*+*
-Disallow: /*/collections/*%2B*
-Disallow: /*/collections/*%2b*
-Disallow: /*/collections/*filter*&*filter*
-Disallow: /blogs/*+*
-Disallow: /blogs/*%2B*
-Disallow: /blogs/*%2b*
-Disallow: /*/blogs/*+*
-Disallow: /*/blogs/*%2B*
-Disallow: /*/blogs/*%2b*
-Disallow: /policies/
-Disallow: /search
-Allow: /search/
-Disallow: /search/?*
+Disallow: /api/
 ${sitemapUrl ? `Sitemap: ${sitemapUrl}` : ''}`;
 }

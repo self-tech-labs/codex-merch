@@ -2,12 +2,16 @@
   "$schema": "./base-products.schema.json",
   "products": [
     {
+      "provider": "printful",
       "alias": "bella-canvas-3001-black",
       "title": "Bella + Canvas 3001 Unisex T-Shirt",
       "kind": "short-sleeve-t-shirt",
       "catalogProductId": 71,
       "catalogVerifiedAt": "2026-05-26",
-      "techniques": ["DTG", "DTFlex"],
+      "techniques": [
+        "DTG",
+        "DTFlex"
+      ],
       "printfile": {
         "width": 1800,
         "height": 2400,
@@ -29,53 +33,65 @@
         {
           "color": "Black",
           "size": "M",
-          "printfulVariantId": 4017
+          "providerVariantId": 4017
         },
         {
           "color": "Black",
           "size": "L",
-          "printfulVariantId": 4018
+          "providerVariantId": 4018
         },
         {
           "color": "Black",
           "size": "XL",
-          "printfulVariantId": 4019
+          "providerVariantId": 4019
         }
       ],
       "placements": [
         {
           "area": "front",
-          "printfulType": "default",
           "mockupPlacement": "front",
-          "techniques": ["DTG"]
+          "techniques": [
+            "DTG"
+          ],
+          "providerPlacementType": "default"
         },
         {
           "area": "front",
-          "printfulType": "front_dtf",
           "mockupPlacement": "front_dtf",
-          "techniques": ["DTFlex"]
+          "techniques": [
+            "DTFlex"
+          ],
+          "providerPlacementType": "front_dtf"
         },
         {
           "area": "back",
-          "printfulType": "back",
           "mockupPlacement": "back",
-          "techniques": ["DTG"]
+          "techniques": [
+            "DTG"
+          ],
+          "providerPlacementType": "back"
         },
         {
           "area": "back",
-          "printfulType": "back_dtf",
           "mockupPlacement": "back_dtf",
-          "techniques": ["DTFlex"]
+          "techniques": [
+            "DTFlex"
+          ],
+          "providerPlacementType": "back_dtf"
         }
       ]
     },
     {
+      "provider": "printful",
       "alias": "bella-canvas-3001-white",
       "title": "Bella + Canvas 3001 Unisex T-Shirt",
       "kind": "short-sleeve-t-shirt",
       "catalogProductId": 71,
       "catalogVerifiedAt": "2026-05-26",
-      "techniques": ["DTG", "DTFlex"],
+      "techniques": [
+        "DTG",
+        "DTFlex"
+      ],
       "printfile": {
         "width": 1800,
         "height": 2400,
@@ -97,53 +113,66 @@
         {
           "color": "White",
           "size": "M",
-          "printfulVariantId": 4012
+          "providerVariantId": 4012
         },
         {
           "color": "White",
           "size": "L",
-          "printfulVariantId": 4013
+          "providerVariantId": 4013
         },
         {
           "color": "White",
           "size": "XL",
-          "printfulVariantId": 4014
+          "providerVariantId": 4014
         }
       ],
       "placements": [
         {
           "area": "front",
-          "printfulType": "default",
           "mockupPlacement": "front",
-          "techniques": ["DTG"]
+          "techniques": [
+            "DTG"
+          ],
+          "providerPlacementType": "default"
         },
         {
           "area": "front",
-          "printfulType": "front_dtf",
           "mockupPlacement": "front_dtf",
-          "techniques": ["DTFlex"]
+          "techniques": [
+            "DTFlex"
+          ],
+          "providerPlacementType": "front_dtf"
         },
         {
           "area": "back",
-          "printfulType": "back",
           "mockupPlacement": "back",
-          "techniques": ["DTG"]
+          "techniques": [
+            "DTG"
+          ],
+          "providerPlacementType": "back"
         },
         {
           "area": "back",
-          "printfulType": "back_dtf",
           "mockupPlacement": "back_dtf",
-          "techniques": ["DTFlex"]
+          "techniques": [
+            "DTFlex"
+          ],
+          "providerPlacementType": "back_dtf"
         }
       ]
     },
     {
+      "provider": "printful",
       "alias": "bella-canvas-3501-black",
       "title": "Bella + Canvas 3501 Unisex Long Sleeve Tee",
       "kind": "long-sleeve-t-shirt",
       "catalogProductId": 356,
       "catalogVerifiedAt": "2026-05-26",
-      "techniques": ["DTG", "DTFlex", "Embroidery"],
+      "techniques": [
+        "DTG",
+        "DTFlex",
+        "Embroidery"
+      ],
       "printfile": {
         "width": 1800,
         "height": 2400,
@@ -166,72 +195,89 @@
         {
           "color": "Black",
           "size": "M",
-          "printfulVariantId": 10095
+          "providerVariantId": 10095
         },
         {
           "color": "Black",
           "size": "L",
-          "printfulVariantId": 10096
+          "providerVariantId": 10096
         },
         {
           "color": "Black",
           "size": "XL",
-          "printfulVariantId": 10097
+          "providerVariantId": 10097
         }
       ],
       "placements": [
         {
           "area": "front",
-          "printfulType": "default",
           "mockupPlacement": "front",
-          "techniques": ["DTG"]
+          "techniques": [
+            "DTG"
+          ],
+          "providerPlacementType": "default"
         },
         {
           "area": "front",
-          "printfulType": "front_dtf",
           "mockupPlacement": "front_dtf",
-          "techniques": ["DTFlex"]
+          "techniques": [
+            "DTFlex"
+          ],
+          "providerPlacementType": "front_dtf"
         },
         {
           "area": "front_large",
-          "printfulType": "front_large_dtf",
           "mockupPlacement": "front_large_dtf",
-          "techniques": ["DTFlex"]
+          "techniques": [
+            "DTFlex"
+          ],
+          "providerPlacementType": "front_large_dtf"
         },
         {
           "area": "back",
-          "printfulType": "back",
           "mockupPlacement": "back",
-          "techniques": ["DTG"]
+          "techniques": [
+            "DTG"
+          ],
+          "providerPlacementType": "back"
         },
         {
           "area": "back",
-          "printfulType": "back_dtf",
           "mockupPlacement": "back_dtf",
-          "techniques": ["DTFlex"]
+          "techniques": [
+            "DTFlex"
+          ],
+          "providerPlacementType": "back_dtf"
         },
         {
           "area": "right_sleeve",
-          "printfulType": "sleeve_right",
           "mockupPlacement": "sleeve_right",
-          "techniques": ["DTG"]
+          "techniques": [
+            "DTG"
+          ],
+          "providerPlacementType": "sleeve_right"
         },
         {
           "area": "left_sleeve",
-          "printfulType": "sleeve_left",
           "mockupPlacement": "sleeve_left",
-          "techniques": ["DTG"]
+          "techniques": [
+            "DTG"
+          ],
+          "providerPlacementType": "sleeve_left"
         }
       ]
     },
     {
+      "provider": "printful",
       "alias": "printful-aop-cotton-sweatshirt-white",
       "title": "All-Over Print Unisex Cotton Sweatshirt",
       "kind": "all-over-cotton-sweatshirt",
       "catalogProductId": 1418,
       "catalogVerifiedAt": "2026-05-26",
       "catalogSource": "https://api.printful.com/products/1418",
-      "techniques": ["All-Over Cotton"],
+      "techniques": [
+        "All-Over Cotton"
+      ],
       "printfile": {
         "width": 5037,
         "height": 6600,
@@ -270,65 +316,66 @@
         {
           "color": "White",
           "size": "2XS",
-          "printfulVariantId": 33963
+          "providerVariantId": 33963
         },
         {
           "color": "White",
           "size": "XS",
-          "printfulVariantId": 33964
+          "providerVariantId": 33964
         },
         {
           "color": "White",
           "size": "S",
-          "printfulVariantId": 33965
+          "providerVariantId": 33965
         },
         {
           "color": "White",
           "size": "M",
-          "printfulVariantId": 33966
+          "providerVariantId": 33966
         },
         {
           "color": "White",
           "size": "L",
-          "printfulVariantId": 33967
+          "providerVariantId": 33967
         },
         {
           "color": "White",
           "size": "XL",
-          "printfulVariantId": 33968
+          "providerVariantId": 33968
         },
         {
           "color": "White",
           "size": "2XL",
-          "printfulVariantId": 33969
+          "providerVariantId": 33969
         },
         {
           "color": "White",
           "size": "3XL",
-          "printfulVariantId": 33970
+          "providerVariantId": 33970
         },
         {
           "color": "White",
           "size": "4XL",
-          "printfulVariantId": 33971
+          "providerVariantId": 33971
         },
         {
           "color": "White",
           "size": "5XL",
-          "printfulVariantId": 33972
+          "providerVariantId": 33972
         },
         {
           "color": "White",
           "size": "6XL",
-          "printfulVariantId": 33973
+          "providerVariantId": 33973
         }
       ],
       "placements": [
         {
           "area": "front",
-          "printfulType": "front_dtfabric",
           "mockupPlacement": "front_dtfabric",
-          "techniques": ["All-Over Cotton"],
+          "techniques": [
+            "All-Over Cotton"
+          ],
           "width": 5037,
           "height": 6600,
           "mockupPosition": {
@@ -338,13 +385,15 @@
             "height": 2473,
             "top": 0,
             "left": 0
-          }
+          },
+          "providerPlacementType": "front_dtfabric"
         },
         {
           "area": "back",
-          "printfulType": "back_dtfabric",
           "mockupPlacement": "back_dtfabric",
-          "techniques": ["All-Over Cotton"],
+          "techniques": [
+            "All-Over Cotton"
+          ],
           "width": 5037,
           "height": 6600,
           "mockupPosition": {
@@ -354,13 +403,15 @@
             "height": 2473,
             "top": 0,
             "left": 0
-          }
+          },
+          "providerPlacementType": "back_dtfabric"
         },
         {
           "area": "left_sleeve",
-          "printfulType": "sleeve_left_dtfabric",
           "mockupPlacement": "sleeve_left_dtfabric",
-          "techniques": ["All-Over Cotton"],
+          "techniques": [
+            "All-Over Cotton"
+          ],
           "width": 5037,
           "height": 6600,
           "mockupPosition": {
@@ -370,13 +421,15 @@
             "height": 3000,
             "top": 0,
             "left": 0
-          }
+          },
+          "providerPlacementType": "sleeve_left_dtfabric"
         },
         {
           "area": "right_sleeve",
-          "printfulType": "sleeve_right_dtfabric",
           "mockupPlacement": "sleeve_right_dtfabric",
-          "techniques": ["All-Over Cotton"],
+          "techniques": [
+            "All-Over Cotton"
+          ],
           "width": 5037,
           "height": 6600,
           "mockupPosition": {
@@ -386,13 +439,15 @@
             "height": 3000,
             "top": 0,
             "left": 0
-          }
+          },
+          "providerPlacementType": "sleeve_right_dtfabric"
         },
         {
           "area": "label_panel",
-          "printfulType": "label_panel_dtfabric",
           "mockupPlacement": "label_panel_dtfabric",
-          "techniques": ["All-Over Cotton"],
+          "techniques": [
+            "All-Over Cotton"
+          ],
           "width": 5037,
           "height": 6600,
           "mockupPosition": {
@@ -402,13 +457,15 @@
             "height": 3000,
             "top": 0,
             "left": 0
-          }
+          },
+          "providerPlacementType": "label_panel_dtfabric"
         },
         {
           "area": "label_inside",
-          "printfulType": "label_inside_dtfabric",
           "mockupPlacement": "label_inside_dtfabric",
-          "techniques": ["All-Over Cotton"],
+          "techniques": [
+            "All-Over Cotton"
+          ],
           "width": 375,
           "height": 150,
           "mockupPosition": {
@@ -418,7 +475,8 @@
             "height": 662,
             "top": 0,
             "left": 0
-          }
+          },
+          "providerPlacementType": "label_inside_dtfabric"
         }
       ]
     }

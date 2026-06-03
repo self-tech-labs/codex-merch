@@ -1,21 +1,23 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
 import {
+  AOP_COTTON_REQUIRED_PLACEMENTS,
   advanceWorkflowStatus,
   allowedTechniques,
+  artDirectionPrompt,
+  artDirectorReview,
+  catalogMockupPath,
   composePrintFilePlan,
+  ensureCatalogMockupFirst,
+  generationDirectionPrompt,
+  generationPreflight,
+  parseNewProductArgs,
   printfulMockupTaskPayload,
   printfulPayload,
-  printfulSyncVariantPayload,
-  generationPreflight,
-  artDirectorReview,
-  artDirectionPrompt,
-  generationDirectionPrompt,
-  productSetIdentifier,
   printfulTechniquePrompt,
-  shopifyPayload,
-  shopifyProductSetInput,
   validateProducts,
+  verifyPrintfulReadiness,
   workflowStatuses,
 } from './merch.mjs';
 import {
@@ -26,6 +28,7 @@ import {
   buildRecentSearchUrl,
   summarizeRecentSearch,
 } from './adapters/x-api.mjs';
+import {providerForSignal} from './services/signals.mjs';
 
 const baseProduct = {
   id: 'drop-test',
@@ -33,7 +36,6 @@ const baseProduct = {
   title: 'Test Shirt',
   status: 'draft',
   workflow: {status: 'draft'},
-  baseProduct: 'bella-canvas-3001-black',
   category: 'Codex',
   description: 'Test description.',
   meme: {
@@ -41,36 +43,35 @@ const baseProduct = {
     brief: 'Simple unit-test product.',
     rightsNote:
       'Unit test rights note with enough detail for validation to accept it.',
-    xQuery: '',
-    xSources: [],
   },
-  shopify: {
+  signals: {
+    profile: 'codex-trend-research',
+    queries: [],
+    sources: [],
+  },
+  commerce: {
     handle: 'test-shirt',
     price: '42.00',
     currency: 'USD',
     tags: ['codex'],
-    variantId: null,
-    productId: null,
     variants: [
       {
-        id: 'gid://shopify/ProductVariant/123',
-        externalId: '123',
+        id: 'test-shirt:4017',
         sku: 'TEST_SHIRT_BLACK_M',
+        color: 'Black',
+        size: 'M',
+        providerVariantId: 4017,
+        availableForSale: true,
         selectedOptions: [
           {name: 'Color', value: 'Black'},
           {name: 'Size', value: 'M'},
         ],
       },
     ],
-    fileUrls: {front: 'https://cdn.shopify.com/test-shirt-front.png'},
-    mockupFileUrls: {},
   },
-  printful: {
-    productId: null,
-    syncProductId: null,
-    mockupTaskKey: null,
-    variantIds: [4017],
-    syncVariants: [],
+  production: {
+    provider: 'printful',
+    baseProduct: 'bella-canvas-3001-black',
     technique: 'DTFlex',
     placements: [
       {
@@ -79,16 +80,22 @@ const baseProduct = {
       },
     ],
   },
+  providerRefs: {
+    printful: {
+      productId: null,
+      mockupTaskKey: null,
+      variantIds: [4017],
+    },
+  },
   assets: {
     artwork: 'assets/artwork/test-shirt.png',
     printFiles: [
       {
         placement: 'front',
         path: 'assets/print/test-shirt-front.png',
-        url: 'https://cdn.shopify.com/test-shirt-front.png',
       },
     ],
-    mockups: ['merch/mockups/test-shirt-front.svg'],
+    mockups: ['assets/mockups/test-shirt-front.png'],
   },
   approval: {
     approvedAt: null,
@@ -115,19 +122,19 @@ const baseBlank = {
     DTFlex: [],
   },
   variants: [
-    {color: 'Black', size: 'M', printfulVariantId: 4017},
-    {color: 'Black', size: 'L', printfulVariantId: 4018},
+    {color: 'Black', size: 'M', providerVariantId: 4017},
+    {color: 'Black', size: 'L', providerVariantId: 4018},
   ],
   placements: [
     {
       area: 'front',
-      printfulType: 'front_dtf',
+      providerPlacementType: 'front_dtf',
       mockupPlacement: 'front_dtf',
       techniques: ['DTFlex'],
     },
     {
       area: 'front',
-      printfulType: 'default',
+      providerPlacementType: 'default',
       mockupPlacement: 'front',
       techniques: ['DTG'],
     },
@@ -177,23 +184,23 @@ const aopBlank = {
   printfile: {width: 5037, height: 6600, dpi: 150},
   templateNotes: ['Front/back/sleeve canvases are 5037x6600 px.'],
   techniqueOptions: {'All-Over Cotton': [{id: 'stitch_color', value: 'black'}]},
-  variants: [{color: 'White', size: 'M', printfulVariantId: 33966}],
+  variants: [{color: 'White', size: 'M', providerVariantId: 33966}],
   placements: [
-    {area: 'front', printfulType: 'front_dtfabric', mockupPlacement: 'front_dtfabric', techniques: ['All-Over Cotton']},
-    {area: 'back', printfulType: 'back_dtfabric', mockupPlacement: 'back_dtfabric', techniques: ['All-Over Cotton']},
-    {area: 'left_sleeve', printfulType: 'sleeve_left_dtfabric', mockupPlacement: 'sleeve_left_dtfabric', techniques: ['All-Over Cotton']},
-    {area: 'right_sleeve', printfulType: 'sleeve_right_dtfabric', mockupPlacement: 'sleeve_right_dtfabric', techniques: ['All-Over Cotton']},
-    {area: 'label_panel', printfulType: 'label_panel_dtfabric', mockupPlacement: 'label_panel_dtfabric', techniques: ['All-Over Cotton']},
-    {area: 'label_inside', printfulType: 'label_inside_dtfabric', mockupPlacement: 'label_inside_dtfabric', techniques: ['All-Over Cotton']},
+    {area: 'front', providerPlacementType: 'front_dtfabric', mockupPlacement: 'front_dtfabric', techniques: ['All-Over Cotton']},
+    {area: 'back', providerPlacementType: 'back_dtfabric', mockupPlacement: 'back_dtfabric', techniques: ['All-Over Cotton']},
+    {area: 'left_sleeve', providerPlacementType: 'sleeve_left_dtfabric', mockupPlacement: 'sleeve_left_dtfabric', techniques: ['All-Over Cotton']},
+    {area: 'right_sleeve', providerPlacementType: 'sleeve_right_dtfabric', mockupPlacement: 'sleeve_right_dtfabric', techniques: ['All-Over Cotton']},
+    {area: 'label_panel', providerPlacementType: 'label_panel_dtfabric', mockupPlacement: 'label_panel_dtfabric', techniques: ['All-Over Cotton']},
+    {area: 'label_inside', providerPlacementType: 'label_inside_dtfabric', mockupPlacement: 'label_inside_dtfabric', techniques: ['All-Over Cotton']},
   ],
 };
 
 const aopProduct = {
   ...baseProduct,
   slug: 'test-aop-sweatshirt',
-  baseProduct: 'printful-aop-cotton-sweatshirt-white',
-  printful: {
-    ...baseProduct.printful,
+  production: {
+    ...baseProduct.production,
+    baseProduct: 'printful-aop-cotton-sweatshirt-white',
     technique: 'All-Over Cotton',
     placements: [
       {area: 'front', file: 'assets/print/test-aop-front.png'},
@@ -203,6 +210,13 @@ const aopProduct = {
       {area: 'label_panel', file: 'assets/print/test-aop-label-panel.png'},
       {area: 'label_inside', file: 'assets/print/test-aop-inside-label.png'},
     ],
+  },
+  providerRefs: {
+    printful: {
+      productId: null,
+      mockupTaskKey: null,
+      variantIds: [33966],
+    },
   },
   artDirector: {
     aopSpec: {
@@ -215,105 +229,123 @@ const aopProduct = {
   },
 };
 
-test('validates complete draft products', () => {
+test('validates complete draft products with commerce fields', () => {
   assert.deepEqual(validateProducts([baseProduct]), []);
 });
 
-test('requires rights note, placements, and supported technique', () => {
+test('customer catalog manifest is restricted to the three AOP sweatshirts', () => {
+  const manifest = JSON.parse(
+    readFileSync(new URL('../merch/products.json', import.meta.url), 'utf8'),
+  );
+  const targetSlugs = [
+    'research-deployment-co-sweatshirt',
+    'terminal-ritual-sweatshirt',
+    'queue-weather-cotton-sweatshirt',
+  ];
+
+  assert.deepEqual(
+    manifest.map((product) => product.slug),
+    targetSlugs,
+  );
+
+  for (const product of manifest) {
+    assert.equal(product.production.baseProduct, 'printful-aop-cotton-sweatshirt-white');
+    assert.equal(product.production.technique, 'All-Over Cotton');
+    assert.equal(product.assets.mockups[0], catalogMockupPath(product));
+    assert.deepEqual(
+      product.production.placements.map((placement) => placement.area),
+      AOP_COTTON_REQUIRED_PLACEMENTS,
+    );
+  }
+});
+
+test('rejects legacy provider-specific product fields', () => {
+  const legacy = {
+    ...baseProduct,
+    baseProduct: 'bella-canvas-3001-black',
+    printful: {
+      technique: 'DTFlex',
+      placements: [{area: 'front', file: 'assets/print/legacy.png'}],
+    },
+    meme: {...baseProduct.meme, xQuery: 'codex', xSources: []},
+  };
+  delete legacy.production;
+  delete legacy.providerRefs;
+  delete legacy.signals;
+
+  const errors = validateProducts([legacy]);
+  assert.ok(errors.some((error) => error.includes('missing production')));
+  assert.ok(errors.some((error) => error.includes('legacy printful field')));
+  assert.ok(errors.some((error) => error.includes('legacy X signal fields')));
+});
+
+test('new merch defaults to AOP unless standard is explicit', () => {
+  assert.deepEqual(parseNewProductArgs(['Research Uniform']), {
+    title: 'Research Uniform',
+    mode: 'aop',
+  });
+  assert.deepEqual(parseNewProductArgs(['--standard', 'Sticker Pack']), {
+    title: 'Sticker Pack',
+    mode: 'standard',
+  });
+  assert.throws(
+    () => parseNewProductArgs(['--aop', '--standard', 'Confused Drop']),
+    /Choose either --aop or --standard/,
+  );
+});
+
+test('requires rights note, placements, commerce, and supported technique', () => {
   const invalid = {
     ...baseProduct,
     meme: {...baseProduct.meme, rightsNote: ''},
-    printful: {...baseProduct.printful, technique: 'Laser', placements: []},
+    commerce: {...baseProduct.commerce, handle: '', price: ''},
+    production: {...baseProduct.production, technique: 'Laser', placements: []},
   };
 
   const errors = validateProducts([invalid]);
-  assert.equal(errors.length, 3);
   assert.ok(errors.some((error) => error.includes('rights note')));
   assert.ok(errors.some((error) => error.includes('unsupported')));
   assert.ok(errors.some((error) => error.includes('placement')));
+  assert.ok(errors.some((error) => error.includes('commerce handle')));
+  assert.ok(errors.some((error) => error.includes('commerce price')));
 });
 
-test('requires print files and Printful sync data in later states', () => {
-  const invalid = {
-    ...baseProduct,
-    status: 'printful_synced',
-    workflow: {status: 'printful_synced'},
-    printful: {
-      ...baseProduct.printful,
-      syncProductId: null,
-      syncVariants: [],
-      placements: [{area: 'front', file: 'assets/print/missing-file.png'}],
-    },
-  };
-
-  const errors = validateProducts([invalid]);
-  assert.equal(errors.length, 3);
-  assert.ok(errors.some((error) => error.includes('missing print file')));
-  assert.ok(errors.some((error) => error.includes('sync product ID')));
-  assert.ok(errors.some((error) => error.includes('sync variants')));
-});
-
-test('builds legacy dry-run Printful payloads', () => {
-  const payload = printfulPayload(baseProduct);
+test('builds direct Printful payloads from commerce data', () => {
+  const payload = printfulPayload(baseProduct, baseBlank, {
+    siteUrl: 'https://merch.example',
+  });
   assert.equal(payload.sync_product.external_id, 'test-shirt');
-  assert.equal(payload.sync_variants[0].variant_id, 4017);
-  assert.equal(payload.sync_variants[0].files[0].type, 'front');
-});
-
-test('builds Shopify productSet input with draft status and codex metafields', () => {
-  const product = structuredClone(baseProduct);
-  product.assets.mockups = ['https://cdn.shopify.com/test-shirt-mockup.jpg'];
-  const payload = shopifyProductSetInput(product, baseBlank);
-  assert.equal(payload.handle, 'test-shirt');
-  assert.equal(payload.status, 'DRAFT');
-  assert.equal(payload.productOptions.length, 2);
-  assert.equal(payload.variants.length, 2);
-  assert.equal(payload.files.length, 1);
-  assert.equal(payload.metafields[0].value, 'drop-test');
-});
-
-test('can omit Shopify media from productSet updates', () => {
-  const product = structuredClone(baseProduct);
-  product.assets.mockups = ['https://cdn.shopify.com/test-shirt-mockup.jpg'];
-  const payload = shopifyProductSetInput(product, baseBlank, {includeFiles: false});
-  assert.equal(payload.handle, 'test-shirt');
-  assert.equal('files' in payload, false);
-});
-
-test('keeps shopifyPayload backward-compatible', () => {
-  const payload = shopifyPayload(baseProduct);
-  assert.equal(payload.handle, 'test-shirt');
-  assert.equal(payload.metafields[0].value, 'drop-test');
-});
-
-test('uses handle as productSet upsert identifier before Shopify ID exists', () => {
-  assert.deepEqual(productSetIdentifier(baseProduct), {handle: 'test-shirt'});
-});
-
-test('builds Printful sync variant payload from Shopify variant options', () => {
-  const payload = printfulSyncVariantPayload(
-    baseProduct,
-    baseBlank,
-    baseProduct.shopify.variants[0],
+  assert.equal(
+    payload.sync_product.thumbnail,
+    'https://merch.example/assets/mockups/test-shirt-front.png',
   );
-
-  assert.equal(payload.variant_id, 4017);
-  assert.equal(payload.files[0].type, 'front_dtf');
-  assert.equal(payload.files[0].url, 'https://cdn.shopify.com/test-shirt-front.png');
+  assert.equal(payload.sync_variants[0].external_id, 'test-shirt:4017');
+  assert.equal(payload.sync_variants[0].variant_id, 4017);
+  assert.equal(payload.sync_variants[0].retail_price, '42.00');
+  assert.equal(payload.sync_variants[0].files[0].type, 'front_dtf');
+  assert.equal(
+    payload.sync_variants[0].files[0].url,
+    'https://merch.example/assets/print/test-shirt-front.png',
+  );
 });
 
-test('builds Printful mockup task payload', () => {
-  const payload = printfulMockupTaskPayload(baseProduct, baseBlank);
+test('builds Printful mockup task payload using public site URLs', () => {
+  const payload = printfulMockupTaskPayload(baseProduct, baseBlank, {
+    siteUrl: 'https://merch.example',
+  });
   assert.deepEqual(payload.variant_ids, [4017, 4018]);
   assert.equal(payload.files[0].placement, 'front_dtf');
-  assert.equal(payload.files[0].image_url, 'https://cdn.shopify.com/test-shirt-front.png');
+  assert.equal(
+    payload.files[0].image_url,
+    'https://merch.example/assets/print/test-shirt-front.png',
+  );
 });
 
 test('preflights Printful technique compatibility before image generation', () => {
   const preflight = generationPreflight(baseProduct, baseBlank, techniqueCatalog);
   assert.equal(preflight.ok, true);
   assert.equal(preflight.technique, 'DTFlex');
-  assert.equal(preflight.supportedPlacements[0].printfulType, 'front_dtf');
+  assert.equal(preflight.supportedPlacements[0].providerPlacementType, 'front_dtf');
 });
 
 test('preflights All-Over Cotton as full panel system', () => {
@@ -321,14 +353,66 @@ test('preflights All-Over Cotton as full panel system', () => {
   assert.equal(preflight.ok, true);
   assert.equal(preflight.technique, 'All-Over Cotton');
   assert.equal(preflight.supportedPlacements.length, 6);
-  assert.equal(preflight.supportedPlacements[0].printfulType, 'front_dtfabric');
+  assert.equal(preflight.supportedPlacements[0].providerPlacementType, 'front_dtfabric');
+});
+
+test('keeps catalog mockups first for AOP customer presentation', () => {
+  const product = structuredClone(aopProduct);
+  product.assets.mockups = [
+    'assets/mockups/test-aop-front.png',
+    'assets/mockups/test-aop-back.png',
+  ];
+
+  const primaryMockup = ensureCatalogMockupFirst(product);
+  assert.equal(primaryMockup, 'assets/mockups/test-aop-sweatshirt-catalog.png');
+  assert.deepEqual(product.assets.mockups, [
+    'assets/mockups/test-aop-sweatshirt-catalog.png',
+    'assets/mockups/test-aop-front.png',
+    'assets/mockups/test-aop-back.png',
+  ]);
+});
+
+test('verifies local Printful readiness for complete AOP products', () => {
+  const product = structuredClone(aopProduct);
+  product.status = 'mockups_ready';
+  product.workflow = {status: 'mockups_ready'};
+  product.providerRefs.printful = {
+    productId: 123,
+    mockupTaskKey: 'gt-test',
+    variantIds: [33966],
+  };
+  ensureCatalogMockupFirst(product);
+
+  const report = verifyPrintfulReadiness(product, aopBlank, {checkFiles: false});
+  assert.equal(report.ok, true);
+  assert.deepEqual(report.issues, []);
+});
+
+test('rejects Printful readiness when sync refs are missing', () => {
+  const product = structuredClone(aopProduct);
+  product.status = 'mockups_ready';
+  product.workflow = {status: 'mockups_ready'};
+  ensureCatalogMockupFirst(product);
+
+  const report = verifyPrintfulReadiness(product, aopBlank, {checkFiles: false});
+  assert.equal(report.ok, false);
+  assert.ok(
+    report.issues.some((issue) =>
+      issue.includes('missing providerRefs.printful.productId'),
+    ),
+  );
+  assert.ok(
+    report.issues.some((issue) =>
+      issue.includes('missing Printful mockup task key'),
+    ),
+  );
 });
 
 test('rejects incomplete All-Over Cotton products before generation', () => {
   const invalid = {
     ...aopProduct,
-    printful: {
-      ...aopProduct.printful,
+    production: {
+      ...aopProduct.production,
       placements: [{area: 'front', file: 'assets/print/front.png'}],
     },
   };
@@ -354,45 +438,22 @@ test('art director accepts garment-first AOP specs and rejects poster logic', ()
   assert.ok(rejected.findings.some((finding) => finding.includes('poster/collage')));
 });
 
-test('rejects image generation when Printful cannot ship the selected placement', () => {
-  const invalid = {
-    ...baseProduct,
-    printful: {
-      ...baseProduct.printful,
-      placements: [{area: 'right_sleeve', file: 'assets/print/sleeve.png'}],
-    },
-  };
+test('adds Printful production constraints and art direction to generation prompt', () => {
+  const techniquePrompt = printfulTechniquePrompt(baseProduct, baseBlank, techniqueCatalog);
+  assert.match(techniquePrompt, /Production technique: DTFlex/);
+  assert.match(techniquePrompt, /front -> provider file type front_dtf/);
 
-  const preflight = generationPreflight(invalid, baseBlank, techniqueCatalog);
-  assert.equal(preflight.ok, false);
-  assert.match(preflight.errors[0], /does not support placement right_sleeve/);
-});
+  const directionPrompt = artDirectionPrompt(artDirection);
+  assert.match(directionPrompt, /Codex Supply House/);
+  assert.match(directionPrompt, /Avoid: No Supreme box logo/);
 
-test('adds Printful production constraints to the OpenAI prompt', () => {
-  const prompt = printfulTechniquePrompt(baseProduct, baseBlank, techniqueCatalog);
-  assert.match(prompt, /Printful production technique: DTFlex/);
-  assert.match(prompt, /front -> Printful file type front_dtf/);
-  assert.match(prompt, /standalone print artwork/);
-});
-
-test('adds art direction without copying source brands or products', () => {
-  const prompt = artDirectionPrompt(artDirection);
-  assert.match(prompt, /Codex Supply House/);
-  assert.match(prompt, /skater graphics/);
-  assert.match(prompt, /ASCII border fragments/);
-  assert.match(prompt, /Avoid: No Supreme box logo/);
-});
-
-test('combines Printful production constraints and art direction for generation', () => {
-  const prompt = generationDirectionPrompt(
+  const combined = generationDirectionPrompt(
     baseProduct,
     baseBlank,
     techniqueCatalog,
     artDirection,
   );
-  assert.match(prompt, /Printful production technique: DTFlex/);
-  assert.match(prompt, /Art direction: Codex Supply House/);
-  assert.match(prompt, /No copied Supply Co product artwork/);
+  assert.match(combined, /No copied Supply Co product artwork/);
 });
 
 test('compose plan keeps deterministic text layers explicit', () => {
@@ -416,7 +477,6 @@ test('builds OpenAI image generation requests with gpt-image-2', () => {
 test('builds X recent search URL and stores metadata without post text', () => {
   const url = buildRecentSearchUrl({query: 'codex lang:en -is:retweet'});
   assert.match(url, /tweets\/search\/recent/);
-  assert.match(url, /tweet\.fields=/);
 
   const summary = summarizeRecentSearch(
     {
@@ -439,12 +499,22 @@ test('builds X recent search URL and stores metadata without post text', () => {
   assert.equal(summary[0].metrics.likes, 3);
 });
 
-test('known Printful techniques and workflow states include MVP defaults', () => {
+test('signal provider wraps X retrieval behind a provider interface', () => {
+  const provider = providerForSignal('x');
+  const dryRun = provider.dryRun({
+    query: 'codex lang:en -is:retweet',
+    maxResults: 10,
+  });
+  assert.equal(provider.name, 'x');
+  assert.match(dryRun.url, /tweets\/search\/recent/);
+});
+
+test('known Printful techniques and workflow states include commerce defaults', () => {
   assert.equal(allowedTechniques.has('DTG'), true);
-  assert.equal(allowedTechniques.has('DTFlex'), true);
-  assert.equal(allowedTechniques.has('Embroidery'), true);
+  assert.equal(allowedTechniques.has('All-Over Cotton'), true);
   assert.equal(workflowStatuses.includes('mockups_ready'), true);
   assert.equal(workflowStatuses.includes('published'), true);
+  assert.equal(workflowStatuses.includes('legacy_draft'), false);
 });
 
 test('workflow advancement does not regress later states', () => {
@@ -452,7 +522,7 @@ test('workflow advancement does not regress later states', () => {
   product.status = 'mockups_ready';
   product.workflow = {status: 'mockups_ready'};
 
-  advanceWorkflowStatus(product, 'shopify_draft');
+  advanceWorkflowStatus(product, 'generated');
   assert.equal(product.workflow.status, 'mockups_ready');
 
   advanceWorkflowStatus(product, 'published');

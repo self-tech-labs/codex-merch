@@ -1,8 +1,8 @@
 :root {
   --aside-width: 400px;
   --rail-width: 216px;
-  --tile: 156px;
-  --gap: 4px;
+  --tile: 260px;
+  --gap: 24px;
   --bg: #f6f6f6;
   --ink: #080808;
   --muted: #5f6368;
@@ -164,60 +164,55 @@ a:hover {
 
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, var(--tile));
-  gap: var(--gap);
+  grid-template-columns: repeat(auto-fill, minmax(var(--tile), 1fr));
+  gap: 38px var(--gap);
   align-content: start;
   min-height: 100vh;
-  padding: 24px 24px 24px 220px;
+  padding: 24px 28px 28px 232px;
 }
 
 .product-tile {
   position: relative;
-  width: var(--tile);
-  height: var(--tile);
+  min-width: 0;
+  height: calc(var(--tile) + 62px);
   margin: 0;
   overflow: hidden;
 }
 
 .product-tile a {
   position: relative;
-  display: block;
+  display: grid;
+  grid-template-rows: var(--tile) minmax(38px, auto);
   width: 100%;
   height: 100%;
   color: var(--ink);
-  background: var(--bg);
+  background: transparent;
 }
 
 .product-tile img {
-  width: var(--tile);
+  width: 100%;
   height: var(--tile);
+  border: 1px solid #d6d0c5;
+  background: #dedbd4;
   object-fit: cover;
-  transition: transform 180ms ease;
+  transition:
+    border-color 180ms ease,
+    transform 180ms ease;
 }
 
 .product-tile:hover img {
-  transform: scale(1.035);
-}
-
-.tile-meta,
-.tile-state {
-  position: absolute;
-  left: 8px;
-  right: 8px;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 160ms ease;
+  border-color: #9f9a91;
+  transform: scale(1.018);
 }
 
 .tile-meta {
-  bottom: 8px;
   display: grid;
-  gap: 2px;
-  padding: 6px;
-  background: rgba(246, 246, 246, 0.88);
+  gap: 5px;
+  padding: 10px 2px 0;
+  background: transparent;
   font-family: var(--mono);
-  font-size: 10px;
-  line-height: 1.15;
+  font-size: 11px;
+  line-height: 1.18;
   text-transform: uppercase;
 }
 
@@ -226,7 +221,10 @@ a:hover {
 }
 
 .tile-state {
+  position: absolute;
   top: 8px;
+  left: 8px;
+  right: 8px;
   width: fit-content;
   padding: 3px 5px;
   border: 1px solid var(--ink);
@@ -234,7 +232,10 @@ a:hover {
   font-family: var(--mono);
   font-size: 10px;
   line-height: 1;
+  opacity: 0;
+  pointer-events: none;
   text-transform: uppercase;
+  transition: opacity 160ms ease;
 }
 
 .tile-state.synced {
@@ -242,9 +243,7 @@ a:hover {
   color: var(--bg);
 }
 
-.product-tile:hover .tile-meta,
 .product-tile:hover .tile-state,
-.product-tile:focus-within .tile-meta,
 .product-tile:focus-within .tile-state {
   opacity: 1;
 }
@@ -464,10 +463,31 @@ a:hover {
 }
 
 .size-row button {
-  padding: 0;
-  border: 0;
+  min-width: 34px;
+  min-height: 28px;
+  padding: 2px 4px;
+  border: 1px solid transparent;
   background: transparent;
   color: var(--ink);
+  cursor: pointer;
+  opacity: 0.58;
+}
+
+.size-row button:hover,
+.size-row button:focus-visible {
+  border-color: var(--ink);
+  opacity: 1;
+}
+
+.size-row button.selected {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: #fff;
+  opacity: 1;
+}
+
+.size-row button:disabled {
+  cursor: not-allowed;
   opacity: 0.24;
 }
 
@@ -515,9 +535,257 @@ a:hover {
 
 /*
 * --------------------------------------------------
-* Hydrogen cart aside
+* Site shell and local cart
 * --------------------------------------------------
 */
+.site-header {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.site-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.site-brand span:last-child {
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.site-nav {
+  display: flex;
+  gap: 12px;
+}
+
+.site-nav a,
+.site-footer a,
+.buy-link {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.site-nav a.active,
+.site-nav a:hover,
+.site-footer a:hover,
+.buy-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.site-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  padding: 18px 24px;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.cart-page {
+  width: min(1120px, calc(100vw - 32px));
+  min-height: calc(100vh - 84px);
+  margin: 0 auto;
+  padding: 92px 0 44px;
+}
+
+.cart-header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.cart-header h1,
+.checkout-result h1 {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: clamp(36px, 7vw, 84px);
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+
+.cart-header a,
+.cart-empty a,
+.checkout-result a {
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 13px;
+  text-transform: uppercase;
+}
+
+.cart-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 28px;
+  align-items: start;
+}
+
+.local-cart-lines {
+  display: grid;
+  gap: 8px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.local-cart-line {
+  display: grid;
+  grid-template-columns: 128px minmax(0, 1fr) auto auto;
+  gap: 16px;
+  align-items: center;
+  min-height: 146px;
+  padding: 8px;
+  border: 1px solid var(--line);
+  background: #fff;
+}
+
+.local-cart-line img {
+  width: 128px;
+  height: 128px;
+  object-fit: cover;
+  background: var(--bg);
+}
+
+.local-cart-line h2 {
+  margin: 0 0 6px;
+  font-size: 18px;
+  line-height: 1.05;
+}
+
+.local-cart-line p {
+  margin: 0 0 5px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+.quantity-stepper {
+  display: grid;
+  grid-template-columns: 34px 34px 34px;
+  align-items: center;
+  border: 1px solid var(--ink);
+  background: #fff;
+  font-family: var(--mono);
+  text-align: center;
+}
+
+.quantity-stepper button,
+.cart-remove,
+.checkout-panel button,
+.product-actions .add-to-cart-button {
+  min-height: 34px;
+  border: 0;
+  background: transparent;
+  font-family: var(--mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.quantity-stepper button:first-child {
+  border-right: 1px solid var(--ink);
+}
+
+.quantity-stepper button:last-child {
+  border-left: 1px solid var(--ink);
+}
+
+.cart-remove {
+  border: 1px solid var(--ink);
+  padding: 0 12px;
+}
+
+.checkout-panel {
+  position: sticky;
+  top: 76px;
+  padding: 18px;
+  border: 1px solid var(--ink);
+  background: #fff;
+}
+
+.checkout-panel dl {
+  display: grid;
+  gap: 12px;
+  margin: 0 0 18px;
+}
+
+.checkout-panel dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 14px;
+}
+
+.checkout-panel dt {
+  color: var(--muted);
+}
+
+.checkout-panel button,
+.product-actions .add-to-cart-button,
+.buy-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 18px;
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: #fff;
+}
+
+.buy-link {
+  background: #fff;
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.checkout-panel button {
+  width: 100%;
+}
+
+.checkout-panel p,
+.cart-empty p,
+.checkout-result p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.cart-empty,
+.checkout-result {
+  display: grid;
+  gap: 18px;
+  max-width: 620px;
+  padding: 92px 24px;
+}
+
+.checkout-result code {
+  width: fit-content;
+  padding: 6px 8px;
+  border: 1px solid var(--line);
+  background: #fff;
+  font-family: var(--mono);
+  font-size: 12px;
+}
+
 html:has(.overlay.expanded) {
   overflow: hidden;
 }
@@ -729,7 +997,49 @@ button.reset,
   }
 
   .product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px 10px;
     padding: 0 12px 20px;
+  }
+
+  .site-header {
+    position: static;
+    justify-content: space-between;
+    padding: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .cart-page {
+    width: auto;
+    padding: 28px 14px 36px;
+  }
+
+  .cart-header {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .cart-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .local-cart-line {
+    grid-template-columns: 96px 1fr;
+  }
+
+  .local-cart-line img {
+    width: 96px;
+    height: 96px;
+  }
+
+  .quantity-stepper,
+  .cart-remove {
+    grid-column: 2;
+    width: fit-content;
+  }
+
+  .checkout-panel {
+    position: static;
   }
 
   .tile-meta,
@@ -739,6 +1049,7 @@ button.reset,
 
   .tile-meta {
     font-size: 9px;
+    line-height: 1.12;
   }
 
   .product-page {

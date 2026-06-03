@@ -39,25 +39,35 @@ export function requirePrintfulEnv(env = process.env) {
   };
 }
 
+export async function createPrintfulStoreProduct(payload, env = process.env) {
+  return printfulRequest('/store/products', {method: 'POST', body: payload}, env);
+}
+
+export async function updatePrintfulStoreProduct(productId, payload, env = process.env) {
+  return printfulRequest(
+    `/store/products/${encodeURIComponent(String(productId))}`,
+    {method: 'PUT', body: payload},
+    env,
+  );
+}
+
+export async function getPrintfulStoreProduct(productId, env = process.env) {
+  return printfulRequest(
+    `/store/products/${encodeURIComponent(String(productId))}`,
+    {},
+    env,
+  );
+}
+
+export async function getPrintfulStoreProductByExternalId(
+  externalId,
+  env = process.env,
+) {
+  return printfulRequest(`/store/products/${externalIdPath(externalId)}`, {}, env);
+}
+
 export async function createPrintfulSyncProduct(payload, env = process.env) {
-  const {token, storeId} = requirePrintfulEnv(env);
-  const response = await fetch(`${PRINTFUL_API_BASE}/store/products`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-      'X-PF-Store-Id': storeId,
-    },
-    body: JSON.stringify(payload),
-  });
-
-  if (!response.ok) {
-    throw new Error(
-      `Printful sync failed (${response.status}): ${await response.text()}`,
-    );
-  }
-
-  return response.json();
+  return createPrintfulStoreProduct(payload, env);
 }
 
 async function printfulRequest(path, {method = 'GET', body} = {}, env = process.env) {
@@ -101,7 +111,7 @@ export async function getPrintfulSyncProductByExternalId(
   externalId,
   env = process.env,
 ) {
-  return printfulRequest(`/sync/products/${externalIdPath(externalId)}`, {}, env);
+  return getPrintfulStoreProductByExternalId(externalId, env);
 }
 
 export async function listPrintfulSyncProducts(query = {}, env = process.env) {
@@ -112,6 +122,16 @@ export async function listPrintfulSyncProducts(query = {}, env = process.env) {
 
   const suffix = params.size ? `?${params}` : '';
   return printfulRequest(`/sync/products${suffix}`, {}, env);
+}
+
+export async function listPrintfulStoreProducts(query = {}, env = process.env) {
+  const params = new URLSearchParams();
+  for (const [key, value] of Object.entries(query)) {
+    if (value != null && value !== '') params.set(key, String(value));
+  }
+
+  const suffix = params.size ? `?${params}` : '';
+  return printfulRequest(`/store/products${suffix}`, {}, env);
 }
 
 export async function updatePrintfulSyncVariant(
@@ -141,4 +161,12 @@ export async function createPrintfulMockupTask(
 export async function getPrintfulMockupTask(taskKey, env = process.env) {
   const params = new URLSearchParams({task_key: taskKey});
   return printfulRequest(`/mockup-generator/task?${params}`, {}, env);
+}
+
+export async function createPrintfulOrder(payload, env = process.env) {
+  return printfulRequest('/orders', {method: 'POST', body: payload}, env);
+}
+
+export async function confirmPrintfulOrder(orderId, env = process.env) {
+  return printfulRequest(`/orders/${orderId}/confirm`, {method: 'POST'}, env);
 }

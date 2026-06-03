@@ -1,41 +1,13 @@
-import {Await} from 'react-router';
-import {Suspense} from 'react';
-import type {
-  CartApiQueryFragment,
-  FooterQuery,
-  HeaderQuery,
-} from 'storefrontapi.generated';
-import {Aside} from '~/components/Aside';
-import {CartMain} from '~/components/CartMain';
+import {CartProvider} from '~/lib/cart';
+import {Header} from '~/components/Header';
+import {Footer} from '~/components/Footer';
 
-interface PageLayoutProps {
-  cart: Promise<CartApiQueryFragment | null>;
-  footer: Promise<FooterQuery | null>;
-  header: HeaderQuery;
-  isLoggedIn: Promise<boolean>;
-  publicStoreDomain: string;
-  children?: React.ReactNode;
-}
-
-export function PageLayout({cart, children = null}: PageLayoutProps) {
+export function PageLayout({children = null}: {children?: React.ReactNode}) {
   return (
-    <Aside.Provider>
-      <CartAside cart={cart} />
+    <CartProvider>
+      <Header />
       <main>{children}</main>
-    </Aside.Provider>
-  );
-}
-
-function CartAside({cart}: {cart: PageLayoutProps['cart']}) {
-  return (
-    <Aside type="cart" heading="Cart">
-      <Suspense fallback={<p>Loading cart...</p>}>
-        <Await resolve={cart}>
-          {(cart) => {
-            return <CartMain cart={cart} layout="aside" />;
-          }}
-        </Await>
-      </Suspense>
-    </Aside>
+      <Footer />
+    </CartProvider>
   );
 }
