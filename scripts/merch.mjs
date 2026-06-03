@@ -49,6 +49,9 @@ export const allowedTechniques = new Set([
   'Knitting',
 ]);
 
+const providerMockupPattern = /(?:^|-)printful-\d+\.(?:jpe?g|png|webp)$/i;
+const generatedCustomerPhotoPattern = /(?:^|-)photoshoot-[a-z0-9-]+\.(?:jpe?g|png|webp)$/i;
+
 export async function readProducts() {
   return JSON.parse(await readFile(productsPath, 'utf8'));
 }
@@ -217,6 +220,14 @@ export function validateProducts(products) {
 
     if (!product?.assets?.mockups?.length) {
       errors.push(`${label}: at least one mockup image is required`);
+    }
+
+    for (const customerPhoto of product?.assets?.customerPhotos || []) {
+      if (!isSupportedImagePath(customerPhoto)) {
+        errors.push(`${label}: unsupported customer photo type ${customerPhoto}`);
+      } else if (!isRemoteUrl(customerPhoto) && !existsSync(path.join(rootDir, customerPhoto))) {
+        errors.push(`${label}: missing customer photo ${customerPhoto}`);
+      }
     }
 
     if (
@@ -672,8 +683,16 @@ function selectProducts(products, args) {
     '--query',
     '--provider',
     '--max-results',
+    '--max-source-images',
     '--site-url',
     '--by',
+    '--view',
+    '--model',
+    '--size',
+    '--quality',
+    '--background',
+    '--output-format',
+    '--input-fidelity',
   ]);
   const positional = [];
   for (let index = 0; index < args.length; index += 1) {
@@ -698,6 +717,13 @@ export function catalogMockupPath(product) {
   return `assets/mockups/${product.slug}-catalog.png`;
 }
 
+export function customerPhotoPath(product, view = 'front', extension = 'png') {
+  const normalizedView = slugify(view || 'front') || 'front';
+  const normalizedExtension =
+    extension === 'jpeg' ? 'jpg' : String(extension || 'png').replace(/^\./, '');
+  return `assets/mockups/${product.slug}-photoshoot-${normalizedView}.${normalizedExtension}`;
+}
+
 function defaultAopMockupPaths(product) {
   return [
     `assets/mockups/${product.slug}-front.png`,
@@ -720,6 +746,86 @@ export function ensureCatalogMockupFirst(product) {
   return catalogPath;
 }
 
+export function photoshootSourceCandidates(product) {
+  const mockups = product.assets?.mockups || [];
+  const catalogPath = catalogMockupPath(product);
+  const customerPhotos = new Set(product.assets?.customerPhotos || []);
+  const providerMockups = mockups.filter((mockup) => providerMockupPattern.test(mockup));
+  const catalogMockups = mockups.filter((mockup) => mockup === catalogPath);
+  const technicalMockups = mockups.filter(
+    (mockup) =>
+      mockup !== catalogPath &&
+      !providerMockupPattern.test(mockup) &&
+      !generatedCustomerPhotoPattern.test(mockup),
+  );
+
+  return uniqueAssetList([
+    ...providerMockups,
+    ...catalogMockups,
+    ...technicalMockups,
+    product.assets?.artwork,
+  ]).filter(
+    (asset) =>
+      asset &&
+      !customerPhotos.has(asset) &&
+      !generatedCustomerPhotoPattern.test(asset),
+  );
+}
+
+export function photoshootPrompt(product, baseProduct, artDirection, options = {}) {
+  const view = options.view || 'front';
+  const spec = product.artDirector?.aopSpec || {};
+  const palette = spec.palette || {};
+  const production = productProduction(product);
+
+  return [
+    'You are the final Codex merch photoshooter.',
+    'Use the supplied mockup images as the source of truth for garment silhouette, fabric color, graphic placement, proportions, and readable text.',
+    'Render one realistic customer-facing merch photo, not a vector mockup, sketch, template, mannequin shot, or model photo.',
+    `Target view: ${view}. Garment: ${baseProduct?.title || product.category || 'apparel'}.`,
+    `Product title: ${product.title}.`,
+    `Garment brief: ${product.meme?.brief || product.description || product.title}.`,
+    `Known fabric palette: fabric ${palette.fabric || 'match source images'}, ink ${palette.ink || 'match source images'}, accent ${palette.accent || 'match source images'}.`,
+    `Deterministic text layer to preserve: ${production.textLayer || product.title}.`,
+    'Art direction: isolated premium merch photography on a very light warm-gray ecommerce background, straight-on composition, soft studio shadow, realistic cotton fleece texture, ribbed cuffs/collar/hem, subtle wrinkles, natural stitching, product filled like real merch but unworn.',
+    'Match the established Codex Supply House direction: quiet research-lab/skater merchandise, restrained negative space, precise sleeve story, and realistic garment depth like the hoodie and long-sleeve reference shots.',
+    artDirection?.aopGarmentRules?.length
+      ? `Garment rules: ${artDirection.aopGarmentRules.join(' ')}`
+      : '',
+    'Do not invent new slogans, add official marks, add public figures, add hangers, add models, add packaging, crop off sleeves, change the garment category, or replace the supplied artwork.',
+  ]
+    .filter(Boolean)
+    .join(' ');
+}
+
+export function verifyPhotoshootReadiness(product, options = {}) {
+  const {checkFiles = true} = options;
+  const customerPhotos = product.assets?.customerPhotos || [];
+  const issues = [];
+
+  if (!customerPhotos.length) {
+    issues.push(`${product.slug}: missing photoshooter customer photo`);
+  }
+
+  for (const customerPhoto of customerPhotos) {
+    if (!isSupportedImagePath(customerPhoto)) {
+      issues.push(`${product.slug}: unsupported customer photo type ${customerPhoto}`);
+      continue;
+    }
+
+    if (checkFiles && !isRemoteUrl(customerPhoto) && !existsSync(localPath(customerPhoto))) {
+      issues.push(`${product.slug}: missing customer photo ${customerPhoto}`);
+    }
+  }
+
+  return {
+    slug: product.slug,
+    ok: issues.length === 0,
+    issues,
+    customerPhotos,
+  };
+}
+
 function loadLocalEnv() {
   for (const name of ['.env.local', '.env']) {
     const file = path.join(rootDir, name);
@@ -732,6 +838,22 @@ function loadLocalEnv() {
       process.env[match[1]] = match[2].replace(/^['"]|['"]$/g, '');
     }
   }
+}
+
+function uniqueAssetList(assets) {
+  return [...new Set(assets.filter(Boolean))];
+}
+
+function isSupportedImagePath(asset) {
+  return /\.(?:png|jpe?g|webp)$/i.test(String(asset || ''));
+}
+
+function localPhotoshootSources(product, maxSourceImages) {
+  return photoshootSourceCandidates(product)
+    .filter((asset) => !isRemoteUrl(asset))
+    .filter(isSupportedImagePath)
+    .filter((asset) => existsSync(localPath(asset)))
+    .slice(0, maxSourceImages);
 }
 
 export function parseNewProductArgs(args) {
@@ -1942,6 +2064,114 @@ async function persistMockupsFromTask(product, task) {
   ];
 }
 
+async function runPhotoshoot(args) {
+  const dryRun = hasFlag(args, '--dry-run');
+  const force = hasFlag(args, '--force');
+  const view = readArg(args, '--view', 'front');
+  const model = readArg(
+    args,
+    '--model',
+    process.env.OPENAI_PHOTOSHOOT_MODEL || 'gpt-image-1.5',
+  );
+  const size = readArg(args, '--size', process.env.OPENAI_PHOTOSHOOT_SIZE || '1536x1024');
+  const quality = readArg(args, '--quality', process.env.OPENAI_PHOTOSHOOT_QUALITY || 'high');
+  const background = readArg(args, '--background', 'opaque');
+  const outputFormat = readArg(args, '--output-format', 'png');
+  const inputFidelity = readArg(
+    args,
+    '--input-fidelity',
+    model === 'gpt-image-1' ? 'high' : null,
+  );
+  const maxSourceImages = Math.max(
+    1,
+    Math.min(16, Number(readArg(args, '--max-source-images', 4)) || 4),
+  );
+  const products = await readProducts();
+  const bases = await readBaseProducts();
+  const artDirection = await readArtDirection();
+  const selected = selectProducts(products, args);
+  const {
+    buildImageEditRequest,
+    firstImageBase64,
+    generateEditedImage,
+  } = await import('./adapters/openai-images.mjs');
+
+  const jobs = selected.map((product) => {
+    const base = baseForProduct(bases, product);
+    const sourceImages = localPhotoshootSources(product, maxSourceImages);
+    if (!sourceImages.length) {
+      throw new Error(
+        `${product.slug}: photoshoot requires at least one local PNG, JPG, or WebP source mockup`,
+      );
+    }
+
+    const prompt = photoshootPrompt(product, base, artDirection, {
+      view,
+      sourceImages,
+    });
+    const request = buildImageEditRequest({
+      prompt,
+      model,
+      size,
+      quality,
+      background,
+      output_format: outputFormat,
+      ...(inputFidelity ? {input_fidelity: inputFidelity} : {}),
+    });
+    const outputPath = customerPhotoPath(product, view, outputFormat);
+
+    return {
+      product,
+      sourceImages,
+      outputPath,
+      request,
+    };
+  });
+
+  if (dryRun) {
+    printJson(
+      jobs.map(({product, sourceImages, outputPath, request}) => ({
+        slug: product.slug,
+        endpoint: 'POST https://api.openai.com/v1/images/edits',
+        sourceImages,
+        outputPath,
+        request,
+      })),
+    );
+    return;
+  }
+
+  requireEnv(['OPENAI_API_KEY']);
+  const results = [];
+  for (const job of jobs) {
+    const output = localPath(job.outputPath);
+    const alreadyExists = existsSync(output);
+    if (!alreadyExists || force) {
+      const result = await generateEditedImage({
+        ...job.request,
+        images: job.sourceImages.map((sourceImage) => localPath(sourceImage)),
+      });
+      await mkdir(path.dirname(output), {recursive: true});
+      await writeFile(output, Buffer.from(firstImageBase64(result), 'base64'));
+    }
+
+    job.product.assets.customerPhotos = [
+      job.outputPath,
+      ...(job.product.assets.customerPhotos || []).filter(
+        (customerPhoto) => customerPhoto !== job.outputPath,
+      ),
+    ];
+    results.push({
+      slug: job.product.slug,
+      customerPhoto: job.outputPath,
+      skippedExisting: alreadyExists && !force,
+    });
+  }
+
+  await writeProducts(products);
+  printJson(results);
+}
+
 export function verifyPrintfulReadiness(product, baseProduct, options = {}) {
   const {checkFiles = true} = options;
   const production = productProduction(product);
@@ -2400,6 +2630,13 @@ async function runPublish(args) {
           `${product.slug}: publish requires Printful readiness: ${readiness.issues.join('; ')}`,
         );
       }
+
+      const photoshootReadiness = verifyPhotoshootReadiness(product);
+      if (!photoshootReadiness.ok) {
+        throw new Error(
+          `${product.slug}: publish requires photoshooter image: ${photoshootReadiness.issues.join('; ')}`,
+        );
+      }
     }
   }
 
@@ -2461,6 +2698,9 @@ async function main() {
     case 'mockups':
       await runMockups(args);
       break;
+    case 'photoshoot':
+      await runPhotoshoot(args);
+      break;
     case 'printful:verify':
     case 'fulfillment:verify':
       await runPrintfulVerify(args);
@@ -2482,7 +2722,7 @@ async function main() {
       break;
     default:
       throw new Error(
-        'Usage: node scripts/merch.mjs <new|validate|signals|signals:x|art-director:review|generate-artwork|compose-print-files|catalog-mockups|mockups|fulfillment:verify|printful:verify|printful:upsert|fulfillment:order:dry-run|printful:order:dry-run|publish>',
+        'Usage: node scripts/merch.mjs <new|validate|signals|signals:x|art-director:review|generate-artwork|compose-print-files|catalog-mockups|mockups|photoshoot|fulfillment:verify|printful:verify|printful:upsert|fulfillment:order:dry-run|printful:order:dry-run|publish>',
       );
   }
 }

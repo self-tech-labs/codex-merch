@@ -9,20 +9,25 @@ import {
   artDirectorReview,
   catalogMockupPath,
   composePrintFilePlan,
+  customerPhotoPath,
   ensureCatalogMockupFirst,
   generationDirectionPrompt,
   generationPreflight,
   parseNewProductArgs,
+  photoshootPrompt,
+  photoshootSourceCandidates,
   printfulMockupTaskPayload,
   printfulPayloadWithSyncVariantIds,
   printfulPayload,
   printfulStoreSyncVariantIds,
   printfulTechniquePrompt,
   validateProducts,
+  verifyPhotoshootReadiness,
   verifyPrintfulReadiness,
   workflowStatuses,
 } from './merch.mjs';
 import {
+  buildImageEditRequest,
   buildImageGenerationRequest,
   buildImagePrompt,
 } from './adapters/openai-images.mjs';
@@ -414,6 +419,52 @@ test('keeps catalog mockups first for AOP customer presentation', () => {
   ]);
 });
 
+test('photoshooter uses provider mockups before catalog and technical fallbacks', () => {
+  const product = structuredClone(aopProduct);
+  product.assets.artwork = 'assets/artwork/test-aop-concept.png';
+  product.assets.mockups = [
+    'assets/mockups/test-aop-sweatshirt-catalog.png',
+    'assets/mockups/test-aop-front.png',
+    'assets/mockups/test-aop-printful-1.jpg',
+    'assets/mockups/test-aop-back.png',
+  ];
+  product.assets.customerPhotos = ['assets/mockups/test-aop-photoshoot-front.png'];
+
+  assert.equal(
+    customerPhotoPath(product, 'front', 'jpeg'),
+    'assets/mockups/test-aop-sweatshirt-photoshoot-front.jpg',
+  );
+  assert.deepEqual(photoshootSourceCandidates(product), [
+    'assets/mockups/test-aop-printful-1.jpg',
+    'assets/mockups/test-aop-sweatshirt-catalog.png',
+    'assets/mockups/test-aop-front.png',
+    'assets/mockups/test-aop-back.png',
+    'assets/artwork/test-aop-concept.png',
+  ]);
+});
+
+test('photoshooter prompt preserves mockup source of truth', () => {
+  const prompt = photoshootPrompt(aopProduct, aopBlank, artDirection, {
+    view: 'front',
+  });
+
+  assert.match(prompt, /final Codex merch photoshooter/);
+  assert.match(prompt, /source of truth/);
+  assert.match(prompt, /realistic cotton fleece texture/);
+  assert.match(prompt, /Do not invent new slogans/);
+});
+
+test('photoshooter readiness requires generated customer photos', () => {
+  const missing = verifyPhotoshootReadiness(aopProduct, {checkFiles: false});
+  assert.equal(missing.ok, false);
+  assert.ok(missing.issues.some((issue) => issue.includes('missing photoshooter')));
+
+  const product = structuredClone(aopProduct);
+  product.assets.customerPhotos = ['assets/mockups/test-aop-photoshoot-front.png'];
+  const ready = verifyPhotoshootReadiness(product, {checkFiles: false});
+  assert.equal(ready.ok, true);
+});
+
 test('verifies local Printful readiness for complete AOP products', () => {
   const product = structuredClone(aopProduct);
   product.status = 'mockups_ready';
@@ -514,6 +565,18 @@ test('builds OpenAI image generation requests with gpt-image-2', () => {
   assert.equal(request.model, 'gpt-image-2');
   assert.equal(request.output_format, 'png');
   assert.match(request.prompt, /SHIP IT/);
+});
+
+test('builds OpenAI image edit requests for photoshooter renders', () => {
+  const request = buildImageEditRequest({
+    prompt: 'Render the supplied mockup as a real garment photo.',
+  });
+
+  assert.equal(request.model, 'gpt-image-1.5');
+  assert.equal(request.output_format, 'png');
+  assert.equal(request.background, 'opaque');
+  assert.equal(request.size, '1536x1024');
+  assert.match(request.prompt, /real garment photo/);
 });
 
 test('builds X recent search URL and stores metadata without post text', () => {

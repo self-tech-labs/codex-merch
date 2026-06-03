@@ -114,6 +114,7 @@ export interface MerchProduct {
       path: string;
       url?: string;
     }>;
+    customerPhotos?: string[];
     mockups: string[];
   };
   approval?: {
@@ -192,12 +193,22 @@ export function assetUrl(path: string) {
 }
 
 export function getCustomerMockups(product: MerchProduct) {
+  const customerPhotos = product.assets.customerPhotos || [];
   const mockups = product.assets.mockups || [];
-  const providerMockups = mockups.filter((mockup) => providerMockupPattern.test(mockup));
-  const providerMockupSet = new Set(providerMockups);
+  const providerMockups = mockups.filter((mockup) =>
+    providerMockupPattern.test(mockup),
+  );
+  const preferredMockupSet = new Set([...customerPhotos, ...providerMockups]);
   const ordered = providerMockups.length
-    ? [...providerMockups, ...mockups.filter((mockup) => !providerMockupSet.has(mockup))]
-    : mockups;
+    ? [
+        ...customerPhotos,
+        ...providerMockups,
+        ...mockups.filter((mockup) => !preferredMockupSet.has(mockup)),
+      ]
+    : [
+        ...customerPhotos,
+        ...mockups.filter((mockup) => !preferredMockupSet.has(mockup)),
+      ];
 
   return ordered.length ? ordered : [product.assets.artwork].filter(Boolean);
 }

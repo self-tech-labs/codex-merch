@@ -1,6 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {generateArtworkImage} from './adapters/openai-images.mjs';
+import {
+  generateArtworkImage,
+  generateEditedImage,
+} from './adapters/openai-images.mjs';
 import {searchRecentPosts} from './adapters/x-api.mjs';
 import {
   confirmPrintfulOrder,
@@ -43,6 +46,13 @@ test('mocked happy path calls X, OpenAI, and Printful adapters', async () => {
       return jsonResponse({data: [{b64_json: Buffer.from('png').toString('base64')}]});
     }
 
+    if (String(url).includes('/images/edits')) {
+      assert.match(init.headers.Authorization, /Bearer openai-token/);
+      assert.equal(init.method, 'POST');
+      assert.equal(init.body instanceof FormData, true);
+      return jsonResponse({data: [{b64_json: Buffer.from('photo').toString('base64')}]});
+    }
+
     if (String(url).includes('/mockup-generator/create-task/')) {
       assert.equal(init.headers['X-PF-Store-Id'], 'store');
       assert.equal(init.method, 'POST');
@@ -74,6 +84,19 @@ test('mocked happy path calls X, OpenAI, and Printful adapters', async () => {
       {prompt: 'Original apparel artwork'},
       {OPENAI_API_KEY: 'openai-token'},
     );
+    await generateEditedImage(
+      {
+        prompt: 'Render as a real merch photo.',
+        images: [
+          {
+            path: 'source.png',
+            buffer: Buffer.from('png'),
+            name: 'source.png',
+          },
+        ],
+      },
+      {OPENAI_API_KEY: 'openai-token'},
+    );
     await createPrintfulMockupTask(
       1418,
       {variant_ids: [33966], files: []},
@@ -91,7 +114,7 @@ test('mocked happy path calls X, OpenAI, and Printful adapters', async () => {
     restore();
   }
 
-  assert.equal(calls.length, 5);
+  assert.equal(calls.length, 6);
 });
 
 test('Printful adapter retries rate-limited requests', async () => {
