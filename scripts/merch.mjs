@@ -2043,11 +2043,16 @@ function printfulStoreAccessIssue(error) {
 
 function printfulProductLookupIssue(slug, error) {
   const message = String(error?.message || error);
-  if (message.includes('(404') || /not found/i.test(message)) {
+  if (isPrintfulNotFound(error)) {
     return `${slug}: Printful store product not found for external_id ${slug}`;
   }
 
   return `${slug}: Printful store product lookup failed: ${message}`;
+}
+
+function isPrintfulNotFound(error) {
+  const message = String(error?.message || error);
+  return message.includes('(404') || /"reason"\s*:\s*"NotFound"/i.test(message);
 }
 
 function printfulStoreProductId(response) {
@@ -2105,29 +2110,58 @@ async function runPrintfulUpsert(args) {
   const {
     createPrintfulStoreProduct,
     getPrintfulStoreProductByExternalId,
+    listPrintfulStoreProducts,
     updatePrintfulStoreProduct,
   } = await import('./adapters/printful.mjs');
   const results = [];
+
+  try {
+    await listPrintfulStoreProducts({limit: 1});
+  } catch (error) {
+    throw new Error(printfulStoreAccessIssue(error));
+  }
 
   for (const job of jobs) {
     job.product.providerRefs.printful = job.product.providerRefs.printful || {};
     const ref = job.product.providerRefs.printful;
     let remoteProductId = ref.productId;
+    let response;
+    let mode = remoteProductId ? 'updated' : 'created';
+    let staleRef = false;
 
-    if (!remoteProductId) {
+    if (remoteProductId) {
+      try {
+        response = await updatePrintfulStoreProduct(remoteProductId, job.payload);
+      } catch (error) {
+        if (!isPrintfulNotFound(error)) throw error;
+        staleRef = true;
+        remoteProductId = null;
+      }
+    }
+
+    if (!response && !remoteProductId) {
       try {
         remoteProductId = printfulStoreProductId(
           await getPrintfulStoreProductByExternalId(job.product.slug),
         );
+        mode = 'relinked-and-updated';
       } catch (error) {
-        if (!String(error?.message || error).includes('(404')) throw error;
+        if (!isPrintfulNotFound(error)) throw error;
       }
     }
 
-    const response = remoteProductId
-      ? await updatePrintfulStoreProduct(remoteProductId, job.payload)
-      : await createPrintfulStoreProduct(job.payload);
+    if (!response) {
+      if (!remoteProductId) mode = 'created';
+      response = remoteProductId
+        ? await updatePrintfulStoreProduct(remoteProductId, job.payload)
+        : await createPrintfulStoreProduct(job.payload);
+    }
+
     const productId = printfulStoreProductId(response) || remoteProductId;
+    if (staleRef || String(ref.productId || '') !== String(productId || '')) {
+      ref.mockupTaskKey = null;
+      delete ref.syncVariantIds;
+    }
 
     ref.productId = productId;
     ref.variantIds = job.payload.sync_variants.map((variant) => variant.variant_id);
@@ -2136,7 +2170,8 @@ async function runPrintfulUpsert(args) {
 
     results.push({
       slug: job.product.slug,
-      mode: remoteProductId ? 'updated' : 'created',
+      mode,
+      replacedStaleProductId: staleRef,
       productId,
       variantIds: ref.variantIds,
       syncVariantIds: ref.syncVariantIds || [],
