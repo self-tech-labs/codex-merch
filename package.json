@@ -24,6 +24,7 @@
     "merch:compose-print-files": "node scripts/merch.mjs compose-print-files",
     "merch:catalog:mockups": "node scripts/merch.mjs catalog-mockups",
     "merch:mockups": "node scripts/merch.mjs mockups",
+    "merch:photoshoot": "node scripts/merch.mjs photoshoot",
     "merch:fulfillment:verify": "node scripts/merch.mjs fulfillment:verify",
     "merch:printful:verify": "node scripts/merch.mjs printful:verify",
     "merch:printful:upsert": "node scripts/merch.mjs printful:upsert",

@@ -170,6 +170,7 @@
               }
             }
           },
+          "customerPhotos": {"type": "array", "items": {"type": "string"}},
           "mockups": {"type": "array", "items": {"type": "string"}}
         }
       },

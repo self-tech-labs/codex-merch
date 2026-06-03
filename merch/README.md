@@ -24,9 +24,9 @@ Default workflow:
 5. Generate original artwork with `npm run merch:generate-artwork -- --slug <slug>`.
 6. Compose deterministic print files with `npm run merch:compose-print-files -- --slug <slug>`.
 7. Generate customer catalog mockups with `npm run merch:catalog:mockups -- --slug <slug>`.
-   Product tiles fall back to `assets/mockups/<slug>-catalog.png`; when native
-   Printful mockup photos are downloaded, the storefront prefers those customer
-   photos automatically.
+   Product tiles fall back to `assets/mockups/<slug>-catalog.png`; once later
+   steps add photoshooter output or native Printful mockups, the storefront
+   prefers those richer customer images automatically.
 8. Create or update the native Printful Manual order/API store product with
    `npm run merch:printful:upsert -- --slug <slug> --site-url https://your-public-domain.example`.
    The site URL must be public HTTPS because Printful fetches the thumbnail and
@@ -35,13 +35,20 @@ Default workflow:
    poll with `npm run merch:mockups -- --slug <slug> --poll`.
    Completed Printful mockup URLs are downloaded into `assets/mockups/` because
    Printful mockup URLs are temporary.
-10. Verify provider readiness with `npm run merch:printful:verify -- --slug <slug>`.
+10. Render the final customer-facing merch photo with
+   `npm run merch:photoshoot -- --slug <slug>`. Start with
+   `npm run merch:photoshoot -- --slug <slug> --dry-run` to review source
+   mockups, prompt, and image-edit request first. The photoshooter stores output
+   in `assets.customerPhotos`; the storefront prefers those images over provider
+   mockups while Printful thumbnails still use the deterministic catalog PNG.
+11. Verify provider readiness with `npm run merch:printful:verify -- --slug <slug>`.
    This checks Printful refs, AOP placements, variant IDs, print files, and
    live native store-product access when credentials are configured.
-11. Dry-run a fulfillment order payload with
+12. Dry-run a fulfillment order payload with
    `npm run merch:fulfillment:order:dry-run -- --provider printful --slug <slug> --site-url https://example.com`.
    `merch:printful:order:dry-run` remains as a compatibility alias.
-12. Publish only after manual approval and provider readiness:
+13. Publish only after manual approval, provider readiness, and a photoshooter
+   image:
    `npm run merch:publish -- --slug <slug> --approve --by <name>`.
 
 Real API mutation is gated behind credentials and explicit non-dry-run
