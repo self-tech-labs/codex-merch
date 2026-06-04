@@ -1211,5 +1211,185 @@
       ],
       "sources": []
     }
+  },
+  {
+    "id": "drop-004-codex-rate-reset",
+    "slug": "codex-rate-reset",
+    "title": "Codex Rate Reset Long Sleeve Tee",
+    "status": "mockups_ready",
+    "workflow": {
+      "status": "mockups_ready",
+      "updatedAt": "2026-06-04T12:04:56.684Z",
+      "lastError": null
+    },
+    "category": "Codex",
+    "description": "A black long sleeve tee for the 429-to-200 recovery ritual: compact front reset mark, sleeve telemetry, and a quiet back-office stamp.",
+    "meme": {
+      "source": "Pending X trend research",
+      "brief": "Long sleeve tee inspired by Codex rate-limit lore, reset windows, retry-after headers, queue pressure, and the relief of a clean 200 after a 429. Treat the idea as original systems merch: no copied posts, screenshots, usernames, official marks, or real service branding.",
+      "rightsNote": "Original Codex-native apparel concept using generic HTTP/status and queue language. Do not copy social posts, screenshots, usernames, official marks, protected service branding, public figures, or real team logos."
+    },
+    "signals": {
+      "profile": "codex-trend-research",
+      "queries": [
+        {
+          "provider": "x",
+          "query": "(codex OR \"coding agent\" OR \"AI agent\" OR terminal) (\"rate limit\" OR 429 OR \"retry after\" OR queue OR reset) lang:en -is:retweet",
+          "maxResults": 20
+        }
+      ],
+      "sources": []
+    },
+    "commerce": {
+      "handle": "codex-rate-reset",
+      "price": "58.00",
+      "currency": "USD",
+      "tags": [
+        "codex",
+        "long-sleeve",
+        "rate-limit",
+        "reset"
+      ],
+      "variants": [
+        {
+          "id": "codex-rate-reset:10095",
+          "sku": "CODEX_RATE_RESET_BLACK_M",
+          "color": "Black",
+          "size": "M",
+          "providerVariantId": 10095,
+          "availableForSale": true,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "Black"
+            },
+            {
+              "name": "Size",
+              "value": "M"
+            }
+          ]
+        },
+        {
+          "id": "codex-rate-reset:10096",
+          "sku": "CODEX_RATE_RESET_BLACK_L",
+          "color": "Black",
+          "size": "L",
+          "providerVariantId": 10096,
+          "availableForSale": true,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "Black"
+            },
+            {
+              "name": "Size",
+              "value": "L"
+            }
+          ]
+        },
+        {
+          "id": "codex-rate-reset:10097",
+          "sku": "CODEX_RATE_RESET_BLACK_XL",
+          "color": "Black",
+          "size": "XL",
+          "providerVariantId": 10097,
+          "availableForSale": true,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "Black"
+            },
+            {
+              "name": "Size",
+              "value": "XL"
+            }
+          ]
+        }
+      ]
+    },
+    "production": {
+      "provider": "printful",
+      "baseProduct": "bella-canvas-3501-black",
+      "technique": "DTG",
+      "textLayer": "Codex Rate Reset",
+      "placements": [
+        {
+          "area": "front",
+          "file": "assets/print/codex-rate-reset-front.png",
+          "text": "CODEX RATE RESET"
+        },
+        {
+          "area": "back",
+          "file": "assets/print/codex-rate-reset-back.png",
+          "text": "RATE RESET DEPARTMENT"
+        },
+        {
+          "area": "left_sleeve",
+          "file": "assets/print/codex-rate-reset-left_sleeve.png",
+          "text": "429"
+        },
+        {
+          "area": "right_sleeve",
+          "file": "assets/print/codex-rate-reset-right_sleeve.png",
+          "text": "RETRY-OK"
+        }
+      ]
+    },
+    "providerRefs": {
+      "printful": {
+        "productId": 436601984,
+        "mockupTaskKey": "gt-928643458",
+        "variantIds": [
+          10095,
+          10096,
+          10097
+        ],
+        "syncVariantIds": [
+          5338615120,
+          5338615121,
+          5338615122
+        ]
+      }
+    },
+    "assets": {
+      "artwork": "assets/artwork/codex-rate-reset-concept.png",
+      "printFiles": [
+        {
+          "placement": "front",
+          "path": "assets/print/codex-rate-reset-front.png"
+        },
+        {
+          "placement": "back",
+          "path": "assets/print/codex-rate-reset-back.png"
+        },
+        {
+          "placement": "left_sleeve",
+          "path": "assets/print/codex-rate-reset-left_sleeve.png"
+        },
+        {
+          "placement": "right_sleeve",
+          "path": "assets/print/codex-rate-reset-right_sleeve.png"
+        }
+      ],
+      "mockups": [
+        "assets/mockups/codex-rate-reset-catalog.png",
+        "assets/mockups/codex-rate-reset-printful-1.jpg",
+        "assets/mockups/codex-rate-reset-printful-2.jpg",
+        "assets/mockups/codex-rate-reset-front.png",
+        "assets/mockups/codex-rate-reset-back.png",
+        "assets/mockups/codex-rate-reset-detail.png"
+      ],
+      "customerPhotos": [
+        "assets/mockups/codex-rate-reset-photoshoot-front.png"
+      ]
+    },
+    "prompts": [
+      "Create standalone black long-sleeve tee print artwork for a Codex-native rate reset ritual: bold compact RATE RESET mark, HTTP 429 to 200 recovery language, terminal-grid fragments, retry-after label logic, one electric blue accent, no official logos, no screenshots, no copied posts, no garment scene."
+    ],
+    "approval": {
+      "approvedAt": "2026-06-04T11:41:53.813Z",
+      "approvedBy": "elliot",
+      "notes": ""
+    }
   }
 ]

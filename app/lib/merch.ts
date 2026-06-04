@@ -56,6 +56,7 @@ export interface SignalSource {
 export interface ProductionPlacement {
   area: string;
   file: string;
+  text?: string;
   url?: string;
   width?: number;
   height?: number;

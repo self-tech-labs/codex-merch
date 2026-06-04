@@ -240,11 +240,11 @@ test('validates complete draft products with commerce fields', () => {
   assert.deepEqual(validateProducts([baseProduct]), []);
 });
 
-test('customer catalog manifest is restricted to the three AOP sweatshirts', () => {
+test('customer catalog manifest includes AOP sweatshirts and rate reset long sleeve', () => {
   const manifest = JSON.parse(
     readFileSync(new URL('../merch/products.json', import.meta.url), 'utf8'),
   );
-  const targetSlugs = [
+  const aopSlugs = [
     'research-deployment-co-sweatshirt',
     'terminal-ritual-sweatshirt',
     'queue-weather-cotton-sweatshirt',
@@ -252,10 +252,10 @@ test('customer catalog manifest is restricted to the three AOP sweatshirts', () 
 
   assert.deepEqual(
     manifest.map((product) => product.slug),
-    targetSlugs,
+    [...aopSlugs, 'codex-rate-reset'],
   );
 
-  for (const product of manifest) {
+  for (const product of manifest.filter((item) => aopSlugs.includes(item.slug))) {
     assert.equal(product.production.baseProduct, 'printful-aop-cotton-sweatshirt-white');
     assert.equal(product.production.technique, 'All-Over Cotton');
     assert.equal(product.assets.mockups[0], catalogMockupPath(product));
@@ -264,6 +264,11 @@ test('customer catalog manifest is restricted to the three AOP sweatshirts', () 
       AOP_COTTON_REQUIRED_PLACEMENTS,
     );
   }
+
+  const rateReset = manifest.find((product) => product.slug === 'codex-rate-reset');
+  assert.equal(rateReset.production.baseProduct, 'bella-canvas-3501-black');
+  assert.equal(rateReset.production.technique, 'DTG');
+  assert.equal(rateReset.assets.customerPhotos[0], 'assets/mockups/codex-rate-reset-photoshoot-front.png');
 });
 
 test('rejects legacy provider-specific product fields', () => {
@@ -444,12 +449,18 @@ test('photoshooter uses provider mockups before catalog and technical fallbacks'
 });
 
 test('photoshooter prompt preserves mockup source of truth', () => {
-  const prompt = photoshootPrompt(aopProduct, aopBlank, artDirection, {
+  const product = structuredClone(aopProduct);
+  product.production.placements[0].text = 'RATE RESET';
+  product.production.placements[3].text = 'RETRY-OK';
+
+  const prompt = photoshootPrompt(product, aopBlank, artDirection, {
     view: 'front',
   });
 
   assert.match(prompt, /final Codex merch photoshooter/);
   assert.match(prompt, /source of truth/);
+  assert.match(prompt, /front: "RATE RESET"/);
+  assert.match(prompt, /right_sleeve: "RETRY-OK"/);
   assert.match(prompt, /realistic cotton fleece texture/);
   assert.match(prompt, /Do not invent new slogans/);
 });

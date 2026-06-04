@@ -3,6 +3,7 @@ import {mkdir, readFile, writeFile} from 'node:fs/promises';
 import {existsSync, readFileSync} from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {createHash} from 'node:crypto';
 import {
   artDirectionPrompt as isolatedArtDirectionPrompt,
   artDirectorReview as isolatedArtDirectorReview,
@@ -551,7 +552,20 @@ function printfulProductVariants(product, baseProduct) {
 
 function publicAssetUrl(file, siteUrl) {
   if (!file || isRemoteUrl(file)) return file;
-  return new URL(`/${String(file).replace(/^\/+/, '')}`, siteUrl).toString();
+  const url = new URL(`/${String(file).replace(/^\/+/, '')}`, siteUrl);
+  const version = localAssetVersion(file);
+  if (version) url.searchParams.set('v', version);
+  return url.toString();
+}
+
+function localAssetVersion(file) {
+  if (!file || isRemoteUrl(file)) return null;
+  const filePath = localPath(file);
+  if (!existsSync(filePath)) return null;
+  return createHash('sha256')
+    .update(readFileSync(filePath))
+    .digest('hex')
+    .slice(0, 12);
 }
 
 function assertPrintfulPublicAssetUrl(siteUrl) {
@@ -777,6 +791,11 @@ export function photoshootPrompt(product, baseProduct, artDirection, options = {
   const spec = product.artDirector?.aopSpec || {};
   const palette = spec.palette || {};
   const production = productProduction(product);
+  const placementText = (production.placements || [])
+    .map((placement) =>
+      placement.text ? `${placement.area}: "${placement.text}"` : '',
+    )
+    .filter(Boolean);
 
   return [
     'You are the final Codex merch photoshooter.',
@@ -787,8 +806,12 @@ export function photoshootPrompt(product, baseProduct, artDirection, options = {
     `Garment brief: ${product.meme?.brief || product.description || product.title}.`,
     `Known fabric palette: fabric ${palette.fabric || 'match source images'}, ink ${palette.ink || 'match source images'}, accent ${palette.accent || 'match source images'}.`,
     `Deterministic text layer to preserve: ${production.textLayer || product.title}.`,
+    placementText.length
+      ? `Exact visible print text by placement: ${placementText.join('; ')}. Preserve these strings when visible; do not hallucinate, rewrite, or mutate letters.`
+      : '',
     'Art direction: isolated premium merch photography on a very light warm-gray ecommerce background, straight-on composition, soft studio shadow, realistic cotton fleece texture, ribbed cuffs/collar/hem, subtle wrinkles, natural stitching, product filled like real merch but unworn.',
     'Match the established Codex Supply House direction: quiet research-lab/skater merchandise, restrained negative space, precise sleeve story, and realistic garment depth like the hoodie and long-sleeve reference shots.',
+    'Keep the background blank except for the garment shadow; do not add titles, captions, labels, badges, UI, or any text outside the garment itself.',
     artDirection?.aopGarmentRules?.length
       ? `Garment rules: ${artDirection.aopGarmentRules.join(' ')}`
       : '',
@@ -1305,7 +1328,6 @@ async function composeProductPrintFiles(product, baseProduct) {
 
   const sharp = (await import('sharp')).default;
   const dimensions = baseProduct?.printfile || {width: 1800, height: 2400};
-  const text = production.textLayer || product.title;
   const placements = production.placements || [];
   product.assets.printFiles = product.assets.printFiles || [];
 
@@ -1319,6 +1341,7 @@ async function composeProductPrintFiles(product, baseProduct) {
     const artworkPath = localPath(product.assets.artwork);
 
     const layout = printPlacementLayout({width, height, placement: placement.area});
+    const text = placement.text || production.textLayer || product.title;
 
     if (existsSync(artworkPath)) {
       const artwork = await sharp(artworkPath)
