@@ -10,7 +10,7 @@
 - Live application: [https://codex-merch.vercel.app](https://codex-merch.vercel.app)
 - Source repository: [`self-tech-labs/codex-merch` at qualified app commit `d44913b`](https://github.com/self-tech-labs/codex-merch/tree/d44913b0738e8537c1986bb7734b41d7a4858243)
 - Demo video: **TODO: public YouTube URL, under three minutes**
-- Primary Codex task/session: **TODO: session ID**
+- Primary Codex task/session: `019f7fb1-9352-7b30-ac89-076c94b2eeeb`
 - `/feedback` session ID: **TODO: feedback ID from the primary build task**
 - Devpost submission: **TODO: submission URL**
 - Eligibility and employer/conflict check: **TODO: confirmed by entrant**

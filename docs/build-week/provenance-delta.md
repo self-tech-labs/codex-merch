@@ -39,7 +39,7 @@ Fill this table from Git after each cohesive commit. Do not backdate, amend away
 
 ## Evidence to preserve
 
-- Primary Codex task/session ID: **TODO**
+- Primary Codex task/session ID: `019f7fb1-9352-7b30-ac89-076c94b2eeeb`
 - `/feedback` session ID: **TODO**
 - Submission commit SHA: **TODO**
 - Sanitized example run directory: `docs/build-week/evidence/weekly-run-2026-W37-fixture-live-gpt56-prepared.json` and `docs/build-week/evidence/weekly-run-2026-W30-live-no-trend.json`
