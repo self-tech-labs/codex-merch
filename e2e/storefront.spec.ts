@@ -1,17 +1,44 @@
-import {expect, test} from '@playwright/test';
+import {expect, test, type Page} from '@playwright/test';
+
+const runtimeErrors = new WeakMap<Page, string[]>();
+
+test.beforeEach(async ({page}) => {
+  const errors: string[] = [];
+  runtimeErrors.set(page, errors);
+  page.on('console', (message) => {
+    if (['error', 'warning'].includes(message.type())) {
+      errors.push(`console.${message.type()}: ${message.text()}`);
+    }
+  });
+  page.on('pageerror', (error) => {
+    errors.push(`pageerror: ${error.message}`);
+  });
+});
+
+test.afterEach(async ({page}) => {
+  expect(runtimeErrors.get(page) ?? []).toEqual([]);
+});
 
 test('preview catalog is browseable but cannot be purchased', async ({page}) => {
-  const applicationErrors: string[] = [];
-  page.on('console', (message) => {
-    if (message.type() === 'error') applicationErrors.push(message.text());
-  });
   await page.goto('/');
   await expect(page.getByText('Preview', {exact: true}).first()).toBeVisible();
   await page.locator('.product-tile a').first().click();
   await expect(page.getByRole('button', {name: 'Preview only'})).toBeDisabled();
-  expect(
-    applicationErrors.filter((error) => /hydration|extra attributes/i.test(error)),
-  ).toEqual([]);
+});
+
+test('critical storefront routes render without runtime errors', async ({page}) => {
+  for (const route of [
+    '/',
+    '/products/codex-rate-reset-long-sleeve',
+    '/cart',
+    '/checkout/cancel',
+    '/policies/shipping',
+  ]) {
+    const response = await page.goto(route);
+    expect(response?.ok(), `${route} should return a successful response`).toBe(true);
+    await expect(page.locator('main')).toBeVisible();
+    await page.waitForLoadState('networkidle');
+  }
 });
 
 test('unverified success URL never confirms an order', async ({page}) => {
