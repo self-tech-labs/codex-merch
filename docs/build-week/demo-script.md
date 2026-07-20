@@ -52,7 +52,7 @@ Voiceover: “The creative judgment is inspectable, the production path is deter
 
 ## Recording checklist
 
-- Replace all `TODO` links and IDs before recording.
+- Resolve all remaining owner-input links and IDs before recording.
 - Use Stripe test mode and keep `PRINTFUL_AUTO_CONFIRM=false`.
 - Do not record the purchase path until `CHECKOUT_ENABLED`, legal/policy, shipping, Stripe webhook, Neon, Inngest, and Printful staging checks all pass; otherwise describe it as not yet verified instead of simulating success.
 - Hide terminal environment values, customer data, webhook bodies, and private X content.

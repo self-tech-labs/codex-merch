@@ -4,21 +4,21 @@ Complete this page before submission. Do not put passwords, API keys, test custo
 
 ## Links
 
-- Live application: **TODO: public HTTPS URL**
+- Live application: [https://codex-merch.vercel.app](https://codex-merch.vercel.app)
 - Public YouTube demo: **TODO: URL**
-- Repository and submission commit: **TODO: URL and SHA**
-- Sanitized example weekly run: **TODO: repository path or URL**
+- Repository and qualified app commit: [`self-tech-labs/codex-merch` at `d44913b`](https://github.com/self-tech-labs/codex-merch/tree/d44913b0738e8537c1986bb7734b41d7a4858243); final submission SHA remains to be recorded
+- Sanitized example weekly runs: [`evidence/weekly-run-2026-W37-fixture-live-gpt56-prepared.json`](evidence/weekly-run-2026-W37-fixture-live-gpt56-prepared.json) and [`evidence/weekly-run-2026-W30-live-no-trend.json`](evidence/weekly-run-2026-W30-live-no-trend.json)
 - Submission evidence index: [`evidence/README.md`](evidence/README.md)
-- CI result: **TODO: URL**
+- Qualification CI result: [GitHub Actions run `29779894993`](https://github.com/self-tech-labs/codex-merch/actions/runs/29779894993) — every functional gate passed; the final strict submission verifier remains blocked on owner-supplied evidence
 - Support contact for judges: **TODO: email**
 
 ## Access model
 
-- Application login required: **TODO: no, or document a free judge account delivery method outside Git**
+- Application login required: **No**
 - Payment mode: **TODO: verify Stripe test mode on the submitted deployment; no real charge**
 - External fulfillment: **TODO: verify one Printful draft is created and `PRINTFUL_AUTO_CONFIRM=false` prevents confirmation**
 - X input: **sanitized 30-post fixture by default; authorized live list read demonstrated separately**
-- Expected browser/device support: **TODO: verified desktop and mobile browsers**
+- Expected browser/device support: **Chromium desktop and mobile profiles, verified 8/8 locally and 8/8 against the public deployment**
 
 If the repository remains private, grant read access to both:
 

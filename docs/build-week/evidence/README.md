@@ -1,7 +1,7 @@
 # Submission evidence index
 
 This directory is the index for the exact, sanitized evidence attached to the
-submission commit. Replace each `TODO` only with an artifact that was actually
+submission commit. Fill each missing field only with an artifact that was actually
 observed. Do not commit credentials, raw live X text, customer data, webhook
 bodies, private run ledgers, or third-party media without redistribution rights.
 
@@ -13,7 +13,7 @@ bodies, private run ledgers, or third-party media without redistribution rights.
 | CI run for that SHA | **TODO: URL** |
 | Primary Codex task/session | **TODO: session ID** |
 | `/feedback` result | **TODO: session ID** |
-| Public deployment | [https://codex-merch.vercel.app](https://codex-merch.vercel.app); qualification deployment `dpl_AfSkDhE53mXUqiy1xUDZyJ9SH5Fk`, bound to Git SHA `7aa9ae0f503a02794ba452abba96bb4aad6f8317` |
+| Public deployment | [https://codex-merch.vercel.app](https://codex-merch.vercel.app); immutable qualification deployment [`codex-merch-7vpziyl2s-ritsl.vercel.app`](https://codex-merch-7vpziyl2s-ritsl.vercel.app), ID `dpl_5UyLxhxkpPiiX9cxBccii9gAzz12`, bound to Git SHA `d44913b0738e8537c1986bb7734b41d7a4858243` |
 | Public YouTube demo | **TODO: URL** |
 | Devpost submission | **TODO: URL** |
 
@@ -31,7 +31,7 @@ command. Prefer a CI URL over pasted terminal output.
 | `npm run lint` | Pass |
 | `npm run build` | Pass: client and both Vercel server bundles generated |
 | `npm run test:e2e` | Pass: 8/8 Chromium desktop and mobile tests locally; 8/8 against `https://codex-merch.vercel.app` via `PLAYWRIGHT_BASE_URL` |
-| `npm run submission:verify` | Repository, fixture, model-contract, provenance, and embedded-secret checks pass; final exit remains blocked by the external submission, rights, owner-evidence, and commerce-configuration fields still marked `TODO` or disabled |
+| `npm run submission:verify` | Repository, fixture, model-contract, provenance, and embedded-secret checks pass; final exit remains blocked by unresolved external submission, rights, owner-evidence, and commerce-configuration fields |
 
 ## Weekly run evidence
 
@@ -100,7 +100,7 @@ Stripe test mode.
 
 | External proof | Verified value |
 | --- | --- |
-| Candidate commit and exact production deployment checkpoint | **TODO: SHA, deployment ID, sanitized immutable URL** |
+| Candidate commit and exact production deployment checkpoint | Qualification app commit `d44913b0738e8537c1986bb7734b41d7a4858243`; deployment `dpl_5UyLxhxkpPiiX9cxBccii9gAzz12`; immutable URL [`codex-merch-7vpziyl2s-ritsl.vercel.app`](https://codex-merch-7vpziyl2s-ritsl.vercel.app). This proves Git/deployment binding, not a weekly product publication. |
 | Public production-asset URL/hash checks | **TODO** |
 | Stable Printful product ID and complete variant mapping | **TODO** |
 | Provider mockup and customer-photoshoot gates | **TODO** |

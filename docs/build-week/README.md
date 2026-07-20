@@ -2,13 +2,13 @@
 
 ## Project record
 
-- Project name: **TODO: final non-infringing name**
+- Project name: **Codex Merch**
 - One-line pitch: A Codex-operated weekly culture-to-commerce studio that turns a recurring team signal into an original, production-ready garment and a testable storefront drop.
 - Category: **Work & Productivity**
-- Entrant: **TODO: entrant and team-member names**
+- Entrant: **Elliot Vaucher**
 - Country: Switzerland
 - Live application: [https://codex-merch.vercel.app](https://codex-merch.vercel.app)
-- Source repository: **TODO: submission commit URL**
+- Source repository: [`self-tech-labs/codex-merch` at qualified app commit `d44913b`](https://github.com/self-tech-labs/codex-merch/tree/d44913b0738e8537c1986bb7734b41d7a4858243)
 - Demo video: **TODO: public YouTube URL, under three minutes**
 - Primary Codex task/session: **TODO: session ID**
 - `/feedback` session ID: **TODO: feedback ID from the primary build task**
@@ -112,4 +112,4 @@ reproduction path.
 
 ## Before submitting
 
-Replace every `TODO` in this directory with verified information. Do not invent a deployment URL, repository URL, video URL, session ID, judge credential, or post-July-13 commit. Run the repository submission verifier, update the readiness matrix, and attach a sanitized example from a verified weekly run. The submission requirements are governed by the [Build Week challenge page](https://openai.devpost.com/) and [official rules](https://openai.devpost.com/rules).
+Resolve every remaining owner-input marker in this directory with verified information. Do not invent a deployment URL, repository URL, video URL, session ID, judge credential, or post-July-13 commit. Run the repository submission verifier, update the readiness matrix, and attach a sanitized example from a verified weekly run. The submission requirements are governed by the [Build Week challenge page](https://openai.devpost.com/) and [official rules](https://openai.devpost.com/rules).
