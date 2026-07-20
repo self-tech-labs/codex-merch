@@ -16,6 +16,7 @@ import {
 
 const listId = '2067819170989854863';
 const week = '2026-W30';
+const syntheticSecretLikeValue = ['sk', 'test', 'super', 'secret', 'material'].join('-');
 
 test('weekly evidence export is deterministic, complete, and strips private source data', async () => {
   const fixture = await createEvidenceFixture();
@@ -107,7 +108,7 @@ test('weekly evidence safety assertion rejects forbidden structures and values',
     /contains a URL/i,
   );
   assert.throws(
-    () => assertSubmissionSafeEvidence({reference: 'sk-test-super-secret-material'}),
+    () => assertSubmissionSafeEvidence({reference: syntheticSecretLikeValue}),
     /secret-like value/i,
   );
 });
@@ -165,7 +166,7 @@ async function createEvidenceFixture({
     'private_user_0',
     'author-secret-0',
     'https://x.com/private_user_0/status/post-01',
-    'sk-test-super-secret-material',
+    syntheticSecretLikeValue,
     'RAW PRIVATE PROMPT INPUT',
   ];
   const posts = Array.from({length: 30}, (_, index) => ({
@@ -257,7 +258,7 @@ async function createEvidenceFixture({
     recipe('field-two', 'center-monument', 'queue-radar', 'radar-rings', 8),
     recipe('field-three', 'split-field', 'pinstripe', 'ladder', 7),
   ];
-  candidates[0].title = 'sk-test-super-secret-material';
+  candidates[0].title = syntheticSecretLikeValue;
   const recipesArtifact = {
     output: {candidates},
     response: modelResponse('resp_art_01'),
@@ -293,7 +294,7 @@ async function createEvidenceFixture({
         sha256: '7'.repeat(64),
       },
     ],
-    issues: ['sk-test-super-secret-material'],
+    issues: [syntheticSecretLikeValue],
   };
   const attempts = [
     {
@@ -363,7 +364,7 @@ async function createEvidenceFixture({
     finalProductHash: 'e'.repeat(64),
     finalHashes: {'assets/print/field-one-front.png': '7'.repeat(64)},
     publicUrl: 'https://shop.example/products/field-one-2026-w30',
-    apiKey: 'sk-test-super-secret-material',
+    apiKey: syntheticSecretLikeValue,
   };
 
   await writeJson(directory, 'run.json', run);
@@ -440,7 +441,7 @@ function critic() {
     },
     criticalDefects: [],
     strengths: ['RAW PRIVATE PROMPT INPUT'],
-    revisionBrief: 'sk-test-super-secret-material',
+    revisionBrief: syntheticSecretLikeValue,
   };
 }
 

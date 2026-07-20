@@ -30,19 +30,16 @@ Fill this table from Git after each cohesive commit. Do not backdate, amend away
 
 | Date (CEST) | Commit | Build Week delta | Verification |
 | --- | --- | --- | --- |
-| TODO | TODO | Single-call GPT-5.6 trend-decision pipeline | TODO |
-| TODO | TODO | Garment recipes, rendering, and visual critic | TODO |
-| TODO | TODO | Resumable prepare/release orchestration | TODO |
-| TODO | TODO | Public catalog, checkout, and fulfillment proof | TODO |
-| TODO | TODO | Codex automation and submission package | TODO |
+| 2026-07-20 | `1e10977` | GPT-5.6 trend decision; garment recipes; deterministic renderer/prepress; visual critic; resumable prepare/release; commerce; automation; submission package | 116 tests pass, one DB integration test skipped; typecheck, lint, build, and 6/6 E2E pass |
+| 2026-07-20 | `7fd90c3` | Removed 38 audited orphaned Shopify/demo files and about 30 MiB of unreferenced legacy merch assets | Full verification repeated after cleanup |
 
 ## Evidence to preserve
 
 - Primary Codex task/session ID: **TODO**
 - `/feedback` session ID: **TODO**
 - Submission commit SHA: **TODO**
-- Sanitized example run directory: **TODO**
-- Duplicate-free replay result: **TODO**
+- Sanitized example run directory: `docs/build-week/evidence/weekly-run-2026-W37-fixture-live-gpt56-prepared.json` and `docs/build-week/evidence/weekly-run-2026-W30-live-no-trend.json`
+- Duplicate-free replay result: W30 terminal replay returned `idempotentReplay: true`
 - CI run URL: **TODO**
 - Production deployment URL and immutable deployment ID: **TODO**
 

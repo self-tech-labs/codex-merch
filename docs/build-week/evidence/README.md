@@ -24,14 +24,14 @@ command. Prefer a CI URL over pasted terminal output.
 
 | Command | Result at submission SHA |
 | --- | --- |
-| `npm ci` | **TODO** |
-| `npm run merch:validate` | **TODO** |
-| `npm test` | **TODO: include database-test status** |
-| `npm run typecheck` | **TODO** |
-| `npm run lint` | **TODO** |
-| `npm run build` | **TODO** |
-| `npm run test:e2e` | **TODO** |
-| `npm run submission:verify` | **TODO** |
+| `npm ci` | Pass: 659 packages installed from the committed lockfile |
+| `npm run merch:validate` | Pass: four catalog products validated |
+| `npm test` | Pass: 116 tests; one database integration test skipped because `TEST_DATABASE_URL` is not configured |
+| `npm run typecheck` | Pass |
+| `npm run lint` | Pass |
+| `npm run build` | Pass: client and both Vercel server bundles generated |
+| `npm run test:e2e` | Pass: 6/6 Chromium desktop and mobile tests |
+| `npm run submission:verify` | Blocked only by the external submission, deployment, rights, and owner-evidence fields still marked `TODO` in this package |
 
 ## Weekly run evidence
 
@@ -50,12 +50,12 @@ Commit a sanitized example or link an immutable artifact containing:
 
 | Weekly artifact | Verified value |
 | --- | --- |
-| Sanitized example path or URL | **TODO** |
-| Successful fixture run ID/status | **TODO** |
-| `no_trend` run ID/status | **TODO** |
-| Authorized live-X run ID and count-30 attestation | **TODO** |
-| Live GPT-5.6 decision provenance | **TODO** |
-| Duplicate-free terminal replay | **TODO** |
+| Sanitized example path or URL | [`weekly-run-2026-W37-fixture-live-gpt56-prepared.json`](weekly-run-2026-W37-fixture-live-gpt56-prepared.json) and [`weekly-run-2026-W30-live-no-trend.json`](weekly-run-2026-W30-live-no-trend.json) |
+| Successful fixture run ID/status | `x-list--2067819170989854863--2026-W37--weekly-merch-v1` / `prepared`; fixture input, live GPT-5.6, critic 88/100 |
+| `no_trend` run ID/status | `x-list--2067819170989854863--2026-W30--weekly-merch-v1` / `no_trend` |
+| Authorized live-X run ID and count-30 attestation | W30 run above; `verified-live-x`, 30 recorded/attested, 30 unique, 13 authors, declared list matched |
+| Live GPT-5.6 decision provenance | Both bundles include returned model, response ID, usage, prompt/schema hashes, output hashes, and `verifiedGpt56Response: true` |
+| Duplicate-free terminal replay | W30 replay returned `idempotentReplay: true` without another X/OpenAI call or catalog mutation |
 
 ### Export a submission-safe weekly bundle
 
