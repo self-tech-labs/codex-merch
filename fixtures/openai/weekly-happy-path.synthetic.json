@@ -1,0 +1,207 @@
+{
+  "fixtureVersion": 1,
+  "synthetic": true,
+  "scenario": "weekly-pipeline-happy-path",
+  "trend": {
+    "status": "trend",
+    "trendName": "Merge Queue Weather",
+    "summary": "Multiple fictional engineering voices describe the merge queue as a changing weather system with pressure, radar, forecasts, and brief green windows.",
+    "memeMechanic": "Routine delivery friction is narrated with overly serious weather-report language, turning review latency into a shared forecast ritual.",
+    "teamConnection": "The joke is specific to a coding-agent team that watches tests, reviews, and merge readiness move together during a shipping day.",
+    "evidencePostIds": [
+      "synthetic-trend-001",
+      "synthetic-trend-002",
+      "synthetic-trend-003",
+      "synthetic-trend-004",
+      "synthetic-trend-005",
+      "synthetic-trend-006",
+      "synthetic-trend-007",
+      "synthetic-trend-008"
+    ],
+    "visualMetaphors": [
+      "queue-depth isobar map",
+      "green merge-window radar",
+      "barometric review gauge",
+      "forecast symbols built from terminal glyphs"
+    ],
+    "originalPhrases": [
+      "QUEUE WEATHER",
+      "PRESSURE RISING",
+      "GREEN WINDOW",
+      "CLEAR TO MERGE"
+    ],
+    "fingerprintTerms": [
+      "merge queue",
+      "weather forecast",
+      "green window",
+      "queue radar",
+      "review pressure"
+    ],
+    "rightsRisk": "low",
+    "modelScores": {
+      "codexSpecificity": 18,
+      "merchability": 19,
+      "novelty": 18,
+      "rightsSafety": 10
+    },
+    "reason": "The pattern recurs across more than three independent fictional authors and can be translated into original visual language without copying a post or identity."
+  },
+  "artDirection": {
+    "candidates": [
+      {
+        "conceptId": "queue-weather-ledger",
+        "title": "Review Barometer Field Sweatshirt",
+        "rationale": "An asymmetric offset ledger maps the joke through branching queue lines, a clearing boundary, check marks, and concentric sleeve rings with crosshairs and accent notches.",
+        "brandLabel": "REVIEW BAROMETER DEPT",
+        "provenanceLine": "SYNTHETIC WEEKLY SIGNAL / FIELD EDITION",
+        "layout": "offset-ledger",
+        "basePattern": "queue-radar",
+        "palette": {
+          "fabric": "#EAE5D8",
+          "ink": "#171A1F",
+          "muted": "#A8A294",
+          "accent": "#2A62FF"
+        },
+        "front": {
+          "primaryText": "PENDING FORECAST",
+          "chestLabel": "FORECAST 30/30",
+          "mark": "QW/30",
+          "subline": "TENSION SETTLES WHEN THE NARROW SLOT CLEARS"
+        },
+        "back": {
+          "statement": "CALM AFTER ACCEPTANCE",
+          "subline": "A FICTIONAL FORECAST FOR PATIENT SHIPPING CREWS"
+        },
+        "sleeves": {
+          "style": "radar-rings",
+          "motif": "THREE CONCENTRIC RINGS WITH A CROSSHAIR AND MIRRORED ACCENT NOTCH",
+          "leftText": "PRESSURE RISING",
+          "rightText": "WINDOW OPEN",
+          "caption": "MERGE CLIMATE / FIELD UNIT"
+        },
+        "label": {
+          "line": "PENDING FORECAST / SYNTHETIC EDITION"
+        },
+        "visualPrompt": "Flat six-placement garment system with an asymmetric offset text block, branching queue lines on the left, a clearing boundary, checks on the right, and concentric sleeve rings with a crosshair and accent notch.",
+        "rightsRisk": "low",
+        "scores": {
+          "conceptClarity": 9,
+          "garmentCoherence": 9,
+          "memeLegibility": 9,
+          "originality": 9,
+          "productionSafety": 9,
+          "rightsSafety": 10
+        }
+      },
+      {
+        "conceptId": "merge-pressure-monument",
+        "title": "Approval Barometer Station Sweatshirt",
+        "rationale": "A centered system uses vertical pinstripes, a rectangular aperture, side connectors, and ladder sleeves made from two rails and nine rungs.",
+        "brandLabel": "PRESSURE STATION",
+        "provenanceLine": "FICTIONAL BAROMETER STUDY / ISSUE ONE",
+        "layout": "center-monument",
+        "basePattern": "pinstripe",
+        "palette": {
+          "fabric": "#20242A",
+          "ink": "#F3EFE4",
+          "muted": "#727982",
+          "accent": "#FF5D3D"
+        },
+        "front": {
+          "primaryText": "REVIEW BAROMETER",
+          "chestLabel": "STATION 01",
+          "mark": "MP/01",
+          "subline": "COMPACT CHANGES EASE ATMOSPHERIC REVIEW LOAD"
+        },
+        "back": {
+          "statement": "HOLD FOR THE CLEAR SLOT",
+          "subline": "MEASURED IN CHECKS, COMMENTS, AND PATIENT REBASES"
+        },
+        "sleeves": {
+          "style": "ladder",
+          "motif": "TWO VERTICAL RAILS WITH NINE RUNGS AND ONE ACCENT RUNG",
+          "leftText": "NARROW HORIZON",
+          "rightText": "CLEARING SOON",
+          "caption": "BAROMETER STUDY / 01"
+        },
+        "label": {
+          "line": "PRESSURE STATION / FICTIONAL GOODS"
+        },
+        "visualPrompt": "Flat six-placement garment system centered on one central axis, with vertical pinstripes, a rectangular aperture and side connectors, plus ladder sleeves with rails and rungs.",
+        "rightsRisk": "low",
+        "scores": {
+          "conceptClarity": 9,
+          "garmentCoherence": 9,
+          "memeLegibility": 8,
+          "originality": 8,
+          "productionSafety": 9,
+          "rightsSafety": 10
+        }
+      },
+      {
+        "conceptId": "green-window-map",
+        "title": "Quiet Passage Map Sweatshirt",
+        "rationale": "A left-weighted split field and vertical accent divider organize nested angular isobar contours with abstract shape-only sleeve nodes.",
+        "brandLabel": "QUIET PASSAGE UNIT",
+        "provenanceLine": "ORIGINAL STATUS MAP / SYNTHETIC SIGNAL",
+        "layout": "split-field",
+        "basePattern": "status-isobar-map",
+        "palette": {
+          "fabric": "#D8E5DD",
+          "ink": "#16251E",
+          "muted": "#8EA99A",
+          "accent": "#00A56A"
+        },
+        "front": {
+          "primaryText": "CLEAR SLOT",
+          "chestLabel": "ROUTE STATUS",
+          "mark": "GW/OK",
+          "subline": "A NARROW OPENING BETWEEN REVIEW FRONTS"
+        },
+        "back": {
+          "statement": "CLEAR TO MERGE",
+          "subline": "FOLLOW THE CHECKS THROUGH THE QUIET CORRIDOR"
+        },
+        "sleeves": {
+          "style": "glyph-stack",
+          "motif": "STACKED ABSTRACT SHAPE-ONLY NODES WITH NO SEMANTIC COPY",
+          "leftText": "ROUTE READY",
+          "rightText": "CHECKS GREEN",
+          "caption": "WINDOW MAP / TEST FIELD"
+        },
+        "label": {
+          "line": "CLEAR SLOT UNIT / ORIGINAL STUDY"
+        },
+        "visualPrompt": "Flat six-placement garment system with a left-weighted split field, vertical accent divider, three nested angular isobar contours, and abstract shape-only sleeve nodes.",
+        "rightsRisk": "low",
+        "scores": {
+          "conceptClarity": 9,
+          "garmentCoherence": 8,
+          "memeLegibility": 9,
+          "originality": 9,
+          "productionSafety": 8,
+          "rightsSafety": 10
+        }
+      }
+    ]
+  },
+  "visualCritic": {
+    "decision": "pass",
+    "overallScore": 91,
+    "scores": {
+      "garmentCoherence": 9,
+      "legibility": 9,
+      "panelIntent": 9,
+      "originality": 9,
+      "productionReadiness": 9,
+      "rightsSafety": 10
+    },
+    "criticalDefects": [],
+    "strengths": [
+      "The forecast mechanic is visible across body and sleeves without becoming a poster.",
+      "The panel system uses a restrained field, clear type hierarchy, and one controlled accent.",
+      "All visible language and marks are fictional, original, and short enough for local rendering."
+    ],
+    "revisionBrief": "No blocking revision. Preserve the current scale, negative space, and sleeve-to-body continuity during final export."
+  }
+}

@@ -3,7 +3,6 @@
     "id": "drop-010-research-deployment-co",
     "slug": "research-deployment-co-sweatshirt",
     "title": "Research & Deployment Co. Cotton Sweatshirt",
-    "status": "mockups_ready",
     "category": "Codex",
     "description": "A cut-and-sew cotton sweatshirt built as a quiet research-lab uniform: cream pinstripes, small chest systems, sleeve waves, and restrained deployment typography.",
     "meme": {
@@ -109,7 +108,7 @@
     },
     "commerce": {
       "handle": "research-deployment-co-sweatshirt",
-      "price": "88.00",
+      "unitAmount": 8800,
       "currency": "USD",
       "tags": [
         "codex",
@@ -366,31 +365,18 @@
       "printful": {
         "productId": 436532136,
         "mockupTaskKey": null,
-        "variantIds": [
-          33963,
-          33964,
-          33965,
-          33966,
-          33967,
-          33968,
-          33969,
-          33970,
-          33971,
-          33972,
-          33973
-        ],
-        "syncVariantIds": [
-          5337903363,
-          5337903365,
-          5337903366,
-          5337903367,
-          5337903369,
-          5337903370,
-          5337903371,
-          5337903373,
-          5337903374,
-          5337903375,
-          5337903377
+        "variants": [
+          {"variantId": "research-deployment-co-sweatshirt:33963", "catalogVariantId": 33963, "syncVariantId": 5337903363, "available": true},
+          {"variantId": "research-deployment-co-sweatshirt:33964", "catalogVariantId": 33964, "syncVariantId": 5337903365, "available": true},
+          {"variantId": "research-deployment-co-sweatshirt:33965", "catalogVariantId": 33965, "syncVariantId": 5337903366, "available": true},
+          {"variantId": "research-deployment-co-sweatshirt:33966", "catalogVariantId": 33966, "syncVariantId": 5337903367, "available": true},
+          {"variantId": "research-deployment-co-sweatshirt:33967", "catalogVariantId": 33967, "syncVariantId": 5337903369, "available": true},
+          {"variantId": "research-deployment-co-sweatshirt:33968", "catalogVariantId": 33968, "syncVariantId": 5337903370, "available": true},
+          {"variantId": "research-deployment-co-sweatshirt:33969", "catalogVariantId": 33969, "syncVariantId": 5337903371, "available": true},
+          {"variantId": "research-deployment-co-sweatshirt:33970", "catalogVariantId": 33970, "syncVariantId": 5337903373, "available": true},
+          {"variantId": "research-deployment-co-sweatshirt:33971", "catalogVariantId": 33971, "syncVariantId": 5337903374, "available": true},
+          {"variantId": "research-deployment-co-sweatshirt:33972", "catalogVariantId": 33972, "syncVariantId": 5337903375, "available": true},
+          {"variantId": "research-deployment-co-sweatshirt:33973", "catalogVariantId": 33973, "syncVariantId": 5337903377, "available": true}
         ]
       }
     },
@@ -404,7 +390,6 @@
     "id": "drop-011-terminal-ritual",
     "slug": "terminal-ritual-sweatshirt",
     "title": "Terminal Ritual Cotton Sweatshirt",
-    "status": "mockups_ready",
     "category": "Runtime",
     "description": "A dark all-over cotton sweatshirt with tone-on-tone grid fabric, sleeve glyph rituals, small chest marks, and a quiet back statement for late-night builders.",
     "meme": {
@@ -510,7 +495,7 @@
     },
     "commerce": {
       "handle": "terminal-ritual-sweatshirt",
-      "price": "88.00",
+      "unitAmount": 8800,
       "currency": "USD",
       "tags": [
         "codex",
@@ -767,31 +752,18 @@
       "printful": {
         "productId": 436532516,
         "mockupTaskKey": null,
-        "variantIds": [
-          33963,
-          33964,
-          33965,
-          33966,
-          33967,
-          33968,
-          33969,
-          33970,
-          33971,
-          33972,
-          33973
-        ],
-        "syncVariantIds": [
-          5337907450,
-          5337907455,
-          5337907456,
-          5337907465,
-          5337907468,
-          5337907469,
-          5337907470,
-          5337907471,
-          5337907473,
-          5337907474,
-          5337907475
+        "variants": [
+          {"variantId": "terminal-ritual-sweatshirt:33963", "catalogVariantId": 33963, "syncVariantId": 5337907450, "available": true},
+          {"variantId": "terminal-ritual-sweatshirt:33964", "catalogVariantId": 33964, "syncVariantId": 5337907455, "available": true},
+          {"variantId": "terminal-ritual-sweatshirt:33965", "catalogVariantId": 33965, "syncVariantId": 5337907456, "available": true},
+          {"variantId": "terminal-ritual-sweatshirt:33966", "catalogVariantId": 33966, "syncVariantId": 5337907465, "available": true},
+          {"variantId": "terminal-ritual-sweatshirt:33967", "catalogVariantId": 33967, "syncVariantId": 5337907468, "available": true},
+          {"variantId": "terminal-ritual-sweatshirt:33968", "catalogVariantId": 33968, "syncVariantId": 5337907469, "available": true},
+          {"variantId": "terminal-ritual-sweatshirt:33969", "catalogVariantId": 33969, "syncVariantId": 5337907470, "available": true},
+          {"variantId": "terminal-ritual-sweatshirt:33970", "catalogVariantId": 33970, "syncVariantId": 5337907471, "available": true},
+          {"variantId": "terminal-ritual-sweatshirt:33971", "catalogVariantId": 33971, "syncVariantId": 5337907473, "available": true},
+          {"variantId": "terminal-ritual-sweatshirt:33972", "catalogVariantId": 33972, "syncVariantId": 5337907474, "available": true},
+          {"variantId": "terminal-ritual-sweatshirt:33973", "catalogVariantId": 33973, "syncVariantId": 5337907475, "available": true}
         ]
       }
     },
@@ -805,7 +777,6 @@
     "id": "drop-012-queue-weather-cotton-sweatshirt",
     "slug": "queue-weather-cotton-sweatshirt",
     "title": "Queue Weather Cotton Sweatshirt",
-    "status": "mockups_ready",
     "workflow": {
       "status": "mockups_ready",
       "updatedAt": "2026-06-03T14:38:30.021Z"
@@ -915,7 +886,7 @@
     },
     "commerce": {
       "handle": "queue-weather-cotton-sweatshirt",
-      "price": "88.00",
+      "unitAmount": 8800,
       "currency": "USD",
       "tags": [
         "codex",
@@ -1173,31 +1144,18 @@
       "printful": {
         "productId": 436532524,
         "mockupTaskKey": null,
-        "variantIds": [
-          33963,
-          33964,
-          33965,
-          33966,
-          33967,
-          33968,
-          33969,
-          33970,
-          33971,
-          33972,
-          33973
-        ],
-        "syncVariantIds": [
-          5337907501,
-          5337907605,
-          5337907606,
-          5337907608,
-          5337907609,
-          5337907610,
-          5337907611,
-          5337907614,
-          5337907616,
-          5337907617,
-          5337907619
+        "variants": [
+          {"variantId": "queue-weather-cotton-sweatshirt:33963", "catalogVariantId": 33963, "syncVariantId": 5337907501, "available": true},
+          {"variantId": "queue-weather-cotton-sweatshirt:33964", "catalogVariantId": 33964, "syncVariantId": 5337907605, "available": true},
+          {"variantId": "queue-weather-cotton-sweatshirt:33965", "catalogVariantId": 33965, "syncVariantId": 5337907606, "available": true},
+          {"variantId": "queue-weather-cotton-sweatshirt:33966", "catalogVariantId": 33966, "syncVariantId": 5337907608, "available": true},
+          {"variantId": "queue-weather-cotton-sweatshirt:33967", "catalogVariantId": 33967, "syncVariantId": 5337907609, "available": true},
+          {"variantId": "queue-weather-cotton-sweatshirt:33968", "catalogVariantId": 33968, "syncVariantId": 5337907610, "available": true},
+          {"variantId": "queue-weather-cotton-sweatshirt:33969", "catalogVariantId": 33969, "syncVariantId": 5337907611, "available": true},
+          {"variantId": "queue-weather-cotton-sweatshirt:33970", "catalogVariantId": 33970, "syncVariantId": 5337907614, "available": true},
+          {"variantId": "queue-weather-cotton-sweatshirt:33971", "catalogVariantId": 33971, "syncVariantId": 5337907616, "available": true},
+          {"variantId": "queue-weather-cotton-sweatshirt:33972", "catalogVariantId": 33972, "syncVariantId": 5337907617, "available": true},
+          {"variantId": "queue-weather-cotton-sweatshirt:33973", "catalogVariantId": 33973, "syncVariantId": 5337907619, "available": true}
         ]
       }
     },
@@ -1214,9 +1172,9 @@
   },
   {
     "id": "drop-004-codex-rate-reset",
-    "slug": "codex-rate-reset",
+    "slug": "codex-rate-reset-long-sleeve",
+    "aliases": ["codex-rate-reset"],
     "title": "Codex Rate Reset Long Sleeve Tee",
-    "status": "mockups_ready",
     "workflow": {
       "status": "mockups_ready",
       "updatedAt": "2026-06-04T12:04:56.684Z",
@@ -1241,8 +1199,8 @@
       "sources": []
     },
     "commerce": {
-      "handle": "codex-rate-reset",
-      "price": "58.00",
+      "handle": "codex-rate-reset-long-sleeve",
+      "unitAmount": 5800,
       "currency": "USD",
       "tags": [
         "codex",
@@ -1252,7 +1210,7 @@
       ],
       "variants": [
         {
-          "id": "codex-rate-reset:10095",
+          "id": "codex-rate-reset-long-sleeve:10095",
           "sku": "CODEX_RATE_RESET_BLACK_M",
           "color": "Black",
           "size": "M",
@@ -1270,7 +1228,7 @@
           ]
         },
         {
-          "id": "codex-rate-reset:10096",
+          "id": "codex-rate-reset-long-sleeve:10096",
           "sku": "CODEX_RATE_RESET_BLACK_L",
           "color": "Black",
           "size": "L",
@@ -1288,7 +1246,7 @@
           ]
         },
         {
-          "id": "codex-rate-reset:10097",
+          "id": "codex-rate-reset-long-sleeve:10097",
           "sku": "CODEX_RATE_RESET_BLACK_XL",
           "color": "Black",
           "size": "XL",
@@ -1339,15 +1297,10 @@
       "printful": {
         "productId": 436601984,
         "mockupTaskKey": "gt-928643458",
-        "variantIds": [
-          10095,
-          10096,
-          10097
-        ],
-        "syncVariantIds": [
-          5338615120,
-          5338615121,
-          5338615122
+        "variants": [
+          {"variantId": "codex-rate-reset-long-sleeve:10095", "catalogVariantId": 10095, "syncVariantId": 5338615120, "available": true},
+          {"variantId": "codex-rate-reset-long-sleeve:10096", "catalogVariantId": 10096, "syncVariantId": 5338615121, "available": true},
+          {"variantId": "codex-rate-reset-long-sleeve:10097", "catalogVariantId": 10097, "syncVariantId": 5338615122, "available": true}
         ]
       }
     },

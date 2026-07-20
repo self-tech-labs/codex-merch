@@ -6,12 +6,12 @@ import {
   Scripts,
   ScrollRestoration,
   useRouteError,
+  useRouteLoaderData,
 } from 'react-router';
 import type {Route} from './+types/root';
 import favicon from '~/assets/favicon.svg';
 import resetStyles from '~/styles/reset.css?url';
 import appStyles from '~/styles/app.css?url';
-import tailwindCss from './styles/tailwind.css?url';
 import {PageLayout} from './components/PageLayout';
 
 export const meta: Route.MetaFunction = () => [
@@ -21,6 +21,10 @@ export const meta: Route.MetaFunction = () => [
     content: 'Codex-native merch drops fulfilled through production providers.',
   },
 ];
+
+export function loader({request}: Route.LoaderArgs) {
+  return {requestId: request.headers.get('x-request-id')};
+}
 
 export function links() {
   return [{rel: 'icon', type: 'image/svg+xml', href: favicon}];
@@ -32,11 +36,10 @@ export function Layout({children}: {children?: React.ReactNode}) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
-        <link rel="stylesheet" href={tailwindCss}></link>
         <link rel="stylesheet" href={resetStyles}></link>
         <link rel="stylesheet" href={appStyles}></link>
         <Meta />
-        <Links />
+        <Links nonce="" />
       </head>
       <body>
         {children}
@@ -57,13 +60,15 @@ export default function App() {
 
 export function ErrorBoundary() {
   const error = useRouteError();
-  let errorMessage = 'Unknown error';
+  const rootData = useRouteLoaderData<typeof loader>('root');
+  let errorMessage = 'Something went wrong. Please try again.';
   let errorStatus = 500;
 
   if (isRouteErrorResponse(error)) {
     errorMessage = error?.data?.message ?? error.data;
     errorStatus = error.status;
-  } else if (error instanceof Error) {
+    if (error.status >= 500) errorMessage = 'Something went wrong. Please try again.';
+  } else if (import.meta.env.DEV && error instanceof Error) {
     errorMessage = error.message;
   }
 
@@ -71,11 +76,8 @@ export function ErrorBoundary() {
     <div className="route-error">
       <h1>Oops</h1>
       <h2>{errorStatus}</h2>
-      {errorMessage && (
-        <fieldset>
-          <pre>{errorMessage}</pre>
-        </fieldset>
-      )}
+      <p>{errorMessage}</p>
+      {rootData?.requestId ? <p>Reference: {rootData.requestId}</p> : null}
     </div>
   );
 }

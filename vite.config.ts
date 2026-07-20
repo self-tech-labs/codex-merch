@@ -1,22 +1,46 @@
-import {cp} from 'node:fs/promises';
+import {copyFile, mkdir} from 'node:fs/promises';
 import path from 'node:path';
 import {defineConfig, type Plugin} from 'vite';
 import {reactRouter} from '@react-router/dev/vite';
-import tailwindcss from '@tailwindcss/vite';
+import products from './merch/products.json';
+import {validateCatalog} from './scripts/validate-catalog.mjs';
 
 function copyMerchAssets(): Plugin {
   return {
     name: 'copy-merch-assets',
+    async buildStart() {
+      const {errors} = await validateCatalog();
+      if (errors.length) this.error(errors.join('\n'));
+    },
     async writeBundle() {
-      await cp(path.resolve('assets'), path.resolve('build/client/assets'), {
-        recursive: true,
-      });
+      const referenced = new Set<string>();
+      for (const product of products) {
+        if (product.workflow.status === 'draft' || product.workflow.status === 'archived') continue;
+        referenced.add(product.assets.artwork);
+        product.assets.mockups.forEach((asset) => referenced.add(asset));
+        product.assets.customerPhotos?.forEach((asset) => referenced.add(asset));
+        // Provider sync happens after a candidate deployment, so generated
+        // products must expose immutable print files before final publication.
+        product.production.placements.forEach((placement) => referenced.add(placement.file));
+      }
+
+      await Promise.all(
+        [...referenced].map(async (asset) => {
+          const source = path.resolve(asset);
+          const destination = path.resolve('build/client', asset);
+          if (!source.startsWith(`${path.resolve('assets')}${path.sep}`)) {
+            throw new Error(`Refusing to publish unsafe merch asset: ${asset}`);
+          }
+          await mkdir(path.dirname(destination), {recursive: true});
+          await copyFile(source, destination);
+        }),
+      );
     },
   };
 }
 
 export default defineConfig({
-  plugins: [tailwindcss(), reactRouter(), copyMerchAssets()],
+  plugins: [reactRouter(), copyMerchAssets()],
   resolve: {
     tsconfigPaths: true,
   },

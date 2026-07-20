@@ -2,7 +2,10 @@ import {Link} from 'react-router';
 import type {Route} from './+types/checkout.cancel';
 
 export const meta: Route.MetaFunction = () => {
-  return [{title: 'Codex Meme Merch | Checkout canceled'}];
+  return [
+    {title: 'Codex Meme Merch | Checkout canceled'},
+    {name: 'robots', content: 'noindex,nofollow'},
+  ];
 };
 
 export default function CheckoutCancel() {

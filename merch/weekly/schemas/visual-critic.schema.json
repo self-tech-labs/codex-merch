@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["decision", "overallScore", "scores", "criticalDefects", "strengths", "revisionBrief"],
+  "properties": {
+    "decision": {"type": "string", "enum": ["pass", "revise", "quarantine"]},
+    "overallScore": {"type": "integer", "minimum": 0, "maximum": 100},
+    "scores": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["garmentCoherence", "legibility", "panelIntent", "originality", "productionReadiness", "rightsSafety"],
+      "properties": {
+        "garmentCoherence": {"type": "integer", "minimum": 0, "maximum": 10},
+        "legibility": {"type": "integer", "minimum": 0, "maximum": 10},
+        "panelIntent": {"type": "integer", "minimum": 0, "maximum": 10},
+        "originality": {"type": "integer", "minimum": 0, "maximum": 10},
+        "productionReadiness": {"type": "integer", "minimum": 0, "maximum": 10},
+        "rightsSafety": {"type": "integer", "minimum": 0, "maximum": 10}
+      }
+    },
+    "criticalDefects": {
+      "type": "array",
+      "maxItems": 10,
+      "items": {"type": "string", "maxLength": 220}
+    },
+    "strengths": {
+      "type": "array",
+      "maxItems": 8,
+      "items": {"type": "string", "maxLength": 220}
+    },
+    "revisionBrief": {"type": "string", "maxLength": 600}
+  }
+}

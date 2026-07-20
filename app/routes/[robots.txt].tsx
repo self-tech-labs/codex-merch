@@ -24,6 +24,7 @@ ${generalDisallowRules({sitemapUrl})}
 # Google adsbot ignores robots.txt unless specifically named!
 User-agent: adsbot-google
 Disallow: /cart
+Disallow: /checkout/
 Disallow: /api/
 
 User-agent: Nutch
@@ -47,6 +48,7 @@ Crawl-delay: 1
 
 function generalDisallowRules({sitemapUrl}: {sitemapUrl?: string}) {
   return `Disallow: /cart
+Disallow: /checkout/
 Disallow: /api/
 ${sitemapUrl ? `Sitemap: ${sitemapUrl}` : ''}`;
 }

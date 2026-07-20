@@ -6,6 +6,7 @@ import {
   getMerchCategories,
   getMerchProducts,
   getPrimaryCustomerMockup,
+  isPurchasableProduct,
   type MerchProduct,
 } from '~/lib/merch';
 
@@ -105,6 +106,9 @@ function ProductTile({product}: {product: MerchProduct}) {
         to={`/products/${product.commerce.handle}`}
       >
         <img src={primaryMockup} alt="" loading="lazy" />
+        {!isPurchasableProduct(product) ? (
+          <span className="preview-badge">Preview</span>
+        ) : null}
         <span className="tile-meta">
           <span>{product.title}</span>
           <span>{formatPrice(product)}</span>

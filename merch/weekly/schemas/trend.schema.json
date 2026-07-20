@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "status",
+    "trendName",
+    "summary",
+    "memeMechanic",
+    "teamConnection",
+    "evidencePostIds",
+    "visualMetaphors",
+    "originalPhrases",
+    "fingerprintTerms",
+    "rightsRisk",
+    "modelScores",
+    "reason"
+  ],
+  "properties": {
+    "status": {"type": "string", "enum": ["trend", "no_trend"]},
+    "trendName": {"type": "string", "maxLength": 80},
+    "summary": {"type": "string", "maxLength": 500},
+    "memeMechanic": {"type": "string", "maxLength": 500},
+    "teamConnection": {"type": "string", "maxLength": 500},
+    "evidencePostIds": {
+      "type": "array",
+      "maxItems": 12,
+      "items": {"type": "string"}
+    },
+    "visualMetaphors": {
+      "type": "array",
+      "maxItems": 8,
+      "items": {"type": "string", "maxLength": 120}
+    },
+    "originalPhrases": {
+      "type": "array",
+      "maxItems": 8,
+      "items": {"type": "string", "maxLength": 48}
+    },
+    "fingerprintTerms": {
+      "type": "array",
+      "maxItems": 12,
+      "items": {"type": "string", "maxLength": 40}
+    },
+    "rightsRisk": {"type": "string", "enum": ["low", "medium", "high"]},
+    "modelScores": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["codexSpecificity", "merchability", "novelty", "rightsSafety"],
+      "properties": {
+        "codexSpecificity": {"type": "integer", "minimum": 0, "maximum": 20},
+        "merchability": {"type": "integer", "minimum": 0, "maximum": 20},
+        "novelty": {"type": "integer", "minimum": 0, "maximum": 20},
+        "rightsSafety": {"type": "integer", "minimum": 0, "maximum": 10}
+      }
+    },
+    "reason": {"type": "string", "maxLength": 500}
+  }
+}
