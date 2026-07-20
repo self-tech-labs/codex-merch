@@ -7,7 +7,7 @@
 - Category: **Work & Productivity**
 - Entrant: **TODO: entrant and team-member names**
 - Country: Switzerland
-- Live application: **TODO: public URL**
+- Live application: [https://codex-merch.vercel.app](https://codex-merch.vercel.app)
 - Source repository: **TODO: submission commit URL**
 - Demo video: **TODO: public YouTube URL, under three minutes**
 - Primary Codex task/session: **TODO: session ID**
@@ -56,10 +56,10 @@ entry only after preserving the cited evidence at the submission commit.
 | --- | --- | --- | --- |
 | Exact 30-post input, recurring-trend gate, and `no_trend` | Yes | Synthetic fixtures, unit coverage, and [`weekly-run-2026-W30-live-no-trend.json`](evidence/weekly-run-2026-W30-live-no-trend.json) | Verified live X list read: 30 unique posts, 13 authors, integrity hashes matched; the signal correctly ended `no_trend` at 15/72 |
 | GPT-5.6 trend and three-recipe Structured Outputs | Yes | [`weekly-run-2026-W37-fixture-live-gpt56-prepared.json`](evidence/weekly-run-2026-W37-fixture-live-gpt56-prepared.json) records fixture input with live GPT-5.6 and three eligible renderer-bound recipes | Live X W30 decision used `gpt-5.6-sol`; no recipe call was warranted after the trend gate failed |
-| Deterministic rendering, prepress, actual-render critic, and rollback | Yes | The W37 sanitized bundle records exact placement/prepress results and an accepted 88/100 fallback candidate; 116 tests pass with one database test skipped | Candidate one was quarantined; candidate two passed without weakening thresholds |
+| Deterministic rendering, prepress, actual-render critic, and rollback | Yes | The W37 sanitized bundle records exact placement/prepress results and an accepted 88/100 fallback candidate; 117 tests run, with 116 passing and one database test skipped | Candidate one was quarantined; candidate two passed without weakening thresholds |
 | Codex Desktop weekly operation | Skill, prompts, the active local `Codex Merch Weekly Prepare` automation, and the paused owner-gated release automation are implemented | Clean-checkout offline prepare, live-X `no_trend`, and terminal `idempotentReplay: true` are preserved | First live manual prepare completed on 2026-07-20; scheduled release remains intentionally paused |
-| Git/deployment/Printful release state machine | Yes | Plan-only, recovery, deployment-binding, and provider-idempotency tests pass; fixtures are deliberately non-releasable | Printful authentication is verified; deployment/release remains blocked by blank Vercel token, public URL, and owner approval gates |
-| Stripe, Neon, Inngest, and Printful draft purchase path | Yes | 116 tests pass, Neon migration applied, and desktop/mobile E2E passes 6/6 | Stripe and Inngest credentials plus legal/shipping approvals are not yet configured, so checkout correctly fails closed |
+| Git/deployment/Printful release state machine | Yes | Plan-only, recovery, deployment-binding, and provider-idempotency tests pass; fixtures are deliberately non-releasable | The public storefront is deployed from an exact Git SHA and Printful authentication is verified; unattended weekly release remains blocked by the blank release-service Vercel token and owner approval gates |
+| Stripe, Neon, Inngest, and Printful draft purchase path | Yes | 117 tests run with 116 passing and one database test skipped; Neon migration applied; desktop/mobile E2E passes 8/8 locally and 8/8 against the public URL | Stripe and Inngest credentials plus legal/shipping approvals are not yet configured, so checkout correctly fails closed |
 
 ## Implemented boundary
 

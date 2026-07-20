@@ -5,7 +5,7 @@
 - Baseline commit: `6de6ea7e2e19e3762d691d0861553e0f2c9f02d1` (`Add codex rate reset long sleeve`)
 - Commit date: 2026-06-04
 - Baseline branch at audit: `codex/rate-reset-long-sleeve`
-- Annotated local baseline tag: `pre-build-week-2026` (created 2026-07-20 CEST)
+- Annotated baseline tag: `pre-build-week-2026` (created 2026-07-20 CEST and pushed to `origin`)
 
 The baseline already contained a React Router storefront, a JSON product manifest, manual merch CLI stages, an X recent-search adapter, rule-based AOP validation, OpenAI image generation, Printful product tooling, and a Stripe checkout/fulfillment path. These pre-existing capabilities must not be presented as Build Week work.
 
@@ -32,6 +32,8 @@ Fill this table from Git after each cohesive commit. Do not backdate, amend away
 | --- | --- | --- | --- |
 | 2026-07-20 | `1e10977` | GPT-5.6 trend decision; garment recipes; deterministic renderer/prepress; visual critic; resumable prepare/release; commerce; automation; submission package | 116 tests pass, one DB integration test skipped; typecheck, lint, build, and 6/6 E2E pass |
 | 2026-07-20 | `7fd90c3` | Removed 38 audited orphaned Shopify/demo files and about 30 MiB of unreferenced legacy merch assets | Full verification repeated after cleanup |
+| 2026-07-20 | `7aa9ae0` | Added sanitized live-X `no_trend` evidence, live GPT-5.6 fixture evidence, and secret-scanner-safe test credentials | Embedded-secret scan clean; 117 tests run with 116 passing and one DB integration test skipped; typecheck and lint pass |
+| 2026-07-20 | `d5a01ca` | Made browser error capture global and enabled the same desktop/mobile E2E suite to target an immutable or public deployment | 8/8 E2E pass locally and 8/8 against `https://codex-merch.vercel.app` |
 
 ## Evidence to preserve
 
@@ -41,6 +43,6 @@ Fill this table from Git after each cohesive commit. Do not backdate, amend away
 - Sanitized example run directory: `docs/build-week/evidence/weekly-run-2026-W37-fixture-live-gpt56-prepared.json` and `docs/build-week/evidence/weekly-run-2026-W30-live-no-trend.json`
 - Duplicate-free replay result: W30 terminal replay returned `idempotentReplay: true`
 - CI run URL: **TODO**
-- Production deployment URL and immutable deployment ID: **TODO**
+- Qualification production deployment: `https://codex-merch.vercel.app`; immutable deployment `dpl_AfSkDhE53mXUqiy1xUDZyJ9SH5Fk`, Git-bound to `7aa9ae0f503a02794ba452abba96bb4aad6f8317`
 
 The example run should retain sanitized normalized signal metadata, prompt/schema hashes, GPT-5.6 structured decisions, garment recipes, critic results, asset hashes, provider references, candidate/final deployment IDs, sanitized immutable deployment URLs and commit bindings, and the final publication result. Preserve dashboard screenshots or API summaries as separate submission evidence without exposing the Vercel token. Never commit API keys, customer data, private X content, or raw third-party media.

@@ -13,7 +13,7 @@ bodies, private run ledgers, or third-party media without redistribution rights.
 | CI run for that SHA | **TODO: URL** |
 | Primary Codex task/session | **TODO: session ID** |
 | `/feedback` result | **TODO: session ID** |
-| Public deployment | **TODO: URL and immutable deployment reference** |
+| Public deployment | [https://codex-merch.vercel.app](https://codex-merch.vercel.app); qualification deployment `dpl_AfSkDhE53mXUqiy1xUDZyJ9SH5Fk`, bound to Git SHA `7aa9ae0f503a02794ba452abba96bb4aad6f8317` |
 | Public YouTube demo | **TODO: URL** |
 | Devpost submission | **TODO: URL** |
 
@@ -26,12 +26,12 @@ command. Prefer a CI URL over pasted terminal output.
 | --- | --- |
 | `npm ci` | Pass: 659 packages installed from the committed lockfile |
 | `npm run merch:validate` | Pass: four catalog products validated |
-| `npm test` | Pass: 116 tests; one database integration test skipped because `TEST_DATABASE_URL` is not configured |
+| `npm test` | Pass: 117 tests run; 116 passed and one database integration test skipped because `TEST_DATABASE_URL` is not configured |
 | `npm run typecheck` | Pass |
 | `npm run lint` | Pass |
 | `npm run build` | Pass: client and both Vercel server bundles generated |
-| `npm run test:e2e` | Pass: 6/6 Chromium desktop and mobile tests |
-| `npm run submission:verify` | Blocked only by the external submission, deployment, rights, and owner-evidence fields still marked `TODO` in this package |
+| `npm run test:e2e` | Pass: 8/8 Chromium desktop and mobile tests locally; 8/8 against `https://codex-merch.vercel.app` via `PLAYWRIGHT_BASE_URL` |
+| `npm run submission:verify` | Repository, fixture, model-contract, provenance, and embedded-secret checks pass; final exit remains blocked by the external submission, rights, owner-evidence, and commerce-configuration fields still marked `TODO` or disabled |
 
 ## Weekly run evidence
 
