@@ -3,6 +3,10 @@ import {Link, useLoaderData} from 'react-router';
 import type {Route} from './+types/products.$handle';
 import {useCart} from '~/lib/cart';
 import {
+  canInitiateStorefrontCheckout,
+  useStorefrontMode,
+} from '~/lib/storefront-mode';
+import {
   assetUrl,
   defaultProductVariant,
   formatPrice,
@@ -55,7 +59,11 @@ export default function Product() {
   const mockups = getCustomerMockups(product);
   const currentMockup = mockups[activeMockup] || mockups[0];
   const {addLine} = useCart();
-  const purchasable = isPurchasableProduct(product);
+  const storefrontMode = useStorefrontMode();
+  const purchasable = canInitiateStorefrontCheckout(
+    storefrontMode,
+    isPurchasableProduct(product),
+  );
 
   return (
     <div className="product-page">
@@ -114,7 +122,13 @@ export default function Product() {
           />
 
           <div className="product-copy">
-            {!purchasable ? <p className="preview-badge">Preview — not yet available</p> : null}
+            {!purchasable ? (
+              <p className="preview-badge">
+                {storefrontMode === 'preview'
+                  ? 'Prototype preview — checkout disabled'
+                  : 'Preview — not yet available'}
+              </p>
+            ) : null}
             <p>{product.description}</p>
             <dl>
               <div>
@@ -149,7 +163,11 @@ export default function Product() {
                 });
               }}
             >
-              {purchasable ? 'Add to cart' : 'Preview only'}
+              {purchasable
+                ? 'Add to cart'
+                : storefrontMode === 'preview'
+                  ? 'Checkout disabled'
+                  : 'Preview only'}
             </button>
             <Link className="buy-link" to="/cart">
               View cart

@@ -5,6 +5,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
   useRouteError,
   useRouteLoaderData,
 } from 'react-router';
@@ -13,6 +14,8 @@ import favicon from '~/assets/favicon.svg';
 import resetStyles from '~/styles/reset.css?url';
 import appStyles from '~/styles/app.css?url';
 import {PageLayout} from './components/PageLayout';
+import {getEnv} from '~/lib/env.server';
+import {resolveStorefrontMode} from '~/lib/storefront-mode';
 
 export const meta: Route.MetaFunction = () => [
   {title: 'Codex Meme Merch'},
@@ -22,8 +25,11 @@ export const meta: Route.MetaFunction = () => [
   },
 ];
 
-export function loader({request}: Route.LoaderArgs) {
-  return {requestId: request.headers.get('x-request-id')};
+export function loader({context, request}: Route.LoaderArgs) {
+  return {
+    requestId: request.headers.get('x-request-id'),
+    storefrontMode: resolveStorefrontMode(getEnv(context).STOREFRONT_MODE),
+  };
 }
 
 export function links() {
@@ -51,8 +57,10 @@ export function Layout({children}: {children?: React.ReactNode}) {
 }
 
 export default function App() {
+  const {storefrontMode} = useLoaderData<typeof loader>();
+
   return (
-    <PageLayout>
+    <PageLayout storefrontMode={storefrontMode}>
       <Outlet />
     </PageLayout>
   );

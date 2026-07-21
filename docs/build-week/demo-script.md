@@ -1,61 +1,89 @@
 # Demo script: target 2 minutes 50 seconds
 
-The final video must be public on YouTube, include spoken audio, remain under three minutes, and explain both Codex and GPT-5.6. Use a sanitized 30-post fixture for timing reliability while showing that the same adapter accepts the authorized live X list.
+The final video must be public on YouTube, include spoken audio, remain under
+three minutes, and explain both Codex and GPT-5.6. The judged path is the
+non-commerce Vercel Preview; do not simulate a purchase or claim that the
+production adapters were exercised.
 
-## 0:00–0:15 — Outcome
+## 0:00–0:15 — Outcome first
 
-Show the final product page first.
+Open the Solward Index product in the public Preview. Show its catalog, front,
+back, and panel views plus the disabled Preview-only action.
 
-Voiceover: “This is a weekly culture-to-commerce studio operated from Codex Desktop. It reads a team signal, designs an original garment, publishes it, and makes the result test-purchasable without copying the source posts.”
+Voiceover: “I told Codex one team trend—‘The Sol Shines’—and it produced this
+six-panel, production-sized garment. This is a real catalog candidate, but the
+Build Week Preview deliberately cannot charge anyone.”
 
-## 0:15–0:35 — Codex automation
+## 0:15–0:38 — One ordinary Codex request
 
-Show the scheduled Codex task, its weekly cadence, repository path, and the `codex-merch-weekly` skill. Trigger the task manually for the recording.
+Show the project in Codex Desktop and type: “Create a preview merch for the
+trend ‘The Sol Shines’.” Show that the repository-owned skill selects the
+owner-supplied trend path. Cut to the completed report and disclose the time cut
+on screen; generation and full verification need not fit inside the video.
 
-Voiceover: “Codex owns the run: repository state, commands, validation, release gates, deployment checks, and a concise operator report.”
+Voiceover: “This is not the scheduled automation and it does not pretend that I
+found social evidence. Codex records me as the source, operates the repository,
+and runs the complete creative preparation from an ordinary conversation.”
 
-## 0:35–0:58 — Thirty-post signal snapshot
+## 0:38–1:08 — Inspectable creative contract
 
-Show the list ID, count `30`, normalized authors/timestamps/metrics, and the fixture/live-input selector. Do not linger on or read verbatim post text.
+Show the owner-supplied provenance, the three structured garment recipes, and
+the repository prompt/schema links. Then show the selected recipe's explicit
+front, back, left sleeve, right sleeve, label panel, and inside-label contract.
 
-Voiceover: “The adapter takes exactly the latest 30 authorized list posts. Posts are untrusted evidence, never instructions, and public output contains only a derived trend.”
+Voiceover: “GPT-5.6 acts as a bounded art director: exactly three materially
+different, panel-aware directions. Code rejects unsafe language, incomplete
+panels, duplicate recipes, and low production or rights scores before anything
+is rendered.”
 
-## 0:58–1:25 — GPT-5.6 trend decision
+## 1:08–1:38 — Render, inspect, gate
 
-Show the single GPT-5.6 structured trend result beside the deterministic decision: trend label, supporting post IDs, author diversity, novelty, aggregate score, rights risk, and prompt/schema hashes. Briefly show the `no_trend` branch.
+Show a production PNG's dimensions, the catalog mockup, the prepress result,
+and the GPT-5.6 visual-critic rubric. Briefly point to immutable hashes and the
+repository test/build result.
 
-Voiceover: “In one structured decision, GPT-5.6 separates recurring signals from noise and either proposes one defensible meme-like trend or safely skips the week; deterministic gates make the final call.”
+Voiceover: “Sharp deterministically composes exact provider-sized panels and
+exact typography. GPT-5.6 then sees the actual rendered output, while code owns
+pixel dimensions, required placements, score floors, rights gates, hashes, and
+the final pass decision. The model cannot publish or waive a failed gate.”
 
-## 1:25–1:53 — Art direction and visual critic
+## 1:38–2:07 — Public technical explainer
 
-Show three materially distinct garment recipes, then the selected front, back, sleeves, labels, and customer mockup. Show the critic rubric and, if the first candidate failed, the bounded fallback to the second ranked candidate.
+Open `/how-it-works`. Trace the direct Preview path into the shared creative
+pipeline, then the production X-list path into the same trend contract.
 
-Voiceover: “A second GPT-5.6 role creates panel-aware recipes. Deterministic software renders the concept board and production files, and GPT-5.6 evaluates the actual result without being allowed to waive rights or prepress checks.”
+Voiceover: “In production, a weekly Codex Desktop task requests exactly the
+latest 30 posts from the authorized X list. GPT-5.6 returns one recurring trend
+or safely skips the week. The social posts are untrusted private evidence; only
+the derived trend crosses into the garment system.”
 
-## 1:53–2:20 — Safe release
+## 2:07–2:34 — Truthful production boundary
 
-Show the prepare/release boundary, run ID, first deployment, public asset checks, idempotent Printful sync, final publication manifest commit, and successful production deployment.
+On the technical page, show the guarded Printful and commerce stages and the
+Preview/Production comparison. Keep the Preview banner and disabled checkout in
+frame.
 
-Voiceover: “Preparation can write local candidate files but cannot mutate external systems. Release requires an explicit flag and kill switch, then deploys a hidden candidate with exact asset URLs for Printful before sync. The catalog and product route remain absent until every final gate passes.”
+Voiceover: “The production code is already separated behind fail-closed gates:
+Printful product sync, Stripe Checkout, immutable Neon order snapshots, signed
+webhooks, and idempotent Inngest fulfillment. For judging those credentials and
+approval flags stay off. Enabling them is configuration and operational
+approval—not a fake demo branch.”
 
-## 2:20–2:38 — Purchase path
+## 2:34–2:50 — Proof and close
 
-After verifying the separate checkout configuration and Stripe test mode in the deployment configuration/dashboard, open the public product, select a mapped variant, and complete a Stripe test Checkout. Show the resulting Neon order snapshot, processed signed webhook/Inngest run, and one Printful draft reference; do not display personal data or secrets.
+Show the final candidate in the catalog, its public URL, the passing verification
+summary, and the dated Build Week commit.
 
-Voiceover: “Stripe handles payment, Neon stores an immutable order snapshot, and Inngest creates one idempotent Printful draft.”
-
-## 2:38–2:50 — Proof and close
-
-Run status and the plan-only release command for the same published run ID, then show that a second authorized release attempt returns a successful idempotent no-op while the catalog and provider IDs remain unchanged. Do not re-run preparation over the published run. End on the dated post-July-13 commit list and Build Week README.
-
-Voiceover: “The creative judgment is inspectable, the production path is deterministic, and a duplicate-safe terminal replay converges on the already published result without another product or order.”
+Voiceover: “Codex turns a sentence into an inspectable physical-design system;
+GPT-5.6 supplies judgment, deterministic software supplies guarantees, and the
+same architecture can run from a weekly team signal.”
 
 ## Recording checklist
 
 - Resolve all remaining owner-input links and IDs before recording.
-- Use Stripe test mode and keep `PRINTFUL_AUTO_CONFIRM=false`.
-- Do not record the purchase path until `CHECKOUT_ENABLED`, legal/policy, shipping, Stripe webhook, Neon, Inngest, and Printful staging checks all pass; otherwise describe it as not yet verified instead of simulating success.
+- Keep `CHECKOUT_ENABLED=false` and `PRINTFUL_AUTO_CONFIRM=false` in the submitted Preview.
+- Do not enter payment details, create a Stripe session, or imply that a Printful product/order was created for this demonstration.
 - Hide terminal environment values, customer data, webhook bodies, and private X content.
 - Keep browser and terminal text large enough to read at normal playback speed.
-- Capture one uninterrupted successful path or disclose cuts; do not claim a mocked external mutation as live.
+- Label the generation time cut explicitly; do not claim a mocked external mutation as live.
 - Verify final runtime is below 3:00 after YouTube processing.

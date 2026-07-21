@@ -1,6 +1,7 @@
 import type Stripe from 'stripe';
 import type {Order, OrderItem} from '~/db/schema.server';
 import {requireEnv} from '~/lib/env.server';
+import {assertProductionStorefrontMode} from '~/lib/stripe.server';
 
 const PRINTFUL_API_BASE = 'https://api.printful.com';
 
@@ -9,6 +10,16 @@ type PrintfulOrderResponse = {
 };
 
 export class PermanentFulfillmentError extends Error {}
+
+export function assertFulfillmentConfiguration(env: AppEnv) {
+  try {
+    assertProductionStorefrontMode(env);
+  } catch (error) {
+    throw new PermanentFulfillmentError(
+      error instanceof Error ? error.message : 'Fulfillment configuration is incomplete',
+    );
+  }
+}
 
 export async function createOrFindPrintfulOrder({
   env,
@@ -21,6 +32,7 @@ export async function createOrFindPrintfulOrder({
   order: Order;
   session: Stripe.Checkout.Session;
 }) {
+  assertFulfillmentConfiguration(env);
   if (order.providerOrderId) {
     return {id: order.providerOrderId, confirmed: order.fulfillmentStatus === 'confirmed'};
   }
@@ -36,6 +48,7 @@ export async function createOrFindPrintfulOrder({
 }
 
 export async function confirmPrintfulOrder(providerOrderId: string, env: AppEnv) {
+  assertFulfillmentConfiguration(env);
   const path = `/orders/${encodeURIComponent(providerOrderId)}`;
   const current = await printfulRequest(path, {env});
   if (current.result?.status === 'confirmed') return true;

@@ -7,6 +7,7 @@ import {loader} from '~/routes/api.readiness';
 
 const configuredEnv: AppEnv = {
   NODE_ENV: 'production',
+  STOREFRONT_MODE: 'production',
   CHECKOUT_ENABLED: 'true',
   PUBLIC_SITE_URL: 'https://shop.example',
   STRIPE_SECRET_KEY: ['sk', 'test', 'unit', '1234567890abcdef'].join('_'),

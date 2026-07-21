@@ -1381,7 +1381,7 @@
           "color": "White",
           "size": "2XS",
           "providerVariantId": 33963,
-          "availableForSale": true,
+          "availableForSale": false,
           "selectedOptions": [
             {
               "name": "Color",
@@ -1399,7 +1399,7 @@
           "color": "White",
           "size": "XS",
           "providerVariantId": 33964,
-          "availableForSale": true,
+          "availableForSale": false,
           "selectedOptions": [
             {
               "name": "Color",
@@ -1417,7 +1417,7 @@
           "color": "White",
           "size": "S",
           "providerVariantId": 33965,
-          "availableForSale": true,
+          "availableForSale": false,
           "selectedOptions": [
             {
               "name": "Color",
@@ -1435,7 +1435,7 @@
           "color": "White",
           "size": "M",
           "providerVariantId": 33966,
-          "availableForSale": true,
+          "availableForSale": false,
           "selectedOptions": [
             {
               "name": "Color",
@@ -1453,7 +1453,7 @@
           "color": "White",
           "size": "L",
           "providerVariantId": 33967,
-          "availableForSale": true,
+          "availableForSale": false,
           "selectedOptions": [
             {
               "name": "Color",
@@ -1471,7 +1471,7 @@
           "color": "White",
           "size": "XL",
           "providerVariantId": 33968,
-          "availableForSale": true,
+          "availableForSale": false,
           "selectedOptions": [
             {
               "name": "Color",
@@ -1489,7 +1489,7 @@
           "color": "White",
           "size": "2XL",
           "providerVariantId": 33969,
-          "availableForSale": true,
+          "availableForSale": false,
           "selectedOptions": [
             {
               "name": "Color",
@@ -1507,7 +1507,7 @@
           "color": "White",
           "size": "3XL",
           "providerVariantId": 33970,
-          "availableForSale": true,
+          "availableForSale": false,
           "selectedOptions": [
             {
               "name": "Color",
@@ -1525,7 +1525,7 @@
           "color": "White",
           "size": "4XL",
           "providerVariantId": 33971,
-          "availableForSale": true,
+          "availableForSale": false,
           "selectedOptions": [
             {
               "name": "Color",
@@ -1543,7 +1543,7 @@
           "color": "White",
           "size": "5XL",
           "providerVariantId": 33972,
-          "availableForSale": true,
+          "availableForSale": false,
           "selectedOptions": [
             {
               "name": "Color",
@@ -1561,7 +1561,7 @@
           "color": "White",
           "size": "6XL",
           "providerVariantId": 33973,
-          "availableForSale": true,
+          "availableForSale": false,
           "selectedOptions": [
             {
               "name": "Color",
@@ -1750,6 +1750,28 @@
         "model": "gpt-5.6-sol",
         "responseId": "resp_0a1687e2c21a57a3016a5f1047139481a2a39a09037b7a7007",
         "checkedAt": "2026-07-21T06:23:24Z"
+      }
+    },
+    "automation": {
+      "pipelineVersion": "owner-trend-preview-v1",
+      "inputMode": "owner-supplied-trend",
+      "inputHash": "993fa351ec820b38ba398d49b2e90205eefaeb148f53d33f8eb1c2de0c9bcb9d",
+      "identityHash": "7033294da79a9f073392c3088308673cb01dac1e7978c2ea7c0d72041664ca21",
+      "previewOnly": true,
+      "releaseEligible": false,
+      "evidenceCount": 0,
+      "criticScore": 87,
+      "prepress": {
+        "validator": "weekly-prepress-v1",
+        "fileCount": 6,
+        "hashes": {
+          "front": "ca46389a9dd440699f36f7f36d176eb388d3181c695d48b010ccef82ad5bf91e",
+          "back": "135e2db85c19d0692a69b025bac87727678a5790e6a6e11b05f6823d2823b378",
+          "left_sleeve": "aba98f2b65855f8e393d0776852a002a0399daadf6a4ee5543cb4c7a2aa90b92",
+          "right_sleeve": "5053c029bde53ce72fd74ef6cb2f53e79f977522441ca30e402cfe7844ce8774",
+          "label_panel": "7163c4c6121a11130965e43dc40ddfcf62a52efa4790b4c8c089251f79317c56",
+          "label_inside": "d216f1c29139ff221eee237ee85ce97c2a568948774e0c00499068d8e7858c88"
+        }
       }
     },
     "approval": {

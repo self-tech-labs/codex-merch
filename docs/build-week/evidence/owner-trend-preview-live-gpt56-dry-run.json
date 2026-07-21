@@ -1,0 +1,69 @@
+{
+  "recordedAt": "2026-07-21T09:12:44Z",
+  "inputMode": "owner-supplied-trend",
+  "trend": "Compiler Summer",
+  "context": "A team joke about fast builds arriving with warm weather",
+  "commandMode": "dry-run",
+  "modelContract": "gpt-5.6",
+  "inputHash": "22b78d5a417aec5b67001a7c84dd8fa46fc8224739405414aeb45e497d6bd9ee",
+  "result": {
+    "mode": "planned",
+    "releaseEligible": false,
+    "externalMutations": [],
+    "candidates": [
+      {
+        "conceptId": "north-index-next-moves-03",
+        "title": "Next One Moves Cotton Sweatshirt",
+        "eligible": true,
+        "score": 89,
+        "checks": {
+          "lowRightsRisk": true,
+          "noProtectedProductTerms": true,
+          "noSourceTextOverlap": true,
+          "displayCopyQuality": true,
+          "rendererFaithful": true,
+          "distinctRendererRecipe": true,
+          "productionScores": true,
+          "completePanels": true
+        }
+      },
+      {
+        "conceptId": "north-index-early-turn-02",
+        "title": "Early Turn Cotton Sweatshirt",
+        "eligible": true,
+        "score": 86,
+        "checks": {
+          "lowRightsRisk": true,
+          "noProtectedProductTerms": true,
+          "noSourceTextOverlap": true,
+          "displayCopyQuality": true,
+          "rendererFaithful": true,
+          "distinctRendererRecipe": true,
+          "productionScores": true,
+          "completePanels": true
+        }
+      },
+      {
+        "conceptId": "north-index-short-wait-01",
+        "title": "Short Wait Cotton Sweatshirt",
+        "eligible": true,
+        "score": 86,
+        "checks": {
+          "lowRightsRisk": true,
+          "noProtectedProductTerms": true,
+          "noSourceTextOverlap": true,
+          "displayCopyQuality": true,
+          "rendererFaithful": true,
+          "distinctRendererRecipe": true,
+          "productionScores": true,
+          "completePanels": true
+        }
+      }
+    ]
+  },
+  "notes": [
+    "The owner supplied the trend directly; no X evidence is claimed.",
+    "The live GPT-5.6 call returned exactly three schema-valid directions.",
+    "Dry-run mode did not change the catalog, write assets, call providers, deploy, publish, or enable checkout."
+  ]
+}

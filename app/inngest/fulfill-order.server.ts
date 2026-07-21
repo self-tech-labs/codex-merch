@@ -1,5 +1,6 @@
 import {NonRetriableError} from 'inngest';
 import {
+  assertFulfillmentConfiguration,
   confirmPrintfulOrder,
   createOrFindPrintfulOrder,
   isRetriableFulfillmentError,
@@ -28,6 +29,13 @@ export const fulfillOrder = inngest.createFunction(
     },
   },
   async ({event, runId, step}) => {
+    try {
+      assertFulfillmentConfiguration(process.env);
+    } catch (error) {
+      throw new NonRetriableError(
+        error instanceof Error ? error.message : 'Fulfillment is disabled',
+      );
+    }
     const {orderId, sessionId} = event.data as {
       orderId: string;
       sessionId: string;

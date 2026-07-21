@@ -25,13 +25,22 @@ command. Prefer a CI URL over pasted terminal output.
 | Command | Result at submission SHA |
 | --- | --- |
 | `npm ci` | Pass: 659 packages installed from the committed lockfile |
-| `npm run merch:validate` | Pass: four catalog products validated |
-| `npm test` | Pass: 117 tests run; 116 passed and one database integration test skipped because `TEST_DATABASE_URL` is not configured |
+| `npm run merch:validate` | Pass: five catalog products validated, including the owner-supplied Solward Preview candidate |
+| `npm test` | Pass locally: 130 discovered, 129 passed, one database integration test skipped because `TEST_DATABASE_URL` is not configured. |
 | `npm run typecheck` | Pass |
 | `npm run lint` | Pass |
 | `npm run build` | Pass: client and both Vercel server bundles generated |
-| `npm run test:e2e` | Pass: 8/8 Chromium desktop and mobile tests locally; 8/8 against `https://codex-merch.vercel.app` via `PLAYWRIGHT_BASE_URL` |
+| `npm run test:e2e` | Pass locally: 10/10 on Chromium desktop and mobile, including the owner-supplied technical explainer and disabled-commerce contract. Record the final public Preview result only after its exact SHA is deployed. |
 | `npm run submission:verify` | Repository, fixture, model-contract, provenance, and embedded-secret checks pass; final exit remains blocked by unresolved external submission, rights, owner-evidence, and commerce-configuration fields |
+
+## Direct owner-trend Preview evidence
+
+| Artifact | Verified value |
+| --- | --- |
+| Live GPT-5.6 dry run | [`owner-trend-preview-live-gpt56-dry-run.json`](owner-trend-preview-live-gpt56-dry-run.json): exactly three eligible structured directions, scores 89/86/86, zero external mutations |
+| Existing full candidate | `The Sol Shines` resolves idempotently to `the-sol-shines-cotton-sweatshirt`; critic 87/100; six production placements; Preview-visible, non-sellable, release-ineligible |
+| Provenance | `owner-supplied-trend`; empty X queries and sources; no invented evidence |
+| Provider/commerce effect | None; provider references are empty and code rejects Printful sync, catalog publication, and checkout for this candidate |
 
 ## Weekly run evidence
 
@@ -92,24 +101,20 @@ digest. `fixture`, `verified-live-x`, and incomplete evidence are labeled
 separately, and model calls are independently labeled as fixture or verified
 GPT-5.6 responses.
 
-## External release and purchase proof
+## Preview deployment and deferred production proof
 
-The weekly release never initiates checkout or creates an order. Preserve the
-release evidence first, then exercise the customer purchase path separately in
-Stripe test mode.
+The submitted Build Week surface is a Vercel Preview with commerce disabled.
+The weekly production release and customer purchase stack are implemented but
+are not presented as live Build Week proof.
 
 | External proof | Verified value |
 | --- | --- |
-| Candidate commit and exact production deployment checkpoint | Qualification app commit `d44913b0738e8537c1986bb7734b41d7a4858243`; deployment `dpl_5UyLxhxkpPiiX9cxBccii9gAzz12`; immutable URL [`codex-merch-7vpziyl2s-ritsl.vercel.app`](https://codex-merch-7vpziyl2s-ritsl.vercel.app). This proves Git/deployment binding, not a weekly product publication. |
-| Public production-asset URL/hash checks | **TODO** |
-| Stable Printful product ID and complete variant mapping | **TODO** |
-| Provider mockup and customer-photoshoot gates | **TODO** |
-| Final publication commit/deployment/product URL | **TODO: SHA, deployment ID, sanitized immutable URL, product URL** |
-| Stripe test Checkout session | **TODO: redacted reference only** |
-| Exactly one Neon order and processed webhook event | **TODO: redacted references only** |
-| Inngest fulfillment run | **TODO: redacted reference only** |
-| Exactly one unconfirmed Printful draft | **TODO: redacted reference only** |
-| Webhook, fulfillment, and weekly-run replay result | **TODO** |
+| Submitted Preview commit/deployment | Pending the final non-production branch push and exact-SHA Vercel verification |
+| Public Solward catalog/product/assets | Pending the same final Preview smoke test |
+| Checkout behavior | Must remain disabled and return no Stripe redirect in Preview |
+| Printful product synchronization | Not run for the Build Week Preview; the candidate is hard-blocked |
+| Neon, Stripe webhook, Inngest, and Printful order draft | Not run or claimed for the Build Week Preview |
+| Qualification deployment | Earlier app commit `d44913b0738e8537c1986bb7734b41d7a4858243`; deployment `dpl_5UyLxhxkpPiiX9cxBccii9gAzz12`; immutable URL [`codex-merch-7vpziyl2s-ritsl.vercel.app`](https://codex-merch-7vpziyl2s-ritsl.vercel.app). This is historical qualification evidence, not the submitted Preview. |
 
 ## Recording rules
 

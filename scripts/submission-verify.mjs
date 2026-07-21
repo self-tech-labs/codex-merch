@@ -18,6 +18,41 @@ export const BUILD_WEEK_BASELINE_TAG = 'pre-build-week-2026';
 export const REQUIRED_X_FIXTURE =
   'fixtures/x/codex-team-meme-30.synthetic.json';
 
+export const BUILD_WEEK_PREVIEW_FILES = [
+  'app/components/Footer.tsx',
+  'app/components/Header.tsx',
+  'app/components/PageLayout.tsx',
+  'app/inngest/fulfill-order.server.ts',
+  'app/lib/commerce.test.ts',
+  'app/lib/fulfillment.server.ts',
+  'app/lib/stripe.server.ts',
+  'app/lib/storefront-mode.test.ts',
+  'app/lib/storefront-mode.tsx',
+  'app/root.tsx',
+  'app/routes/[sitemap.xml].tsx',
+  'app/routes/_index.tsx',
+  'app/routes/api.stripe.webhook.ts',
+  'app/routes/cart.tsx',
+  'app/routes/how-it-works.tsx',
+  'app/routes/products.$handle.tsx',
+  'app/styles/app.css',
+  'assets/artwork/the-sol-shines-cotton-sweatshirt-concept.png',
+  'assets/mockups/the-sol-shines-cotton-sweatshirt-back.png',
+  'assets/mockups/the-sol-shines-cotton-sweatshirt-catalog.png',
+  'assets/mockups/the-sol-shines-cotton-sweatshirt-front.png',
+  'assets/mockups/the-sol-shines-cotton-sweatshirt-patterns.png',
+  'assets/print/the-sol-shines-cotton-sweatshirt-back_dtfabric.png',
+  'assets/print/the-sol-shines-cotton-sweatshirt-front_dtfabric.png',
+  'assets/print/the-sol-shines-cotton-sweatshirt-label_inside_dtfabric.png',
+  'assets/print/the-sol-shines-cotton-sweatshirt-label_panel_dtfabric.png',
+  'assets/print/the-sol-shines-cotton-sweatshirt-left_sleeve_dtfabric.png',
+  'assets/print/the-sol-shines-cotton-sweatshirt-right_sleeve_dtfabric.png',
+  'docs/build-week/evidence/owner-trend-preview-live-gpt56-dry-run.json',
+  'e2e/storefront.spec.ts',
+  'env.d.ts',
+  'merch/products.json',
+];
+
 export const SUBMISSION_DOCUMENT_FILES = [
   'README.md',
   'docs/build-week/README.md',
@@ -32,6 +67,7 @@ export const SUBMISSION_DOCUMENT_FILES = [
 ];
 
 export const CORE_WEEKLY_FILES = [
+  ...BUILD_WEEK_PREVIEW_FILES,
   'app/lib/merch.ts',
   'app/lib/weekly-visibility.test.ts',
   'fixtures/openai/weekly-happy-path.synthetic.json',
@@ -46,10 +82,13 @@ export const CORE_WEEKLY_FILES = [
   'scripts/adapters/x-api.mjs',
   'scripts/merch-renderer-quality.test.mjs',
   'scripts/merch.mjs',
+  'scripts/owner-trend-preview.mjs',
+  'scripts/owner-trend-preview.test.mjs',
   'scripts/prompts/weekly-art-director.md',
   'scripts/prompts/weekly-trend.md',
   'scripts/prompts/weekly-visual-critic.md',
   'scripts/services/weekly-art-director.mjs',
+  'scripts/services/owner-trend-preview.mjs',
   'scripts/services/weekly-deployment.mjs',
   'scripts/services/weekly-prepress.mjs',
   'scripts/services/weekly-product.mjs',
@@ -75,6 +114,7 @@ export const REQUIRED_TRACKED_FILES = [
 
 export const REQUIRED_BUILD_WEEK_DELTA_FILES = [
   'README.md',
+  ...BUILD_WEEK_PREVIEW_FILES,
   'app/lib/merch.ts',
   'app/lib/weekly-visibility.test.ts',
   'fixtures/openai/weekly-happy-path.synthetic.json',
@@ -87,10 +127,13 @@ export const REQUIRED_BUILD_WEEK_DELTA_FILES = [
   'scripts/adapters/x-api.mjs',
   'scripts/merch-renderer-quality.test.mjs',
   'scripts/merch.mjs',
+  'scripts/owner-trend-preview.mjs',
+  'scripts/owner-trend-preview.test.mjs',
   'scripts/prompts/weekly-art-director.md',
   'scripts/prompts/weekly-trend.md',
   'scripts/prompts/weekly-visual-critic.md',
   'scripts/services/weekly-art-director.mjs',
+  'scripts/services/owner-trend-preview.mjs',
   'scripts/services/weekly-deployment.mjs',
   'scripts/services/weekly-prepress.mjs',
   'scripts/services/weekly-product.mjs',
@@ -371,6 +414,8 @@ export function evaluatePackageScripts(text) {
   const checks = {
     validJson: true,
     weeklyPrepare: scripts['merch:weekly'] === 'node scripts/weekly-merch.mjs prepare',
+    ownerTrendPreview:
+      scripts['merch:trend-preview'] === 'node scripts/owner-trend-preview.mjs',
     weeklyDemo: /weekly-merch\.mjs prepare/.test(String(scripts['merch:weekly:demo'] || '')),
     weeklyRelease: scripts['merch:weekly:release'] === 'node scripts/weekly-merch.mjs release',
     weeklyStatus: scripts['merch:weekly:status'] === 'node scripts/weekly-merch.mjs status',

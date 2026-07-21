@@ -4,7 +4,7 @@ Complete this page before submission. Do not put passwords, API keys, test custo
 
 ## Links
 
-- Live application: [https://codex-merch.vercel.app](https://codex-merch.vercel.app)
+- Public application: [https://codex-merch.vercel.app](https://codex-merch.vercel.app); replace this with the exact submitted Vercel Preview URL after the final branch deployment
 - Public YouTube demo: **TODO: URL**
 - Repository and qualified app commit: [`self-tech-labs/codex-merch` at `d44913b`](https://github.com/self-tech-labs/codex-merch/tree/d44913b0738e8537c1986bb7734b41d7a4858243); final submission SHA remains to be recorded
 - Sanitized example weekly runs: [`evidence/weekly-run-2026-W37-fixture-live-gpt56-prepared.json`](evidence/weekly-run-2026-W37-fixture-live-gpt56-prepared.json) and [`evidence/weekly-run-2026-W30-live-no-trend.json`](evidence/weekly-run-2026-W30-live-no-trend.json)
@@ -15,10 +15,10 @@ Complete this page before submission. Do not put passwords, API keys, test custo
 ## Access model
 
 - Application login required: **No**
-- Payment mode: **TODO: verify Stripe test mode on the submitted deployment; no real charge**
-- External fulfillment: **TODO: verify one Printful draft is created and `PRINTFUL_AUTO_CONFIRM=false` prevents confirmation**
+- Payment mode: **Disabled in the submitted Preview; no payment form or real charge**
+- External fulfillment: **Disabled in the submitted Preview; no Printful product or order is created by the judge path**
 - X input: **sanitized 30-post fixture by default; authorized live list read demonstrated separately**
-- Expected browser/device support: **Chromium desktop and mobile profiles, verified 8/8 locally and 8/8 against the public deployment**
+- Expected browser/device support: **Chromium desktop and mobile profiles; local suite verified, submitted Vercel Preview verification pending the final push**
 
 If the repository remains private, grant read access to both:
 
@@ -27,21 +27,17 @@ If the repository remains private, grant read access to both:
 
 ## Suggested judge path
 
-Follow steps 1–5 only after the corresponding links and Stripe test path above
-are verified. If an external step remains blocked, use the sanitized fixture and
-evidence index and do not represent it as a live integration.
-
-1. Open the live catalog and select the Build Week drop.
-2. Inspect the garment views, technique, price, variant availability, and public rights note. The current product page does not expose the private trend rationale, critic score, or run ledger.
-3. Select an available variant and enter Stripe test Checkout using Stripe’s documented test-payment method.
-4. Return to the verified success page and inspect the non-sensitive order reference.
-5. Open the separately linked sanitized example run to inspect the 30-post metadata, GPT-5.6 structured decisions, generated recipe, critic result, release gates, and duplicate-free replay. It must not include raw private X text.
+1. Open the public Preview and select **Solward Index Cotton Sweatshirt**.
+2. Inspect its catalog, front, back, pattern, technique, price, and public rights note. Confirm the action says Preview only and remains disabled.
+3. Open `/how-it-works` from the primary navigation. Follow the owner-supplied trend path and the weekly 30-post X path into their shared art-direction, renderer, critic, and prepress stages.
+4. Compare Preview and Production on that page. The former stops after a branch deployment; the latter adds explicit provider publication and commerce gates.
+5. Open the sanitized example run to inspect GPT-5.6 Structured Outputs, the selected recipe, actual-render critic, deterministic gate results, and hashes. It must not include raw private X text.
 
 ## Expected limitations
 
-- Real payments and Printful order confirmation remain disabled during judging unless the owner records separate legal, tax, shipping, and operational approval.
+- Payments, Printful synchronization, and fulfillment are outside the submitted Build Week Preview. They are implemented as fail-closed production adapters but are not claimed as live proof.
 - A weekly run may validly return `no_trend`; the sanitized successful fixture exists so the complete judged path remains reproducible.
-- The first release deployment exposes only the candidate's exact static asset URLs for Printful; automated weekly candidates are absent from storefront listings and product routes until the final `published` manifest is deployed with an available Printful mapping.
+- Owner-supplied trends are explicitly marked as such, contain no invented X evidence, and are ineligible for unattended weekly production release.
 - The local Codex Desktop automation requires Elliot’s Mac to be powered on with Codex running. The example run and video remain available if the scheduled machine is offline during judging.
 
 ## Pre-submission access check
@@ -49,7 +45,7 @@ evidence index and do not represent it as a live integration.
 - [ ] Test every link in a signed-out browser window.
 - [ ] Confirm the submitted commit contains setup instructions and sample data.
 - [ ] Confirm no secret, customer data, private post content, or inaccessible local path appears in the judge path.
-- [ ] Complete one fresh Stripe test checkout from the public deployment.
-- [ ] Confirm the deployed checkout fails closed unless all required commerce variables and approval flags are present, then verify the configured test path creates exactly one order and one Printful draft.
+- [ ] Confirm product actions and checkout remain disabled in the submitted Preview.
+- [ ] Confirm `/how-it-works` accurately distinguishes demonstrated Preview behavior from production-only integrations.
 - [ ] Verify the video is public, has audio, and is under three minutes.
 - [ ] Verify private-repository invitations from both judge accounts were accepted or are pending with correct access.

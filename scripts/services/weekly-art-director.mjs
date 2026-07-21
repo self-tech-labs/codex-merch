@@ -60,8 +60,10 @@ export async function directWeeklyGarment({
   modelOutput,
   env = process.env,
 } = {}) {
-  if (!decision?.publishEligible) {
-    throw new Error('Art direction requires a trend that passed deterministic gates');
+  if (!decision?.publishEligible && !decision?.artDirectionEligible) {
+    throw new Error(
+      'Art direction requires a research-approved trend or an explicit preview-only art-direction decision',
+    );
   }
 
   if (modelOutput) {

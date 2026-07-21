@@ -9,6 +9,7 @@ import {
   isPurchasableProduct,
   type MerchProduct,
 } from '~/lib/merch';
+import {useStorefrontMode} from '~/lib/storefront-mode';
 
 export const meta: Route.MetaFunction = () => {
   return [
@@ -60,14 +61,17 @@ function StoreRail({
   categories: string[];
   selectedCategory: string | null;
 }) {
+  const storefrontMode = useStorefrontMode();
+  const preview = storefrontMode === 'preview';
+
   return (
     <aside className="store-rail" aria-label="Filters">
       <Link className="store-mark" to="/" aria-label="Codex Meme Merch home">
         <span>Codex</span>
         <span>Meme Merch</span>
       </Link>
-      <Link className="rail-action" to="/cart">
-        Cart
+      <Link className="rail-action" to="/how-it-works">
+        How it works
       </Link>
       <nav className="rail-nav" aria-label="Product categories">
         <Link className={!selectedCategory ? 'active' : ''} to="/">
@@ -84,12 +88,13 @@ function StoreRail({
         ))}
       </nav>
       <div className="rail-status">
-        <span>Manifest catalog</span>
-        <span>Stripe checkout</span>
+        <span>{preview ? 'Prototype preview' : 'Production storefront'}</span>
+        <span>{preview ? 'Checkout disabled' : 'Commerce server-gated'}</span>
       </div>
       <p className="rail-note">
-        Drops are created from Codex conversations, reviewed for rights, then
-        routed to the configured production provider after checkout.
+        {preview
+          ? 'Browse production-intent mockups. This build cannot create a payment or production order.'
+          : 'Product and checkout eligibility are verified individually by server-side commerce gates.'}
       </p>
     </aside>
   );

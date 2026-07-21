@@ -45,13 +45,13 @@ Never paste secret values into Git, Codex chat, logs, screenshots, or this docum
 - [ ] Confirm OpenAI API billing, GPT-5.6 access, image-model access, and sufficient rate limits.
 - [ ] Confirm `X_BEARER_TOKEN` can call the list-post endpoint for list `2067819170989854863` and that use of the selected posts is authorized.
 - [ ] Rotate the invalid `PRINTFUL_TOKEN`; confirm `PRINTFUL_STORE_ID`, Manual order/API store access, billing, product availability, and shipping regions.
-- [ ] Create or verify Stripe test-mode keys, signed webhook secret, approved shipping configuration, and a safe judge checkout path. Confirm the deployed Stripe account is test mode before recording or inviting judges.
-- [ ] Provision separate Neon staging/production databases, set `DATABASE_URL`, and run migrations.
-- [ ] Create Inngest staging/production environments and configure event/signing keys and the served function URL.
+- [ ] For a later production pilot, create or verify Stripe test-mode keys, a signed webhook, and approved shipping configuration. These are not required by the Build Week Preview.
+- [ ] For a later production pilot, provision separate Neon staging/production databases and run migrations.
+- [ ] For a later production pilot, create Inngest staging/production environments and configure event/signing keys and the served function URL.
 - [ ] Verify `codex-merch` is linked to this Git repository under Vercel scope `ritsl`; install a least-privilege `VERCEL_TOKEN`; configure `MERCH_DEPLOY_PROVIDER=vercel`, `MERCH_VERCEL_SCOPE`, `MERCH_VERCEL_PROJECT_ID`, production environment variables, canonical `PUBLIC_SITE_URL`, and the checkout WAF rule.
 - [x] `.gitignore` excludes `.env.*` variants while retaining `.env.example`; verify no secret-bearing env file is tracked before submission.
 - [ ] Supply merchant contact and reviewed shipping, returns, privacy, terms, and contact policy text in the deployment environment.
-- [ ] Keep `CHECKOUT_ENABLED=false` until Stripe, Neon, Inngest, Printful, policy, legal, tax, and shipping staging proof passes; only then set it to `true` for the submitted test deployment.
+- [x] Keep `CHECKOUT_ENABLED=false` for the submitted Preview. Enable it only in a later production environment after Stripe, Neon, Inngest, Printful, policy, legal, tax, and shipping staging proof passes.
 
 Expected secret/configuration names include:
 
@@ -67,6 +67,7 @@ PRINTFUL_TOKEN
 PRINTFUL_STORE_ID
 PRINTFUL_AUTO_CONFIRM
 PUBLIC_SITE_URL
+STOREFRONT_MODE
 MERCH_DEPLOY_PROVIDER
 MERCH_VERCEL_SCOPE
 MERCH_VERCEL_PROJECT_ID
@@ -88,13 +89,24 @@ STRIPE_AUTOMATIC_TAX
 INNGEST_SERVE_ORIGIN
 ```
 
-At the 2026-07-20 local audit, the X bearer token, Stripe secrets, database URL, and Inngest keys were not available, and the existing Printful token returned `401`. Treat live-list ingestion, provider release, and checkout as blocked until those owner-supplied credentials are installed locally/deployed and reverified without printing them.
+Secret presence is not production proof. Treat provider publication and checkout
+as outside the Build Week Preview until each credential is verified in its
+target environment and the legal, tax, shipping, webhook, migration, retry, and
+rollback checks pass. Do not weaken Preview safety because a variable happens
+to be present.
 
-## Staging proof
+## Build Week Preview proof
 
 - [ ] Run the sanitized 30-post fixture and one authorized live-list read.
 - [ ] Show a `no_trend` run and a successful candidate run.
 - [ ] Run catalog validation, unit tests, database integration tests, typecheck, lint, build, and browser tests in CI.
+- [ ] Trigger one owner-supplied trend from ordinary Codex chat and preserve its truthful provenance, generated panels, critic result, prepress result, and visible catalog candidate.
+- [ ] Push the exact judged commit to a non-production branch, record the Vercel Preview URL and deployment SHA, then test signed out on desktop and mobile.
+- [ ] Verify the Preview exposes `/how-it-works`, keeps every product non-purchasable, and does not create a Stripe session, Printful object, order, or Inngest event.
+- [ ] Record the exact tested commands and final SHA in `evidence/README.md`.
+
+## Later production-pilot proof
+
 - [ ] Run the release command once in staging with its explicit `--release` flag, weekly release kill switch, pilot approval, non-default branch, clean expected worktree, public HTTPS URL, and `PRINTFUL_AUTO_CONFIRM=false`.
 - [ ] Verify both deployments, all public asset URLs, one Printful product, complete variant mappings, provider mockups, and one published catalog entry.
 - [ ] Complete a Stripe test payment and verify exactly one Neon order, one processed webhook event, one Inngest run, and one Printful draft.

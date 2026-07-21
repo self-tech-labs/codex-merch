@@ -56,6 +56,21 @@ export function assertPilotPublicationAllowed(selected, env = process.env) {
   }
 }
 
+export function assertProviderMutationAllowed(selected, action = 'provider mutation') {
+  const blocked = selected.filter(
+    (product) =>
+      product.automation?.previewOnly === true ||
+      product.automation?.releaseEligible === false,
+  );
+  if (blocked.length) {
+    throw new Error(
+      `${action} is disabled for preview-only products: ${blocked
+        .map((product) => product.slug)
+        .join(', ')}`,
+    );
+  }
+}
+
 export const allowedTechniques = new Set([
   'DTG',
   'DTFlex',
@@ -1360,7 +1375,7 @@ async function runComposePrintFiles(args) {
   printJson(plans.map(({product}) => ({slug: product.slug, printFiles: product.assets.printFiles})));
 }
 
-async function composeProductPrintFiles(product, baseProduct) {
+export async function composeProductPrintFiles(product, baseProduct) {
   const production = productProduction(product);
   if (production.technique === 'All-Over Cotton') {
     return composeAopCottonProductFiles(product, baseProduct);
@@ -2392,6 +2407,7 @@ async function runMockups(args) {
   const products = await readProducts();
   const bases = await readBaseProducts();
   const selected = selectProducts(products, args);
+  if (!dryRun) assertProviderMutationAllowed(selected, 'Printful mockup generation');
   const payloads = selected.map((product) => {
     const base = baseForProduct(bases, product);
     const provider = providerForProduction(productProduction(product).provider);
@@ -2888,6 +2904,7 @@ async function runPrintfulUpsert(args) {
   const products = await readProducts();
   const bases = await readBaseProducts();
   const selected = selectProducts(products, args);
+  if (!dryRun) assertProviderMutationAllowed(selected, 'Printful product synchronization');
   const jobs = selected.map((product) => {
     const base = baseForProduct(bases, product);
     const ref = product.providerRefs.printful || {};
@@ -3192,6 +3209,7 @@ async function runPublish(args) {
   const bases = await readBaseProducts();
   const selected = selectProducts(products, args);
   assertPilotPublicationAllowed(selected);
+  assertProviderMutationAllowed(selected, 'Catalog publication');
 
   for (const product of selected) {
     if (approve) {

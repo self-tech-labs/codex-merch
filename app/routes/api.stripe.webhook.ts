@@ -5,11 +5,19 @@ import {
   finishStripeEvent,
   recordStripeEvent,
 } from '~/lib/orders.server';
-import {constructStripeEvent} from '~/lib/stripe.server';
+import {
+  assertProductionStorefrontMode,
+  constructStripeEvent,
+} from '~/lib/stripe.server';
 import {processStripeEvent} from '~/lib/stripe-webhook.server';
 
 export async function action({context, request}: Route.ActionArgs) {
   const env = getEnv(context);
+  try {
+    assertProductionStorefrontMode(env);
+  } catch {
+    throw new Response('Stripe webhooks are disabled', {status: 503});
+  }
   const rawBody = await request.text();
   const signature = request.headers.get('stripe-signature');
   if (!signature) throw new Response('Missing Stripe signature', {status: 400});

@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
+  BUILD_WEEK_PREVIEW_FILES,
   BUILD_WEEK_BASELINE_COMMIT,
   BUILD_WEEK_PROVENANCE_END,
   BUILD_WEEK_PROVENANCE_START,
@@ -47,6 +48,7 @@ const validPackage = JSON.stringify({
     build: 'react-router build',
     'test:e2e': 'playwright test',
     'merch:weekly': 'node scripts/weekly-merch.mjs prepare',
+    'merch:trend-preview': 'node scripts/owner-trend-preview.mjs',
     'merch:weekly:demo':
       'node scripts/weekly-merch.mjs prepare --fixture fixtures/x/codex-team-meme-30.synthetic.json --offline',
     'merch:weekly:release': 'node scripts/weekly-merch.mjs release',
@@ -125,10 +127,29 @@ test('required artifacts cover weekly runtime, prompts, schemas, fixtures, right
     'scripts/prompts/weekly-visual-critic.md',
     'scripts/services/weekly-run-store.mjs',
     'scripts/weekly-merch.mjs',
+    'scripts/owner-trend-preview.mjs',
+    'scripts/owner-trend-preview.test.mjs',
+    'scripts/services/owner-trend-preview.mjs',
+    'app/routes/how-it-works.tsx',
+    'app/lib/storefront-mode.tsx',
+    'docs/build-week/evidence/owner-trend-preview-live-gpt56-dry-run.json',
+    'merch/products.json',
   ]) {
     assert.equal(REQUIRED_TRACKED_FILES.includes(file), true, file);
   }
   assert.equal(CORE_WEEKLY_FILES.includes('scripts/adapters/x-api.mjs'), true);
+  assert.equal(
+    BUILD_WEEK_PREVIEW_FILES.includes(
+      'assets/mockups/the-sol-shines-cotton-sweatshirt-catalog.png',
+    ),
+    true,
+  );
+  assert.equal(BUILD_WEEK_PREVIEW_FILES.includes('app/lib/fulfillment.server.ts'), true);
+  assert.equal(
+    BUILD_WEEK_PREVIEW_FILES.includes('app/routes/api.stripe.webhook.ts'),
+    true,
+  );
+  assert.equal(BUILD_WEEK_PREVIEW_FILES.includes('app/routes/how-it-works.tsx'), true);
 });
 
 test('runtime GPT-5.6 contract pins requests and rejects overrides without source counting', () => {

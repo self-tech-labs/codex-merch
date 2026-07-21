@@ -38,6 +38,7 @@
     "merch:printful:order:dry-run": "node scripts/merch.mjs printful:order:dry-run",
     "merch:publish": "node scripts/merch.mjs publish",
     "merch:weekly": "node scripts/weekly-merch.mjs prepare",
+    "merch:trend-preview": "node scripts/owner-trend-preview.mjs",
     "merch:weekly:demo": "node scripts/weekly-merch.mjs prepare --fixture fixtures/x/codex-team-meme-30.synthetic.json --offline",
     "merch:weekly:release": "node scripts/weekly-merch.mjs release",
     "merch:weekly:status": "node scripts/weekly-merch.mjs status",

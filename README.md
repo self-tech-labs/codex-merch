@@ -1,9 +1,10 @@
 # Codex Merch
 
-Production-oriented React Router storefront and garment workflow. The catalog
-is owned by `merch/products.json`; Stripe Checkout collects payment; Neon stores
-immutable order snapshots; Inngest runs durable fulfillment; Printful produces
-the order.
+Codex-operated creative studio and React Router storefront. The catalog is
+owned by `merch/products.json`; GPT-5.6 supplies bounded cultural and visual
+judgment; deterministic code renders and validates production files. Optional
+production adapters connect Stripe, Neon, Inngest, and Printful after an owner
+enables every commerce gate.
 
 Legacy non-draft products may be shown as no-index previews. Products created
 by the weekly automation remain absent from catalog listings and product routes
@@ -26,6 +27,54 @@ npm run test:e2e
 ```
 
 Database integration coverage is enabled when `TEST_DATABASE_URL` is set.
+
+## Build Week Preview mode
+
+The submitted application deliberately runs as a non-commerce Preview. Every
+visible drop is inspectable, but generated candidates cannot be added to the
+cart and `/api/checkout` still fails closed. This keeps the judged path focused
+on the creative system and prevents a prototype from implying that payments,
+tax, policy, or fulfillment operations have been approved.
+
+From Codex Desktop, the owner can start the complete creative path with a plain
+request such as:
+
+> Create a preview merch for the trend “The Sol Shines.”
+
+The repository-owned `codex-merch-weekly` skill recognizes this as a trusted,
+owner-supplied trend. It records that provenance instead of fabricating X
+evidence, then converges on the same art-direction, deterministic composition,
+visual-critic, prepress, catalog, and verification stages used by the weekly
+workflow. Once its branch is pushed, Vercel builds the changed manifest and
+assets into a shareable Preview deployment. The included **Solward Index
+Cotton Sweatshirt** is the reference result of that path.
+
+The skill invokes the same inspectable CLI that a judge can run directly:
+
+```bash
+# Plan three GPT-5.6 directions without changing the catalog
+npm run merch:trend-preview -- --trend "Compiler Summer" \
+  --context "A team joke about fast builds arriving with warm weather" --dry-run
+
+# Render, critique, prepress-check, and persist a Preview candidate
+npm run merch:trend-preview -- --trend "The Sol Shines"
+```
+
+The normalized owner input is hashed, so an identical retry resolves to the
+same candidate instead of creating a duplicate. The command never calls X,
+Printful, Stripe, Neon, Inngest, Git, or Vercel; Codex handles a requested
+non-production branch push only after the local result and repository checks
+pass. `--context` can add a short owner-supplied clarification when the premise
+is otherwise ambiguous; it intentionally becomes part of the idempotency key.
+
+Production adds a second intake: a weekly Codex Desktop automation requests the
+latest 30 posts from the configured X list and lets GPT-5.6 select one recurring
+trend or `no_trend`. It then joins the same garment pipeline. Enabling real
+sales requires no storefront rewrite, but it is intentionally more than a
+single mode toggle: valid provider credentials, a published product with mapped
+variants, database migrations, signed webhooks, reviewed merchant policies,
+shipping/tax approval, and all fail-closed environment flags must be present.
+The public `/how-it-works` page documents both modes and the exact boundary.
 
 ## Build Week: weekly signal studio
 
@@ -135,16 +184,18 @@ checklist. The credential-free sample data is documented in
 
 ## Commerce infrastructure
 
-1. Provision separate Neon databases or branches for staging and production.
-2. Set `DATABASE_URL` and run `npm run db:migrate` once per environment.
-3. Install the Inngest Vercel integration and set its event/signing keys.
-4. Configure Stripe Checkout and a signed webhook at `/api/stripe/webhook`.
-5. Configure a valid Printful Manual order/API store token.
-6. Keep `PRINTFUL_AUTO_CONFIRM=false` through the pilot.
-7. Configure a Vercel WAF fixed-window rule for `POST /api/checkout`: 10
+1. Keep `STOREFRONT_MODE=preview` and `CHECKOUT_ENABLED=false` in the submitted Build Week Preview.
+2. Provision separate Neon databases or branches for staging and production.
+3. Set `DATABASE_URL` and run `npm run db:migrate` once per environment.
+4. Install the Inngest Vercel integration and set its event/signing keys.
+5. Configure Stripe Checkout and a signed webhook at `/api/stripe/webhook`.
+6. Configure a valid Printful Manual order/API store token.
+7. Keep `PRINTFUL_AUTO_CONFIRM=false` through the pilot.
+8. Configure a Vercel WAF fixed-window rule for `POST /api/checkout`: 10
    requests per IP per 60 seconds. Do not apply this rule to Stripe or Inngest
    webhook routes.
-8. Set reviewed policy/contact, tax, country, and shipping values, then set
+9. Set reviewed policy/contact, tax, country, and shipping values, then set
+   `STOREFRONT_MODE=production`,
    `STOREFRONT_LEGAL_APPROVED=true`,
    `STOREFRONT_TAX_SHIPPING_APPROVED=true`, and finally
    `CHECKOUT_ENABLED=true`.

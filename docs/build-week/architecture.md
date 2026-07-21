@@ -1,32 +1,55 @@
 # Architecture and model roles
 
-## Two-phase weekly workflow
+## Two intake modes, one creative pipeline
 
 ```mermaid
 flowchart TD
-    A["Codex Desktop scheduled task"] --> B["Prepare: npm run merch:weekly"]
-    B --> C["X list: latest 30 authorized posts or fixture"]
-    C --> D["Private immutable normalized signal snapshot"]
-    D --> E["One GPT-5.6 trend-analysis Structured Output"]
-    E --> G{"Deterministic trend and rights gates pass?"}
-    G -->|"No"| H["Successful no_trend report; no release"]
-    G -->|"Yes"| I["GPT-5.6 art director: three garment recipes"]
-    I --> J["Deterministic concept board and panel compositor"]
-    J --> K["Prepress plus GPT-5.6 actual-render critic; at most two candidates"]
-    K --> L["Local candidate assets, manifest, hashes, and catalog validation"]
-    L --> M["Release plan; no external writes"]
-    M -->|"Explicit --release plus kill switch and release preflight"| N["Commit and push hidden candidate; deploy fetchable assets"]
-    N --> O["Verify public asset URLs"]
-    O --> P["Idempotent Printful sync and provider mockups"]
-    P --> Q["OpenAI image-model photoshoot and final quality/provider gates"]
-    Q --> R["Single manifest status change to published"]
-    R --> S["Tests, typecheck, lint, and build"]
-    S --> T["Final commit, push, deployment, and public product check"]
-    T -.-> U["Separate configured user purchase: Stripe Checkout"]
+    A["Production: Codex Desktop weekly automation"] --> B["X list: latest 30 authorized posts"]
+    B --> C["Private immutable normalized signal snapshot"]
+    C --> D["GPT-5.6 trend Structured Output"]
+    D --> E{"Deterministic recurrence, novelty, and rights gates"}
+    E -->|"No"| F["Successful no_trend; no catalog mutation"]
+    E -->|"Yes"| I["Normalized trend contract"]
+    G["Preview: owner tells Codex a trusted trend"] --> H["Owner-supplied provenance; no invented X evidence"]
+    H --> I
+    I --> J["GPT-5.6 art director: three garment recipes"]
+    J --> K["Deterministic concept board and six-panel compositor"]
+    K --> L["Prepress plus GPT-5.6 actual-render critic; at most two candidates"]
+    L --> M["Generated candidate assets, manifest, hashes, and repository checks"]
+    M --> N["Build Week: branch push and Vercel Preview; checkout disabled"]
+    M -->|"Production only: explicit --release plus all gates"| O["Commit and push hidden candidate; deploy fetchable assets"]
+    O --> P["Verify public asset URLs"]
+    P --> Q["Idempotent Printful sync and provider mockups"]
+    Q --> R["OpenAI image-model photoshoot and final quality/provider gates"]
+    R --> S["Single manifest status change to published"]
+    S --> T["Tests, typecheck, lint, build, final deployment check"]
+    T -.-> U["Separately configured purchase: Stripe Checkout"]
     U --> V["Neon order snapshot and signed Stripe webhook"]
     V --> W["Inngest durable fulfillment"]
     W --> X["Idempotent Printful order draft"]
 ```
+
+The Build Week judge path stops at the Vercel Preview node. A trusted trend is
+not represented as X research: its provenance is recorded as owner supplied,
+its evidence list is empty, and it is ineligible for the unattended weekly
+release path. The generated product remains visible with preview semantics but
+is not `published`, has no sellable Printful mapping, and cannot reach Stripe.
+This demonstrates the complete creative result without pretending that the
+commerce stack has been operationally approved.
+
+Both intake modes deliberately meet at a normalized trend contract. Everything
+after that join—three directions, bounded selection, panel composition,
+actual-render critique, prepress, hashes, catalog update, and repository
+verification—is shared. The Preview is therefore not a separate mock UI; it is
+the production creative pipeline with external commerce mutations withheld.
+
+`STOREFRONT_MODE=preview` is enforced in both presentation and server commerce
+configuration. It disables product checkout actions and makes checkout-session
+creation reject before Stripe. Changing it to the exact value `production` only
+opens the first gate: the product must also be `published` with a valid Printful
+sync mapping, and `CHECKOUT_ENABLED`, database, Stripe, Inngest, Printful,
+policy, legal, tax, and shipping checks must all pass. Unknown or missing mode
+values resolve to Preview.
 
 The repository currently builds its catalog and merch assets into the deployment. That makes two deployments intentional:
 

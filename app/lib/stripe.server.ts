@@ -57,6 +57,7 @@ export function stripeClient(env: AppEnv) {
 }
 
 export function assertCheckoutConfiguration(env: AppEnv) {
+  assertProductionStorefrontMode(env);
   requireEnv(env, [
     'STRIPE_SECRET_KEY',
     'DATABASE_URL',
@@ -91,6 +92,12 @@ export function assertCheckoutConfiguration(env: AppEnv) {
     ) {
       throw new Error('Production checkout requires legal and tax/shipping approval');
     }
+  }
+}
+
+export function assertProductionStorefrontMode(env: AppEnv) {
+  if (env.STOREFRONT_MODE !== 'production') {
+    throw new Error('Storefront operations require explicit production storefront mode');
   }
 }
 

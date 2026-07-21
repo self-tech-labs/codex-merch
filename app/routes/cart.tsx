@@ -7,6 +7,7 @@ import {
   money,
   useCart,
 } from '~/lib/cart';
+import {useStorefrontMode} from '~/lib/storefront-mode';
 
 export const meta: Route.MetaFunction = () => {
   return [
@@ -17,6 +18,8 @@ export const meta: Route.MetaFunction = () => {
 
 export default function Cart() {
   const {displayLines, lines, removeLine, subtotal, updateQuantity} = useCart();
+  const storefrontMode = useStorefrontMode();
+  const preview = storefrontMode === 'preview';
   const currency = displayLines[0]?.product.commerce.currency || 'USD';
   const fulfillmentProvider = displayLines[0]?.product.production.provider || 'printful';
   const fulfillmentLabel =
@@ -97,24 +100,39 @@ export default function Cart() {
                 <dd>{fulfillmentLabel}</dd>
               </div>
             </dl>
-            <Form action="/api/checkout" method="post">
-              <input
-                type="hidden"
-                name="cart"
-                value={checkoutCartValue(lines)}
-              />
-              <button disabled={checkingOut} type="submit">
-                {checkingOut ? 'Opening secure checkout…' : 'Checkout with Stripe'}
+            {preview ? (
+              <button disabled type="button">
+                Checkout disabled in preview
               </button>
-            </Form>
+            ) : (
+              <Form action="/api/checkout" method="post">
+                <input
+                  type="hidden"
+                  name="cart"
+                  value={checkoutCartValue(lines)}
+                />
+                <button disabled={checkingOut} type="submit">
+                  {checkingOut
+                    ? 'Opening secure checkout…'
+                    : 'Checkout with Stripe'}
+                </button>
+              </Form>
+            )}
             <p>
-              Taxes and shipping are finalized in Stripe Checkout when configured.
+              {preview
+                ? 'This deployment cannot create a payment or production order.'
+                : 'Taxes and shipping are finalized in Stripe Checkout when configured.'}
             </p>
           </aside>
         </div>
       ) : (
         <section className="cart-empty">
           <h2>Your cart is empty.</h2>
+          <p>
+            {preview
+              ? 'Prototype preview — checkout is disabled in this public build.'
+              : 'Checkout availability is determined by server-side product and commerce gates.'}
+          </p>
           <Link to="/">Browse drops</Link>
         </section>
       )}

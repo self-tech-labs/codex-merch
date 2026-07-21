@@ -139,6 +139,7 @@ test('checkout enforces aggregate quantities, availability, currencies, and uniq
 test('production checkout configuration fails closed', () => {
   const configured: AppEnv = {
     NODE_ENV: 'production',
+    STOREFRONT_MODE: 'production',
     CHECKOUT_ENABLED: 'true',
     STRIPE_SECRET_KEY: 'sk_test',
     DATABASE_URL: 'postgres://test',
@@ -161,6 +162,32 @@ test('production checkout configuration fails closed', () => {
   configured.STOREFRONT_TERMS_POLICY = 'Reviewed terms policy';
   configured.STOREFRONT_CONTACT_POLICY = 'Reviewed contact policy';
   assert.doesNotThrow(() => assertCheckoutConfiguration(configured));
+});
+
+test('checkout requires explicit production storefront mode', () => {
+  const configured: AppEnv = {
+    STOREFRONT_MODE: 'production',
+    STRIPE_SECRET_KEY: 'sk_test',
+    DATABASE_URL: 'postgres://test',
+    INNGEST_EVENT_KEY: 'event',
+    INNGEST_SIGNING_KEY: 'signing',
+    PRINTFUL_TOKEN: 'printful',
+    PRINTFUL_STORE_ID: 'store',
+  };
+
+  assert.doesNotThrow(() => assertCheckoutConfiguration(configured));
+  assert.throws(
+    () => assertCheckoutConfiguration({...configured, STOREFRONT_MODE: 'preview'}),
+    /explicit production storefront mode/,
+  );
+  assert.throws(
+    () => assertCheckoutConfiguration({...configured, STOREFRONT_MODE: undefined}),
+    /explicit production storefront mode/,
+  );
+  assert.throws(
+    () => assertCheckoutConfiguration({...configured, STOREFRONT_MODE: 'PRODUCTION'}),
+    /explicit production storefront mode/,
+  );
 });
 
 test('Printful payload uses immutable sync variants and no print files', () => {
@@ -208,7 +235,17 @@ test('Printful draft creation and confirmation are idempotent', async () => {
     },
     customer_details: {email: 'test@example.com'},
   } as unknown as Stripe.Checkout.Session;
-  const env: AppEnv = {PRINTFUL_TOKEN: 'token', PRINTFUL_STORE_ID: 'store'};
+  const env: AppEnv = {
+    NODE_ENV: 'production',
+    STOREFRONT_MODE: 'production',
+    CHECKOUT_ENABLED: 'false',
+    STRIPE_SECRET_KEY: 'stripe',
+    DATABASE_URL: 'postgres://test',
+    INNGEST_EVENT_KEY: 'event',
+    INNGEST_SIGNING_KEY: 'signing',
+    PRINTFUL_TOKEN: 'token',
+    PRINTFUL_STORE_ID: 'store',
+  };
   const baseOrder = {
     providerOrderId: null,
     fulfillmentStatus: 'processing',
@@ -265,6 +302,42 @@ test('Printful draft creation and confirmation are idempotent', async () => {
       requests.filter((request) => request.url.endsWith('/confirm')).length,
       1,
     );
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test('preview mode blocks Printful fulfillment before any provider request', async () => {
+  const originalFetch = globalThis.fetch;
+  let requests = 0;
+  globalThis.fetch = async () => {
+    requests += 1;
+    throw new Error('Preview mode must not reach Printful');
+  };
+
+  try {
+    await assert.rejects(
+      createOrFindPrintfulOrder({
+        env: {
+          STOREFRONT_MODE: 'preview',
+          PRINTFUL_TOKEN: 'token',
+          PRINTFUL_STORE_ID: 'store',
+        },
+        items: [] as any,
+        order: {providerOrderId: null} as Order,
+        session: {id: 'cs_preview_blocked'} as Stripe.Checkout.Session,
+      }),
+      /explicit production storefront mode/,
+    );
+    await assert.rejects(
+      confirmPrintfulOrder('99', {
+        STOREFRONT_MODE: 'preview',
+        PRINTFUL_TOKEN: 'token',
+        PRINTFUL_STORE_ID: 'store',
+      }),
+      /explicit production storefront mode/,
+    );
+    assert.equal(requests, 0);
   } finally {
     globalThis.fetch = originalFetch;
   }
