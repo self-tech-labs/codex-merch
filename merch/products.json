@@ -1344,5 +1344,418 @@
       "approvedBy": "elliot",
       "notes": ""
     }
+  },
+  {
+    "id": "drop-005-the-sol-shines-cotton-sweatshirt",
+    "slug": "the-sol-shines-cotton-sweatshirt",
+    "title": "Solward Index Cotton Sweatshirt",
+    "workflow": {
+      "status": "generated",
+      "updatedAt": "2026-07-21T06:23:24Z"
+    },
+    "category": "Codex",
+    "description": "A warm all-over cotton sweatshirt that turns the Sol inside joke into a quiet brightness index: angular contour fields, amber signal paths, and concentric sleeve systems.",
+    "meme": {
+      "source": "Owner-supplied trend: The Sol Shines",
+      "brief": "All-over cotton sweatshirt inspired by the owner-supplied team wordplay The Sol Shines. Translate the optimistic model-weather joke into a premium garment system: warm daylight field, measured brightness contours, restrained identity, and intentional ring-based sleeves. Avoid literal sun illustration and poster logic.",
+      "rightsNote": "Owner-supplied wordplay rendered as an original abstract apparel system. No official logos, company marks, model logos, copied post language, screenshots, usernames, likenesses, or protected product layouts."
+    },
+    "signals": {
+      "profile": "owner-supplied-trend",
+      "queries": [],
+      "sources": []
+    },
+    "commerce": {
+      "handle": "the-sol-shines-cotton-sweatshirt",
+      "unitAmount": 8800,
+      "currency": "USD",
+      "tags": [
+        "codex",
+        "sweatshirt",
+        "all-over-cotton"
+      ],
+      "variants": [
+        {
+          "id": "the-sol-shines-cotton-sweatshirt:33963",
+          "sku": "THE_SOL_SHINES_COTTON_SWEATSHIRT_WHITE_2XS",
+          "color": "White",
+          "size": "2XS",
+          "providerVariantId": 33963,
+          "availableForSale": true,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "2XS"
+            }
+          ]
+        },
+        {
+          "id": "the-sol-shines-cotton-sweatshirt:33964",
+          "sku": "THE_SOL_SHINES_COTTON_SWEATSHIRT_WHITE_XS",
+          "color": "White",
+          "size": "XS",
+          "providerVariantId": 33964,
+          "availableForSale": true,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "XS"
+            }
+          ]
+        },
+        {
+          "id": "the-sol-shines-cotton-sweatshirt:33965",
+          "sku": "THE_SOL_SHINES_COTTON_SWEATSHIRT_WHITE_S",
+          "color": "White",
+          "size": "S",
+          "providerVariantId": 33965,
+          "availableForSale": true,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "S"
+            }
+          ]
+        },
+        {
+          "id": "the-sol-shines-cotton-sweatshirt:33966",
+          "sku": "THE_SOL_SHINES_COTTON_SWEATSHIRT_WHITE_M",
+          "color": "White",
+          "size": "M",
+          "providerVariantId": 33966,
+          "availableForSale": true,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "M"
+            }
+          ]
+        },
+        {
+          "id": "the-sol-shines-cotton-sweatshirt:33967",
+          "sku": "THE_SOL_SHINES_COTTON_SWEATSHIRT_WHITE_L",
+          "color": "White",
+          "size": "L",
+          "providerVariantId": 33967,
+          "availableForSale": true,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "L"
+            }
+          ]
+        },
+        {
+          "id": "the-sol-shines-cotton-sweatshirt:33968",
+          "sku": "THE_SOL_SHINES_COTTON_SWEATSHIRT_WHITE_XL",
+          "color": "White",
+          "size": "XL",
+          "providerVariantId": 33968,
+          "availableForSale": true,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "XL"
+            }
+          ]
+        },
+        {
+          "id": "the-sol-shines-cotton-sweatshirt:33969",
+          "sku": "THE_SOL_SHINES_COTTON_SWEATSHIRT_WHITE_2XL",
+          "color": "White",
+          "size": "2XL",
+          "providerVariantId": 33969,
+          "availableForSale": true,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "2XL"
+            }
+          ]
+        },
+        {
+          "id": "the-sol-shines-cotton-sweatshirt:33970",
+          "sku": "THE_SOL_SHINES_COTTON_SWEATSHIRT_WHITE_3XL",
+          "color": "White",
+          "size": "3XL",
+          "providerVariantId": 33970,
+          "availableForSale": true,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "3XL"
+            }
+          ]
+        },
+        {
+          "id": "the-sol-shines-cotton-sweatshirt:33971",
+          "sku": "THE_SOL_SHINES_COTTON_SWEATSHIRT_WHITE_4XL",
+          "color": "White",
+          "size": "4XL",
+          "providerVariantId": 33971,
+          "availableForSale": true,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "4XL"
+            }
+          ]
+        },
+        {
+          "id": "the-sol-shines-cotton-sweatshirt:33972",
+          "sku": "THE_SOL_SHINES_COTTON_SWEATSHIRT_WHITE_5XL",
+          "color": "White",
+          "size": "5XL",
+          "providerVariantId": 33972,
+          "availableForSale": true,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "5XL"
+            }
+          ]
+        },
+        {
+          "id": "the-sol-shines-cotton-sweatshirt:33973",
+          "sku": "THE_SOL_SHINES_COTTON_SWEATSHIRT_WHITE_6XL",
+          "color": "White",
+          "size": "6XL",
+          "providerVariantId": 33973,
+          "availableForSale": true,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "6XL"
+            }
+          ]
+        }
+      ]
+    },
+    "production": {
+      "provider": "printful",
+      "baseProduct": "printful-aop-cotton-sweatshirt-white",
+      "technique": "All-Over Cotton",
+      "textLayer": "SOLWARD",
+      "placements": [
+        {
+          "area": "front",
+          "file": "assets/print/the-sol-shines-cotton-sweatshirt-front_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "back",
+          "file": "assets/print/the-sol-shines-cotton-sweatshirt-back_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "left_sleeve",
+          "file": "assets/print/the-sol-shines-cotton-sweatshirt-left_sleeve_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "right_sleeve",
+          "file": "assets/print/the-sol-shines-cotton-sweatshirt-right_sleeve_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "label_panel",
+          "file": "assets/print/the-sol-shines-cotton-sweatshirt-label_panel_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "label_inside",
+          "file": "assets/print/the-sol-shines-cotton-sweatshirt-label_inside_dtfabric.png",
+          "width": 375,
+          "height": 150
+        }
+      ]
+    },
+    "providerRefs": {
+      "printful": {
+        "productId": null,
+        "mockupTaskKey": null,
+        "variants": []
+      }
+    },
+    "assets": {
+      "artwork": "assets/artwork/the-sol-shines-cotton-sweatshirt-concept.png",
+      "printFiles": [
+        {
+          "placement": "front",
+          "path": "assets/print/the-sol-shines-cotton-sweatshirt-front_dtfabric.png"
+        },
+        {
+          "placement": "back",
+          "path": "assets/print/the-sol-shines-cotton-sweatshirt-back_dtfabric.png"
+        },
+        {
+          "placement": "left_sleeve",
+          "path": "assets/print/the-sol-shines-cotton-sweatshirt-left_sleeve_dtfabric.png"
+        },
+        {
+          "placement": "right_sleeve",
+          "path": "assets/print/the-sol-shines-cotton-sweatshirt-right_sleeve_dtfabric.png"
+        },
+        {
+          "placement": "label_panel",
+          "path": "assets/print/the-sol-shines-cotton-sweatshirt-label_panel_dtfabric.png"
+        },
+        {
+          "placement": "label_inside",
+          "path": "assets/print/the-sol-shines-cotton-sweatshirt-label_inside_dtfabric.png"
+        }
+      ],
+      "mockups": [
+        "assets/mockups/the-sol-shines-cotton-sweatshirt-catalog.png",
+        "assets/mockups/the-sol-shines-cotton-sweatshirt-front.png",
+        "assets/mockups/the-sol-shines-cotton-sweatshirt-back.png",
+        "assets/mockups/the-sol-shines-cotton-sweatshirt-patterns.png"
+      ]
+    },
+    "prompts": [
+      "Flat six-placement all-over cotton sweatshirt system on a warm ivory field. Use three sparse nested angular contour outlines and one short amber accent path. Center-monument front with centered primary typography and geometry on one central axis; repeat the contour family more quietly on the back. Both sleeves use three concentric rings, a crosshair, and a mirrored accent notch. Keep the label panel and inside label restrained with supplied local text. Exact text is rendered locally."
+    ],
+    "workflowNotes": [
+      "Trend premise was supplied directly by the owner on 2026-07-21; no X post records were fabricated or attached.",
+      "This manual candidate is not eligible for the automated weekly release path without separate live provenance and explicit release approval.",
+      "Concept board generated from the accepted garment spec with Codex built-in image generation; deterministic local composition owns production panels and exact text."
+    ],
+    "artDirector": {
+      "mode": "supervised-aop-cotton",
+      "aopSpec": {
+        "garmentFirst": true,
+        "brandLabel": "DAYSHIFT STUDIO",
+        "provenanceLine": "DAYSHIFT / SERIES 01",
+        "layout": "center-monument",
+        "basePattern": "status-isobar-map",
+        "palette": {
+          "fabric": "#F3E7C3",
+          "ink": "#15120D",
+          "muted": "#B4A26D",
+          "accent": "#A64D00"
+        },
+        "front": {
+          "primaryText": "SOLWARD",
+          "chestLabel": "DAYSHIFT INDEX",
+          "mark": "SOL",
+          "subline": "BRIGHT BUILD / CLEAR RUN"
+        },
+        "back": {
+          "statement": "TURN TOWARD THE BRIGHT SIDE",
+          "subline": "MODEL WEATHER / FULL SIGNAL"
+        },
+        "sleeves": {
+          "style": "radar-rings",
+          "motif": "THREE CONCENTRIC RINGS WITH A CROSSHAIR AND MIRRORED ACCENT NOTCH",
+          "leftText": "FIRST LIGHT",
+          "rightText": "FULL SIGNAL",
+          "caption": "RADIANT CYCLE"
+        },
+        "label": {
+          "line": "DAYSHIFT / SOLWARD"
+        }
+      },
+      "review": {
+        "accepted": true,
+        "score": 92,
+        "reviewer": "codex-aop-art-director-validator",
+        "checkedAt": "2026-07-21T06:02:40.080Z",
+        "referenceScreenshots": [
+          "merch/reference/art-direction/supplyco-screenshots/01-market-grid.png",
+          "merch/reference/art-direction/supplyco-screenshots/02-polo-cardigan.png",
+          "merch/reference/art-direction/supplyco-screenshots/03-research-deployment-polo.png",
+          "merch/reference/art-direction/supplyco-screenshots/04-black-hoodie-sleeve.png",
+          "merch/reference/art-direction/supplyco-screenshots/05-blue-lab-long-sleeve.png"
+        ],
+        "templateSpec": {
+          "provider": "printful",
+          "baseProduct": "printful-aop-cotton-sweatshirt-white",
+          "technique": "All-Over Cotton",
+          "requiredPlacements": [
+            "front",
+            "back",
+            "left_sleeve",
+            "right_sleeve",
+            "label_panel",
+            "label_inside"
+          ]
+        },
+        "findings": [
+          "Accepted: garment-first AOP cotton plan with panel-specific sleeves, front, back, label panel, and inside label.",
+          "Accepted: production files can be composed from exact selected template dimensions."
+        ]
+      },
+      "visualCritic": {
+        "decision": "pass",
+        "overallScore": 87,
+        "scores": {
+          "garmentCoherence": 9,
+          "legibility": 8,
+          "panelIntent": 9,
+          "originality": 8,
+          "productionReadiness": 9,
+          "rightsSafety": 10
+        },
+        "criticalDefects": [],
+        "revisionBrief": "No required revision. Optional polish: slightly reduce or reposition the vertical sleeve text so it clears the concentric-ring strokes more cleanly and remains easier to read around the arm.",
+        "model": "gpt-5.6-sol",
+        "responseId": "resp_0a1687e2c21a57a3016a5f1047139481a2a39a09037b7a7007",
+        "checkedAt": "2026-07-21T06:23:24Z"
+      }
+    },
+    "approval": {
+      "approvedAt": null,
+      "approvedBy": null,
+      "notes": ""
+    }
   }
 ]
