@@ -1,0 +1,89 @@
+{
+  "model": "gpt-audio-1.5",
+  "voice": "alloy",
+  "endpoint": "https://api.openai.com/v1/chat/completions",
+  "explicitDisclosureRequired": true,
+  "compositionDurationSeconds": 171,
+  "segments": [
+    {
+      "id": "intro",
+      "file": "video/public/audio/v2/segments/01-intro.wav",
+      "startSeconds": 0.6,
+      "durationSeconds": 7.6,
+      "transcript": "Codex Merch is an open-source, hackable trend-signal-to-real-merch pipeline, built with Codex and GPT-5.6.",
+      "transcriptSimilarity": 1,
+      "attempt": 1,
+      "tempo": 1
+    },
+    {
+      "id": "positioning",
+      "file": "video/public/audio/v2/segments/02-positioning.wav",
+      "startSeconds": 9.4,
+      "durationSeconds": 14.95,
+      "transcript": "The idea is simple: fashion has many signal tools and many production tools, but the loop between them is still opaque. This project turns that loop into a visible, replaceable system—from trusted premise to testable garment.",
+      "transcriptSimilarity": 1,
+      "attempt": 1,
+      "tempo": 1
+    },
+    {
+      "id": "product",
+      "file": "video/public/audio/v2/segments/03-product.wav",
+      "startSeconds": 26.5,
+      "durationSeconds": 21.8,
+      "transcript": "Start with the output. Solward Index is not a moodboard or a single generated image. It is a catalog entry, four customer-facing views, six provider-sized print panels, hashes, and a public rights record. The Preview is deliberately non-sellable: sizes and checkout stay disabled, while the artifact remains inspectable.",
+      "transcriptSimilarity": 1,
+      "attempt": 1,
+      "tempo": 1
+    },
+    {
+      "id": "pipeline",
+      "file": "video/public/audio/v2/segments/04-pipeline.wav",
+      "startSeconds": 53.5,
+      "durationSeconds": 31.85,
+      "transcript": "The new walkthrough reduces the system to five moves. Signal: an owner brief, or exactly thirty authorized posts. Direct: GPT-5.6 proposes three panel-aware visual worlds. Build: deterministic code composes front, back, both sleeves, panel label, and inside label. Prove: AI critiques the rendered garment while code enforces provenance, rights, dimensions, PNG integrity, and prepress. Release: stop safely at Preview, or require explicit human authority to ship.",
+      "transcriptSimilarity": 1,
+      "attempt": 2,
+      "tempo": 1
+    },
+    {
+      "id": "open",
+      "file": "video/public/audio/v2/segments/05-open.wav",
+      "startSeconds": 90.5,
+      "durationSeconds": 20.9,
+      "transcript": "This is what makes the project hackable. Swap X for a community feed or an internal trend desk. Change the prompt and schema without hiding the contract. Add another garment or composition grammar. Route validated outputs into another provider or commerce stack. The seams live in the repository, alongside the tests.",
+      "transcriptSimilarity": 1,
+      "attempt": 2,
+      "tempo": 1
+    },
+    {
+      "id": "commercial",
+      "file": "video/public/audio/v2/segments/06-commercial.wav",
+      "startSeconds": 114.5,
+      "durationSeconds": 23.654958,
+      "transcript": "The commercial thesis is larger than this storefront. Zara and Shein illustrate the value of shorter signal-to-sample loops. Richemont and LVMH illustrate a different R-and-D need: test sources, models, product formats, and approval policies as replaceable components. These are market examples only; no affiliation, endorsement, customer relationship, or proprietary data is claimed.",
+      "transcriptSimilarity": 1,
+      "attempt": 1,
+      "tempo": 1.0613
+    },
+    {
+      "id": "proof",
+      "file": "video/public/audio/v2/segments/07-proof.wav",
+      "startSeconds": 138.5,
+      "durationSeconds": 19.650292,
+      "transcript": "The repository is the evidence: eleven products, 147 passing tests, twelve browser checks, visible prompts, strict schemas, reproducible assets, and fail-closed adapters. GPT provides taste. Code proves the contract. A human holds the release keys. No payment, provider sync, publication, or fulfillment is shown.",
+      "transcriptSimilarity": 1,
+      "attempt": 1,
+      "tempo": 1.2036
+    },
+    {
+      "id": "outro",
+      "file": "video/public/audio/v2/segments/08-outro.wav",
+      "startSeconds": 158.5,
+      "durationSeconds": 10.9,
+      "transcript": "Signal in. Merch out. A small open-source proof for a large fashion problem. Fork the pipeline, inspect the garments, and judge the system.",
+      "transcriptSimilarity": 1,
+      "attempt": 1,
+      "tempo": 1
+    }
+  ]
+}

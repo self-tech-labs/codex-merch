@@ -1,0 +1,20 @@
+{
+  "status": "pass",
+  "generatedFrom": "video/out/codex-merch-signal-to-product-1080p.mp4",
+  "resolution": "1920x1080",
+  "fps": 30,
+  "durationSeconds": 171,
+  "videoCodec": "h264",
+  "audioCodec": "aac",
+  "audioSampleRate": 48000,
+  "integratedLufs": -15.97,
+  "truePeakDbtp": -1.5,
+  "captionCueCount": 39,
+  "playbackDecode": "pass",
+  "contactSheet": "video/qa/v2/final-contact-sheet.png",
+  "visualPrivacyReview": "pass",
+  "fileSizeBytes": 49194673,
+  "sha256": "b3d40dfa048a9114e828b7c39d7580b72a6377e576f64a110974b310529fa7f2",
+  "captionsSha256": "c2be2ae615926e2a6ebdf8161778e5206af01a2d2d0187970e69995acf570bc3",
+  "thumbnailSha256": "774fdbde676661185f89a2b19b25ad4227bf557a16e76a745331a898d5d71ef3"
+}

@@ -2,8 +2,9 @@ import {Link, useLoaderData, useSearchParams} from 'react-router';
 import type {Route} from './+types/_index';
 import {money} from '~/lib/cart';
 import {
-  merchantPilot,
-  merchantPilotDisplayAmounts,
+  getApprovedJuryProduct,
+  merchantJuryCatalog,
+  merchantJuryDisplayAmounts,
 } from '~/lib/merchant-policy';
 import {
   assetUrl,
@@ -14,15 +15,15 @@ import {
   isPurchasableProduct,
   type MerchProduct,
 } from '~/lib/merch';
-import {useStorefrontMode} from '~/lib/storefront-mode';
+import {useJurySales, useStorefrontMode} from '~/lib/storefront-mode';
 
 export const meta: Route.MetaFunction = () => {
   return [
-    {title: 'Codex Meme Merch'},
+    {title: 'Codex Merch | Signal to product'},
     {
       name: 'description',
       content:
-        'A Codex-first meme merch storefront prototype backed by repo manifests.',
+        'An open-source, hackable pipeline that turns trend signals into production-ready garments.',
     },
   ];
 };
@@ -38,16 +39,31 @@ export async function loader() {
 
 export default function Homepage() {
   const {products, categories} = useLoaderData<typeof loader>();
+  const storefrontMode = useStorefrontMode();
   const [searchParams] = useSearchParams();
   const selectedCategory = searchParams.get('category');
+  const storefrontProducts =
+    storefrontMode === 'preview'
+      ? products
+      : products.filter(
+          (product) =>
+            isPurchasableProduct(product) &&
+            Boolean(getApprovedJuryProduct(product.slug)),
+        );
+  const storefrontCategories =
+    storefrontMode === 'preview'
+      ? categories
+      : getMerchCategories(storefrontProducts);
   const filteredProducts = selectedCategory
-    ? products.filter((product) => product.category === selectedCategory)
-    : products;
+    ? storefrontProducts.filter(
+        (product) => product.category === selectedCategory,
+      )
+    : storefrontProducts;
 
   return (
     <div className="supply-page">
       <StoreRail
-        categories={categories}
+        categories={storefrontCategories}
         selectedCategory={selectedCategory}
       />
       <section className="product-grid" aria-label="Codex meme merch products">
@@ -67,13 +83,14 @@ function StoreRail({
   selectedCategory: string | null;
 }) {
   const storefrontMode = useStorefrontMode();
+  const jurySales = useJurySales();
   const preview = storefrontMode === 'preview';
 
   return (
     <aside className="store-rail" aria-label="Filters">
-      <Link className="store-mark" to="/" aria-label="Codex Meme Merch home">
+      <Link className="store-mark" to="/" aria-label="Codex Merch home">
         <span>Codex</span>
-        <span>Meme Merch</span>
+        <span>Signal → Merch</span>
       </Link>
       <Link className="rail-action" to="/how-it-works">
         How it works
@@ -93,13 +110,27 @@ function StoreRail({
         ))}
       </nav>
       <div className="rail-status">
-        <span>{preview ? 'Prototype preview' : 'Production storefront'}</span>
-        <span>{preview ? 'Checkout disabled' : 'Commerce server-gated'}</span>
+        <span>
+          {preview
+            ? 'Prototype preview'
+            : jurySales.enabled
+              ? 'OpenAI jury pilot'
+              : 'Production storefront'}
+        </span>
+        <span>
+          {preview
+            ? 'Checkout disabled'
+            : jurySales.enabled
+              ? 'Jury code required'
+              : 'Checkout closed'}
+        </span>
       </div>
       <p className="rail-note">
         {preview
-          ? 'Browse production-intent mockups. This build cannot create a payment or production order.'
-          : 'Product and checkout eligibility are verified individually by server-side commerce gates.'}
+          ? 'Open signal-to-product proof. Browse real garment outputs; payment and production orders are disabled.'
+          : jurySales.enabled
+            ? 'Fan-made, unofficial merch. Real purchases are temporarily reserved for OpenAI Build Week judges.'
+            : 'Product and checkout eligibility are verified individually by server-side commerce gates.'}
       </p>
     </aside>
   );
@@ -107,10 +138,10 @@ function StoreRail({
 
 function ProductTile({product}: {product: MerchProduct}) {
   const primaryMockup = assetUrl(getPrimaryCustomerMockup(product));
-  const signedPilot = product.slug === merchantPilot.productSlug;
-  const pilotShipping = merchantPilotDisplayAmounts(0).shipping;
-  const shippingDisclosure = signedPilot
-    ? ` + ${money(pilotShipping, merchantPilot.currency)} CH shipping`
+  const approvedForJury = Boolean(getApprovedJuryProduct(product.slug));
+  const pilotShipping = merchantJuryDisplayAmounts(0).shipping;
+  const shippingDisclosure = approvedForJury
+    ? ` + ${money(pilotShipping, merchantJuryCatalog.currency)} shipping`
     : '';
 
   return (
@@ -127,9 +158,9 @@ function ProductTile({product}: {product: MerchProduct}) {
         <span className="tile-meta">
           <span>{product.title}</span>
           <span>{formatPrice(product)}</span>
-          {signedPilot ? (
+          {approvedForJury ? (
             <span>
-              + {money(pilotShipping, merchantPilot.currency)} CH shipping
+              + {money(pilotShipping, merchantJuryCatalog.currency)} shipping
             </span>
           ) : null}
         </span>

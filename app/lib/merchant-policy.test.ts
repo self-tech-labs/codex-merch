@@ -2,8 +2,9 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
   merchantIdentity,
+  merchantJuryCatalog,
+  merchantJuryDisplayAmounts,
   merchantPilot,
-  merchantPilotDisplayAmounts,
   merchantPolicyPages,
   MERCHANT_CONTACT_EMAIL,
   MERCHANT_POLICY_PAGE_IDS,
@@ -29,8 +30,8 @@ test('merchant policy identity and reviewed version stay explicit', () => {
   });
 });
 
-test('pilot display amounts convert centimes once and preserve the signed total', () => {
-  assert.deepEqual(merchantPilotDisplayAmounts(58), {
+test('jury display amounts convert centimes once and preserve the signed total', () => {
+  assert.deepEqual(merchantJuryDisplayAmounts(58), {
     shipping: 9.1,
     total: 67.1,
   });
@@ -38,6 +39,11 @@ test('pilot display amounts convert centimes once and preserve the signed total'
   assert.equal(merchantPilot.stripeTaxBehavior, 'inclusive');
   assert.equal(merchantPilot.printfulProductId, 436601984);
   assert.equal(merchantPilot.printfulVariants.length, 3);
+  assert.equal(merchantJuryCatalog.products.length, 11);
+  assert.equal(
+    new Set(merchantJuryCatalog.products.map((product) => product.productSlug)).size,
+    11,
+  );
 });
 
 test('every public merchant policy has structured, substantive copy', () => {

@@ -18,6 +18,9 @@ declare global {
     STOREFRONT_MODE?: string;
     DATABASE_URL?: string;
     CHECKOUT_ENABLED?: string;
+    JURY_SALES_ENABLED?: string;
+    JURY_ACCESS_CODE?: string;
+    JURY_SALES_END_AT?: string;
     MERCH_PILOT_APPROVED?: string;
     MERCH_EXPANSION_APPROVED?: string;
     STOREFRONT_LEGAL_APPROVED?: string;

@@ -8,13 +8,21 @@ import {
 
 export function PageLayout({
   children = null,
+  jurySalesEnabled,
+  jurySalesEndAt,
   storefrontMode,
 }: {
   children?: React.ReactNode;
+  jurySalesEnabled: boolean;
+  jurySalesEndAt: string | null;
   storefrontMode: StorefrontMode;
 }) {
   return (
-    <StorefrontModeProvider mode={storefrontMode}>
+    <StorefrontModeProvider
+      jurySalesEnabled={jurySalesEnabled}
+      jurySalesEndAt={jurySalesEndAt}
+      mode={storefrontMode}
+    >
       <CartProvider>
         <Header />
         <main>{children}</main>

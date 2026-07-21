@@ -3,11 +3,13 @@ import {Link, useLoaderData} from 'react-router';
 import type {Route} from './+types/products.$handle';
 import {money, useCart} from '~/lib/cart';
 import {
-  merchantPilot,
-  merchantPilotDisplayAmounts,
+  getApprovedJuryProduct,
+  merchantJuryCatalog,
+  merchantJuryDisplayAmounts,
 } from '~/lib/merchant-policy';
 import {
   canInitiateStorefrontCheckout,
+  useJurySales,
   useStorefrontMode,
 } from '~/lib/storefront-mode';
 import {
@@ -26,7 +28,7 @@ import {
 
 export const meta: Route.MetaFunction = ({data}) => {
   const metadata = [
-    {title: `Codex Meme Merch | ${data?.product.title ?? 'Product'}`},
+    {title: `Codex Merch | ${data?.product.title ?? 'Product'}`},
     {
       name: 'description',
       content: data?.product.description ?? 'Codex meme merch product.',
@@ -64,12 +66,14 @@ export default function Product() {
   const currentMockup = mockups[activeMockup] || mockups[0];
   const {addLine} = useCart();
   const storefrontMode = useStorefrontMode();
+  const jurySales = useJurySales();
   const purchasable = canInitiateStorefrontCheckout(
     storefrontMode,
     isPurchasableProduct(product),
+    jurySales.enabled,
   );
-  const signedPilot = product.slug === merchantPilot.productSlug;
-  const pilotAmounts = merchantPilotDisplayAmounts(
+  const approvedForJury = Boolean(getApprovedJuryProduct(product.slug));
+  const pilotAmounts = merchantJuryDisplayAmounts(
     product.commerce.unitAmount / 100,
   );
 
@@ -130,14 +134,20 @@ export default function Product() {
           />
 
           <div className="product-copy">
-            {!purchasable ? (
+            {purchasable ? (
+              <p className="preview-badge">OpenAI Build Week jury-only sale</p>
+            ) : (
               <p className="preview-badge">
                 {storefrontMode === 'preview'
                   ? 'Prototype preview — checkout disabled'
-                  : 'Preview — not yet available'}
+                  : 'Jury checkout closed'}
               </p>
-            ) : null}
+            )}
             <p>{product.description}</p>
+            <p className="fan-merch-disclaimer">
+              Fan-made content. This is not official OpenAI merchandise and is
+              not affiliated with, sponsored by, or endorsed by OpenAI.
+            </p>
             <dl>
               <div>
                 <dt>Technique</dt>
@@ -147,14 +157,14 @@ export default function Product() {
                 <dt>Price</dt>
                 <dd>{formatPrice(product)}</dd>
               </div>
-              {signedPilot ? (
+              {approvedForJury ? (
                 <>
                   <div>
-                    <dt>CH shipping</dt>
+                    <dt>Shipping</dt>
                     <dd>
                       {money(
                         pilotAmounts.shipping,
-                        merchantPilot.currency,
+                        merchantJuryCatalog.currency,
                       )}{' '}
                       per order
                     </dd>
@@ -164,18 +174,18 @@ export default function Product() {
                     <dd>
                       {money(
                         pilotAmounts.total,
-                        merchantPilot.currency,
+                        merchantJuryCatalog.currency,
                       )}
                     </dd>
                   </div>
                 </>
               ) : null}
             </dl>
-            {signedPilot ? (
+            {approvedForJury ? (
               <p>
-                Switzerland delivery only. RITSL bears normal import, customs,
-                and carrier-clearance charges for the approved route. Review the
-                final CHF total before paying.
+                Switzerland and United States delivery only. RITSL bears normal
+                import, customs, and carrier-clearance charges for the approved
+                routes. Review the final CHF total before paying.
               </p>
             ) : null}
           </div>
@@ -202,10 +212,10 @@ export default function Product() {
               }}
             >
               {purchasable
-                ? 'Add to cart'
+                ? 'Add to jury cart'
                 : storefrontMode === 'preview'
                   ? 'Checkout disabled'
-                  : 'Preview only'}
+                  : 'Jury checkout closed'}
             </button>
             <Link className="buy-link" to="/cart">
               View cart
@@ -234,7 +244,11 @@ export default function Product() {
                 ) : null}
                 <div>
                   <dt>Made to order</dt>
-                  <dd>{product.productDetails.productionTime}</dd>
+                  <dd>
+                    {approvedForJury
+                      ? 'Production usually takes 2–5 business days. Delivery to Switzerland or the United States is estimated at 7–15 business days in total and is not guaranteed.'
+                      : product.productDetails.productionTime}
+                  </dd>
                 </div>
                 <div>
                   <dt>Origin and fulfillment</dt>

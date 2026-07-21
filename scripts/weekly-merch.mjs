@@ -2098,6 +2098,7 @@ function requireReleaseEnvironment() {
     'MERCH_PILOT_APPROVED',
     'MERCH_EXPANSION_APPROVED',
     'CHECKOUT_ENABLED',
+    'JURY_SALES_ENABLED',
     'STOREFRONT_LEGAL_APPROVED',
     'STOREFRONT_TAX_SHIPPING_APPROVED',
   ];
@@ -2119,6 +2120,8 @@ function requireReleaseEnvironment() {
     'STOREFRONT_POLICY_VERSION',
     'STRIPE_ALLOWED_SHIPPING_COUNTRIES',
     'STRIPE_AUTOMATIC_TAX',
+    'JURY_ACCESS_CODE',
+    'JURY_SALES_END_AT',
   ];
   const missing = required.filter((name) => !process.env[name]);
   if (missing.length) throw new Error(`Missing release env vars: ${missing.join(', ')}`);
@@ -2130,8 +2133,17 @@ function requireReleaseEnvironment() {
       `STOREFRONT_POLICY_VERSION must be ${CURRENT_MERCHANT_POLICY_VERSION}`,
     );
   }
-  if (process.env.STRIPE_ALLOWED_SHIPPING_COUNTRIES !== 'CH') {
-    throw new Error('The production pilot supports STRIPE_ALLOWED_SHIPPING_COUNTRIES=CH only');
+  if (process.env.STRIPE_ALLOWED_SHIPPING_COUNTRIES !== 'CH,US') {
+    throw new Error(
+      'The jury pilot requires STRIPE_ALLOWED_SHIPPING_COUNTRIES=CH,US',
+    );
+  }
+  const jurySalesEndAt = Date.parse(process.env.JURY_SALES_END_AT);
+  if (!Number.isFinite(jurySalesEndAt) || Date.now() >= jurySalesEndAt) {
+    throw new Error('JURY_SALES_END_AT must be a future ISO timestamp');
+  }
+  if (process.env.JURY_ACCESS_CODE.trim().length < 16) {
+    throw new Error('JURY_ACCESS_CODE must contain at least 16 characters');
   }
   if (!['true', 'false'].includes(process.env.STRIPE_AUTOMATIC_TAX)) {
     throw new Error('STRIPE_AUTOMATIC_TAX must be explicitly true or false');

@@ -18,13 +18,13 @@ import {
 import {
   allowedShippingCountries,
   assertCheckoutConfiguration,
-  assertMerchantPilotLines,
+  assertMerchantJuryLines,
   normalizeCheckoutLines,
   shippingOptions,
 } from './stripe.server';
 
 test('preview products are visible but not purchasable', () => {
-  const preview = merchProducts[0];
+  const preview = merchProducts.find((product) => product.automation?.previewOnly)!;
   assert.equal(isPubliclyVisibleProduct(preview), true);
   assert.equal(isPurchasableProduct(preview), false);
 });
@@ -41,7 +41,7 @@ test('published products require an available sync mapping', () => {
 });
 
 test('checkout rejects preview products and non-integer quantities', () => {
-  const product = merchProducts[0];
+  const product = merchProducts.find((candidate) => candidate.automation?.previewOnly)!;
   const variant = product.commerce.variants![0];
   assert.throws(
     () =>
@@ -141,7 +141,7 @@ test('checkout enforces aggregate quantities, availability, currencies, and uniq
   }
 });
 
-test('merchant pilot pins product, price, and whole-cart quantity', () => {
+test('jury catalog pins approved products, prices, and whole-cart quantity', () => {
   const product = merchProducts.find(
     (candidate) => candidate.slug === 'codex-rate-reset-long-sleeve',
   )!;
@@ -160,13 +160,13 @@ test('merchant pilot pins product, price, and whole-cart quantity', () => {
     const lines = normalizeCheckoutLines([
       {productSlug: product.slug, variantId: variants[0].id, quantity: 1},
     ]);
-    assert.doesNotThrow(() => assertMerchantPilotLines(lines));
+    assert.doesNotThrow(() => assertMerchantJuryLines(lines));
     product.commerce.unitAmount = 5900;
-    assert.throws(() => assertMerchantPilotLines(lines), /approved merchant pilot/);
+    assert.throws(() => assertMerchantJuryLines(lines), /approved jury catalog/);
     product.commerce.unitAmount = 5800;
     product.providerRefs.printful!.variants[0].syncVariantId += 1;
     assert.throws(
-      () => assertMerchantPilotLines(lines),
+      () => assertMerchantJuryLines(lines),
       /product revision does not match/,
     );
   } finally {
@@ -181,10 +181,13 @@ test('production checkout configuration fails closed', () => {
     NODE_ENV: 'production',
     STOREFRONT_MODE: 'production',
     CHECKOUT_ENABLED: 'true',
+    JURY_SALES_ENABLED: 'true',
+    JURY_ACCESS_CODE: ['unit', 'test', 'jury', 'access'].join('-'),
+    JURY_SALES_END_AT: '2099-08-06T00:00:00Z',
     MERCH_PILOT_APPROVED: 'true',
     STRIPE_SECRET_KEY: 'sk_test',
     STRIPE_WEBHOOK_SECRET: 'whsec_test',
-    STRIPE_ALLOWED_SHIPPING_COUNTRIES: 'CH',
+    STRIPE_ALLOWED_SHIPPING_COUNTRIES: 'CH,US',
     STRIPE_AUTOMATIC_TAX: 'false',
     DATABASE_URL: 'postgres://test',
     INNGEST_EVENT_KEY: 'event',
@@ -206,6 +209,15 @@ test('production checkout configuration fails closed', () => {
   configured.STOREFRONT_POLICY_VERSION = '2026-07-21';
   assert.doesNotThrow(() => assertCheckoutConfiguration(configured));
   assert.throws(
+    () =>
+      assertCheckoutConfiguration({...configured, JURY_SALES_ENABLED: 'false'}),
+    /Jury sales are disabled/,
+  );
+  assert.throws(
+    () => assertCheckoutConfiguration({...configured, JURY_ACCESS_CODE: ''}),
+    /Jury access is not configured/,
+  );
+  assert.throws(
     () => assertCheckoutConfiguration({...configured, MERCH_PILOT_APPROVED: 'false'}),
     /pilot approval/,
   );
@@ -219,7 +231,7 @@ test('production checkout configuration fails closed', () => {
         ...configured,
         STRIPE_ALLOWED_SHIPPING_COUNTRIES: 'CH,DE',
       }),
-    /CH only/,
+    /CH and US only/,
   );
   assert.throws(
     () =>
@@ -249,6 +261,9 @@ test('production checkout configuration fails closed', () => {
 test('checkout requires explicit production storefront mode', () => {
   const configured: AppEnv = {
     STOREFRONT_MODE: 'production',
+    JURY_SALES_ENABLED: 'true',
+    JURY_ACCESS_CODE: ['unit', 'test', 'jury', 'access'].join('-'),
+    JURY_SALES_END_AT: '2099-08-06T00:00:00Z',
     STRIPE_SECRET_KEY: 'sk_test',
     STRIPE_WEBHOOK_SECRET: 'whsec_test',
     DATABASE_URL: 'postgres://test',
@@ -276,14 +291,14 @@ test('checkout requires explicit production storefront mode', () => {
 });
 
 test('pilot shipping countries and delivery configuration fail closed', async () => {
-  assert.deepEqual(allowedShippingCountries({}), ['CH']);
+  assert.deepEqual(allowedShippingCountries({}), ['CH', 'US']);
   assert.deepEqual(
-    allowedShippingCountries({STRIPE_ALLOWED_SHIPPING_COUNTRIES: ' ch '}),
-    ['CH'],
+    allowedShippingCountries({STRIPE_ALLOWED_SHIPPING_COUNTRIES: ' ch, us '}),
+    ['CH', 'US'],
   );
   assert.throws(
     () => allowedShippingCountries({STRIPE_ALLOWED_SHIPPING_COUNTRIES: 'CH,FR'}),
-    /CH only/,
+    /CH and US only/,
   );
 
   assert.deepEqual(

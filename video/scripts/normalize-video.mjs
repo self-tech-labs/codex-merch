@@ -4,8 +4,16 @@ import {promisify} from "node:util";
 
 const execFileAsync = promisify(execFile);
 const workspace = process.cwd();
-const input = path.join(workspace, "video/out/codex-merch-build-week-1080p-raw.mp4");
-const output = path.join(workspace, "video/out/codex-merch-build-week-1080p.mp4");
+const argumentValue = (name, fallback) =>
+  process.argv.find((argument) => argument.startsWith(`${name}=`))?.slice(name.length + 1) ?? fallback;
+const input = path.join(
+  workspace,
+  argumentValue("--input", "video/out/codex-merch-build-week-1080p-raw.mp4"),
+);
+const output = path.join(
+  workspace,
+  argumentValue("--output", "video/out/codex-merch-build-week-1080p.mp4"),
+);
 
 await execFileAsync(
   "ffmpeg",

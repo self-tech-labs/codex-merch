@@ -1,73 +1,50 @@
+import signedJuryProducts from '../../merch/merchant-jury-catalog.json';
+
 export const MERCHANT_POLICY_VERSION = '2026-07-21';
 export const MERCHANT_CONTACT_EMAIL = 'elliot@ritsl.com';
 
-export const merchantPilot = {
-  productSlug: 'codex-rate-reset-long-sleeve',
-  productTitle: 'Codex Rate Reset Long Sleeve Tee',
+/**
+ * Exact merchant-approved catalog contract. Every product added here must pin
+ * its local manifest revision, public assets, Printful product, and Printful
+ * variants before production checkout can accept it.
+ */
+export const merchantJuryCatalog = {
   currency: 'CHF',
-  unitAmount: 5800,
   shippingAmount: 910,
-  shippingCountries: ['CH'],
+  shippingCountries: ['CH', 'US'],
   deliveryEstimateBusinessDays: {minimum: 7, maximum: 15},
   maximumItemsPerOrder: 10,
   stripeTaxBehavior: 'inclusive',
   stripeProductTaxCode: 'txcd_99999999',
   stripeShippingTaxCode: 'txcd_92010001',
-  printfulProductId: 436601984,
-  printfulVariants: [
-    {
-      variantId: 'codex-rate-reset-long-sleeve:10095',
-      size: 'M',
-      catalogVariantId: 10095,
-      syncVariantId: 5338615120,
-    },
-    {
-      variantId: 'codex-rate-reset-long-sleeve:10096',
-      size: 'L',
-      catalogVariantId: 10096,
-      syncVariantId: 5338615121,
-    },
-    {
-      variantId: 'codex-rate-reset-long-sleeve:10097',
-      size: 'XL',
-      catalogVariantId: 10097,
-      syncVariantId: 5338615122,
-    },
-  ],
-  approvedProductRevision:
-    '867adc36037e608ed5c60871eee29e0c9347a017ff24ec7304d4986882941246',
-  approvedAssetSha256: {
-    'assets/artwork/codex-rate-reset-concept.png':
-      '9dbdc4f71f972a5060a7586c1b6379d8fd83f6bc46c8a4c515c0abfb1b45ec3e',
-    'assets/print/codex-rate-reset-front.png':
-      '05eb2fe7ddc264f9d06b59bea8919af08e78048348c38ba3c2ee92045768feeb',
-    'assets/print/codex-rate-reset-back.png':
-      '325e55502d386c173982732e75bea30f54f29022fe1eed286ac6b71feb8f600c',
-    'assets/print/codex-rate-reset-left_sleeve.png':
-      '3c8f2f5d4619791f107fdfa550ac829a41ae042d26db19f07b27f74690242cf5',
-    'assets/print/codex-rate-reset-right_sleeve.png':
-      '2ef209071cdaf2b56c74366cc2ec4b546c804a49d5d00fe6b9848cc848664b3b',
-    'assets/mockups/codex-rate-reset-catalog.png':
-      'e6b0bb428a82adf6e1b710d8ed585b6068a2088328108f2cd61b66a445c5c584',
-    'assets/mockups/codex-rate-reset-printful-1.jpg':
-      '727284e61e7f6529bb59fb28b9bd867d88d17cbc15878bc45d1629529712683c',
-    'assets/mockups/codex-rate-reset-printful-2.jpg':
-      '8c983ceb565befc30790561890929d58364702b7ec74329063b3b6bd78209d6d',
-    'assets/mockups/codex-rate-reset-front.png':
-      'e6b0bb428a82adf6e1b710d8ed585b6068a2088328108f2cd61b66a445c5c584',
-    'assets/mockups/codex-rate-reset-back.png':
-      '57285702b2ba4644fd02aa1f4ed5c0290609fdabd33e1697b0090e8b38a58a59',
-    'assets/mockups/codex-rate-reset-detail.png':
-      '88618a29147e68ada73049a24ce65f4aaad22b258031b571a849aced206be3ff',
-    'assets/mockups/codex-rate-reset-photoshoot-front.png':
-      '61c86cfd45c970ebf4896fc87affba784a746fc4a42d7ebc3782d7979bf697b7',
-  },
+  products: signedJuryProducts,
 } as const;
 
-export function merchantPilotDisplayAmounts(subtotal: number) {
-  const shipping = merchantPilot.shippingAmount / 100;
+export type MerchantJuryProduct =
+  (typeof merchantJuryCatalog.products)[number];
+
+export function getApprovedJuryProduct(productSlug: string) {
+  return merchantJuryCatalog.products.find(
+    (product) => product.productSlug === productSlug,
+  );
+}
+
+/**
+ * Compatibility alias for policy copy and integrations that still use the
+ * original pilot name. Product authorization must use merchantJuryCatalog.
+ */
+export const merchantPilot = {
+  ...merchantJuryCatalog,
+  ...signedJuryProducts[0],
+} as const;
+
+export function merchantJuryDisplayAmounts(subtotal: number) {
+  const shipping = merchantJuryCatalog.shippingAmount / 100;
   return {shipping, total: subtotal + shipping};
 }
+
+/** @deprecated Use merchantJuryDisplayAmounts for the multi-product catalog. */
+export const merchantPilotDisplayAmounts = merchantJuryDisplayAmounts;
 
 export const merchantIdentity = {
   legalName: 'RITSL Elliot Vaucher',
@@ -110,7 +87,7 @@ export const merchantPolicyPages = {
   shipping: {
     title: 'Shipping policy',
     summary:
-      'We currently accept orders only for delivery in Switzerland. Storefront prices and checkout charges are in Swiss francs (CHF).',
+      'This OpenAI Build Week jury pilot accepts delivery addresses in Switzerland and the United States. Storefront prices and checkout charges are in Swiss francs (CHF).',
     sections: [
       {
         heading: 'Made-to-order production',
@@ -122,9 +99,9 @@ export const merchantPolicyPages = {
       {
         heading: 'Delivery estimate and charges',
         paragraphs: [
-          'Typical transit within Switzerland is 5–9 business days after production. Allow an estimated 7–15 business days from order confirmation to delivery. These timings are estimates, not guarantees, and can be affected by production demand, public holidays, carrier disruption, or the destination.',
+          'Allow an estimated 7–15 business days from order confirmation to delivery in Switzerland or the United States. These timings are estimates, not guarantees, and can be affected by production demand, public holidays, carrier disruption, customs, or the destination.',
           'The shipping charge and any other non-optional charge are shown in checkout before payment. Tracking is provided when the fulfillment partner and carrier make it available.',
-          'RITSL is responsible for normal import, customs, and carrier-clearance charges required to deliver the parcel under the approved Switzerland route. If a carrier asks you to pay an unexpected import or clearance charge, contact us before paying so we can investigate and arrange payment or reimbursement where appropriate.',
+          'RITSL is responsible for normal import, customs, and carrier-clearance charges required to deliver the parcel under the approved Switzerland or United States route. If a carrier asks you to pay an unexpected import or clearance charge, contact us before paying so we can investigate and arrange payment or reimbursement where appropriate.',
         ],
       },
       {
@@ -137,7 +114,7 @@ export const merchantPolicyPages = {
       {
         heading: 'Where we deliver',
         paragraphs: [
-          'This pilot storefront serves delivery addresses in Switzerland only. An order with an unsupported destination may be cancelled and refunded rather than fulfilled.',
+          'This time-limited pilot storefront serves OpenAI Build Week judges using delivery addresses in Switzerland or the United States only. An order with an unsupported destination may be cancelled and refunded rather than fulfilled.',
         ],
       },
     ],
@@ -236,13 +213,13 @@ export const merchantPolicyPages = {
   terms: {
     title: 'Terms of sale',
     summary:
-      'These terms govern consumer orders placed with RITSL Elliot Vaucher through this independently operated, Switzerland-only storefront.',
+      'These terms govern orders placed by OpenAI Build Week judges with RITSL Elliot Vaucher through this independently operated CH/US jury pilot.',
     sections: [
       {
         heading: 'Merchant and scope',
         paragraphs: [
           'The seller is RITSL Elliot Vaucher, a Swiss sole proprietorship operated by Elliot Richard Vaucher. The registered identity and contact details appear below.',
-          'The shop currently accepts orders only for delivery in Switzerland and contracts only in Swiss francs (CHF). You must be able to enter into the purchase contract and provide accurate checkout information.',
+          'The shop currently accepts orders only from OpenAI Build Week judges for delivery in Switzerland or the United States and contracts only in Swiss francs (CHF). You must be able to enter into the purchase contract, hold the private jury access code, and provide accurate checkout information.',
         ],
       },
       {
@@ -275,7 +252,7 @@ export const merchantPolicyPages = {
       {
         heading: 'Intellectual property and independence',
         paragraphs: [
-          'This shop is independently operated by RITSL Elliot Vaucher. It is not affiliated with, sponsored by, or endorsed by OpenAI or any other third-party mark owner.',
+          'This fan-made shop is independently operated by RITSL Elliot Vaucher. Its merchandise is not official OpenAI merchandise, and the shop is not affiliated with, sponsored by, or endorsed by OpenAI or any other third-party mark owner.',
           'OpenAI, Codex, and other names, logos, product identifiers, and marks belong to their respective owners. Their appearance does not transfer any ownership or license to a purchaser. Storefront text, original artwork, photographs, and site materials remain protected by their respective owners and may not be commercially reproduced without permission.',
         ],
       },
@@ -308,7 +285,7 @@ export const merchantPolicyPages = {
       {
         heading: 'Independent operation',
         paragraphs: [
-          'This shop is independently operated by RITSL Elliot Vaucher and is not affiliated with, sponsored by, or endorsed by OpenAI. OpenAI, Codex, and other third-party marks remain the property of their respective owners.',
+          'This is a fan-made shop independently operated by RITSL Elliot Vaucher. Its merchandise is not official OpenAI merchandise, and the shop is not affiliated with, sponsored by, or endorsed by OpenAI. OpenAI, Codex, and other third-party marks remain the property of their respective owners.',
         ],
       },
     ],

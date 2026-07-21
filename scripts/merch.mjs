@@ -45,6 +45,19 @@ export const workflowStatuses = [
 
 export const pilotProductSlug = 'codex-rate-reset-long-sleeve';
 
+export const ownerPreviewReleaseSlugs = new Map([
+  ['the-sol-shines-cotton-sweatshirt', 'solward-index-cotton-sweatshirt'],
+  ['field-clearing-cotton-sweatshirt-preview', 'field-clearing-cotton-sweatshirt'],
+  ['clean-slate-club-cotton-sweatshirt-preview', 'clean-slate-club-cotton-sweatshirt'],
+  [
+    'parallel-noise-poster-cotton-sweatshirt-preview',
+    'parallel-noise-poster-cotton-sweatshirt',
+  ],
+  ['sun-break-victory-cotton-sweatshirt-preview', 'sun-break-victory-cotton-sweatshirt'],
+  ['tastemaxxing-cutline-cotton-sweatshirt-preview', 'tastemaxxing-cutline-cotton-sweatshirt'],
+  ['archive-monument-cotton-sweatshirt-preview', 'archive-monument-cotton-sweatshirt'],
+]);
+
 export function printfulDryRunExternalId(slug) {
   return `CM-DRY-${String(slug).slice(0, 25)}`;
 }
@@ -72,6 +85,18 @@ export function assertProviderMutationAllowed(selected, action = 'provider mutat
         .map((product) => product.slug)
         .join(', ')}`,
     );
+  }
+}
+
+export function assertReleaseAuthority(args, env = process.env) {
+  if (!hasFlag(args, '--release')) {
+    throw new Error('Live merch mutation requires the literal --release flag');
+  }
+  if (env.MERCH_WEEKLY_RELEASE_ENABLED !== 'true') {
+    throw new Error('Live merch mutation requires MERCH_WEEKLY_RELEASE_ENABLED=true');
+  }
+  if (env.PRINTFUL_AUTO_CONFIRM !== 'false') {
+    throw new Error('PRINTFUL_AUTO_CONFIRM=false is required for every merch release');
   }
 }
 
@@ -776,14 +801,20 @@ function selectProducts(products, args) {
     }
     if (!arg.startsWith('--')) positional.push(arg);
   }
-  const slug = readArg(args, '--slug') || positional[0];
-  if (!slug || slug === 'all') return products;
+  const slugs = [];
+  for (let index = 0; index < args.length; index += 1) {
+    if (args[index] === '--slug' && args[index + 1]) slugs.push(args[index + 1]);
+  }
+  if (!slugs.length && positional[0]) slugs.push(positional[0]);
+  if (!slugs.length || slugs.includes('all')) return products;
 
-  const product = products.find(
-    (item) => item.slug === slug || item.commerce?.handle === slug,
-  );
-  if (!product) throw new Error(`Unknown merch product: ${slug}`);
-  return [product];
+  return [...new Set(slugs)].map((slug) => {
+    const product = products.find(
+      (item) => item.slug === slug || item.commerce?.handle === slug,
+    );
+    if (!product) throw new Error(`Unknown merch product: ${slug}`);
+    return product;
+  });
 }
 
 export function catalogMockupPath(product) {
@@ -974,6 +1005,95 @@ async function runNew(args) {
   products.push(product);
   await writeProducts(products);
   process.stdout.write(`Created ${slug} (${mode})\n`);
+}
+
+export function productionCopyFromOwnerPreview(source, targetSlug, sequence) {
+  if (
+    source?.automation?.previewOnly !== true ||
+    source?.automation?.releaseEligible !== false
+  ) {
+    throw new Error(`${source?.slug || 'Unknown product'} is not an owner preview`);
+  }
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(targetSlug)) {
+    throw new Error(`Unsafe production slug: ${targetSlug}`);
+  }
+
+  const product = structuredClone(source);
+  product.id = `drop-${String(sequence).padStart(3, '0')}-${targetSlug}`;
+  product.slug = targetSlug;
+  product.workflow = {status: 'generated', updatedAt: new Date().toISOString()};
+  product.meme.source =
+    'Owner-designed concept; production qualification uses current aggregate X signals';
+  product.signals = {
+    profile: 'owner-preview-production-qualification',
+    queries: [
+      {
+        provider: 'x',
+        query:
+          '(codex OR "coding agent" OR "AI coding") (ship OR build OR review OR terminal OR agent) lang:en -is:retweet',
+        maxResults: 25,
+      },
+    ],
+    sources: [],
+  };
+  product.commerce.handle = targetSlug;
+  product.commerce.currency = 'CHF';
+  product.commerce.variants = product.commerce.variants.map((variant) => {
+    const suffix = String(variant.providerVariantId);
+    return {
+      ...variant,
+      id: `${targetSlug}:${suffix}`,
+      sku: `${targetSlug.replaceAll('-', '_').toUpperCase()}_${variant.color}_${variant.size}`
+        .replace(/[^A-Z0-9_]/g, '_')
+        .replace(/_+/g, '_'),
+      availableForSale: true,
+    };
+  });
+  product.providerRefs.printful = {
+    productId: null,
+    mockupTaskKey: null,
+    variants: [],
+  };
+  product.assets = {
+    ...product.assets,
+    customerPhotos: [],
+  };
+  product.approval = {
+    approvedAt: null,
+    approvedBy: null,
+    notes:
+      `Production release copy of owner preview ${source.slug}; the original preview record remains non-sellable and unchanged.`,
+  };
+  product.workflowNotes = [
+    ...(product.workflowNotes || []),
+    `Production identity created from owner preview ${source.slug} under explicit release authority.`,
+    'Live X records qualify current audience relevance only; they did not retroactively determine or originate the owner-designed artwork.',
+  ];
+  delete product.automation;
+  return product;
+}
+
+async function runQualifyOwnerPreviews(args) {
+  assertReleaseAuthority(args);
+  const products = await readProducts();
+  const created = [];
+  const reused = [];
+
+  for (const [sourceSlug, targetSlug] of ownerPreviewReleaseSlugs) {
+    const existing = products.find((product) => product.slug === targetSlug);
+    if (existing) {
+      reused.push(targetSlug);
+      continue;
+    }
+    const source = products.find((product) => product.slug === sourceSlug);
+    if (!source) throw new Error(`Missing owner preview: ${sourceSlug}`);
+    const copy = productionCopyFromOwnerPreview(source, targetSlug, products.length + 1);
+    products.push(copy);
+    created.push(targetSlug);
+  }
+
+  await writeProducts(products);
+  printJson({created, reused});
 }
 
 async function newAopCottonProduct({products, slug, title}) {
@@ -2689,12 +2809,18 @@ function wrapText(text, maxLineLength) {
 async function runMockups(args) {
   const dryRun = hasFlag(args, '--dry-run');
   const pollOnly = hasFlag(args, '--poll');
+  const fromStoreProduct = hasFlag(args, '--from-store-product');
   const siteUrl = readArg(args, '--site-url', process.env.PUBLIC_SITE_URL);
-  if (!dryRun && !pollOnly) assertPrintfulPublicAssetUrl(siteUrl);
+  if (!dryRun && !pollOnly && !fromStoreProduct) {
+    assertReleaseAuthority(args);
+    assertPrintfulPublicAssetUrl(siteUrl);
+  }
   const products = await readProducts();
   const bases = await readBaseProducts();
   const selected = selectProducts(products, args);
-  if (!dryRun) assertProviderMutationAllowed(selected, 'Printful mockup generation');
+  if (!dryRun && !fromStoreProduct) {
+    assertProviderMutationAllowed(selected, 'Printful mockup generation');
+  }
   const payloads = selected.map((product) => {
     const base = baseForProduct(bases, product);
     const provider = providerForProduction(productProduction(product).provider);
@@ -2717,6 +2843,54 @@ async function runMockups(args) {
         slug: product.slug,
         endpoint: `POST https://api.printful.com/mockup-generator/create-task/${base.catalogProductId}`,
         payload,
+      })),
+    );
+    return;
+  }
+
+  if (fromStoreProduct) {
+    requireEnv(['PRINTFUL_TOKEN', 'PRINTFUL_STORE_ID']);
+    const {getPrintfulStoreProduct} = await import('./adapters/printful.mjs');
+    for (const item of payloads) {
+      const ref = item.product.providerRefs[item.provider.name];
+      if (!ref?.productId) {
+        throw new Error(
+          `${item.product.slug}: store-product mockup import requires a provider product ID`,
+        );
+      }
+      const response = await getPrintfulStoreProduct(ref.productId);
+      const urls = [
+        ...new Set(
+          printfulStoreSyncVariants(response).flatMap((variant) =>
+            (variant.files || [])
+              .filter((file) => file.type === 'preview' && file.preview_url)
+              .map((file) => file.preview_url),
+          ),
+        ),
+      ];
+      if (!urls.length) {
+        throw new Error(
+          `${item.product.slug}: Printful store product has no downloadable preview`,
+        );
+      }
+      const savedMockups = await persistMockupsFromTask(item.product, {
+        mockups: urls.map((mockupUrl) => ({mockup_url: mockupUrl})),
+      });
+      if (!savedMockups.length) {
+        throw new Error(
+          `${item.product.slug}: Printful store product preview import saved no files`,
+        );
+      }
+      advanceWorkflowStatus(item.product, 'mockups_ready');
+    }
+
+    await writeProducts(products);
+    printJson(
+      selected.map((product) => ({
+        slug: product.slug,
+        source: 'existing-store-product',
+        status: workflowStatus(product),
+        mockups: product.assets.mockups,
       })),
     );
     return;
@@ -3240,7 +3414,10 @@ export function printfulPayloadWithSyncVariantIds(payload, response) {
 async function runPrintfulUpsert(args) {
   const dryRun = hasFlag(args, '--dry-run');
   const siteUrl = readArg(args, '--site-url', process.env.PUBLIC_SITE_URL);
-  if (!dryRun) assertPrintfulPublicAssetUrl(siteUrl);
+  if (!dryRun) {
+    assertReleaseAuthority(args);
+    assertPrintfulPublicAssetUrl(siteUrl);
+  }
 
   const products = await readProducts();
   const bases = await readBaseProducts();
@@ -3586,6 +3763,7 @@ async function runPublish(args) {
   const products = await readProducts();
   const bases = await readBaseProducts();
   const selected = selectProducts(products, args);
+  if (!hasFlag(args, '--dry-run')) assertReleaseAuthority(args);
   assertPilotPublicationAllowed(selected);
   assertProviderMutationAllowed(selected, 'Catalog publication');
 
@@ -3663,6 +3841,9 @@ async function main() {
     case 'new':
       await runNew(args);
       break;
+    case 'release:qualify-owner-previews':
+      await runQualifyOwnerPreviews(args);
+      break;
     case 'validate':
       await runValidate();
       break;
@@ -3713,7 +3894,7 @@ async function main() {
       break;
     default:
       throw new Error(
-        'Usage: node scripts/merch.mjs <new|validate|signals|signals:x|art-director:review|generate-artwork|compose-print-files|catalog-mockups|mockups|photoshoot|fulfillment:verify|printful:verify|printful:upsert|fulfillment:order:dry-run|printful:order:dry-run|publish>',
+        'Usage: node scripts/merch.mjs <new|release:qualify-owner-previews|validate|signals|signals:x|art-director:review|generate-artwork|compose-print-files|catalog-mockups|mockups|photoshoot|fulfillment:verify|printful:verify|printful:upsert|fulfillment:order:dry-run|printful:order:dry-run|publish>',
       );
   }
 }

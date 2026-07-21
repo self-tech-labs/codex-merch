@@ -6,10 +6,19 @@ import {promisify} from "node:util";
 
 const execFileAsync = promisify(execFile);
 const workspace = process.cwd();
-const finalVideo = path.join(workspace, "video/out/codex-merch-build-week-1080p.mp4");
-const captionsPath = path.join(workspace, "video/out/codex-merch-build-week.en.srt");
-const thumbnailPath = path.join(workspace, "video/out/codex-merch-build-week-thumbnail.png");
-const qaDirectory = path.join(workspace, "video/qa");
+const argumentValue = (name, fallback) =>
+  process.argv.find((argument) => argument.startsWith(`${name}=`))?.slice(name.length + 1) ?? fallback;
+const finalVideoRelative = argumentValue("--video", "video/out/codex-merch-build-week-1080p.mp4");
+const finalVideo = path.join(workspace, finalVideoRelative);
+const captionsPath = path.join(
+  workspace,
+  argumentValue("--captions", "video/out/codex-merch-build-week.en.srt"),
+);
+const thumbnailPath = path.join(
+  workspace,
+  argumentValue("--thumbnail", "video/out/codex-merch-build-week-thumbnail.png"),
+);
+const qaDirectory = path.join(workspace, argumentValue("--qa-dir", "video/qa"));
 const privacyReviewed = process.argv.includes("--privacy-reviewed");
 await mkdir(qaDirectory, {recursive: true});
 
@@ -114,7 +123,7 @@ await execFileAsync(
 
 const report = {
   status: privacyReviewed ? "pass" : "technical-pass-privacy-review-pending",
-  generatedFrom: "video/out/codex-merch-build-week-1080p.mp4",
+  generatedFrom: finalVideoRelative,
   resolution: `${video.width}x${video.height}`,
   fps,
   durationSeconds,
@@ -125,7 +134,7 @@ const report = {
   truePeakDbtp,
   captionCueCount,
   playbackDecode: "pass",
-  contactSheet: "video/qa/final-contact-sheet.png",
+  contactSheet: path.relative(workspace, contactSheetPath),
   visualPrivacyReview: privacyReviewed ? "pass" : "pending manual contact-sheet review",
   fileSizeBytes: (await stat(finalVideo)).size,
   sha256: createHash("sha256").update(await readFile(finalVideo)).digest("hex"),

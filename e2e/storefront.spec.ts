@@ -41,6 +41,14 @@ test.afterEach(async ({page}) => {
 
 test('preview catalog is browseable but cannot be purchased', async ({page}) => {
   await page.goto('/');
+  await expect(
+    page.getByText('Fan-made Build Week project · Not official OpenAI merch', {
+      exact: true,
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByText(/judge demo is free and requires no purchase/i),
+  ).toBeVisible();
   await expect(page.getByText('Prototype preview', {exact: true}).first()).toBeVisible();
   await expect(page.getByText('Checkout disabled', {exact: true}).first()).toBeVisible();
   await expect(page.getByText('Preview', {exact: true}).first()).toBeVisible();
@@ -57,6 +65,9 @@ test('preview catalog is browseable but cannot be purchased', async ({page}) => 
     'noindex,nofollow',
   );
   await expect(page.locator('.mockup-strip img')).toHaveCount(4);
+  await expect(
+    page.getByText(/This is not official OpenAI merchandise/i),
+  ).toBeVisible();
   await expect(page.getByRole('button', {name: 'Checkout disabled'})).toBeDisabled();
 
   await page.goto('/cart');
@@ -84,11 +95,11 @@ test('research and deployment carousel leads with the supplied worn photo', asyn
   );
 });
 
-test('how it works leads with the truthful owner-supplied preview path', async ({page}) => {
+test('how it works explains the open signal-to-product pipeline', async ({page}) => {
   await page.goto('/how-it-works');
 
   await expect(
-    page.getByRole('heading', {name: 'One premise to a garment preview.'}),
+    page.getByRole('heading', {name: 'Signal in. Merch out.'}),
   ).toBeVisible();
   await expect(
     page.getByText('Create a preview merch for the trend ‘The Sol Shines’.', {
@@ -96,40 +107,42 @@ test('how it works leads with the truthful owner-supplied preview path', async (
     }),
   ).toBeVisible();
   await expect(
-    page.getByRole('heading', {name: 'Owner-supplied trend'}),
+    page.getByText('Owner-supplied trend', {exact: true}),
   ).toBeVisible();
   await expect(
-    page.getByRole('heading', {name: 'Weekly X-list discovery'}),
-  ).toBeVisible();
-  await expect(page.getByText('None claimed', {exact: true})).toBeVisible();
-  await expect(page.getByText('Skipped', {exact: true})).toBeVisible();
-  await expect(
-    page.getByText(
-      'GPT-5.6 art direction → deterministic compositor → actual-render critic → prepress',
-      {exact: true},
-    ),
+    page.getByText('30 authorized X posts', {exact: true}),
   ).toBeVisible();
   await expect(
-    page.getByRole('heading', {name: 'Vercel Preview', exact: true}),
+    page.getByRole('heading', {name: 'Five moves. One inspectable run.'}),
   ).toBeVisible();
   await expect(
-    page.getByRole('heading', {name: 'Production candidate', exact: true}),
+    page.getByRole('heading', {name: 'GPT-5.6 proposes'}),
   ).toBeVisible();
   await expect(
-    page.getByRole('heading', {name: 'Inspectable contracts', exact: true}),
+    page.getByRole('heading', {name: 'Code proves'}),
   ).toBeVisible();
   await expect(
-    page.getByText('scripts/prompts/weekly-trend.md', {exact: true}),
+    page.getByRole('heading', {name: 'A human releases'}),
   ).toBeVisible();
   await expect(
-    page.getByText('merch/weekly/schemas/art-direction.schema.json', {
-      exact: true,
+    page.getByRole('heading', {name: 'Fork the pipeline, not the promise.'}),
+  ).toBeVisible();
+  await expect(
+    page.getByText('scripts/prompts/ · merch/weekly/schemas/', {exact: true}),
+  ).toBeVisible();
+  await expect(
+    page.getByRole('heading', {
+      name: 'A small proof for a large fashion problem.',
     }),
   ).toBeVisible();
+  await expect(page.getByText(/Richemont and LVMH/i)).toBeVisible();
+  await expect(page.getByText(/Zara and Shein/i)).toBeVisible();
   await expect(
-    page.getByText(/strict JSON Schema Structured Outputs \/ store: false/i),
+    page.getByRole('heading', {name: 'Build Week Preview', exact: true}),
   ).toBeVisible();
-  await expect(page.getByText(/5037 × 6600 px at 150 DPI/i)).toBeVisible();
+  await expect(
+    page.getByRole('heading', {name: 'Production release', exact: true}),
+  ).toBeVisible();
   await expect(page.getByText('Prototype preview', {exact: true}).first()).toBeVisible();
   await expect(page.getByText('Checkout disabled', {exact: true}).first()).toBeVisible();
 });

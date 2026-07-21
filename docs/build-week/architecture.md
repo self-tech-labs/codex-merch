@@ -1,5 +1,11 @@
 # Architecture and model roles
 
+Codex Merch is designed as open signal-to-product infrastructure, not a fixed
+social-listening demo. Signal adapters, strict model contracts, physical product
+templates, deterministic rendering, and release providers are separate
+repository seams. The submitted X-to-sweatshirt path is one working
+configuration of that wider, hackable system.
+
 ## Two intake modes, one creative pipeline
 
 ```mermaid
@@ -36,6 +42,13 @@ release path. The generated product remains visible with preview semantics but
 is not `published`, has no sellable Printful mapping, and cannot reach Stripe.
 This demonstrates the complete creative result without pretending that the
 commerce stack has been operationally approved.
+
+That separation is commercially useful: a high-velocity retailer can focus on
+signal latency, a luxury group can apply stricter brand and human-approval
+policies, and a personalization team can swap in segment-level data and a
+different physical format. Examples such as Zara, Shein, Richemont, and LVMH
+describe the kinds of R&D questions this architecture can support; they are not
+claimed customers, partners, endorsements, or sources of project data.
 
 Both intake modes deliberately meet at a normalized trend contract. Everything
 after that join—mandatory trend hero copy, three deliberately different

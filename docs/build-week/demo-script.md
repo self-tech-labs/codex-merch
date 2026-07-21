@@ -1,89 +1,89 @@
-# Demo script: target 2 minutes 50 seconds
+# Demo script: “Signal In. Merch Out.” — 2:51
 
-The final video must be public on YouTube, include spoken audio, remain under
-three minutes, and explain both Codex and GPT-5.6. The judged path is the
-non-commerce Vercel Preview; do not simulate a purchase or claim that the
-production adapters were exercised.
+The final video must be public on YouTube, include spoken English audio, remain
+under three minutes, and explain both Codex and GPT-5.6. The judged path is a
+non-commerce Preview. Do not simulate a purchase or claim that a production
+provider was exercised.
 
-## 0:00–0:15 — Outcome first
+The accepted script is also stored as structured narration in
+[`../../video/narration-v2.json`](../../video/narration-v2.json).
 
-Open the Solward Index product in the public Preview. Show its catalog, front,
-back, and panel views plus the disabled Preview-only action.
+## 0:00–0:09 — Signal in. Merch out.
 
-Voiceover: “I told Codex one team trend—‘The Sol Shines’—and it produced this
-six-panel, production-sized garment. This is a real catalog candidate, but the
-Build Week Preview deliberately cannot charge anyone.”
+Open on the Solward Index output and the new acid-lime signal tape.
 
-## 0:15–0:38 — One ordinary Codex request
+Voiceover: “Codex Merch is an open-source, hackable
+trend-signal-to-real-merch pipeline, built with Codex and GPT-5.6.”
 
-Show the project in Codex Desktop and type: “Create a preview merch for the
-trend ‘The Sol Shines’.” Show that the repository-owned skill selects the
-owner-supplied trend path. Cut to the completed report and disclose the time cut
-on screen; generation and full verification need not fit inside the video.
+## 0:09–0:26 — Make the loop visible
 
-Voiceover: “This is not the scheduled automation and it does not pretend that I
-found social evidence. Codex records me as the source, operates the repository,
-and runs the complete creative preparation from an ordinary conversation.”
+Show the five replaceable contracts: Signal, Direct, Build, Prove, Release.
 
-## 0:38–1:08 — Inspectable creative contract
+Voiceover: “Fashion has many signal tools and many production tools, but the
+loop between them is still opaque. This project turns that loop into a visible,
+replaceable system—from trusted premise to testable garment.”
 
-Show the owner-supplied provenance, the three structured garment recipes, and
-the repository prompt/schema links. Then show the selected recipe's explicit
-front, back, left sleeve, right sleeve, label panel, and inside-label contract.
+## 0:26–0:53 — Start with the real output
 
-Voiceover: “GPT-5.6 acts as a bounded art director: exactly three materially
-different, panel-aware directions. Code rejects unsafe language, incomplete
-panels, duplicate recipes, and low production or rights scores before anything
-is rendered.”
+Show the updated catalog, Solward product views, six-panel view, rights note,
+and disabled checkout.
 
-## 1:08–1:38 — Render, inspect, gate
+Voiceover: “Solward Index is not a moodboard or a single generated image. It is
+a catalog entry, four customer-facing views, six provider-sized print panels,
+hashes, and a public rights record. The Preview is deliberately non-sellable.”
 
-Show a production PNG's dimensions, the catalog mockup, the prepress result,
-and the GPT-5.6 visual-critic rubric. Briefly point to immutable hashes and the
-repository test/build result.
+## 0:53–1:30 — Five moves, three authorities
 
-Voiceover: “Sharp deterministically composes exact provider-sized panels and
-exact typography. GPT-5.6 then sees the actual rendered output, while code owns
-pixel dimensions, required placements, score floors, rights gates, hashes, and
-the final pass decision. The model cannot publish or waive a failed gate.”
+Walk the simplified How it works page from the one-sentence input through the
+five stages, then show the authority cards.
 
-## 1:38–2:07 — Public technical explainer
+Voiceover: “Signal starts from an owner brief or exactly 30 authorized posts.
+GPT-5.6 directs three panel-aware visual worlds and critiques the rendered
+garment. Deterministic code composes the six panels and enforces provenance,
+rights, dimensions, PNG integrity, and prepress. A human authorizes release.”
 
-Open `/how-it-works`. Trace the direct Preview path into the shared creative
-pipeline, then the production X-list path into the same trend contract.
+## 1:30–1:54 — Fork the pipeline
 
-Voiceover: “In production, a weekly Codex Desktop task requests exactly the
-latest 30 posts from the authorized X list. GPT-5.6 returns one recurring trend
-or safely skips the week. The social posts are untrusted private evidence; only
-the derived trend crosses into the garment system.”
+Show the four repository seams: source, judgment, product, and outcome.
 
-## 2:07–2:34 — Truthful production boundary
+Voiceover: “Swap X for a community feed or an internal trend desk. Change the
+prompt and schema without hiding the contract. Add another garment or
+composition grammar. Route validated outputs into another provider or commerce
+stack. The seams live in the repository, alongside the tests.”
 
-On the technical page, show the guarded Printful and commerce stages and the
-Preview/Production comparison. Keep the Preview banner and disabled checkout in
-frame.
+## 1:54–2:18 — Commercial fashion thesis
 
-Voiceover: “The production code is already separated behind fail-closed gates:
-Printful product sync, Stripe Checkout, immutable Neon order snapshots, signed
-webhooks, and idempotent Inngest fulfillment. For judging those credentials and
-approval flags stay off. Enabling them is configuration and operational
-approval—not a fake demo branch.”
+Show the acid-lime commercial frame with speed, specificity, and R&D columns.
 
-## 2:34–2:50 — Proof and close
+Voiceover: “Zara and Shein illustrate the value of shorter signal-to-sample
+loops. Richemont and LVMH illustrate a different R&D need: test sources, models,
+product formats, and approval policies as replaceable components.”
 
-Show the final candidate in the catalog, its public URL, the passing verification
-summary, and the dated Build Week commit.
+Keep the following disclaimer visible: “These are market examples only; no
+affiliation, endorsement, customer relationship, or proprietary data is
+claimed.”
 
-Voiceover: “Codex turns a sentence into an inspectable physical-design system;
-GPT-5.6 supplies judgment, deterministic software supplies guarantees, and the
-same architecture can run from a weekly team signal.”
+## 2:18–2:38 — Repository proof
 
-## Recording checklist
+Show 11 products, 147 passing tests, 12 browser checks, six panels, and the
+model/code/human authority split.
 
-- Resolve all remaining owner-input links and IDs before recording.
+Voiceover: “The repository is the evidence. GPT provides taste. Code proves the
+contract. A human holds the release keys. No payment, provider sync,
+publication, or fulfillment is shown.”
+
+## 2:38–2:51 — Close
+
+Return to the garment and repository call to action.
+
+Voiceover: “Signal in. Merch out. A small open-source proof for a large fashion
+problem. Fork the pipeline, inspect the garments, and judge the system.”
+
+## Recording and upload checklist
+
 - Keep `CHECKOUT_ENABLED=false` and `PRINTFUL_AUTO_CONFIRM=false` in the submitted Preview.
-- Do not enter payment details, create a Stripe session, or imply that a Printful product/order was created for this demonstration.
-- Hide terminal environment values, customer data, webhook bodies, and private X content.
-- Keep browser and terminal text large enough to read at normal playback speed.
-- Label the generation time cut explicitly; do not claim a mocked external mutation as live.
-- Verify final runtime is below 3:00 after YouTube processing.
+- Do not enter payment details, create a Stripe session, or imply that a provider product or order was created.
+- Keep credentials, customer data, webhook bodies, private X content, browser chrome, and desktop UI out of frame.
+- Keep the persistent AI-voice label and the market-example disclaimer.
+- Upload the supplied thumbnail and 39-cue English SRT file.
+- Verify the public YouTube transcode preserves 1080p, audio, captions, description, and chapters.

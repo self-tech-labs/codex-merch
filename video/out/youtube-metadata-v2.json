@@ -1,0 +1,27 @@
+{
+  "title": "Codex Merch — Signal In. Merch Out. | OpenAI Build Week 2026",
+  "visibility": "public",
+  "audience": "not_made_for_kids",
+  "language": "en",
+  "category": "Science & Technology",
+  "video": "video/out/codex-merch-signal-to-product-1080p.mp4",
+  "thumbnail": "video/out/codex-merch-signal-to-product-thumbnail.png",
+  "captions": "video/out/codex-merch-signal-to-product.en.srt",
+  "descriptionSource": "video/out/youtube-description-v2.md",
+  "aiDisclosure": "Narration is an AI-generated voice synthesized with OpenAI gpt-audio-1.5. GPT-5.6 performs bounded structured judgment and critiques rendered imagery; deterministic code owns production and release authority.",
+  "independenceDisclosure": "Independent OpenAI Build Week project; named fashion groups are market examples only and are not claimed customers, partners, or data sources.",
+  "tags": [
+    "OpenAI Build Week",
+    "Codex",
+    "GPT-5.6",
+    "gpt-audio-1.5",
+    "open source",
+    "fashion tech",
+    "signal to product",
+    "agentic workflow",
+    "structured outputs",
+    "Remotion",
+    "TypeScript",
+    "creative operations"
+  ]
+}

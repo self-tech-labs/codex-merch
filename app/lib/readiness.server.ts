@@ -1,11 +1,17 @@
 import {sql} from 'drizzle-orm';
 import {getDatabase} from '~/db/client.server';
-import {merchantPilot} from '~/lib/merchant-policy';
+import {
+  merchantJuryCatalog,
+  type MerchantJuryProduct,
+} from '~/lib/merchant-policy';
 import {stripeClient} from '~/lib/stripe.server';
 
 type ProbeDependencies = {
   databaseProbe?: (env: AppEnv) => Promise<void>;
-  printfulProbe?: (env: AppEnv) => Promise<void>;
+  printfulProbe?: (
+    env: AppEnv,
+    approvedProduct: MerchantJuryProduct,
+  ) => Promise<void>;
   stripeProbe?: (env: AppEnv) => Promise<{livemode: boolean}>;
 };
 
@@ -18,11 +24,12 @@ export async function probeCheckoutDependencies(
     printfulProbe = probePrintful,
     stripeProbe = probeStripe,
   }: ProbeDependencies = {},
+  approvedProduct: MerchantJuryProduct = merchantJuryCatalog.products[0],
 ) {
   const paymentMode = stripePaymentMode(env.STRIPE_SECRET_KEY);
   const [, , stripe] = await Promise.all([
     withTimeout(databaseProbe(env), 'database'),
-    withTimeout(printfulProbe(env), 'Printful'),
+    withTimeout(printfulProbe(env, approvedProduct), 'Printful'),
     withTimeout(stripeProbe(env), 'Stripe'),
   ]);
   const expectedLiveMode = paymentMode === 'live';
@@ -104,9 +111,12 @@ async function probeStripe(env: AppEnv) {
   return {livemode: balance.livemode};
 }
 
-async function probePrintful(env: AppEnv) {
+async function probePrintful(
+  env: AppEnv,
+  approvedProduct: MerchantJuryProduct,
+) {
   const response = await fetch(
-    `https://api.printful.com/store/products/${merchantPilot.printfulProductId}`,
+    `https://api.printful.com/store/products/${approvedProduct.printfulProductId}`,
     {
       headers: {
         Authorization: `Bearer ${env.PRINTFUL_TOKEN || ''}`,
@@ -123,14 +133,14 @@ async function probePrintful(env: AppEnv) {
       sync_variants?: Array<{id?: number}>;
     };
   };
-  if (body.result?.sync_product?.id !== merchantPilot.printfulProductId) {
+  if (body.result?.sync_product?.id !== approvedProduct.printfulProductId) {
     throw new Error('Printful readiness probe returned the wrong product');
   }
   const liveVariants = new Set(
     (body.result.sync_variants || []).map((variant) => variant.id),
   );
   if (
-    merchantPilot.printfulVariants.some(
+    approvedProduct.printfulVariants.some(
       (variant) => !liveVariants.has(variant.syncVariantId),
     )
   ) {

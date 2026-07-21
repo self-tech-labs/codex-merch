@@ -1,37 +1,41 @@
 # OpenAI Build Week demo video
 
-This directory contains the reproducible source and verified YouTube package for
-the Codex Merch submission. The final program is **2:50**, below the three-minute
-limit, and combines a real public-app walkthrough with authored Remotion slides.
+This directory contains two reproducible Remotion cuts. The current jury cut is
+**Signal In. Merch Out.**, a 2:51 explanation of Codex Merch as an open-source,
+hackable trend-signal-to-real-merch pipeline. The verified first cut remains
+available below as an archive.
 
-## Ready-to-upload package
+## Current jury package — v2
 
-- Final master: [`out/codex-merch-build-week-1080p.mp4`](out/codex-merch-build-week-1080p.mp4)
-- YouTube thumbnail: [`out/codex-merch-build-week-thumbnail.png`](out/codex-merch-build-week-thumbnail.png)
-- English captions: [`out/codex-merch-build-week.en.srt`](out/codex-merch-build-week.en.srt)
-- Upload title, description, chapters, and tags: [`out/youtube-description.md`](out/youtube-description.md)
-- Machine-readable upload fields: [`out/youtube-metadata.json`](out/youtube-metadata.json)
-- Final QA report: [`qa/qa-report.json`](qa/qa-report.json)
-- Final contact sheet: [`qa/final-contact-sheet.png`](qa/final-contact-sheet.png)
+- Final master: [`out/codex-merch-signal-to-product-1080p.mp4`](out/codex-merch-signal-to-product-1080p.mp4)
+- YouTube thumbnail: [`out/codex-merch-signal-to-product-thumbnail.png`](out/codex-merch-signal-to-product-thumbnail.png)
+- English captions: [`out/codex-merch-signal-to-product.en.srt`](out/codex-merch-signal-to-product.en.srt)
+- Upload title, description, chapters, and tags: [`out/youtube-description-v2.md`](out/youtube-description-v2.md)
+- Machine-readable upload fields: [`out/youtube-metadata-v2.json`](out/youtube-metadata-v2.json)
+- Final QA report: [`qa/v2/qa-report.json`](qa/v2/qa-report.json)
+- Final contact sheet: [`qa/v2/final-contact-sheet.png`](qa/v2/final-contact-sheet.png)
+- Narration provenance: [`public/audio/v2/narration-metadata.json`](public/audio/v2/narration-metadata.json)
 
-The video permanently labels the narration as an AI-generated voice, identifies
-the project as an independent Build Week entry, and includes a full-screen AI
-and production-boundary disclosure. No payment, provider sync, publication, or
-fulfillment action is shown.
+The master permanently labels its AI-generated narration. It distinguishes the
+real local application capture from authored Remotion graphics, identifies the
+commerce surface as a safe Preview, and says that named fashion groups are
+market examples only. It shows no payment, provider sync, publication, or
+fulfillment action.
 
-## Timeline
+## V2 timeline
 
 | Time | Section |
 | --- | --- |
-| 0:00 | Branded premise and scope |
-| 0:08 | Live catalog and Solward product walkthrough |
-| 0:39 | GPT-5.6 judgment versus deterministic authority |
-| 1:05 | Live intake, contracts, critic, and release-boundary walkthrough |
-| 1:53 | Judged-commit evidence |
-| 2:14 | Explicit AI and production disclosure |
-| 2:38 | Public Preview call to action |
+| 0:00 | Signal in. Merch out. |
+| 0:09 | The missing middle: make the loop visible |
+| 0:26 | Real Solward catalog, product, panels, and rights record |
+| 0:53 | Five moves and three authorities |
+| 1:30 | Four hackable repository seams |
+| 1:54 | Commercial thesis and market examples |
+| 2:18 | Repository proof and fail-closed boundary |
+| 2:38 | Fork the pipeline; inspect the garments |
 
-## Reproduce the edit
+## Reproduce v2
 
 Prerequisites are Node.js 22 or 24, FFmpeg/FFprobe, and the committed media
 sources. Remotion and its related packages are pinned to `4.0.495`.
@@ -39,59 +43,63 @@ sources. Remotion and its related packages are pinned to `4.0.495`.
 ```bash
 npm ci
 
-# Rebuild captions, video, normalized audio delivery, thumbnail, and technical QA.
-npm run video:package
+# Reassemble the committed narration without an API call.
+npm run video:narrate:v2 -- --assemble-only
 
-# Inspect video/qa/final-contact-sheet.png, then record the human privacy review.
-npm run video:qa -- --privacy-reviewed
+# Rebuild captions, master, loudness-normalized delivery, thumbnail, and QA.
+npm run video:package:v2
 ```
 
-`video:package` intentionally leaves the privacy review pending because a human
-must inspect the generated contact sheet. The committed `qa-report.json` records
-the completed review for the included final master.
+`video:package:v2` deliberately leaves privacy review pending. Inspect
+[`qa/v2/final-contact-sheet.png`](qa/v2/final-contact-sheet.png), then record the
+human review with `npm run video:qa:v2 -- --privacy-reviewed`. The committed
+report records that completed review for the included master.
 
-The committed narration segments can be assembled again without an API call:
+To generate fresh narration, place `OPENAI_API_KEY` in the confirmed local
+environment and run `npm run video:narrate:v2`. The reusable generator calls
+OpenAI `gpt-audio-1.5`, verifies transcript similarity, rejects silent or
+inaudible responses, enforces each scene's pacing window, and records every
+accepted take and any bounded tempo adjustment.
 
-```bash
-npm run video:narrate -- --assemble-only
-npm run video:captions
-```
+## V2 capture provenance
 
-To generate fresh narration, set `OPENAI_API_KEY` in the confirmed local
-environment and run `npm run video:narrate`. The script calls OpenAI
-`gpt-audio-1.5` through Chat Completions, saves the returned WAV and transcript,
-rejects takes below 0.98 transcript similarity, and records provenance in
-[`public/audio/narration-metadata.json`](public/audio/narration-metadata.json).
-Two committed segments have documented leading-acknowledgement trims; their
-exact accepted speech and source transcripts remain in the metadata.
+Codex Computer Use rehearsed and operated a clean, full-screen Chromium window
+against the repository's local Preview build. The retained assets are 13
+target-window screenshots under [`public/capture/v2/`](public/capture/v2/):
+catalog, Solward views, rights record, simplified five-stage flow, authority
+model, hackable seams, commercial thesis, and Preview boundary.
 
-## Live recording provenance
+The screenshots contain only repository-owned interface and safe catalog data.
+They contain no browser chrome, credentials, private tabs, raw X content,
+customer information, provider UI, or desktop setup. A physical-display take
+showed the macOS Computer Use privacy shield instead of the application; it was
+rejected and moved into ignored `video/raw/` storage. No rejected frame is part
+of the jury package. The accepted source overview is
+[`qa/v2/source-frames-contact-sheet.png`](qa/v2/source-frames-contact-sheet.png).
 
-Codex Computer Use rehearsed and then operated the real public Preview in
-Safari using only public, non-sellable sample data. FFmpeg captured the Mac
-display at 30 fps after device enumeration. The accepted take was cropped to
-the browser content and stitched from these clean ranges:
+## V2 QA result
 
-- `00:08.2–00:17.5` — public catalog
-- `00:32.0–00:48.8` — Solward catalog/front/back/pattern views
-- `00:50.2–01:40.7` — technical explainer and release boundary
+The included master passed at **1920×1080**, **30 fps**, **171.0 seconds**,
+H.264/AAC at 48 kHz, **−15.97 LUFS**, and **−1.5 dBTP**. All 39 English cues are
+both burned in and supplied as SRT. FFmpeg completed a full decode, the contact
+sheet passed visual privacy review, and QuickTime successfully played both the
+opening and the commercial-thesis chapter.
 
-The physical 3024×1964 capture used `crop=2600:1462:192:170`, followed by
-`scale=1920:1080`, before the ranges were concatenated. The retained canonical
-source is [`public/capture/walkthrough-trimmed.mp4`](public/capture/walkthrough-trimmed.mp4),
-and its inspection sheet is
-[`qa/walkthrough-trimmed-contact-sheet.png`](qa/walkthrough-trimmed-contact-sheet.png).
-Raw and rejected takes were deleted after review because their setup frames
-contained private desktop UI; `video/raw/` remains ignored by Git.
+`npm run video:qa:v2 -- --privacy-reviewed` fails unless the master is under
+three minutes, has the expected delivery codecs and dimensions, meets the
+loudness and true-peak limits, includes captions and a thumbnail, and decodes
+without error.
 
-The structured capture record is [`recording.json`](recording.json). It records
-the app URL, crop, retained ranges, and privacy decision without retaining any
-private frames.
+## Archived first cut
 
-## QA acceptance criteria
+The original 2:50 **Inspectable AI Garment System** package remains reproducible:
 
-`npm run video:qa` fails unless the final master has 1920×1080 video at 30 fps,
-duration between one and three minutes, H.264 video, AAC audio, at least ten SRT
-cues, integrated loudness within 1.5 LU of −16 LUFS, true peak no higher than
-−1 dBTP, and a complete FFmpeg decode. It also regenerates the final contact
-sheet. The included master passed at **−15.85 LUFS** and **−1.15 dBTP**.
+- [`out/codex-merch-build-week-1080p.mp4`](out/codex-merch-build-week-1080p.mp4)
+- [`out/codex-merch-build-week-thumbnail.png`](out/codex-merch-build-week-thumbnail.png)
+- [`out/codex-merch-build-week.en.srt`](out/codex-merch-build-week.en.srt)
+- [`qa/qa-report.json`](qa/qa-report.json)
+- Remotion composition `CodexMerchBuildWeek`
+
+Use `npm run video:package` to rebuild that archived cut. Its narration and
+walkthrough assets remain under `public/audio/` and
+`public/capture/walkthrough-trimmed.mp4`.
