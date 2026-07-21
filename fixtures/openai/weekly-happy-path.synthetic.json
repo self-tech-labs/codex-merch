@@ -54,6 +54,8 @@
         "rationale": "An asymmetric offset ledger maps the joke through branching queue lines, a clearing boundary, check marks, and concentric sleeve rings with crosshairs and accent notches.",
         "brandLabel": "REVIEW BAROMETER DEPT",
         "provenanceLine": "SYNTHETIC WEEKLY SIGNAL / FIELD EDITION",
+        "aestheticWorld": "zine-punk",
+        "typeSystem": "condensed-zine",
         "layout": "offset-ledger",
         "basePattern": "queue-radar",
         "palette": {
@@ -63,7 +65,7 @@
           "accent": "#2A62FF"
         },
         "front": {
-          "primaryText": "PENDING FORECAST",
+          "primaryText": "QUIET QUEUE RITUAL",
           "chestLabel": "FORECAST 30/30",
           "mark": "QW/30",
           "subline": "TENSION SETTLES WHEN THE NARROW SLOT CLEARS"
@@ -99,6 +101,8 @@
         "rationale": "A centered system uses vertical pinstripes, a rectangular aperture, side connectors, and ladder sleeves made from two rails and nine rungs.",
         "brandLabel": "PRESSURE STATION",
         "provenanceLine": "FICTIONAL BAROMETER STUDY / ISSUE ONE",
+        "aestheticWorld": "sports-club",
+        "typeSystem": "varsity-block",
         "layout": "center-monument",
         "basePattern": "pinstripe",
         "palette": {
@@ -108,7 +112,7 @@
           "accent": "#FF5D3D"
         },
         "front": {
-          "primaryText": "REVIEW BAROMETER",
+          "primaryText": "QUIET QUEUE RITUAL",
           "chestLabel": "STATION 01",
           "mark": "MP/01",
           "subline": "COMPACT CHANGES EASE ATMOSPHERIC REVIEW LOAD"
@@ -144,6 +148,8 @@
         "rationale": "A left-weighted split field and vertical accent divider organize nested angular isobar contours with abstract shape-only sleeve nodes.",
         "brandLabel": "QUIET PASSAGE UNIT",
         "provenanceLine": "ORIGINAL STATUS MAP / SYNTHETIC SIGNAL",
+        "aestheticWorld": "coastal-surf",
+        "typeSystem": "rounded-surf",
         "layout": "split-field",
         "basePattern": "status-isobar-map",
         "palette": {
@@ -153,7 +159,7 @@
           "accent": "#00A56A"
         },
         "front": {
-          "primaryText": "CLEAR SLOT",
+          "primaryText": "QUIET QUEUE RITUAL",
           "chestLabel": "ROUTE STATUS",
           "mark": "GW/OK",
           "subline": "A NARROW OPENING BETWEEN REVIEW FRONTS"

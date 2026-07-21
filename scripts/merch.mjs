@@ -1553,8 +1553,10 @@ export function aopPanelSvg({product, spec, area, width, height}) {
 <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${escapeXml(product.title)} ${area} AOP panel">
   ${aopDefs(palette)}
   <rect width="${width}" height="${height}" fill="${palette.fabric}"/>
-  ${aopBasePattern({area, spec, palette, width, height})}
-  ${aopPanelComposition({area, text, spec, palette, width, height})}
+  <g data-aop-aesthetic-world="${escapeXml(spec.aestheticWorld || 'legacy')}" data-aop-type-system="${escapeXml(spec.typeSystem || 'serif-editorial')}">
+    ${aopBasePattern({area, spec, palette, width, height})}
+    ${aopPanelComposition({area, text, spec, palette, width, height})}
+  </g>
 </svg>`;
 }
 
@@ -1563,14 +1565,15 @@ function aopInsideLabelSvg({product, spec, width, height}) {
   const production = productProduction(product);
   const brandLabel = spec.brandLabel || 'CODEX SUPPLY';
   const labelLine = spec.label?.line || production.textLayer || product.title;
-  const contentWidth = Math.max(1, width - 40);
+  const contentWidth = Math.max(1, width - 72);
+  const type = aopTypeSystem(spec);
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${escapeXml(product.title)} inside label">
   <rect width="${width}" height="${height}" fill="${palette.fabric}"/>
   <rect x="8" y="8" width="${width - 16}" height="${height - 16}" fill="none" stroke="${palette.ink}" stroke-width="3"/>
-  ${fittedTextSvg({text: brandLabel, x: width / 2, y: 29, maxWidth: contentWidth, maxHeight: 29, fontMax: 26, fontMin: 14, family: 'Arial, Helvetica, sans-serif', weight: 800, fill: palette.ink, maxLineLength: 28, maxLines: 1, role: 'inside-label-brand'})}
-  ${fittedTextSvg({text: labelLine, x: width / 2, y: 68, maxWidth: contentWidth, maxHeight: 25, fontMax: 20, fontMin: 12, family: 'Georgia, serif', fill: palette.ink, maxLineLength: 32, maxLines: 1, role: 'inside-label-line'})}
-  ${fittedTextSvg({text: '95% COTTON / 5% ELASTANE / MADE ON DEMAND', x: width / 2, y: 111, maxWidth: contentWidth, maxHeight: 18, fontMax: 13, fontMin: 8, family: 'Arial, Helvetica, sans-serif', weight: 700, fill: palette.ink, maxLineLength: 52, maxLines: 1, role: 'inside-label-fiber'})}
+  ${fittedTextSvg({text: brandLabel, x: width / 2, y: 29, maxWidth: contentWidth, maxHeight: 29, fontMax: 26, fontMin: 14, family: type.supportFamily, weight: 800, fill: palette.ink, maxLineLength: 28, maxLines: 1, role: 'inside-label-brand'})}
+  ${fittedTextSvg({text: labelLine, x: width / 2, y: 68, maxWidth: contentWidth, maxHeight: 25, fontMax: 20, fontMin: 12, family: type.displayFamily, weight: type.displayWeight, fill: palette.ink, maxLineLength: 32, maxLines: 1, role: 'inside-label-line'})}
+  ${fittedTextSvg({text: '95% COTTON / 5% ELASTANE / MADE ON DEMAND', x: width / 2, y: 111, maxWidth: contentWidth, maxHeight: 18, fontMax: 13, fontMin: 8, family: type.supportFamily, weight: 700, fill: palette.ink, maxLineLength: 52, maxLines: 1, role: 'inside-label-fiber'})}
 </svg>`;
 }
 
@@ -1596,6 +1599,24 @@ function aopDefs(palette) {
       <circle cx="150" cy="168" r="10" fill="${palette.ink}" opacity="0.28"/>
       <path d="M52 52V168H150V284H258" fill="none" stroke="${palette.ink}" stroke-width="5" opacity="0.22"/>
     </pattern>
+    <pattern id="checkerboard" width="320" height="320" patternUnits="userSpaceOnUse">
+      <rect width="320" height="320" fill="transparent"/>
+      <rect width="160" height="160" fill="${palette.ink}" opacity="0.2"/>
+      <rect x="160" y="160" width="160" height="160" fill="${palette.ink}" opacity="0.2"/>
+    </pattern>
+    <pattern id="sunstripes" width="400" height="520" patternUnits="userSpaceOnUse">
+      <rect width="400" height="120" fill="${palette.accent}" opacity="0.32"/>
+      <rect y="170" width="400" height="72" fill="${palette.ink}" opacity="0.12"/>
+      <rect y="300" width="400" height="150" fill="${palette.muted}" opacity="0.2"/>
+    </pattern>
+    <pattern id="halftone" width="180" height="180" patternUnits="userSpaceOnUse">
+      <circle cx="35" cy="35" r="18" fill="${palette.ink}" opacity="0.22"/>
+      <circle cx="125" cy="125" r="28" fill="${palette.accent}" opacity="0.24"/>
+    </pattern>
+    <pattern id="wavybands" width="480" height="360" patternUnits="userSpaceOnUse">
+      <path d="M-40 88C70 18 168 158 280 88S490 18 560 88" fill="none" stroke="${palette.accent}" stroke-width="54" opacity="0.28"/>
+      <path d="M-40 244C70 174 168 314 280 244S490 174 560 244" fill="none" stroke="${palette.ink}" stroke-width="32" opacity="0.14"/>
+    </pattern>
   </defs>`;
 }
 
@@ -1606,6 +1627,10 @@ function usesRecipeAopRenderer(spec) {
 function aopPatternId(spec) {
   if (spec.basePattern === 'pinstripe') return 'pinstripe';
   if (spec.basePattern === 'queue-radar') return 'queuegrid';
+  if (spec.basePattern === 'checkerboard') return 'checkerboard';
+  if (spec.basePattern === 'sun-stripes') return 'sunstripes';
+  if (spec.basePattern === 'halftone-noise') return 'halftone';
+  if (spec.basePattern === 'wavy-bands') return 'wavybands';
   if (spec.basePattern === 'status-isobar-map') {
     return 'statusmap';
   }
@@ -1692,6 +1717,39 @@ function aopBodyMotif({spec, palette, width, height, area}) {
     </g>`;
   }
 
+  if (spec.basePattern === 'checkerboard') {
+    const y = height * (area === 'back' ? 0.58 : 0.56);
+    return `<g data-aop-motif="checkerboard" fill="none">
+      <rect x="${width * 0.12}" y="${y - height * 0.12}" width="${width * 0.76}" height="${height * 0.24}" rx="${width * 0.05}" stroke="${palette.ink}" stroke-width="${strongStroke}"/>
+      <path d="M${width * 0.2} ${y}H${width * 0.8}" stroke="${palette.accent}" stroke-width="${strongStroke * 1.35}"/>
+    </g>`;
+  }
+
+  if (spec.basePattern === 'sun-stripes') {
+    const sunX = width * (area === 'back' ? 0.66 : 0.32);
+    const sunY = height * 0.58;
+    return `<g data-aop-motif="sun-stripes">
+      <circle cx="${sunX}" cy="${sunY}" r="${width * 0.19}" fill="${palette.accent}" opacity="0.92"/>
+      <rect x="${width * 0.08}" y="${sunY}" width="${width * 0.84}" height="${height * 0.052}" fill="${palette.fabric}"/>
+      <rect x="${width * 0.08}" y="${sunY + height * 0.07}" width="${width * 0.84}" height="${height * 0.025}" fill="${palette.ink}" opacity="0.78"/>
+    </g>`;
+  }
+
+  if (spec.basePattern === 'halftone-noise') {
+    const rotation = area === 'back' ? -7 : 7;
+    return `<g data-aop-motif="halftone-noise" transform="rotate(${rotation} ${width * 0.5} ${height * 0.58})">
+      <rect x="${width * 0.14}" y="${height * 0.45}" width="${width * 0.72}" height="${height * 0.28}" fill="${palette.ink}" opacity="0.12"/>
+      <rect x="${width * 0.2}" y="${height * 0.5}" width="${width * 0.6}" height="${height * 0.18}" fill="none" stroke="${palette.accent}" stroke-width="${strongStroke}"/>
+    </g>`;
+  }
+
+  if (spec.basePattern === 'wavy-bands') {
+    return `<g data-aop-motif="wavy-bands" fill="none" stroke-linecap="round">
+      <path d="M${-width * 0.08} ${height * 0.52}C${width * 0.18} ${height * 0.42} ${width * 0.32} ${height * 0.64} ${width * 0.55} ${height * 0.52}S${width * 0.92} ${height * 0.4} ${width * 1.08} ${height * 0.52}" stroke="${palette.accent}" stroke-width="${width * 0.075}"/>
+      <path d="M${-width * 0.08} ${height * 0.65}C${width * 0.18} ${height * 0.55} ${width * 0.32} ${height * 0.77} ${width * 0.55} ${height * 0.65}S${width * 0.92} ${height * 0.53} ${width * 1.08} ${height * 0.65}" stroke="${palette.ink}" stroke-width="${width * 0.035}" opacity="0.68"/>
+    </g>`;
+  }
+
   return '';
 }
 
@@ -1726,6 +1784,39 @@ function aopSleeveMotif({spec, palette, width, height, area}) {
       <path d="M${width * 0.35} ${height * 0.15}V${height * 0.82}M${width * 0.65} ${height * 0.15}V${height * 0.82}" stroke="${palette.ink}" stroke-width="${width * 0.018}" opacity="0.58"/>
       ${rungs}
     </g>`;
+  }
+  if (style === 'racing-stripe') {
+    return `<g data-aop-motif="racing-stripe">
+      <rect x="${width * (right ? 0.18 : 0.58)}" y="${height * 0.08}" width="${width * 0.13}" height="${height * 0.82}" fill="${palette.ink}" opacity="0.82"/>
+      <rect x="${width * (right ? 0.33 : 0.43)}" y="${height * 0.08}" width="${width * 0.075}" height="${height * 0.82}" fill="${palette.accent}"/>
+      <rect x="${width * (right ? 0.43 : 0.35)}" y="${height * 0.08}" width="${width * 0.025}" height="${height * 0.82}" fill="${palette.muted}"/>
+    </g>`;
+  }
+  if (style === 'checker-cuff') {
+    const cells = Array.from({length: 8}, (_, index) => {
+      const x = (index % 4) * width * 0.25;
+      const y = height * (0.66 + Math.floor(index / 4) * 0.12);
+      const filled = (index + Math.floor(index / 4)) % 2 === 0;
+      return `<rect x="${x}" y="${y}" width="${width * 0.25}" height="${height * 0.12}" fill="${filled ? palette.ink : palette.accent}" opacity="${filled ? 0.82 : 0.9}"/>`;
+    }).join('');
+    return `<g data-aop-motif="checker-cuff">${cells}</g>`;
+  }
+  if (style === 'sun-wave') {
+    return `<g data-aop-motif="sun-wave" fill="none" stroke-linecap="round">
+      <circle cx="${width * (right ? 0.68 : 0.32)}" cy="${height * 0.24}" r="${width * 0.13}" fill="${palette.accent}" stroke="none"/>
+      <path d="M${width * 0.08} ${height * 0.48}C${width * 0.28} ${height * 0.4} ${width * 0.42} ${height * 0.56} ${width * 0.62} ${height * 0.48}S${width * 0.9} ${height * 0.4} ${width * 1.05} ${height * 0.48}" stroke="${palette.ink}" stroke-width="${width * 0.04}"/>
+      <path d="M${-width * 0.05} ${height * 0.59}C${width * 0.18} ${height * 0.51} ${width * 0.38} ${height * 0.67} ${width * 0.58} ${height * 0.59}S${width * 0.86} ${height * 0.51} ${width * 1.08} ${height * 0.59}" stroke="${palette.muted}" stroke-width="${width * 0.026}"/>
+    </g>`;
+  }
+  if (style === 'badge-repeat') {
+    const badges = Array.from({length: 3}, (_, index) => {
+      const y = height * (0.24 + index * 0.22);
+      return `<g transform="translate(${motifX} ${y})">
+        <circle r="${width * 0.12}" fill="${index === 1 ? palette.accent : 'none'}" stroke="${palette.ink}" stroke-width="${width * 0.018}"/>
+        <path d="M${-width * 0.065} 0H${width * 0.065}M0 ${-width * 0.065}V${width * 0.065}" stroke="${index === 1 ? palette.fabric : palette.accent}" stroke-width="${width * 0.018}"/>
+      </g>`;
+    }).join('');
+    return `<g data-aop-motif="badge-repeat">${badges}</g>`;
   }
   if (style === 'wave') {
     const lineCount = right ? 3 : 6;
@@ -1763,8 +1854,22 @@ function aopPanelComposition({area, text, spec, palette, width, height}) {
   const frontWidth = layout === 'split-field' ? width * 0.48 : layout === 'offset-ledger' ? width * 0.64 : width * 0.68;
   const brandLabel = spec.brandLabel || 'CODEX SUPPLY';
   const provenance = spec.provenanceLine || 'CODEX / CUT-SEW / 2026';
+  const type = aopTypeSystem(spec);
 
   if (area === 'front') {
+    if (['giant-type', 'badge-stack', 'horizon-band', 'diagonal-poster'].includes(layout)) {
+      return aopExpressiveFrontComposition({
+        layout,
+        text,
+        spec,
+        palette,
+        width,
+        height,
+        brandLabel,
+        provenance,
+        type,
+      });
+    }
     const mainTop = height * (layout === 'split-field' ? 0.31 : 0.3);
     const mainLayout = fitTextLayout({
       text: text.front,
@@ -1774,19 +1879,32 @@ function aopPanelComposition({area, text, spec, palette, width, height}) {
       fontMin: width * 0.026,
       maxLineLength: layout === 'split-field' ? 16 : 18,
       maxLines: 3,
-      family: 'Georgia, serif',
+      family: type.displayFamily,
     });
     const subTop = mainTop + mainLayout.height + height * 0.025;
     return `
-      ${fittedTextSvg({text: text.chest, x: width * 0.34, y: height * 0.17, maxWidth: width * 0.28, maxHeight: height * 0.07, fontMax: width * 0.034, fontMin: width * 0.018, family: 'Arial, Helvetica, sans-serif', weight: 800, fill: palette.accent, maxLineLength: 18, maxLines: 2, role: 'front-chest'})}
-      ${fittedTextSvg({text: text.mark, x: width * 0.72, y: height * 0.165, maxWidth: width * 0.14, maxHeight: height * 0.075, fontMax: width * 0.05, fontMin: width * 0.022, family: 'Arial, Helvetica, sans-serif', weight: 800, fill: palette.ink, maxLineLength: 8, maxLines: 1, role: 'front-mark'})}
-      ${fittedTextSvg({text: text.front, x: frontX, y: mainTop, maxWidth: frontWidth, maxHeight: height * 0.17, fontMax: width * 0.064, fontMin: width * 0.026, family: 'Georgia, serif', fill: palette.ink, maxLineLength: layout === 'split-field' ? 16 : 18, maxLines: 3, role: 'front-primary', layout: mainLayout})}
-      ${fittedTextSvg({text: spec.front?.subline || 'CUT AND SEWN FOR RESEARCH CREWS', x: frontX, y: subTop, maxWidth: Math.min(frontWidth, width - safeX * 2), maxHeight: height * 0.055, fontMax: width * 0.024, fontMin: width * 0.014, family: 'Arial, Helvetica, sans-serif', weight: 700, fill: palette.ink, maxLineLength: 28, maxLines: 2, role: 'front-subline'})}
+      ${fittedTextSvg({text: text.chest, x: width * 0.34, y: height * 0.17, maxWidth: width * 0.28, maxHeight: height * 0.07, fontMax: width * 0.034, fontMin: width * 0.018, family: type.supportFamily, weight: 800, fill: palette.accent, maxLineLength: 18, maxLines: 2, role: 'front-chest'})}
+      ${fittedTextSvg({text: text.mark, x: width * 0.72, y: height * 0.165, maxWidth: width * 0.14, maxHeight: height * 0.075, fontMax: width * 0.05, fontMin: width * 0.022, family: type.supportFamily, weight: 800, fill: palette.ink, maxLineLength: 8, maxLines: 1, role: 'front-mark'})}
+      ${fittedTextSvg({text: text.front, x: frontX, y: mainTop, maxWidth: frontWidth, maxHeight: height * 0.17, fontMax: width * 0.064, fontMin: width * 0.026, family: type.displayFamily, weight: type.displayWeight, fill: palette.ink, maxLineLength: layout === 'split-field' ? 16 : 18, maxLines: 3, role: 'front-primary', layout: mainLayout})}
+      ${fittedTextSvg({text: spec.front?.subline || 'CUT AND SEWN FOR RESEARCH CREWS', x: frontX, y: subTop, maxWidth: Math.min(frontWidth, width - safeX * 2), maxHeight: height * 0.055, fontMax: width * 0.024, fontMin: width * 0.014, family: type.supportFamily, weight: 700, fill: palette.ink, maxLineLength: 28, maxLines: 2, role: 'front-subline'})}
       ${layout === 'split-field' ? `<rect x="${width * 0.68}" y="${height * 0.32}" width="${width * 0.008}" height="${height * 0.3}" fill="${palette.accent}"/>` : ''}
       ${aopFooterCode({palette, width, height, provenance})}`;
   }
 
   if (area === 'back') {
+    if (['giant-type', 'badge-stack', 'horizon-band', 'diagonal-poster'].includes(layout)) {
+      return aopExpressiveBackComposition({
+        layout,
+        text,
+        spec,
+        palette,
+        width,
+        height,
+        brandLabel,
+        provenance,
+        type,
+      });
+    }
     const mainTop = height * 0.16;
     const mainLayout = fitTextLayout({
       text: text.back,
@@ -1796,12 +1914,12 @@ function aopPanelComposition({area, text, spec, palette, width, height}) {
       fontMin: width * 0.024,
       maxLineLength: 18,
       maxLines: 3,
-      family: 'Georgia, serif',
+      family: type.displayFamily,
     });
     const subTop = mainTop + mainLayout.height + Math.max(height * 0.03, mainLayout.fontSize);
     return `
-      ${fittedTextSvg({text: text.back, x: width * 0.5, y: mainTop, maxWidth: width * 0.72, maxHeight: height * 0.2, fontMax: width * 0.058, fontMin: width * 0.024, family: 'Georgia, serif', fill: palette.ink, maxLineLength: 18, maxLines: 3, role: 'back-primary', layout: mainLayout})}
-      ${fittedTextSvg({text: spec.back?.subline || 'SAN FRANCISCO / MODEL WORKSHOP', x: width * 0.5, y: subTop, maxWidth: width * 0.66, maxHeight: height * 0.06, fontMax: width * 0.026, fontMin: width * 0.014, family: 'Arial, Helvetica, sans-serif', weight: 800, fill: palette.accent, maxLineLength: 28, maxLines: 2, role: 'back-subline'})}
+      ${fittedTextSvg({text: text.back, x: width * 0.5, y: mainTop, maxWidth: width * 0.72, maxHeight: height * 0.2, fontMax: width * 0.058, fontMin: width * 0.024, family: type.displayFamily, weight: type.displayWeight, fill: palette.ink, maxLineLength: 18, maxLines: 3, role: 'back-primary', layout: mainLayout})}
+      ${fittedTextSvg({text: spec.back?.subline || 'SAN FRANCISCO / MODEL WORKSHOP', x: width * 0.5, y: subTop, maxWidth: width * 0.66, maxHeight: height * 0.06, fontMax: width * 0.026, fontMin: width * 0.014, family: type.supportFamily, weight: 800, fill: palette.accent, maxLineLength: 28, maxLines: 2, role: 'back-subline'})}
       ${aopFooterCode({palette, width, height, provenance})}`;
   }
 
@@ -1821,7 +1939,7 @@ function aopPanelComposition({area, text, spec, palette, width, height}) {
       maxHeight: width * 0.1,
       fontMax: width * 0.075,
       fontMin: width * 0.026,
-      family: 'Georgia, serif',
+      family: type.displayFamily,
       maxLineLength: 28,
       maxLines: 1,
     });
@@ -1832,14 +1950,14 @@ function aopPanelComposition({area, text, spec, palette, width, height}) {
       maxHeight: width * 0.06,
       fontMax: width * 0.03,
       fontMin: width * 0.016,
-      family: 'Arial, Helvetica, sans-serif',
+      family: type.supportFamily,
       maxLineLength: 28,
       maxLines: 1,
     });
     return `
       <g transform="translate(${textX} ${textY}) rotate(${rotation})" data-aop-role="sleeve-type-${right ? 'right' : 'left'}" data-aop-text-lane="outer" data-aop-primary-lane="${primaryLane}" data-aop-caption-lane="${captionLane}">
-        ${fittedTextSvg({text: sleeveText, x: 0, y: primaryLane - primaryLayout.fontSize, maxWidth: primaryMaxWidth, maxHeight: width * 0.1, fontMax: width * 0.075, fontMin: width * 0.026, family: 'Georgia, serif', fill: palette.ink, maxLineLength: 28, maxLines: 1, role: 'sleeve-primary', layout: primaryLayout})}
-        ${fittedTextSvg({text: caption, x: 0, y: captionLane - captionLayout.fontSize, maxWidth: captionMaxWidth, maxHeight: width * 0.06, fontMax: width * 0.03, fontMin: width * 0.016, family: 'Arial, Helvetica, sans-serif', weight: 800, fill: palette.accent, maxLineLength: 28, maxLines: 1, role: 'sleeve-caption', layout: captionLayout})}
+        ${fittedTextSvg({text: sleeveText, x: 0, y: primaryLane - primaryLayout.fontSize, maxWidth: primaryMaxWidth, maxHeight: width * 0.1, fontMax: width * 0.075, fontMin: width * 0.026, family: type.displayFamily, weight: type.displayWeight, fill: palette.ink, maxLineLength: 28, maxLines: 1, role: 'sleeve-primary', layout: primaryLayout})}
+        ${fittedTextSvg({text: caption, x: 0, y: captionLane - captionLayout.fontSize, maxWidth: captionMaxWidth, maxHeight: width * 0.06, fontMax: width * 0.03, fontMin: width * 0.016, family: type.supportFamily, weight: 800, fill: palette.accent, maxLineLength: 28, maxLines: 1, role: 'sleeve-caption', layout: captionLayout})}
       </g>
       <rect x="${safeX}" y="${safeY}" width="${width - safeX * 2}" height="${height - safeY * 2}" fill="none" stroke="none" data-aop-safe-margin="true"/>`;
   }
@@ -1847,11 +1965,172 @@ function aopPanelComposition({area, text, spec, palette, width, height}) {
   if (area === 'label_panel') {
     return `
       <rect x="${width * 0.23}" y="${height * 0.29}" width="${width * 0.54}" height="${height * 0.2}" fill="${palette.fabric}" stroke="${palette.ink}" stroke-width="${Math.max(8, width * 0.008)}"/>
-      ${fittedTextSvg({text: brandLabel, x: width * 0.5, y: height * 0.325, maxWidth: width * 0.46, maxHeight: height * 0.055, fontMax: width * 0.042, fontMin: width * 0.018, family: 'Arial, Helvetica, sans-serif', weight: 800, fill: palette.ink, maxLineLength: 28, maxLines: 1, role: 'label-brand'})}
-      ${fittedTextSvg({text: spec.label?.line || text.title, x: width * 0.5, y: height * 0.405, maxWidth: width * 0.46, maxHeight: height * 0.045, fontMax: width * 0.03, fontMin: width * 0.015, family: 'Georgia, serif', fill: palette.accent, maxLineLength: 32, maxLines: 1, role: 'label-line'})}`;
+      ${fittedTextSvg({text: brandLabel, x: width * 0.5, y: height * 0.325, maxWidth: width * 0.46, maxHeight: height * 0.055, fontMax: width * 0.042, fontMin: width * 0.018, family: type.supportFamily, weight: 800, fill: palette.ink, maxLineLength: 28, maxLines: 1, role: 'label-brand'})}
+      ${fittedTextSvg({text: spec.label?.line || text.title, x: width * 0.5, y: height * 0.405, maxWidth: width * 0.46, maxHeight: height * 0.045, fontMax: width * 0.03, fontMin: width * 0.015, family: type.displayFamily, weight: type.displayWeight, fill: palette.accent, maxLineLength: 32, maxLines: 1, role: 'label-line'})}`;
   }
 
   return '';
+}
+
+function aopExpressiveFrontComposition({
+  layout,
+  text,
+  spec,
+  palette,
+  width,
+  height,
+  brandLabel,
+  provenance,
+  type,
+}) {
+  const support = spec.front?.subline || 'ORIGINAL CUT AND SEWN EDITION';
+  const brand = fittedTextSvg({
+    text: brandLabel,
+    x: width * 0.5,
+    y: height * 0.105,
+    maxWidth: width * 0.72,
+    maxHeight: height * 0.055,
+    fontMax: width * 0.032,
+    fontMin: width * 0.014,
+    family: type.supportFamily,
+    weight: 800,
+    fill: palette.ink,
+    maxLineLength: 28,
+    maxLines: 1,
+    role: 'front-chest',
+  });
+  const provenanceText = aopPlainProvenance({
+    palette,
+    width,
+    height,
+    provenance,
+    family: type.supportFamily,
+  });
+
+  if (layout === 'giant-type') {
+    return `<g data-aop-layout="giant-type"></g>${brand}
+      ${fittedTextSvg({text: text.front, x: width * 0.5, y: height * 0.23, maxWidth: width * 0.68, maxHeight: height * 0.34, fontMax: width * 0.135, fontMin: width * 0.04, family: type.displayFamily, weight: type.displayWeight, fill: palette.ink, maxLineLength: 11, maxLines: 3, role: 'front-primary'})}
+      <rect x="${width * 0.09}" y="${height * 0.63}" width="${width * 0.82}" height="${height * 0.018}" fill="${palette.accent}"/>
+      ${fittedTextSvg({text: support, x: width * 0.5, y: height * 0.675, maxWidth: width * 0.74, maxHeight: height * 0.06, fontMax: width * 0.032, fontMin: width * 0.015, family: type.supportFamily, weight: 800, fill: palette.ink, maxLineLength: 30, maxLines: 2, role: 'front-subline'})}
+      ${provenanceText}`;
+  }
+
+  if (layout === 'badge-stack') {
+    return `${brand}
+      <g data-aop-layout="badge-stack">
+        <circle cx="${width * 0.5}" cy="${height * 0.47}" r="${width * 0.31}" fill="${palette.fabric}" stroke="${palette.ink}" stroke-width="${width * 0.026}"/>
+        <circle cx="${width * 0.5}" cy="${height * 0.47}" r="${width * 0.255}" fill="none" stroke="${palette.accent}" stroke-width="${width * 0.014}"/>
+      </g>
+      ${fittedTextSvg({text: text.front, x: width * 0.5, y: height * 0.355, maxWidth: width * 0.46, maxHeight: height * 0.19, fontMax: width * 0.082, fontMin: width * 0.032, family: type.displayFamily, weight: type.displayWeight, fill: palette.ink, maxLineLength: 12, maxLines: 3, role: 'front-primary'})}
+      ${fittedTextSvg({text: support, x: width * 0.5, y: height * 0.63, maxWidth: width * 0.58, maxHeight: height * 0.055, fontMax: width * 0.026, fontMin: width * 0.014, family: type.supportFamily, weight: 800, fill: palette.ink, maxLineLength: 26, maxLines: 2, role: 'front-subline'})}
+      ${provenanceText}`;
+  }
+
+  if (layout === 'horizon-band') {
+    return `${brand}
+      <g data-aop-layout="horizon-band">
+        <rect x="0" y="${height * 0.34}" width="${width}" height="${height * 0.24}" fill="${palette.ink}"/>
+        <rect x="0" y="${height * 0.58}" width="${width}" height="${height * 0.035}" fill="${palette.accent}"/>
+      </g>
+      ${fittedTextSvg({text: text.front, x: width * 0.5, y: height * 0.385, maxWidth: width * 0.86, maxHeight: height * 0.145, fontMax: width * 0.105, fontMin: width * 0.038, family: type.displayFamily, weight: type.displayWeight, fill: palette.fabric, maxLineLength: 15, maxLines: 2, role: 'front-primary'})}
+      ${fittedTextSvg({text: support, x: width * 0.5, y: height * 0.67, maxWidth: width * 0.72, maxHeight: height * 0.06, fontMax: width * 0.03, fontMin: width * 0.014, family: type.supportFamily, weight: 800, fill: palette.ink, maxLineLength: 28, maxLines: 2, role: 'front-subline'})}
+      ${provenanceText}`;
+  }
+
+  return `${brand}
+    <g data-aop-layout="diagonal-poster" transform="rotate(-7 ${width * 0.5} ${height * 0.47})">
+      <rect x="${width * 0.11}" y="${height * 0.24}" width="${width * 0.78}" height="${height * 0.43}" fill="${palette.ink}"/>
+      <rect x="${width * 0.14}" y="${height * 0.27}" width="${width * 0.72}" height="${height * 0.37}" fill="none" stroke="${palette.accent}" stroke-width="${width * 0.018}"/>
+      ${fittedTextSvg({text: text.front, x: width * 0.5, y: height * 0.335, maxWidth: width * 0.62, maxHeight: height * 0.19, fontMax: width * 0.105, fontMin: width * 0.038, family: type.displayFamily, weight: type.displayWeight, fill: palette.fabric, maxLineLength: 12, maxLines: 3, role: 'front-primary'})}
+      ${fittedTextSvg({text: support, x: width * 0.5, y: height * 0.565, maxWidth: width * 0.6, maxHeight: height * 0.055, fontMax: width * 0.027, fontMin: width * 0.013, family: type.supportFamily, weight: 800, fill: palette.accent, maxLineLength: 28, maxLines: 2, role: 'front-subline'})}
+    </g>
+    ${provenanceText}`;
+}
+
+function aopExpressiveBackComposition({
+  layout,
+  text,
+  spec,
+  palette,
+  width,
+  height,
+  brandLabel,
+  provenance,
+  type,
+}) {
+  const support = spec.back?.subline || brandLabel;
+  const alignedX = layout === 'diagonal-poster' ? width * 0.46 : width * 0.5;
+  const mainY = layout === 'horizon-band' ? height * 0.5 : height * 0.2;
+  const band = layout === 'horizon-band'
+    ? `<rect x="0" y="${height * 0.44}" width="${width}" height="${height * 0.25}" fill="${palette.accent}" opacity="0.92" data-aop-layout="horizon-band"/>`
+    : '';
+  const badge = layout === 'badge-stack'
+    ? `<g data-aop-layout="badge-stack"><circle cx="${width * 0.5}" cy="${height * 0.54}" r="${width * 0.27}" fill="none" stroke="${palette.ink}" stroke-width="${width * 0.024}"/><circle cx="${width * 0.5}" cy="${height * 0.54}" r="${width * 0.21}" fill="none" stroke="${palette.accent}" stroke-width="${width * 0.012}"/></g>`
+    : '';
+  const posterOpen = layout === 'diagonal-poster'
+    ? `<g data-aop-layout="diagonal-poster" transform="rotate(7 ${width * 0.5} ${height * 0.42})"><rect x="${width * 0.09}" y="${height * 0.14}" width="${width * 0.82}" height="${height * 0.42}" fill="${palette.fabric}" stroke="${palette.ink}" stroke-width="${width * 0.024}"/>`
+    : '';
+  const posterClose = layout === 'diagonal-poster' ? '</g>' : '';
+  const supportY = layout === 'badge-stack' ? height * 0.79 : height * 0.73;
+  return `${band}${badge}${posterOpen}
+    ${fittedTextSvg({text: text.back, x: alignedX, y: mainY, maxWidth: width * 0.66, maxHeight: height * 0.24, fontMax: width * (layout === 'giant-type' ? 0.12 : 0.085), fontMin: width * 0.028, family: type.displayFamily, weight: type.displayWeight, fill: layout === 'horizon-band' ? palette.ink : palette.ink, maxLineLength: 14, maxLines: 3, role: 'back-primary'})}
+    ${fittedTextSvg({text: support, x: width * 0.5, y: supportY, maxWidth: width * 0.62, maxHeight: height * 0.05, fontMax: width * 0.026, fontMin: width * 0.012, family: type.supportFamily, weight: 800, fill: palette.ink, maxLineLength: 28, maxLines: 2, role: 'back-subline'})}
+    ${posterClose}
+    ${aopPlainProvenance({palette, width, height, provenance, family: type.supportFamily})}`;
+}
+
+function aopPlainProvenance({palette, width, height, provenance, family}) {
+  return fittedTextSvg({
+    text: provenance,
+    x: width * 0.5,
+    y: height * 0.86,
+    maxWidth: width * 0.7,
+    maxHeight: height * 0.04,
+    fontMax: width * 0.022,
+    fontMin: width * 0.01,
+    family,
+    weight: 800,
+    fill: palette.ink,
+    maxLineLength: 44,
+    maxLines: 1,
+    role: 'provenance',
+  });
+}
+
+function aopTypeSystem(spec) {
+  const systems = {
+    'grotesk-poster': {
+      displayFamily: 'Arial Black, Helvetica, sans-serif',
+      supportFamily: 'Arial, Helvetica, sans-serif',
+      displayWeight: 900,
+    },
+    'serif-editorial': {
+      displayFamily: 'Georgia, Times New Roman, serif',
+      supportFamily: 'Arial, Helvetica, sans-serif',
+      displayWeight: 700,
+    },
+    'mono-utility': {
+      displayFamily: 'Courier New, monospace',
+      supportFamily: 'Courier New, monospace',
+      displayWeight: 800,
+    },
+    'rounded-surf': {
+      displayFamily: 'Arial Rounded MT Bold, Arial, sans-serif',
+      supportFamily: 'Arial, Helvetica, sans-serif',
+      displayWeight: 900,
+    },
+    'varsity-block': {
+      displayFamily: 'Impact, Arial Black, sans-serif',
+      supportFamily: 'Arial Narrow, Arial, sans-serif',
+      displayWeight: 900,
+    },
+    'condensed-zine': {
+      displayFamily: 'Impact, Arial Narrow, sans-serif',
+      supportFamily: 'Arial Narrow, Arial, sans-serif',
+      displayWeight: 900,
+    },
+  };
+  return systems[spec.typeSystem] || systems['serif-editorial'];
 }
 
 function legacyAopPanelComposition({area, text, spec, palette, width, height}) {
@@ -1978,10 +2257,14 @@ function fittedTextSvg({
     lineHeightRatio,
   });
   const linesMarkup = layout.lines
-    .map(
-      (line, index) =>
-        `<text x="${x}" y="${y + layout.fontSize + index * layout.lineHeight}" text-anchor="middle" font-family="${family}" font-size="${layout.fontSize}" font-weight="${weight}" fill="${fill}">${escapeXml(line)}</text>`,
-    )
+    .map((line, index) => {
+      const lineWidth = Math.min(
+        maxWidth,
+        estimatedTextUnits(line, family) * layout.fontSize,
+      );
+      const fittedLength = line ? ` textLength="${lineWidth.toFixed(2)}" lengthAdjust="spacingAndGlyphs"` : '';
+      return `<text x="${x}" y="${y + layout.fontSize + index * layout.lineHeight}" text-anchor="middle" font-family="${family}" font-size="${layout.fontSize}" font-weight="${weight}" fill="${fill}"${fittedLength}>${escapeXml(line)}</text>`;
+    })
     .join('');
   return `<g data-aop-role="${escapeXml(role)}" data-fit-width="${layout.width.toFixed(2)}" data-fit-height="${layout.height.toFixed(2)}" data-fit-max-width="${maxWidth}" data-fit-max-height="${Number.isFinite(maxHeight) ? maxHeight : ''}">${linesMarkup}</g>`;
 }

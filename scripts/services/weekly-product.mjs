@@ -247,6 +247,8 @@ export function recipeToAopSpec(recipe) {
     garmentFirst: true,
     brandLabel: recipe.brandLabel,
     provenanceLine: recipe.provenanceLine,
+    aestheticWorld: recipe.aestheticWorld,
+    typeSystem: recipe.typeSystem,
     layout: recipe.layout,
     basePattern: recipe.basePattern,
     palette: recipe.palette,

@@ -259,11 +259,15 @@ export async function prepare(args = []) {
         baseProduct,
         artDirection,
         recentProductTitles: products.map((product) => product.title),
+        recentProducts: products,
+        requiredDisplayPhrase: trendResult.output.trendName,
+        inputMode: 'weekly-derived-trend',
         runKey: identity.runKey,
         modelOutput: modelFixture?.artDirection,
       });
       const rankedRecipes = rankGarmentRecipes(artResult.output, {
         sourceTexts: posts.map((post) => post.text),
+        requiredDisplayPhrase: trendResult.output.trendName,
       });
       if (!rankedRecipes.some((entry) => entry.eligible)) {
         throw new Error('No garment recipe passed deterministic rights and production gates');

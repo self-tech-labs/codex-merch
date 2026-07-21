@@ -20,6 +20,14 @@ const fixture = JSON.parse(
   ),
 );
 
+function ownerArtDirection(displayPhrase = 'THE SOL SHINES') {
+  const output = structuredClone(fixture.artDirection);
+  for (const candidate of output.candidates) {
+    candidate.front.primaryText = displayPhrase;
+  }
+  return output;
+}
+
 test('owner trend preview options require an explicit bounded trend and reject release flags', () => {
   assert.deepEqual(
     parseOwnerTrendPreviewOptions([
@@ -68,7 +76,9 @@ test('owner trend provenance is deterministic, preview-only, and contains no inv
   assert.equal(first.decision.artDirectionEligible, true);
   assert.equal(first.decision.publishEligible, false);
   assert.deepEqual(first.decision.evidencePostIds, []);
-  assert.deepEqual(first.decision.safeOriginalPhrases, []);
+  assert.deepEqual(first.decision.safeOriginalPhrases, ['THE SOL SHINES']);
+  assert.equal(first.trend.displayPhrase, 'THE SOL SHINES');
+  assert.match(first.trend.memeMechanic, /exact hero copy/i);
   assert.match(first.decision.fingerprint, /^owner:[a-f0-9]{64}$/);
   assert.match(first.trend.teamConnection, /not represented as X research/);
 });
@@ -78,7 +88,7 @@ test('weekly art direction accepts explicit preview eligibility without granting
   const result = await directWeeklyGarment({
     trend: input.trend,
     decision: input.decision,
-    modelOutput: fixture.artDirection,
+    modelOutput: ownerArtDirection(),
   });
 
   assert.equal(input.decision.publishEligible, false);
@@ -87,7 +97,7 @@ test('weekly art direction accepts explicit preview eligibility without granting
     directWeeklyGarment({
       trend: input.trend,
       decision: {publishEligible: false},
-      modelOutput: fixture.artDirection,
+      modelOutput: ownerArtDirection(),
     }),
     /preview-only art-direction decision/,
   );
@@ -98,7 +108,7 @@ test('owner trend product is storefront-visible metadata but cannot be sold or s
   const product = buildOwnerTrendPreviewProduct({
     existingProducts: [],
     baseProduct: previewBaseProduct(),
-    recipe: fixture.artDirection.candidates[0],
+    recipe: ownerArtDirection().candidates[0],
     trend: 'the Sol shines',
     inputHash: input.inputHash,
   });
@@ -109,6 +119,7 @@ test('owner trend product is storefront-visible metadata but cannot be sold or s
   assert.equal(product.automation.releaseEligible, false);
   assert.equal(product.automation.runKey, undefined);
   assert.equal(product.signals.profile, 'owner-supplied-trend');
+  assert.equal(product.artDirector.aopSpec.front.primaryText, 'THE SOL SHINES');
   assert.deepEqual(product.signals.queries, []);
   assert.deepEqual(product.signals.sources, []);
   assert.ok(product.commerce.variants.every((variant) => !variant.availableForSale));
@@ -126,7 +137,7 @@ test('idempotent replay is case-insensitive and revalidates catalog, prepress, a
   const product = buildOwnerTrendPreviewProduct({
     existingProducts: [],
     baseProduct,
-    recipe: fixture.artDirection.candidates[0],
+    recipe: ownerArtDirection().candidates[0],
     trend: 'The Sol Shines',
     inputHash: input.inputHash,
     identityHash: input.identityHash,
@@ -195,10 +206,12 @@ test('dry-run produces structured candidates without rendering, persistence, or 
       readProducts: async () => [],
       readBaseProducts: async () => ({products: [previewBaseProduct()]}),
       readArtDirection: async () => ({}),
-      directWeeklyGarment: async ({decision}) => {
+      directWeeklyGarment: async ({decision, requiredDisplayPhrase, inputMode}) => {
         assert.equal(decision.artDirectionEligible, true);
         assert.equal(decision.publishEligible, false);
-        return {output: fixture.artDirection, response: {}};
+        assert.equal(requiredDisplayPhrase, 'THE SOL SHINES');
+        assert.equal(inputMode, 'owner-supplied-trend');
+        return {output: ownerArtDirection(), response: {}};
       },
       renderWeeklyConceptBoard: async () => calls.push('render'),
       composeProductPrintFiles: async () => calls.push('compose'),
@@ -231,7 +244,7 @@ test('preview orchestration persists only after render, prepress, and actual-ren
         readBaseProducts: async () => ({products: [previewBaseProduct()]}),
         readArtDirection: async () => ({}),
         directWeeklyGarment: async () => ({
-          output: fixture.artDirection,
+          output: ownerArtDirection(),
           response: {responseId: 'art-test', model: 'gpt-5.6'},
         }),
         renderWeeklyConceptBoard: async () => calls.push('render'),
@@ -292,7 +305,7 @@ test('a failed persisted-catalog gate restores exact catalog bytes and cleans ca
           readProducts: async () => existing,
           readBaseProducts: async () => ({products: [previewBaseProduct()]}),
           readArtDirection: async () => ({}),
-          directWeeklyGarment: async () => ({output: fixture.artDirection, response: {}}),
+          directWeeklyGarment: async () => ({output: ownerArtDirection(), response: {}}),
           renderWeeklyConceptBoard: async () => {},
           composeProductPrintFiles: async () => {},
           validateWeeklyPrepress: async () => ({

@@ -112,15 +112,16 @@ export async function prepareOwnerTrendPreview(options, dependencies = {}) {
     baseProduct,
     artDirection,
     recentProductTitles: products.map((product) => product.title),
+    recentProducts: products,
+    requiredDisplayPhrase: provenance.trend.displayPhrase,
+    inputMode: 'owner-supplied-trend',
     runKey: `owner-trend-preview:${provenance.inputHash.slice(0, 32)}`,
   });
   const ranked = rankGarmentRecipes(artResult.output, {
-    sourceTexts: [options.trend, options.context].filter(Boolean),
+    sourceTexts: [],
+    requiredDisplayPhrase: provenance.trend.displayPhrase,
   });
   const eligible = ranked.filter((entry) => entry.eligible).slice(0, 2);
-  if (!eligible.length) {
-    throw new Error('No owner-trend garment recipe passed rights and production gates');
-  }
 
   if (options.dryRun) {
     return {
@@ -133,11 +134,22 @@ export async function prepareOwnerTrendPreview(options, dependencies = {}) {
       candidates: ranked.map((entry) => ({
         conceptId: entry.candidate.conceptId,
         title: entry.candidate.title,
+        authorityRank: entry.originalIndex + 1,
+        aestheticWorld: entry.candidate.aestheticWorld,
+        typeSystem: entry.candidate.typeSystem,
+        layout: entry.candidate.layout,
+        basePattern: entry.candidate.basePattern,
+        sleeveStyle: entry.candidate.sleeves?.style,
+        heroCopy: entry.candidate.front?.primaryText,
         eligible: entry.eligible,
-        score: entry.weightedScore,
+        advisoryScore: entry.weightedScore,
         checks: entry.checks,
       })),
     };
+  }
+
+  if (!eligible.length) {
+    throw new Error('No owner-trend garment recipe passed rights and production gates');
   }
 
   const originalCatalog = await readFile(catalogPath, 'utf8');
@@ -196,6 +208,8 @@ export async function prepareOwnerTrendPreview(options, dependencies = {}) {
         conceptId: entry.candidate.conceptId,
         decision: visualGate.decision,
         overallScore: criticResult.output.overallScore,
+        criticalDefects: criticResult.output.criticalDefects,
+        revisionBrief: criticResult.output.revisionBrief,
       });
       if (!visualGate.passed) {
         await cleanupAssets(candidateAssets, removeAsset, repositoryRoot);
@@ -245,7 +259,14 @@ export async function prepareOwnerTrendPreview(options, dependencies = {}) {
 
   throw new Error(
     `No preview candidate passed the actual-render critic: ${attempts
-      .map((attempt) => `${attempt.conceptId}:${attempt.decision}`)
+      .map((attempt) =>
+        JSON.stringify({
+          conceptId: attempt.conceptId,
+          decision: attempt.decision,
+          criticalDefects: attempt.criticalDefects || attempt.issues || attempt.findings || [],
+          revisionBrief: attempt.revisionBrief || '',
+        }),
+      )
       .join(', ')}`,
   );
 }

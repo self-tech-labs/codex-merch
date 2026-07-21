@@ -17,6 +17,8 @@
           "rationale",
           "brandLabel",
           "provenanceLine",
+          "aestheticWorld",
+          "typeSystem",
           "layout",
           "basePattern",
           "palette",
@@ -49,13 +51,52 @@
             "maxLength": 48,
             "pattern": "^[A-Z0-9][A-Z0-9 .,/&+:#()'!?-]*$"
           },
+          "aestheticWorld": {
+            "type": "string",
+            "enum": [
+              "sf-skate",
+              "coastal-surf",
+              "zine-punk",
+              "sports-club",
+              "lab-utility",
+              "minimal-type"
+            ]
+          },
+          "typeSystem": {
+            "type": "string",
+            "enum": [
+              "grotesk-poster",
+              "serif-editorial",
+              "mono-utility",
+              "rounded-surf",
+              "varsity-block",
+              "condensed-zine"
+            ]
+          },
           "layout": {
             "type": "string",
-            "enum": ["offset-ledger", "center-monument", "split-field"]
+            "enum": [
+              "offset-ledger",
+              "center-monument",
+              "split-field",
+              "giant-type",
+              "badge-stack",
+              "horizon-band",
+              "diagonal-poster"
+            ]
           },
           "basePattern": {
             "type": "string",
-            "enum": ["microgrid", "pinstripe", "status-isobar-map", "queue-radar"]
+            "enum": [
+              "microgrid",
+              "pinstripe",
+              "status-isobar-map",
+              "queue-radar",
+              "checkerboard",
+              "sun-stripes",
+              "halftone-noise",
+              "wavy-bands"
+            ]
           },
           "palette": {
             "type": "object",
@@ -95,7 +136,16 @@
             "properties": {
               "style": {
                 "type": "string",
-                "enum": ["wave", "glyph-stack", "radar-rings", "ladder"]
+                "enum": [
+                  "wave",
+                  "glyph-stack",
+                  "radar-rings",
+                  "ladder",
+                  "racing-stripe",
+                  "checker-cuff",
+                  "sun-wave",
+                  "badge-repeat"
+                ]
               },
               "motif": {"type": "string", "minLength": 1, "maxLength": 160},
               "leftText": {"type": "string", "minLength": 1, "maxLength": 24, "pattern": "^[A-Z0-9][A-Z0-9 .,/&+:#()'!?-]*$"},

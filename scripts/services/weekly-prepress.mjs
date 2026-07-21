@@ -72,10 +72,17 @@ export async function validateWeeklyPrepress({product, baseProduct, rootDir}) {
   }
 
   const spec = product.artDirector?.aopSpec || {};
+  const heroCopy = String(spec.front?.primaryText || '');
+  const ownerAuthorizedHero =
+    product.automation?.inputMode === 'owner-supplied-trend' &&
+    heroCopy === String(product.production?.textLayer || '');
   const garmentText = JSON.stringify({
     brandLabel: spec.brandLabel,
     provenanceLine: spec.provenanceLine,
-    front: spec.front,
+    front: {
+      ...spec.front,
+      primaryText: ownerAuthorizedHero ? heroCopy.replace(/\bcodex\b/gi, '') : heroCopy,
+    },
     back: spec.back,
     sleeves: spec.sleeves,
     label: spec.label,

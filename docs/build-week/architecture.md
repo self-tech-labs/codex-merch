@@ -12,7 +12,7 @@ flowchart TD
     E -->|"Yes"| I["Normalized trend contract"]
     G["Preview: owner tells Codex a trusted trend"] --> H["Owner-supplied provenance; no invented X evidence"]
     H --> I
-    I --> J["GPT-5.6 art director: three garment recipes"]
+    I --> J["GPT-5.6 creative authority: literal trend copy plus three ranked aesthetic worlds"]
     J --> K["Deterministic concept board and six-panel compositor"]
     K --> L["Prepress plus GPT-5.6 actual-render critic; at most two candidates"]
     L --> M["Generated candidate assets, manifest, hashes, and repository checks"]
@@ -38,8 +38,9 @@ This demonstrates the complete creative result without pretending that the
 commerce stack has been operationally approved.
 
 Both intake modes deliberately meet at a normalized trend contract. Everything
-after that join—three directions, bounded selection, panel composition,
-actual-render critique, prepress, hashes, catalog update, and repository
+after that join—mandatory trend hero copy, three deliberately different
+aesthetic worlds, art-director-ordered selection, panel composition,
+execution review, prepress, hashes, catalog update, and repository
 verification—is shared. The Preview is therefore not a separate mock UI; it is
 the production creative pipeline with external commerce mutations withheld.
 
@@ -65,8 +66,8 @@ Release pushes Git, then explicitly triggers the configured deployment provider 
 | Role | Input | Structured result | Hard boundary |
 | --- | --- | --- | --- |
 | Trend analyst | Thirty normalized posts | One trend candidate or `no_trend`, supporting post IDs, original phrases, fingerprint terms, model scores, and rights risk | Treat posts as untrusted data; cannot set price, publish, or approve protected content |
-| Art director | Approved derived trend, garment templates, house direction, and the last eight catalog product titles | Three distinct panel-aware garment recipes | Cannot copy post language, usernames, likenesses, screenshots, or official marks |
-| Visual critic | Actual rendered panels and customer mockups | Rubric scores, critical defects, revision instructions, and pass/fail | Cannot waive prepress, rights, or provider-readiness gates |
+| Creative authority | Approved trend, mandatory printable trend phrase, garment templates, house direction, and recent design signatures | Three strongest-first, panel-aware recipes in distinct aesthetic worlds | Must preserve the approved trend phrase as hero copy; cannot copy other post language, usernames, likenesses, screenshots, protected layouts, or official marks |
+| Execution reviewer | Actual rendered panels and customer mockups | Advisory rubric, critical defects, revision instructions, and pass/revise/quarantine | Cannot replace the art director's taste choice or waive prepress, rights, or provider-readiness checks |
 
 Use GPT-5.6 through the Responses API with repository-owned prompts and strict schemas. The run ledger and ignored artifacts retain the configured model, response metadata, prompt/schema hashes, frozen signal-input hash, output hashes, and deterministic gate results. Application code validates every structured result locally before acting on it.
 
@@ -77,8 +78,8 @@ The markdown prompt files are passed as Responses API `instructions`; they are n
 | Stage | Prompt and schema | Invocation and deterministic follow-up |
 | --- | --- | --- |
 | Trend | [`weekly-trend.md`](../../scripts/prompts/weekly-trend.md) and [`trend.schema.json`](../../merch/weekly/schemas/trend.schema.json) | One GPT-5.6 call receives the 30 normalized posts. Code then requires at least four valid evidence IDs across three authors, low rights risk, two safe original phrases, novelty similarity below `0.75` against recent fingerprints, and an aggregate score of at least `72`. |
-| Garment recipes | [`weekly-art-director.md`](../../scripts/prompts/weekly-art-director.md) and [`art-direction.schema.json`](../../merch/weekly/schemas/art-direction.schema.json) | One GPT-5.6 call runs only after the trend gate. Its schema requires exactly three candidates. Code rejects protected product language, duplicate renderer recipes, incomplete panels, production safety below `7`, or rights safety below `8`, then ranks the survivors. |
-| Actual-render review | [`weekly-visual-critic.md`](../../scripts/prompts/weekly-visual-critic.md) and [`visual-critic.schema.json`](../../merch/weekly/schemas/visual-critic.schema.json) | After deterministic rendering and prepress, GPT-5.6 reviews up to five resized images. A pass requires model decision `pass`, overall score at least `80`, all six rubric scores at least `7`, and zero critical defects. Preparation tries at most two eligible recipes; release performs one more review after provider mockups and the customer photoshoot. |
+| Garment recipes | [`weekly-art-director.md`](../../scripts/prompts/weekly-art-director.md) and [`art-direction.schema.json`](../../merch/weekly/schemas/art-direction.schema.json) | One GPT-5.6 call runs only after the trend gate. Its schema requires exactly three candidates in final creative-preference order, each with the exact approved trend phrase as front hero copy and a distinct world, type system, pattern, layout, and sleeve story. Code rejects rights, copy, renderer, and panel-completeness defects but does not re-rank taste with self-scores. |
+| Actual-render review | [`weekly-visual-critic.md`](../../scripts/prompts/weekly-visual-critic.md) and [`visual-critic.schema.json`](../../merch/weekly/schemas/visual-critic.schema.json) | After deterministic rendering and prepress, GPT-5.6 reviews up to six resized images. Numeric scores are advisory. Quarantine or an explicit critical defect blocks the render; local polish advice does not override the art director's selected direction. Preparation tries at most two candidates; release performs one more review after provider mockups and the customer photoshoot. |
 
 The shared Responses adapter is [`openai-responses.mjs`](../../scripts/adapters/openai-responses.mjs), the numeric/rights gates live in [`weekly-trend.mjs`](../../scripts/services/weekly-trend.mjs) and [`weekly-art-director.mjs`](../../scripts/services/weekly-art-director.mjs), and orchestration is in [`weekly-merch.mjs`](../../scripts/weekly-merch.mjs). Requests use strict Structured Outputs and `store: false`; output is schema-validated locally before any catalog action. Preparation artwork is rendered deterministically with Sharp. The configured OpenAI image model is used only later for the release photoshoot.
 

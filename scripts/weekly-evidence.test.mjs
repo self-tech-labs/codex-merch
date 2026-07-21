@@ -401,12 +401,17 @@ function modelResponse(responseId) {
 }
 
 function recipe(conceptId, layout, basePattern, style, score) {
+  const index = ['offset-ledger', 'center-monument', 'split-field'].indexOf(layout);
+  const aestheticWorlds = ['lab-utility', 'sports-club', 'coastal-surf'];
+  const typeSystems = ['mono-utility', 'varsity-block', 'rounded-surf'];
   return {
     conceptId,
     title: `${conceptId} title`,
     rationale: 'Aggregate rationale.',
     brandLabel: 'Field Office',
     provenanceLine: 'weekly signal study',
+    aestheticWorld: aestheticWorlds[Math.max(index, 0)],
+    typeSystem: typeSystems[Math.max(index, 0)],
     layout,
     basePattern,
     palette: {fabric: '#F4F1E8', ink: '#151515', muted: '#777777', accent: '#FF5A36'},

@@ -4,6 +4,39 @@
   "sourceUrl": "https://supplyco.openai.com/",
   "checkedAt": "2026-05-26",
   "positioning": "Original Codex-native merch with a tech-culture supply-store feel: current meme energy, skater/drop culture, SF engineering lore, ASCII/computing language, sports-kit references, and collectible ephemera.",
+  "creativeMandate": [
+    "Treat the approved trend name as the garment's hero copy. If the owner says Tastemaxxing, the garment says TASTEMAXXING; do not hide the joke behind a conceptual synonym.",
+    "Act as the central creative authority: order the three directions strongest-first and choose the visual world that makes the premise funniest and most culturally legible.",
+    "Make every candidate belong to a materially different apparel world, typography system, layout, pattern, and sleeve story. Technical lab graphics are one option, not the default.",
+    "Translate reference energy into original shapes and composition. Never reproduce an existing brand name, logo, box mark, product layout, team mark, or protected trade dress.",
+    "Prefer a decisive, memorable garment gesture over a collection of safe labels and diagram furniture."
+  ],
+  "aestheticWorlds": [
+    {
+      "id": "sf-skate",
+      "direction": "Bay Area skate-shop flyer energy: oversized hard type, deck-strip geometry, photocopy contrast, irreverent placement, and one sharp color. Original graphics only."
+    },
+    {
+      "id": "coastal-surf",
+      "direction": "Northern California surf-club energy: sun bands, rolling stripes, rounded display type, weathered color blocking, and relaxed sleeve rhythm without literal brand borrowing."
+    },
+    {
+      "id": "zine-punk",
+      "direction": "Photocopied zine and gig-poster energy: condensed type, diagonal composition, halftone texture, abrupt scale changes, and controlled roughness."
+    },
+    {
+      "id": "sports-club",
+      "direction": "Fictional local club uniform energy: varsity type, bold numbering logic, crests built from original geometry, racing bands, and strong bilateral sleeves."
+    },
+    {
+      "id": "lab-utility",
+      "direction": "Technical workshop uniform energy: monospace labels, grids, status systems, restrained construction marks, and engineered panel logic."
+    },
+    {
+      "id": "minimal-type",
+      "direction": "High-impact type garment: one enormous phrase, radical negative space, a single supporting mark, and almost no decorative explanation."
+    }
+  ],
   "pillars": [
     "Gen Z internet-native humor without copying posts or screenshots",
     "drop-culture and skater graphics: bold marks, sticker-bomb density, varsity/jersey numbering, utilitarian labels",
@@ -14,7 +47,7 @@
   "visualRules": [
     "Make the artwork feel like an original cult merch drop, not a corporate logo tee.",
     "Favor high-contrast black/white with one sharp accent color unless the Printful technique allows broader color.",
-    "Use bold composition, hard edges, chunky typography zones, diagrams, badges, ASCII fragments, terminal glyphs, or jersey-number logic.",
+    "Use bold composition, hard edges, chunky typography zones, surf bands, skate-poster scale, diagrams, badges, ASCII fragments, terminal glyphs, or jersey-number logic.",
     "Prefer concise symbols and systems over literal screenshots, public figures, or copied social posts.",
     "Keep exact readable slogans out of the generated image; local composition owns final text.",
     "Do not copy OpenAI Supply Co product names, layouts, official logos, Supreme branding, or protected brand marks.",
@@ -30,7 +63,7 @@
     "merch/reference/art-direction/supplyco-screenshots/05-blue-lab-long-sleeve.png"
   ],
   "aopGarmentRules": [
-    "Use sparse, premium garment composition over dense poster collage.",
+    "Use a clear garment idea over undifferentiated collage; density may range from radical minimalism to controlled zine or skate-poster energy.",
     "Large quiet fabric fields are allowed and preferred when supported by one strong motif.",
     "Sleeves should have intentional vertical or wrapped systems, not duplicated front artwork.",
     "A small chest mark, restrained center typography, or upper-back wordmark can be used, but it must be panel-aware.",

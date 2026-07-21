@@ -11,11 +11,33 @@ const criticPromptUrl = new URL('../prompts/weekly-visual-critic.md', import.met
 const protectedTerms =
   /\b(?:openai|chatgpt|gpt(?:[- ]?\d+(?:\.\d+)?)?|codex|sora|supreme|nike|adidas)\b|https?:\/\/|@[a-z0-9_]+/i;
 const unsupportedRendererClaims =
-  /\b(?:archway|character|clock|cloud|door|doorway|gateway|hourglass|illustration|logo|mascot|photograph|portal|semaphore|storm|traffic light|tunnel)\b/i;
+  /\b(?:add|draw|feature|include|show|use|uses|using|with)\b[^.]{0,72}\b(?:archway|character|clock|cloud|door|doorway|gateway|hourglass|illustration|logo|mascot|photograph|portal|semaphore|storm|traffic light|tunnel)\b|\b(?:large|literal)\s+(?:archway|character|clock|cloud|door|doorway|gateway|hourglass|illustration|logo|mascot|photograph|portal|semaphore|storm|traffic light|tunnel)\b/i;
 const upperAsciiDisplayCopy = /^[A-Z0-9][A-Z0-9 .,/&+:#()'!?-]*$/;
 const asciiTitle = /^[A-Za-z0-9][A-Za-z0-9 .,/&+:#()'!?-]*$/;
 
 export const WEEKLY_RENDERER_CONTRACT = {
+  aestheticWorlds: {
+    'sf-skate':
+      'Bay Area skate-poster energy with oversized type, deck-strip geometry, hard contrast, and irreverent spacing.',
+    'coastal-surf':
+      'Northern California surf-club energy with sun bands, rolling stripes, rounded type, and relaxed rhythm.',
+    'zine-punk':
+      'Photocopied zine and gig-poster energy with condensed type, halftone texture, diagonals, and abrupt scale shifts.',
+    'sports-club':
+      'A fictional local-club uniform with varsity type, badge geometry, racing bands, and bilateral sleeve logic.',
+    'lab-utility':
+      'A technical workshop uniform with monospace labels, grids, status systems, and engineered panel logic.',
+    'minimal-type':
+      'A radical type-led garment with one enormous phrase, sharp negative space, and minimal supporting furniture.',
+  },
+  typeSystems: {
+    'grotesk-poster': 'Heavy grotesk display type with compact sans-serif support copy.',
+    'serif-editorial': 'High-contrast editorial serif display type with restrained sans-serif support copy.',
+    'mono-utility': 'Monospaced display and utility copy with engineered spacing.',
+    'rounded-surf': 'Rounded heavy display type with relaxed sans-serif support copy.',
+    'varsity-block': 'Wide block display type with compact athletic support copy.',
+    'condensed-zine': 'Condensed poster display type with narrow photocopy-style support copy.',
+  },
   basePatterns: {
     microgrid:
       'A quiet microgrid fabric field with no independent custom torso symbol.',
@@ -25,6 +47,14 @@ export const WEEKLY_RENDERER_CONTRACT = {
       'Three sparse nested angular isobar or contour outlines plus one short accent path.',
     'queue-radar':
       'Branching queue lines on the left, a vertical clearing boundary, and check marks on the right.',
+    checkerboard:
+      'A bold two-tone checker field with large production-safe squares.',
+    'sun-stripes':
+      'Wide horizontal sun bands with a flat rising-disc geometry and no gradient.',
+    'halftone-noise':
+      'A deterministic field of large halftone dots with a cropped poster block.',
+    'wavy-bands':
+      'Broad rolling horizontal bands that move across the garment like an abstract swell.',
   },
   layouts: {
     'offset-ledger':
@@ -33,6 +63,14 @@ export const WEEKLY_RENDERER_CONTRACT = {
       'Centered primary typography and geometry organized on one central axis.',
     'split-field':
       'A left-weighted primary text field and a vertical accent divider on the right.',
+    'giant-type':
+      'One oversized hero phrase dominates the torso with radical negative space and minimal support copy.',
+    'badge-stack':
+      'A large original circular badge system anchors the torso with stacked type and bilateral balance.',
+    'horizon-band':
+      'The hero phrase sits across a broad horizontal band with open space above and movement below.',
+    'diagonal-poster':
+      'A rotated poster block and diagonal support rule create an asymmetric zine composition.',
   },
   sleeveStyles: {
     wave:
@@ -43,6 +81,14 @@ export const WEEKLY_RENDERER_CONTRACT = {
       'Three concentric rings with a crosshair and a mirrored accent notch.',
     ladder:
       'Two vertical rails, nine rungs, and one accent rung at a different position on each sleeve.',
+    'racing-stripe':
+      'Two broad longitudinal stripes and one narrow accent stripe run down each sleeve.',
+    'checker-cuff':
+      'A large checker field resolves into a strong checked cuff band.',
+    'sun-wave':
+      'Three broad rolling wave lines and one flat accent sun move down each sleeve.',
+    'badge-repeat':
+      'Three original geometric badge rings repeat vertically with alternating accent fills.',
   },
   fidelityRule:
     'Rationale, sleeve motif, and visual prompt may only claim the visible primitives listed here. Do not invent extra figurative geometry.',
@@ -54,6 +100,9 @@ export async function directWeeklyGarment({
   baseProduct,
   artDirection,
   recentProductTitles = [],
+  recentProducts = [],
+  requiredDisplayPhrase,
+  inputMode,
   runKey,
   model = process.env.OPENAI_TEXT_MODEL || DEFAULT_OPENAI_TEXT_MODEL,
   reasoningEffort = process.env.OPENAI_ART_REASONING_EFFORT || 'medium',
@@ -74,6 +123,9 @@ export async function directWeeklyGarment({
   }
 
   const instructions = await readFile(artPromptUrl, 'utf8');
+  const mandatoryDisplayPhrase = toTrendDisplayPhrase(
+    requiredDisplayPhrase || trend.trendName,
+  );
   const response = await createStructuredResponse(
     {
       model,
@@ -92,6 +144,14 @@ export async function directWeeklyGarment({
           visualMetaphors: trend.visualMetaphors,
           fingerprint: decision.fingerprint,
         },
+        creativeAuthority: {
+          inputMode:
+            inputMode || (decision.publishEligible ? 'weekly-derived-trend' : 'owner-supplied-trend'),
+          mandatoryDisplayPhrase,
+          literalDisplayPhraseAuthorized: true,
+          candidateOrderIsFinalArtDirectorPreference: true,
+          downstreamScoresAreAdvisory: true,
+        },
         production: {
           garment: baseProduct?.title,
           technique: 'All-Over Cotton',
@@ -107,8 +167,14 @@ export async function directWeeklyGarment({
           visualRules: artDirection?.visualRules,
           aopGarmentRules: artDirection?.aopGarmentRules,
           negativePromptRules: artDirection?.negativePromptRules,
+          creativeMandate: artDirection?.creativeMandate,
+          aestheticWorlds: artDirection?.aestheticWorlds,
         },
         recentProductTitles: recentProductTitles.slice(-8),
+        recentDesignSignatures: recentProducts
+          .slice(-8)
+          .map(recentDesignSignature)
+          .filter(Boolean),
       }),
     },
     env,
@@ -120,34 +186,76 @@ export async function directWeeklyGarment({
   };
 }
 
-export function rankGarmentRecipes(output, {sourceTexts = []} = {}) {
+export function toTrendDisplayPhrase(value) {
+  const phrase = String(value || '')
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toUpperCase()
+    .replace(/[^A-Z0-9 .,/&+:#()'!?-]+/g, ' ')
+    .trim()
+    .replace(/\s+/g, ' ');
+  if (!phrase) throw new Error('Trend must produce printable hero copy');
+  if (phrase.length > 36) {
+    throw new Error('Trend hero copy must be at most 36 printable characters');
+  }
+  return phrase;
+}
+
+function recentDesignSignature(product) {
+  const spec = product?.artDirector?.aopSpec;
+  if (!spec) return null;
+  return {
+    title: String(product?.title || '').slice(0, 80),
+    aestheticWorld: spec.aestheticWorld || null,
+    typeSystem: spec.typeSystem || null,
+    layout: spec.layout || null,
+    basePattern: spec.basePattern || null,
+    sleeveStyle: spec.sleeves?.style || null,
+    palette: spec.palette || null,
+  };
+}
+
+export function rankGarmentRecipes(
+  output,
+  {sourceTexts = [], requiredDisplayPhrase} = {},
+) {
+  const mandatoryDisplayPhrase = requiredDisplayPhrase
+    ? toTrendDisplayPhrase(requiredDisplayPhrase)
+    : null;
   const combinationCounts = new Map();
+  const worldCounts = new Map();
+  const typeCounts = new Map();
   for (const candidate of output.candidates || []) {
-    const combination = `${candidate.basePattern}:${candidate.layout}:${candidate.sleeves.style}`;
+    const combination = creativeSignature(candidate);
     combinationCounts.set(combination, (combinationCounts.get(combination) || 0) + 1);
+    worldCounts.set(
+      candidate.aestheticWorld,
+      (worldCounts.get(candidate.aestheticWorld) || 0) + 1,
+    );
+    typeCounts.set(
+      candidate.typeSystem,
+      (typeCounts.get(candidate.typeSystem) || 0) + 1,
+    );
   }
 
   return (output.candidates || [])
     .map((candidate, index) => {
-      const productText = JSON.stringify({
-        title: candidate.title,
-        rationale: candidate.rationale,
-        brandLabel: candidate.brandLabel,
-        provenanceLine: candidate.provenanceLine,
-        front: candidate.front,
-        back: candidate.back,
-        sleeves: candidate.sleeves,
-        label: candidate.label,
-        visualPrompt: candidate.visualPrompt,
-      });
-      const combination = `${candidate.basePattern}:${candidate.layout}:${candidate.sleeves.style}`;
+      const productText = protectedTermReviewText(candidate, mandatoryDisplayPhrase);
+      const combination = creativeSignature(candidate);
       const checks = {
         lowRightsRisk: candidate.rightsRisk === 'low',
         noProtectedProductTerms: !protectedTerms.test(productText),
-        noSourceTextOverlap: !candidateCopiesSource(candidate, sourceTexts),
+        noSourceTextOverlap: !candidateCopiesSource(candidate, sourceTexts, {
+          allowedDisplayPhrase: mandatoryDisplayPhrase,
+        }),
+        trendPhrasePresent:
+          mandatoryDisplayPhrase == null ||
+          normalizedDisplayCopy(candidate.front?.primaryText) === mandatoryDisplayPhrase,
         displayCopyQuality: hasProductionReadyDisplayCopy(candidate),
         rendererFaithful: matchesRendererContract(candidate),
         distinctRendererRecipe: combinationCounts.get(combination) === 1,
+        distinctCreativeWorld: worldCounts.get(candidate.aestheticWorld) === 1,
+        distinctTypeSystem: typeCounts.get(candidate.typeSystem) === 1,
         productionScores:
           candidate.scores?.productionSafety >= 7 && candidate.scores?.rightsSafety >= 8,
         completePanels: Boolean(
@@ -168,15 +276,24 @@ export function rankGarmentRecipes(output, {sourceTexts = []} = {}) {
           candidate.scores.rightsSafety * 2 -
           Math.max(
             0,
-            (combinationCounts.get(
-              `${candidate.basePattern}:${candidate.layout}:${candidate.sleeves.style}`,
-            ) || 1) - 1,
+            (combinationCounts.get(combination) || 1) - 1,
           ) * 5,
       );
       return {
         candidate,
         originalIndex: index,
-        eligible: Object.values(checks).every(Boolean),
+        eligible: [
+          'lowRightsRisk',
+          'noProtectedProductTerms',
+          'noSourceTextOverlap',
+          'trendPhrasePresent',
+          'displayCopyQuality',
+          'rendererFaithful',
+          'distinctRendererRecipe',
+          'distinctCreativeWorld',
+          'distinctTypeSystem',
+          'completePanels',
+        ].every((check) => checks[check]),
         checks,
         weightedScore,
       };
@@ -184,9 +301,43 @@ export function rankGarmentRecipes(output, {sourceTexts = []} = {}) {
     .sort(
       (left, right) =>
         Number(right.eligible) - Number(left.eligible) ||
-        right.weightedScore - left.weightedScore ||
-        left.candidate.conceptId.localeCompare(right.candidate.conceptId),
+        left.originalIndex - right.originalIndex,
     );
+}
+
+function protectedTermReviewText(candidate, mandatoryDisplayPhrase) {
+  const heroCopy = String(candidate.front?.primaryText || '');
+  const exactAuthorizedHero =
+    mandatoryDisplayPhrase != null &&
+    normalizedDisplayCopy(heroCopy) === mandatoryDisplayPhrase;
+  const reviewHero = exactAuthorizedHero
+    ? heroCopy.replace(/\bcodex\b/gi, '')
+    : heroCopy;
+  return JSON.stringify({
+    title: candidate.title,
+    rationale: candidate.rationale,
+    brandLabel: candidate.brandLabel,
+    provenanceLine: candidate.provenanceLine,
+    front: {...candidate.front, primaryText: reviewHero},
+    back: candidate.back,
+    sleeves: candidate.sleeves,
+    label: candidate.label,
+    visualPrompt: candidate.visualPrompt,
+  });
+}
+
+function creativeSignature(candidate) {
+  return [
+    candidate.aestheticWorld,
+    candidate.typeSystem,
+    candidate.basePattern,
+    candidate.layout,
+    candidate.sleeves?.style,
+  ].join(':');
+}
+
+function normalizedDisplayCopy(value) {
+  return String(value || '').trim().replace(/\s+/g, ' ').toUpperCase();
 }
 
 function hasProductionReadyDisplayCopy(candidate) {
@@ -233,6 +384,8 @@ function isUpperAsciiCopy(value) {
 }
 
 function matchesRendererContract(candidate) {
+  if (!WEEKLY_RENDERER_CONTRACT.aestheticWorlds[candidate.aestheticWorld]) return false;
+  if (!WEEKLY_RENDERER_CONTRACT.typeSystems[candidate.typeSystem]) return false;
   const descriptiveText = [
     candidate.rationale,
     candidate.sleeves?.motif,
@@ -240,10 +393,31 @@ function matchesRendererContract(candidate) {
   ]
     .filter(Boolean)
     .join(' ')
-    .toLowerCase();
+    .toLowerCase()
+    .replace(/[-_]+/g, ' ')
+    .replace(
+      /\b(?:no|without)\s+(?:archways?|characters?|clocks?|clouds?|doors?|doorways?|gateways?|hourglasses?|illustrations?|logos?|mascots?|photographs?|portals?|semaphores?|storms?|traffic lights?|tunnels?)\b/g,
+      '',
+    );
   if (unsupportedRendererClaims.test(descriptiveText)) return false;
 
   const expected = {
+    aestheticWorld: {
+      'sf-skate': [[/\bskate\b|\bdeck[- ]strip\b|\bposter\b/]],
+      'coastal-surf': [[/\bsurf\b|\bcoastal\b|\bsun bands?\b|\bswell\b/]],
+      'zine-punk': [[/\bzine\b|\bphotocop(?:y|ied)\b|\bgig[- ]poster\b/]],
+      'sports-club': [[/\bclub\b|\bvarsity\b|\bathletic\b|\buniform\b/]],
+      'lab-utility': [[/\blab\b|\butility\b|\bworkshop\b|\btechnical\b/]],
+      'minimal-type': [[/\bminimal\b|\bnegative space\b|\btype[- ]led\b/]],
+    },
+    typeSystem: {
+      'grotesk-poster': [[/\bgrotesk\b|\bposter type\b|\bheavy sans\b/]],
+      'serif-editorial': [[/\bserif\b|\beditorial\b/]],
+      'mono-utility': [[/\bmono(?:space|spaced)?\b|\butility type\b/]],
+      'rounded-surf': [[/\brounded\b|\bsurf type\b/]],
+      'varsity-block': [[/\bvarsity\b|\bblock type\b|\bathletic type\b/]],
+      'condensed-zine': [[/\bcondensed\b|\bzine type\b|\bnarrow type\b/]],
+    },
     basePattern: {
       microgrid: [[/\bmicrogrid\b|\bmicro grid\b/]],
       pinstripe: [
@@ -258,6 +432,10 @@ function matchesRendererContract(candidate) {
         [/\bbranch(?:ed|es|ing)?\b|\bqueue lines?\b/],
         [/\bchecks?\b|\bclearing marks?\b/],
       ],
+      checkerboard: [[/\bchecker(?:board|ed)?\b/]],
+      'sun-stripes': [[/\bsun bands?\b|\bsun stripes?\b|\brising disc\b/]],
+      'halftone-noise': [[/\bhalftone\b/], [/\bdots?\b|\bposter block\b/]],
+      'wavy-bands': [[/\bwavy bands?\b|\brolling bands?\b|\babstract swell\b/]],
     },
     layout: {
       'offset-ledger': [[/\basymmetric\b|\boffset\b/]],
@@ -266,6 +444,10 @@ function matchesRendererContract(candidate) {
         [/\bleft[- ]weighted\b|\bsplit field\b/],
         [/\bvertical (?:accent )?divider\b/],
       ],
+      'giant-type': [[/\bgiant type\b|\boversized (?:hero )?phrase\b/]],
+      'badge-stack': [[/\bbadge (?:stack|system)\b|\bcircular badge\b/]],
+      'horizon-band': [[/\bhorizon band\b|\bhorizontal band\b/]],
+      'diagonal-poster': [[/\bdiagonal poster\b|\brotated poster\b/]],
     },
     sleeveStyle: {
       wave: [
@@ -283,6 +465,10 @@ function matchesRendererContract(candidate) {
         [/\brails?\b/],
         [/\brungs?\b/],
       ],
+      'racing-stripe': [[/\bracing stripes?\b|\blongitudinal stripes?\b/]],
+      'checker-cuff': [[/\bchecker(?:ed)? cuff\b|\bchecked cuff\b/]],
+      'sun-wave': [[/\bsun wave\b|\brolling wave lines?\b/]],
+      'badge-repeat': [[/\bbadge rings?\b|\brepeating badges?\b/]],
     },
   };
 
@@ -297,7 +483,7 @@ function matchesRendererContract(candidate) {
   );
 }
 
-function candidateCopiesSource(candidate, sourceTexts) {
+function candidateCopiesSource(candidate, sourceTexts, {allowedDisplayPhrase} = {}) {
   const sources = sourceTexts.map(normalizedWords).filter(Boolean);
   const candidateStrings = [
     candidate.title,
@@ -317,7 +503,10 @@ function candidateCopiesSource(candidate, sourceTexts) {
     candidate.label?.line,
     candidate.visualPrompt,
   ];
-  return candidateStrings.map(normalizedWords).filter(Boolean).some((candidateText) =>
+  const allowed = normalizedWords(allowedDisplayPhrase);
+  return candidateStrings.map(normalizedWords).filter(Boolean).filter(
+    (candidateText) => !allowed || candidateText !== allowed,
+  ).some((candidateText) =>
     sources.some((sourceText) => hasDistinctiveNgramOverlap(candidateText, sourceText)),
   );
 }
@@ -467,18 +656,15 @@ export function buildVisualCriticContext({
 }
 
 export function evaluateVisualCritic(output) {
-  const coreScores = Object.values(output.scores || {});
+  const criticalDefects = output.criticalDefects || [];
   const passed =
-    output.decision === 'pass' &&
-    output.overallScore >= 80 &&
-    coreScores.length === 6 &&
-    coreScores.every((score) => score >= 7) &&
-    output.criticalDefects.length === 0;
+    output.decision !== 'quarantine' &&
+    criticalDefects.length === 0;
   return {
     passed,
     decision: passed ? 'pass' : output.decision === 'quarantine' ? 'quarantine' : 'revise',
-    minimumOverallScore: 80,
-    minimumCoreScore: 7,
+    authority: 'art-director',
+    scoresAdvisory: true,
   };
 }
 

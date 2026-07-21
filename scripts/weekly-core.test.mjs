@@ -451,6 +451,8 @@ test('garment recipe ranking rejects protected product text and rewards a distin
   const distinctCandidate = garmentRecipe({
     conceptId: 'safe-and-distinct',
     title: 'Quiet Queue Uniform',
+    aestheticWorld: 'coastal-surf',
+    typeSystem: 'rounded-surf',
     basePattern: 'pinstripe',
     layout: 'split-field',
     sleeveStyle: 'radar-rings',
@@ -494,6 +496,76 @@ test('garment recipe ranking rejects copied source phrases hidden inside longer 
 
   assert.equal(result.eligible, false);
   assert.equal(result.checks.noSourceTextOverlap, false);
+});
+
+test('art director order is authoritative and the approved trend phrase must be hero copy', () => {
+  const first = garmentRecipe({
+    conceptId: 'first-authority-choice',
+    title: 'Taste Practice Sweatshirt',
+    aestheticWorld: 'sf-skate',
+    typeSystem: 'grotesk-poster',
+    basePattern: 'checkerboard',
+    layout: 'giant-type',
+    sleeveStyle: 'racing-stripe',
+    scores: recipeScores(7),
+  });
+  first.front.primaryText = 'TASTEMAXXING';
+  first.rationale =
+    'Skate poster direction with a bold checkerboard, giant type, and racing stripes.';
+  first.sleeves.motif = 'Broad longitudinal racing stripes on both sleeves.';
+  first.visualPrompt =
+    'SF skate poster garment with a checkerboard field, oversized hero phrase, giant type, and longitudinal racing stripes.';
+
+  const second = garmentRecipe({
+    conceptId: 'second-higher-score',
+    title: 'Taste Signal Sweatshirt',
+    aestheticWorld: 'coastal-surf',
+    typeSystem: 'rounded-surf',
+    basePattern: 'wavy-bands',
+    layout: 'horizon-band',
+    sleeveStyle: 'sun-wave',
+    scores: recipeScores(10),
+  });
+  second.front.primaryText = 'A HIGHER STANDARD';
+  second.rationale =
+    'Coastal surf direction with rolling bands, a horizon band, and rolling wave lines.';
+  second.sleeves.motif = 'Three rolling wave lines with a flat accent sun.';
+  second.visualPrompt =
+    'Coastal surf garment with rolling wavy bands, a horizontal horizon band, and sun wave sleeves.';
+
+  const ranked = rankGarmentRecipes(
+    {candidates: [first, second]},
+    {requiredDisplayPhrase: 'tastemaxxing'},
+  );
+
+  assert.equal(ranked[0].candidate.conceptId, 'first-authority-choice');
+  assert.equal(ranked[0].eligible, true);
+  assert.equal(ranked[0].checks.trendPhrasePresent, true);
+  assert.equal(ranked[1].eligible, false);
+  assert.equal(ranked[1].checks.trendPhrasePresent, false);
+});
+
+test('an exact owner-authorized Codex hero phrase is allowed only in the hero placement', () => {
+  const authorized = garmentRecipe({
+    conceptId: 'authorized-codex-reset',
+    title: 'Clear State Shift Cotton Sweatshirt',
+  });
+  authorized.front.primaryText = 'CODEX RESET';
+
+  const [accepted] = rankGarmentRecipes(
+    {candidates: [authorized]},
+    {requiredDisplayPhrase: 'codex reset'},
+  );
+  assert.equal(accepted.checks.noProtectedProductTerms, true);
+  assert.equal(accepted.eligible, true);
+
+  authorized.back.statement = 'CODEX SYSTEMS';
+  const [rejected] = rankGarmentRecipes(
+    {candidates: [authorized]},
+    {requiredDisplayPhrase: 'codex reset'},
+  );
+  assert.equal(rejected.checks.noProtectedProductTerms, false);
+  assert.equal(rejected.eligible, false);
 });
 
 test('garment recipe ranking rejects malformed display copy before rendering', () => {
@@ -548,25 +620,25 @@ test('garment recipe ranking rejects concepts that promise unsupported renderer 
   assert.equal(ranked.checks.rendererFaithful, false);
 });
 
-test('visual critic enforces overall, core-score, and critical-defect thresholds', () => {
+test('visual critic is advisory unless it finds a critical or quarantine defect', () => {
   const passing = criticOutput();
   assert.deepEqual(evaluateVisualCritic(passing), {
     passed: true,
     decision: 'pass',
-    minimumOverallScore: 80,
-    minimumCoreScore: 7,
+    authority: 'art-director',
+    scoresAdvisory: true,
   });
 
   assert.equal(
     evaluateVisualCritic({...passing, overallScore: 79}).passed,
-    false,
+    true,
   );
   assert.equal(
     evaluateVisualCritic({
       ...passing,
       scores: {...passing.scores, panelIntent: 6},
     }).passed,
-    false,
+    true,
   );
   assert.equal(
     evaluateVisualCritic({
@@ -1253,6 +1325,8 @@ function trendOutput(overrides = {}) {
 function garmentRecipe({
   conceptId,
   title,
+  aestheticWorld = 'lab-utility',
+  typeSystem = 'mono-utility',
   basePattern = 'microgrid',
   layout = 'offset-ledger',
   sleeveStyle = 'wave',
@@ -1268,6 +1342,8 @@ function garmentRecipe({
     )}.`,
     brandLabel: 'WEEKLY SIGNAL DEPT.',
     provenanceLine: 'OBSERVED / ABSTRACTED / REDRAWN',
+    aestheticWorld,
+    typeSystem,
     layout,
     basePattern,
     palette: {

@@ -1,5 +1,6 @@
 import {hashJson} from './weekly-run-store.mjs';
 import {recipeToAopSpec} from './weekly-product.mjs';
+import {toTrendDisplayPhrase} from './weekly-art-director.mjs';
 
 export const OWNER_TREND_PREVIEW_PIPELINE = 'owner-trend-preview-v1';
 export const OWNER_TREND_PROFILE = 'owner-supplied-trend';
@@ -70,6 +71,7 @@ export function ownerTrendInput({trend, context = ''} = {}) {
     trend: normalizedTrend,
     context: normalizedContext,
   });
+  const displayPhrase = toTrendDisplayPhrase(normalizedTrend);
 
   return {
     trend: {
@@ -81,18 +83,19 @@ export function ownerTrendInput({trend, context = ''} = {}) {
         .filter(Boolean)
         .join(' '),
       memeMechanic:
-        'Translate the supplied team in-joke into original abstract garment language without copying its wording onto the garment.',
+        `Use ${displayPhrase} as exact hero copy, then build an original apparel world around the joke.`,
       teamConnection:
         'The premise is explicitly identified by the project owner as a current team-relevant signal; it is not represented as X research.',
-      originalPhrases: [],
+      originalPhrases: [displayPhrase],
       visualMetaphors: ['contrast', 'signal shift', 'repetition', 'release'],
+      displayPhrase,
     },
     decision: {
       artDirectionEligible: true,
       publishEligible: false,
       reason: 'Owner-supplied premise is eligible for preview art direction only.',
       fingerprint: `owner:${inputHash}`,
-      safeOriginalPhrases: [],
+      safeOriginalPhrases: [displayPhrase],
       evidencePostIds: [],
       score: null,
     },
@@ -132,6 +135,10 @@ export function buildOwnerTrendPreviewProduct({
     maximum: 600,
     required: false,
   });
+  const displayPhrase = toTrendDisplayPhrase(normalizedTrend);
+  if (String(recipe.front?.primaryText || '').trim().toUpperCase() !== displayPhrase) {
+    throw new Error(`Owner-trend preview hero copy must be ${displayPhrase}`);
+  }
   const canonicalIdentityHash =
     identityHash ||
     ownerTrendIdentityHash({trend: normalizedTrend, context: normalizedContext});

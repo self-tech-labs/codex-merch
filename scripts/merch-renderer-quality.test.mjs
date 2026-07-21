@@ -137,6 +137,69 @@ test('sleeve renderer realizes each declared style instead of a generic glyph st
   }
 });
 
+test('expressive art-direction worlds render materially different patterns, layouts, type, and sleeves', () => {
+  const directions = [
+    {
+      aestheticWorld: 'sf-skate',
+      typeSystem: 'grotesk-poster',
+      layout: 'giant-type',
+      basePattern: 'checkerboard',
+      sleeveStyle: 'racing-stripe',
+    },
+    {
+      aestheticWorld: 'coastal-surf',
+      typeSystem: 'rounded-surf',
+      layout: 'horizon-band',
+      basePattern: 'sun-stripes',
+      sleeveStyle: 'sun-wave',
+    },
+    {
+      aestheticWorld: 'zine-punk',
+      typeSystem: 'condensed-zine',
+      layout: 'diagonal-poster',
+      basePattern: 'halftone-noise',
+      sleeveStyle: 'checker-cuff',
+    },
+    {
+      aestheticWorld: 'sports-club',
+      typeSystem: 'varsity-block',
+      layout: 'badge-stack',
+      basePattern: 'wavy-bands',
+      sleeveStyle: 'badge-repeat',
+    },
+  ];
+
+  for (const direction of directions) {
+    const spec = {
+      ...baseSpec,
+      aestheticWorld: direction.aestheticWorld,
+      typeSystem: direction.typeSystem,
+      layout: direction.layout,
+      basePattern: direction.basePattern,
+      front: {...baseSpec.front, primaryText: 'TASTEMAXXING'},
+      sleeves: {...baseSpec.sleeves, style: direction.sleeveStyle},
+    };
+    const front = aopPanelSvg({product, spec, area: 'front', width: 1000, height: 1300});
+    const sleeve = aopPanelSvg({
+      product,
+      spec,
+      area: 'left_sleeve',
+      width: 1000,
+      height: 1300,
+    });
+
+    assert.match(front, new RegExp(`data-aop-aesthetic-world="${direction.aestheticWorld}"`));
+    assert.match(front, new RegExp(`data-aop-type-system="${direction.typeSystem}"`));
+    assert.match(front, new RegExp(`data-aop-motif="${direction.basePattern}"`));
+    assert.match(front, new RegExp(`data-aop-layout="${direction.layout}"`));
+    assert.match(front, />TASTEMAXXING<\/text>/);
+    assert.match(front, /textLength="[\d.]+" lengthAdjust="spacingAndGlyphs">TASTEMAXXING<\/text>/);
+    assert.match(sleeve, new RegExp(`data-aop-motif="${direction.sleeveStyle}"`));
+    assertFittedBounds(front);
+    assertFittedBounds(sleeve);
+  }
+});
+
 test('glyph-stack is shape-only and adds no invented semantic copy', () => {
   const spec = {
     ...baseSpec,
