@@ -25,6 +25,7 @@ test(
   async () => {
     const env: AppEnv = {...process.env, DATABASE_URL: databaseUrl};
     const createdOrderIds: string[] = [];
+    const printfulSyncVariantId = 5_338_615_120;
     const order = await createPendingOrder({
       catalogRevision: 'test-revision',
       currency: 'USD',
@@ -42,13 +43,15 @@ test(
           currency: 'USD',
           provider: 'printful',
           catalogVariantId: 1,
-          syncVariantId: 2,
+          syncVariantId: printfulSyncVariantId,
         },
       ],
     });
     createdOrderIds.push(order.id);
     try {
-      assert.equal((await getOrderItems(order.id, env)).length, 1);
+      const storedItems = await getOrderItems(order.id, env);
+      assert.equal(storedItems.length, 1);
+      assert.equal(storedItems[0].syncVariantId, printfulSyncVariantId);
       assert.equal(
         (await getOrderById(order.id, env))?.policyVersion,
         '2026-07-21',

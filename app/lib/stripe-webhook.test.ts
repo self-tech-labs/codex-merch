@@ -85,7 +85,7 @@ test('refund events distinguish partial and full amounts', () => {
   );
 });
 
-test('paid sessions remain bound to the policy accepted on their order', () => {
+test('paid sessions remain bound to the server-recorded policy version', () => {
   const order = {
     id: 'order-policy-rollover',
     stripeSessionId: 'cs_policy_rollover',
@@ -103,7 +103,6 @@ test('paid sessions remain bound to the policy accepted on their order', () => {
       catalog_revision: 'catalog-old',
       policy_version: '2026-07-20',
     },
-    consent: {terms_of_service: 'accepted'},
     payment_status: 'paid',
     currency: 'chf',
     amount_subtotal: 5800,

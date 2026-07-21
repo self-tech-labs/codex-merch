@@ -1,5 +1,6 @@
 import {sql} from 'drizzle-orm';
 import {
+  bigint,
   check,
   index,
   integer,
@@ -110,7 +111,7 @@ export const orderItems = pgTable(
     currency: varchar('currency', {length: 3}).notNull(),
     provider: varchar('provider', {length: 32}).notNull(),
     catalogVariantId: integer('catalog_variant_id').notNull(),
-    syncVariantId: integer('sync_variant_id').notNull(),
+    syncVariantId: bigint('sync_variant_id', {mode: 'number'}).notNull(),
   },
   (table) => [
     index('order_items_order_id_idx').on(table.orderId),

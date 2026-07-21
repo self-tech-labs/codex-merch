@@ -311,7 +311,6 @@ export async function createCheckoutSession({
         client_reference_id: order.id,
         metadata,
         payment_intent_data: {metadata},
-        consent_collection: {terms_of_service: 'required'},
         phone_number_collection: {enabled: true},
         custom_text: {
           submit: {

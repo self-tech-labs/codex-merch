@@ -216,9 +216,6 @@ export function paidCheckoutSnapshot(
   ) {
     throw new Error('Checkout session metadata does not match the order');
   }
-  if (session.consent?.terms_of_service !== 'accepted') {
-    throw new Error('Checkout terms were not accepted');
-  }
   if (session.payment_status !== 'paid') return null;
   if (session.currency?.toUpperCase() !== order.currency) {
     throw new Error('Checkout currency does not match the order');
