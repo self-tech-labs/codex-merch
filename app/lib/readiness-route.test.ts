@@ -12,6 +12,8 @@ const configuredEnv: AppEnv = {
   PUBLIC_SITE_URL: 'https://shop.example',
   STRIPE_SECRET_KEY: ['sk', 'test', 'unit', '1234567890abcdef'].join('_'),
   STRIPE_WEBHOOK_SECRET: 'whsec_example',
+  STRIPE_ALLOWED_SHIPPING_COUNTRIES: 'CH,DE,FR',
+  STRIPE_AUTOMATIC_TAX: 'false',
   DATABASE_URL: 'postgres://example',
   INNGEST_EVENT_KEY: ['inngest', 'event', 'unit'].join('-'),
   INNGEST_SIGNING_KEY: ['inngest', 'signing', 'unit'].join('-'),

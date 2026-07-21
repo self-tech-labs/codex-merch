@@ -26,6 +26,7 @@ import {
   printfulPayloadWithSyncVariantIds,
   printfulPayload,
   printfulStoreProductExternalId,
+  printfulStoreProductMatchesAnyExternalId,
   printfulStoreProductMatchesExternalId,
   printfulStoreSyncVariantIds,
   printfulTechniquePrompt,
@@ -417,6 +418,20 @@ test('binds a stored Printful product reference to the expected external ID', ()
     printfulStoreProductMatchesExternalId(response, 'unrelated-product'),
     false,
   );
+  assert.equal(
+    printfulStoreProductMatchesAnyExternalId(response, [
+      'canonical-product',
+      'weekly-safe-product',
+    ]),
+    true,
+  );
+  assert.equal(
+    printfulStoreProductMatchesAnyExternalId(response, [
+      'canonical-product',
+      'unrelated-product',
+    ]),
+    false,
+  );
   assert.equal(printfulStoreProductMatchesExternalId({result: {id: 42}}, 'missing'), false);
 });
 
@@ -733,8 +748,10 @@ test('builds X recent search URL and stores metadata without post text', () => {
     'codex',
   );
 
-  assert.equal(summary[0].url, 'https://x.com/coder/status/42');
+  assert.equal(summary[0].url, 'https://x.com/i/web/status/42');
   assert.equal('text' in summary[0], false);
+  assert.equal('authorUsername' in summary[0], false);
+  assert.equal('authorVerified' in summary[0], false);
   assert.equal(summary[0].metrics.likes, 3);
 });
 

@@ -142,6 +142,9 @@ test('production checkout configuration fails closed', () => {
     STOREFRONT_MODE: 'production',
     CHECKOUT_ENABLED: 'true',
     STRIPE_SECRET_KEY: 'sk_test',
+    STRIPE_WEBHOOK_SECRET: 'whsec_test',
+    STRIPE_ALLOWED_SHIPPING_COUNTRIES: 'CH,DE,FR',
+    STRIPE_AUTOMATIC_TAX: 'false',
     DATABASE_URL: 'postgres://test',
     INNGEST_EVENT_KEY: 'event',
     INNGEST_SIGNING_KEY: 'signing',
@@ -162,12 +165,36 @@ test('production checkout configuration fails closed', () => {
   configured.STOREFRONT_TERMS_POLICY = 'Reviewed terms policy';
   configured.STOREFRONT_CONTACT_POLICY = 'Reviewed contact policy';
   assert.doesNotThrow(() => assertCheckoutConfiguration(configured));
+  assert.throws(
+    () =>
+      assertCheckoutConfiguration({
+        ...configured,
+        VERCEL_ENV: 'production',
+      }),
+    /live Stripe secret key/,
+  );
+  assert.doesNotThrow(() =>
+    assertCheckoutConfiguration({
+      ...configured,
+      VERCEL_ENV: 'production',
+      STRIPE_SECRET_KEY: 'sk_live_unit',
+    }),
+  );
+  assert.throws(
+    () =>
+      assertCheckoutConfiguration({
+        ...configured,
+        STRIPE_SHIPPING_RATE_ID: 'shr_live',
+      }),
+    /exactly one approved shipping-rate configuration/,
+  );
 });
 
 test('checkout requires explicit production storefront mode', () => {
   const configured: AppEnv = {
     STOREFRONT_MODE: 'production',
     STRIPE_SECRET_KEY: 'sk_test',
+    STRIPE_WEBHOOK_SECRET: 'whsec_test',
     DATABASE_URL: 'postgres://test',
     INNGEST_EVENT_KEY: 'event',
     INNGEST_SIGNING_KEY: 'signing',

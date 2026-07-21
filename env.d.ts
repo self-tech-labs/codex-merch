@@ -11,6 +11,7 @@ declare global {
 
   interface AppEnv {
     NODE_ENV?: string;
+    VERCEL_ENV?: string;
     PUBLIC_SITE_URL?: string;
     STOREFRONT_MODE?: string;
     DATABASE_URL?: string;

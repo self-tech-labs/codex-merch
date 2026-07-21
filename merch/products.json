@@ -1346,14 +1346,14 @@
     ],
     "title": "Codex Rate Reset Long Sleeve Tee",
     "workflow": {
-      "status": "mockups_ready",
-      "updatedAt": "2026-06-04T12:04:56.684Z",
+      "status": "published",
+      "updatedAt": "2026-07-21T11:46:23.355Z",
       "lastError": null
     },
     "category": "Codex",
     "description": "A black long sleeve tee for the 429-to-200 recovery ritual: compact front reset mark, sleeve telemetry, and a quiet back-office stamp.",
     "meme": {
-      "source": "Pending X trend research",
+      "source": "Signal provider: x",
       "brief": "Long sleeve tee inspired by Codex rate-limit lore, reset windows, retry-after headers, queue pressure, and the relief of a clean 200 after a 429. Treat the idea as original systems merch: no copied posts, screenshots, usernames, official marks, or real service branding.",
       "rightsNote": "Original Codex-native apparel concept using generic HTTP/status and queue language. Do not copy social posts, screenshots, usernames, official marks, protected service branding, public figures, or real team logos."
     },
@@ -1362,11 +1362,152 @@
       "queries": [
         {
           "provider": "x",
-          "query": "(codex OR \"coding agent\" OR \"AI agent\" OR terminal) (\"rate limit\" OR 429 OR \"retry after\" OR queue OR reset) lang:en -is:retweet",
-          "maxResults": 20
+          "query": "Codex (\"rate limit\" OR \"weekly limit\" OR \"usage reset\" OR reset) lang:en -is:retweet",
+          "maxResults": 10
         }
       ],
-      "sources": []
+      "sources": [
+        {
+          "provider": "x",
+          "id": "2079533827471380769",
+          "url": "https://x.com/i/web/status/2079533827471380769",
+          "createdAt": "2026-07-21T11:47:54.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "Codex (\"rate limit\" OR \"weekly limit\" OR \"usage reset\" OR reset) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079533090012266671",
+          "url": "https://x.com/i/web/status/2079533090012266671",
+          "createdAt": "2026-07-21T11:44:59.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "Codex (\"rate limit\" OR \"weekly limit\" OR \"usage reset\" OR reset) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079533089513230601",
+          "url": "https://x.com/i/web/status/2079533089513230601",
+          "createdAt": "2026-07-21T11:44:59.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "Codex (\"rate limit\" OR \"weekly limit\" OR \"usage reset\" OR reset) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079530682074755216",
+          "url": "https://x.com/i/web/status/2079530682074755216",
+          "createdAt": "2026-07-21T11:35:25.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 3,
+            "quotes": 0
+          },
+          "matchedQuery": "Codex (\"rate limit\" OR \"weekly limit\" OR \"usage reset\" OR reset) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079529161127854138",
+          "url": "https://x.com/i/web/status/2079529161127854138",
+          "createdAt": "2026-07-21T11:29:22.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "Codex (\"rate limit\" OR \"weekly limit\" OR \"usage reset\" OR reset) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079528966986080614",
+          "url": "https://x.com/i/web/status/2079528966986080614",
+          "createdAt": "2026-07-21T11:28:36.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 1,
+            "quotes": 0
+          },
+          "matchedQuery": "Codex (\"rate limit\" OR \"weekly limit\" OR \"usage reset\" OR reset) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079526599494615080",
+          "url": "https://x.com/i/web/status/2079526599494615080",
+          "createdAt": "2026-07-21T11:19:11.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "Codex (\"rate limit\" OR \"weekly limit\" OR \"usage reset\" OR reset) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079525021165523123",
+          "url": "https://x.com/i/web/status/2079525021165523123",
+          "createdAt": "2026-07-21T11:12:55.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "Codex (\"rate limit\" OR \"weekly limit\" OR \"usage reset\" OR reset) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079522667007250785",
+          "url": "https://x.com/i/web/status/2079522667007250785",
+          "createdAt": "2026-07-21T11:03:34.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "Codex (\"rate limit\" OR \"weekly limit\" OR \"usage reset\" OR reset) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079520393715741109",
+          "url": "https://x.com/i/web/status/2079520393715741109",
+          "createdAt": "2026-07-21T10:54:32.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "Codex (\"rate limit\" OR \"weekly limit\" OR \"usage reset\" OR reset) lang:en -is:retweet"
+        }
+      ]
     },
     "commerce": {
       "handle": "codex-rate-reset-long-sleeve",

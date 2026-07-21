@@ -124,19 +124,10 @@ export async function getListPosts(input, env = process.env) {
 }
 
 export function summarizeRecentSearch(result, query) {
-  const usersById = new Map(
-    (result.includes?.users || []).map((user) => [user.id, user]),
-  );
-
   return (result.data || []).map((post) => {
-    const user = usersById.get(post.author_id);
-    const username = user?.username || 'unknown';
-
     return {
       id: post.id,
-      url: `https://x.com/${username}/status/${post.id}`,
-      authorUsername: username,
-      authorVerified: Boolean(user?.verified),
+      url: `https://x.com/i/web/status/${post.id}`,
       createdAt: post.created_at || null,
       lang: post.lang || null,
       metrics: {

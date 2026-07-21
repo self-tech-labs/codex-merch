@@ -60,6 +60,7 @@ export function assertCheckoutConfiguration(env: AppEnv) {
   assertProductionStorefrontMode(env);
   requireEnv(env, [
     'STRIPE_SECRET_KEY',
+    'STRIPE_WEBHOOK_SECRET',
     'DATABASE_URL',
     'INNGEST_EVENT_KEY',
     'INNGEST_SIGNING_KEY',
@@ -70,6 +71,13 @@ export function assertCheckoutConfiguration(env: AppEnv) {
     if (env.CHECKOUT_ENABLED !== 'true') throw new Error('Production checkout is disabled');
     if (!env.PUBLIC_SITE_URL) {
       throw new Error('Production checkout requires a canonical public site URL');
+    }
+    assertCanonicalProductionSiteUrl(env.PUBLIC_SITE_URL);
+    if (
+      env.VERCEL_ENV === 'production' &&
+      !env.STRIPE_SECRET_KEY?.startsWith('sk_live_')
+    ) {
+      throw new Error('Vercel production checkout requires a live Stripe secret key');
     }
     if (!env.STOREFRONT_CONTACT_EMAIL) {
       throw new Error('Production checkout requires a merchant contact email');
@@ -83,8 +91,19 @@ export function assertCheckoutConfiguration(env: AppEnv) {
     ) {
       throw new Error('Production checkout requires merchant-reviewed policy copy');
     }
-    if (!env.STRIPE_SHIPPING_RATE_ID && !env.STRIPE_FLAT_SHIPPING_AMOUNT) {
-      throw new Error('Production checkout requires an approved shipping rate');
+    if (!env.STRIPE_ALLOWED_SHIPPING_COUNTRIES) {
+      throw new Error('Production checkout requires approved shipping countries');
+    }
+    if (
+      Boolean(env.STRIPE_SHIPPING_RATE_ID) ===
+      Boolean(env.STRIPE_FLAT_SHIPPING_AMOUNT)
+    ) {
+      throw new Error(
+        'Production checkout requires exactly one approved shipping-rate configuration',
+      );
+    }
+    if (!['true', 'false'].includes(env.STRIPE_AUTOMATIC_TAX || '')) {
+      throw new Error('Production checkout requires an explicit automatic-tax decision');
     }
     if (
       env.STOREFRONT_LEGAL_APPROVED !== 'true' ||
@@ -92,6 +111,25 @@ export function assertCheckoutConfiguration(env: AppEnv) {
     ) {
       throw new Error('Production checkout requires legal and tax/shipping approval');
     }
+  }
+}
+
+function assertCanonicalProductionSiteUrl(value: string) {
+  let url: URL;
+  try {
+    url = new URL(value);
+  } catch {
+    throw new Error('Production checkout requires a valid canonical public site URL');
+  }
+  if (
+    url.protocol !== 'https:' ||
+    url.username ||
+    url.password ||
+    url.search ||
+    url.hash ||
+    (url.pathname !== '/' && url.pathname !== '')
+  ) {
+    throw new Error('Production checkout requires a canonical HTTPS origin without a path');
   }
 }
 

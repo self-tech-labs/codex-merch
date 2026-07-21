@@ -3075,6 +3075,7 @@ export function verifyPrintfulReadiness(product, baseProduct, options = {}) {
     expectedVariantIds,
     placements: [...placementAreas],
     primaryMockup: primaryMockup || null,
+    externalIds: printfulProductExternalIds(product),
   };
 }
 
@@ -3123,6 +3124,29 @@ export function printfulStoreProductExternalId(response) {
 export function printfulStoreProductMatchesExternalId(response, expectedExternalId) {
   const actual = printfulStoreProductExternalId(response);
   return actual !== null && actual === String(expectedExternalId);
+}
+
+export function printfulStoreProductMatchesAnyExternalId(
+  response,
+  expectedExternalIds,
+) {
+  const actual = printfulStoreProductExternalId(response);
+  return (
+    actual !== null &&
+    (expectedExternalIds || []).some(
+      (expectedExternalId) => actual === String(expectedExternalId),
+    )
+  );
+}
+
+function printfulProductExternalIds(product) {
+  return [
+    ...new Set(
+      [product?.slug, ...(product?.aliases || [])]
+        .map((value) => String(value || '').trim())
+        .filter(Boolean),
+    ),
+  ];
 }
 
 export function printfulStoreSyncVariantIds(response) {
@@ -3237,6 +3261,7 @@ async function runPrintfulUpsert(args) {
   for (const job of jobs) {
     job.product.providerRefs.printful = job.product.providerRefs.printful || {};
     const ref = job.product.providerRefs.printful;
+    const externalIds = printfulProductExternalIds(job.product);
     let remoteProductId = ref.productId;
     let response;
     let remoteProductResponse;
@@ -3244,9 +3269,9 @@ async function runPrintfulUpsert(args) {
     let staleRef = false;
     const updateRemoteProduct = async (productId, currentResponse = null) => {
       const productResponse = currentResponse || (await getPrintfulStoreProduct(productId));
-      if (!printfulStoreProductMatchesExternalId(productResponse, job.product.slug)) {
+      if (!printfulStoreProductMatchesAnyExternalId(productResponse, externalIds)) {
         throw new Error(
-          `${job.product.slug}: refusing to update Printful product ${productId} because its external_id does not match`,
+          `${job.product.slug}: refusing to update Printful product ${productId} because its external_id does not match the slug or a catalog alias`,
         );
       }
       const payload = printfulPayloadWithSyncVariantIds(job.payload, productResponse);
@@ -3256,7 +3281,12 @@ async function runPrintfulUpsert(args) {
     if (remoteProductId) {
       try {
         remoteProductResponse = await getPrintfulStoreProduct(remoteProductId);
-        if (printfulStoreProductMatchesExternalId(remoteProductResponse, job.product.slug)) {
+        if (
+          printfulStoreProductMatchesAnyExternalId(
+            remoteProductResponse,
+            externalIds,
+          )
+        ) {
           response = await updateRemoteProduct(remoteProductId, remoteProductResponse);
         } else {
           staleRef = true;
@@ -3271,20 +3301,28 @@ async function runPrintfulUpsert(args) {
     }
 
     if (!response && !remoteProductId) {
-      try {
-        remoteProductResponse = await getPrintfulStoreProductByExternalId(job.product.slug);
-        if (!printfulStoreProductMatchesExternalId(remoteProductResponse, job.product.slug)) {
-          throw new Error(
-            `${job.product.slug}: Printful external-id lookup returned a different product`,
-          );
+      for (const externalId of externalIds) {
+        try {
+          remoteProductResponse = await getPrintfulStoreProductByExternalId(externalId);
+          if (
+            !printfulStoreProductMatchesAnyExternalId(
+              remoteProductResponse,
+              externalIds,
+            )
+          ) {
+            throw new Error(
+              `${job.product.slug}: Printful external-id lookup returned a different product`,
+            );
+          }
+          remoteProductId = printfulStoreProductId(remoteProductResponse);
+          if (!remoteProductId) {
+            throw new Error(`${job.product.slug}: Printful lookup returned no product ID`);
+          }
+          mode = 'relinked-and-updated';
+          break;
+        } catch (error) {
+          if (!isPrintfulNotFound(error)) throw error;
         }
-        remoteProductId = printfulStoreProductId(remoteProductResponse);
-        if (!remoteProductId) {
-          throw new Error(`${job.product.slug}: Printful lookup returned no product ID`);
-        }
-        mode = 'relinked-and-updated';
-      } catch (error) {
-        if (!isPrintfulNotFound(error)) throw error;
       }
     }
 
@@ -3378,7 +3416,20 @@ async function runPrintfulVerify(args) {
 
       for (const productReport of report.products) {
         try {
-          const syncProduct = await getPrintfulStoreProductByExternalId(productReport.slug);
+          let syncProduct = null;
+          for (const externalId of productReport.externalIds) {
+            try {
+              syncProduct = await getPrintfulStoreProductByExternalId(externalId);
+              break;
+            } catch (error) {
+              if (!isPrintfulNotFound(error)) throw error;
+            }
+          }
+          if (!syncProduct) {
+            throw new Error(
+              `Printful request failed (404): no product matched ${productReport.externalIds.join(', ')}`,
+            );
+          }
           const result = syncProduct.result || {};
           const remoteProduct = result.sync_product || result;
           const remoteProductId =

@@ -1,21 +1,24 @@
 # Production runbook
 
+Complete the account, provider, and Vercel configuration in
+[`production-deployment.md`](production-deployment.md) before using this
+operational runbook.
+
 ## Staging gate
 
 1. Use Stripe test mode, a dedicated Neon branch, a dedicated Inngest
    environment, and `PRINTFUL_AUTO_CONFIRM=false`.
-2. Rotate the currently invalid Printful token and confirm
-   `npm run merch:printful:verify -- --slug codex-rate-reset-long-sleeve` succeeds.
-3. Add at least one reviewed X research source to the pilot manifest and rerun
-   `npm run merch:validate`.
-4. Reapprove and publish the `codex-rate-reset-long-sleeve` pilot. The former
-   `codex-rate-reset` storefront handle remains a read-only compatibility alias.
-5. Deploy staging and complete one Stripe test payment. Verify exactly one
+2. Confirm `npm run merch:printful:verify -- --slug
+   codex-rate-reset-long-sleeve` succeeds against the configured Manual/API
+   store. Its legacy provider external ID is an explicitly supported alias.
+3. Confirm the published pilot still has reviewed research metadata, approval,
+   immutable sync-variant mappings, and unchanged asset hashes.
+4. Deploy staging and complete one Stripe test payment. Verify exactly one
    Printful draft, a `draft_created` local order, a verified success page, and
    a cleared cart.
-6. Replay the Stripe event and the Inngest function. Confirm neither operation
+5. Replay the Stripe event and the Inngest function. Confirm neither operation
    creates a second Printful order.
-7. After explicit operational sign-off, set `MERCH_PILOT_APPROVED=true` to
+6. After explicit operational sign-off, set `MERCH_PILOT_APPROVED=true` to
    unlock publication of the remaining products one at a time. This flag does
    not enable automatic Printful confirmation.
 

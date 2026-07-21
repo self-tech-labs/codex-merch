@@ -218,7 +218,9 @@ npm run orders:reconcile -- <order-id-or-CM-reference>
 ```
 
 See `docs/production-runbook.md` for the staging smoke test, monitoring, and
-rollback sequence.
+rollback sequence. The exact account setup, Vercel variable matrix, Stripe
+events, Printful pilot procedure, and launch order are in
+`docs/production-deployment.md`.
 
 ## Merch pipeline
 
