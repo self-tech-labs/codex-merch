@@ -8,7 +8,7 @@ Devpost before the deadline: **2026-07-22 02:00 CEST** (2026-07-21 17:00 PDT).
 
 - **Project name:** Codex Merch
 - **Tagline:** An open-source, hackable pipeline from trend signal to production-ready merch—with GPT-5.6 taste and deterministic gates.
-- **Category:** Work & Productivity
+- **Category:** Apps for Your Life
 - **Submitter type:** Individual
 - **Entrant:** Elliot Vaucher
 - **Country:** Switzerland

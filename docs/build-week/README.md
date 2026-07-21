@@ -4,7 +4,7 @@
 
 - Project name: **Codex Merch**
 - One-line pitch: An open-source, hackable pipeline from a trusted trend signal to an original, production-ready garment and inspectable storefront Preview.
-- Category: **Work & Productivity**
+- Category: **Apps for Your Life**
 - Entrant: **Elliot Vaucher**
 - Country: Switzerland
 - Judge Preview: public [`codex-build-week-weekly-studio` branch alias](https://codex-merch-git-codex-build-week-weekly-studio-ritsl.vercel.app); no account or token is required

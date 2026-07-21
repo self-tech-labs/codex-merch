@@ -5,7 +5,7 @@ Submission deadline: **2026-07-22 02:00 CEST** (2026-07-21 17:00 PDT). Complete 
 ## Identity, eligibility, and submission
 
 - [ ] Register the entrant/team on Devpost; appoint an authorized team representative if applicable; and confirm age, Switzerland eligibility, employer permission, absence of conflicts, and compliance with the official rules.
-- [ ] Select **Work & Productivity**.
+- [x] Select **Apps for Your Life**.
 - [ ] Add the final project name, short description, repository, live URL, and public YouTube URL.
 - [ ] Keep the video below three minutes with spoken English audio explaining Codex and GPT-5.6; use no copyrighted music, third-party artwork, or marks beyond authorized/nominative references.
 - [x] Submit `/feedback` without logs for the primary Codex build task and record session ID `019f7fb1-9352-7b30-ac89-076c94b2eeeb` in this pack; paste it into Devpost.
