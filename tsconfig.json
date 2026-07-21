@@ -6,6 +6,8 @@
     "app/**/*.d.ts",
     "e2e/**/*.ts",
     "scripts/**/*.ts",
+    "video/**/*.ts",
+    "video/**/*.tsx",
     "*.ts",
     "*.tsx",
     "*.d.ts",

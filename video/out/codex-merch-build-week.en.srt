@@ -1,0 +1,123 @@
+1
+00:00:00,600 --> 00:00:06,585
+Codex Meme Merch turns one owner-supplied premise into an inspectable garment
+
+2
+00:00:06,585 --> 00:00:09,850
+preview, built with Codex and GPT-5.6.
+
+3
+00:00:10,300 --> 00:00:13,076
+The public demo is deliberately non-sellable.
+
+4
+00:00:13,076 --> 00:00:18,165
+From the catalog, I open Solward Index and inspect four customer-facing
+
+5
+00:00:18,165 --> 00:00:22,329
+views: catalog, front, back, and the four print panels.
+
+6
+00:00:22,329 --> 00:00:25,105
+Size choices and checkout are disabled.
+
+7
+00:00:25,105 --> 00:00:30,194
+The rights note records original abstract wordplay, with no official logos,
+
+8
+00:00:30,194 --> 00:00:33,896
+copied posts, usernames, likenesses, or protected product layouts.
+
+9
+00:00:42,000 --> 00:00:47,954
+Behind this surface, GPT-5.6 provides bounded judgment: trend selection on the
+
+10
+00:00:47,954 --> 00:00:53,909
+scheduled route, exactly three structured art directions, and critique of actual
+
+11
+00:00:53,909 --> 00:00:59,863
+renders. Deterministic code owns provenance, schemas, rights checks, exact dimensions, six-panel
+
+12
+00:00:59,863 --> 00:01:04,735
+composition, hashes, prepress, state transitions, and every release gate.
+
+13
+00:01:04,735 --> 00:01:06,900
+Judgment never becomes authority.
+
+14
+00:01:08,000 --> 00:01:10,677
+The owner route skips only discovery.
+
+15
+00:01:10,677 --> 00:01:15,584
+It keeps the same guarded studio as the weekly route, where
+
+16
+00:01:15,584 --> 00:01:20,491
+exactly thirty authorized posts can produce a recurring trend or a
+
+17
+00:01:20,491 --> 00:01:25,398
+truthful no-trend stop. The shared pipeline validates each recipe, composes front,
+
+18
+00:01:25,398 --> 00:01:30,305
+back, both sleeves, panel label, and inside label, then asks GPT-5.6
+
+19
+00:01:30,305 --> 00:01:32,981
+to review the rendered garment itself.
+
+20
+00:01:32,981 --> 00:01:36,996
+Every contract, threshold, and prompt is visible for inspection.
+
+21
+00:01:56,000 --> 00:02:00,781
+At the judged Preview commit, eleven products validate, one hundred thirty-three
+
+22
+00:02:00,781 --> 00:02:05,562
+of one hundred thirty-three tests pass, and twelve of twelve browser
+
+23
+00:02:05,562 --> 00:02:09,038
+checks pass locally and against the public deployment.
+
+24
+00:02:09,038 --> 00:02:12,950
+Solward's critic score is eighty-seven out of one hundred.
+
+25
+00:02:17,000 --> 00:02:22,657
+AI disclosure: GPT-5.6 produced structured trend and art-direction judgments and reviewed
+
+26
+00:02:22,657 --> 00:02:27,285
+rendered images. Codex image generation assisted the concept board.
+
+27
+00:02:27,285 --> 00:02:31,914
+Six print panels and exact text were composed deterministically.
+
+28
+00:02:31,914 --> 00:02:35,514
+This voice was synthesized with OpenAI gpt-audio-1.5.
+
+29
+00:02:35,514 --> 00:02:40,657
+No payment, provider sync, publication, or fulfillment action is shown.
+
+30
+00:02:41,000 --> 00:02:46,053
+One sentence becomes an inspectable garment system, without a hidden commerce
+
+31
+00:02:46,053 --> 00:02:48,350
+claim. Explore the public Preview.

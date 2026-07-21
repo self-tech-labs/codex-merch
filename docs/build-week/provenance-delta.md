@@ -40,6 +40,8 @@ Fill this table from Git after each cohesive commit. Do not backdate, amend away
 | 2026-07-20 | `77bf2c7` | Recorded the primary Codex Desktop task ID across the submission pack | Provenance fields agree across the index, evidence, and delta |
 | 2026-07-21 | `24d866c` | Added the Solward Index six-panel owner-trend candidate and storefront mockups | Exact prepress assets and catalog manifest committed; critic 87/100 |
 | 2026-07-21 | `42fd968` | Added the owner-triggered GPT-5.6 Preview workflow, technical public explainer, hard Preview/commerce boundary, and adversarial coverage | 130 tests discovered; typecheck, lint, build, 10/10 local E2E, and 10/10 protected-Preview E2E pass |
+| 2026-07-21 | `b4ac160` | Refactored creative authority so GPT-5.6 remains strongest-first while deterministic gates enforce renderer, rights, and production constraints | Unit, type, lint, and build verification passed in branch CI |
+| 2026-07-21 | `4050aec` | Added six distinct owner-trend Preview garments and the current judged branch head | 11 products validate; 133/133 tests, typecheck, lint, build, production audit, and 12/12 local E2E pass in CI run `29825394859` |
 
 ## Evidence to preserve
 

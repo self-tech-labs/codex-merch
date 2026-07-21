@@ -7,9 +7,9 @@
 - Category: **Work & Productivity**
 - Entrant: **Elliot Vaucher**
 - Country: Switzerland
-- Judge Preview: [`codex-build-week-weekly-studio` branch alias](https://codex-merch-git-codex-build-week-weekly-studio-ritsl.vercel.app) — open the scoped Vercel Shareable Link supplied privately in Devpost; the repository never stores its access token
-- Source repository: [`self-tech-labs/codex-merch` at owner-triggered Preview commit `42fd968`](https://github.com/self-tech-labs/codex-merch/tree/42fd968d66985bd41793b20ea7ead1ac29f4c8ec)
-- Demo video: **TODO: public YouTube URL, under three minutes**
+- Judge Preview: public [`codex-build-week-weekly-studio` branch alias](https://codex-merch-git-codex-build-week-weekly-studio-ritsl.vercel.app); no account or token is required
+- Source repository: [`self-tech-labs/codex-merch` at current Preview branch head `4050aec`](https://github.com/self-tech-labs/codex-merch/tree/4050aec0c0bf925f6f2dded7ea7a9fc28f8ddca2); the owner-triggered reference feature begins at `42fd968`
+- Demo video: verified local [`2:50 YouTube master`](../../video/out/codex-merch-build-week-1080p.mp4); **TODO: public YouTube URL**
 - Primary Codex task/session: `019f7fb1-9352-7b30-ac89-076c94b2eeeb`
 - `/feedback` session ID: **TODO: feedback ID from the primary build task**
 - Devpost submission: **TODO: submission URL**
@@ -65,8 +65,8 @@ entry only after preserving the cited evidence at the submission commit.
 | --- | --- | --- | --- |
 | Exact 30-post input, recurring-trend gate, and `no_trend` | Yes | Synthetic fixtures, unit coverage, and [`weekly-run-2026-W30-live-no-trend.json`](evidence/weekly-run-2026-W30-live-no-trend.json) | Verified live X list read: 30 unique posts, 13 authors, integrity hashes matched; the signal correctly ended `no_trend` at 15/72 |
 | GPT-5.6 trend and three-recipe Structured Outputs | Yes | [`weekly-run-2026-W37-fixture-live-gpt56-prepared.json`](evidence/weekly-run-2026-W37-fixture-live-gpt56-prepared.json) records fixture input with live GPT-5.6 and three eligible renderer-bound recipes | Live X W30 decision used `gpt-5.6-sol`; no recipe call was warranted after the trend gate failed |
-| Deterministic rendering, prepress, actual-render critic, and rollback | Yes | The W37 sanitized bundle records exact placement/prepress results and an accepted 88/100 fallback candidate; 130 tests run, with 129 passing and one database test skipped | Candidate one was quarantined; candidate two passed without weakening thresholds |
-| Direct Codex prompt to visible Preview merch | Yes | [`owner-trend-preview-live-gpt56-dry-run.json`](evidence/owner-trend-preview-live-gpt56-dry-run.json) records a live three-direction GPT-5.6 dry run; Solward replays idempotently as the full six-panel reference candidate | Vercel deployment `dpl_EeYdVHVtecJjKQBWfGFan2M3Mca2`, bound to `42fd968`; 10/10 desktop/mobile browser checks passed through its scoped Shareable Link |
+| Deterministic rendering, prepress, actual-render critic, and rollback | Yes | The W37 sanitized bundle records exact placement/prepress results and an accepted 88/100 fallback candidate; Preview branch CI ran 133/133 tests | Candidate one was quarantined; candidate two passed without weakening thresholds |
+| Direct Codex prompt to visible Preview merch | Yes | [`owner-trend-preview-live-gpt56-dry-run.json`](evidence/owner-trend-preview-live-gpt56-dry-run.json) records a live three-direction GPT-5.6 dry run; Solward replays idempotently as the full six-panel reference candidate | Public Vercel branch alias at `4050aec`; 12/12 desktop/mobile browser checks passed. The original immutable Solward deployment `dpl_EeYdVHVtecJjKQBWfGFan2M3Mca2` is bound to `42fd968` |
 | Codex Desktop weekly operation | Skill, prompts, the active local `Codex Merch Weekly Prepare` automation, and the paused owner-gated release automation are implemented | Clean-checkout offline prepare, live-X `no_trend`, and terminal `idempotentReplay: true` are preserved | First live manual prepare completed on 2026-07-20; scheduled release remains intentionally paused |
 | Git/deployment/Printful production release state machine | Implemented, outside judged Preview | Plan-only, recovery, deployment-binding, and provider-idempotency tests pass; fixtures and owner-supplied trends are deliberately non-releasable | Not claimed as a live Build Week proof; provider and owner approval gates remain closed |
 | Stripe, Neon, Inngest, and Printful draft purchase path | Implemented, outside judged Preview | Unit coverage verifies server-side pricing, webhook signatures, immutable order snapshots, idempotency, and fail-closed configuration | Checkout is intentionally disabled for judging; no payment or fulfillment claim is made |
@@ -127,6 +127,8 @@ Never add `--release` while following this reproduction path.
 - [Provenance and judged delta](provenance-delta.md)
 - [Architecture and model roles](architecture.md)
 - [Three-minute demo script](demo-script.md)
+- [Copy-ready Devpost submission](devpost-submission.md)
+- [Reproducible demo video and YouTube package](../../video/README.md)
 - [Codex Desktop automation prompt](automation-prompt.md)
 - [Judge access](judge-access.md)
 - [Asset and rights record](asset-and-rights.md)

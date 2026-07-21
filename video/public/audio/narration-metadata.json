@@ -1,0 +1,94 @@
+{
+  "model": "gpt-audio-1.5",
+  "voice": "alloy",
+  "endpoint": "https://api.openai.com/v1/chat/completions",
+  "explicitDisclosureRequired": true,
+  "compositionDurationSeconds": 170,
+  "segments": [
+    {
+      "id": "intro",
+      "file": "video/public/audio/segments/01-intro.wav",
+      "startSeconds": 0.6,
+      "durationSeconds": 9.25,
+      "transcript": "Codex Meme Merch turns one owner-supplied premise into an inspectable garment preview, built with Codex and GPT-5.6.",
+      "transcriptSimilarity": 1,
+      "attempt": 1,
+      "tempo": 1,
+      "postProcessing": null
+    },
+    {
+      "id": "product",
+      "file": "video/public/audio/segments/02-product.wav",
+      "startSeconds": 10.3,
+      "durationSeconds": 23.595625,
+      "transcript": "The public demo is deliberately non-sellable. From the catalog, I open Solward Index and inspect four customer-facing views: catalog, front, back, and the four print panels. Size choices and checkout are disabled. The rights note records original abstract wordplay, with no official logos, copied posts, usernames, likenesses, or protected product layouts.",
+      "transcriptSimilarity": 1,
+      "attempt": 1,
+      "tempo": 1,
+      "postProcessing": {
+        "trimLeadingSeconds": 3.354375,
+        "reason": "Removed the model acknowledgement before the exact script at the waveform-verified pause."
+      },
+      "sourceTranscript": "Understood. Here is the narration read verbatim:\n\nThe public demo is deliberately non-sellable. From the catalog, I open Solward Index and inspect four customer-facing views: catalog, front, back, and the four print panels. Size choices and checkout are disabled. The rights note records original abstract wordplay, with no official logos, copied posts, usernames, likenesses, or protected product layouts."
+    },
+    {
+      "id": "architecture",
+      "file": "video/public/audio/segments/03-architecture.wav",
+      "startSeconds": 42,
+      "durationSeconds": 24.9,
+      "transcript": "Behind this surface, GPT-5.6 provides bounded judgment: trend selection on the scheduled route, exactly three structured art directions, and critique of actual renders. Deterministic code owns provenance, schemas, rights checks, exact dimensions, six-panel composition, hashes, prepress, state transitions, and every release gate. Judgment never becomes authority.",
+      "transcriptSimilarity": 1,
+      "attempt": 1,
+      "tempo": 1,
+      "postProcessing": null
+    },
+    {
+      "id": "pipeline",
+      "file": "video/public/audio/segments/04-pipeline.wav",
+      "startSeconds": 68,
+      "durationSeconds": 28.996,
+      "transcript": "The owner route skips only discovery. It keeps the same guarded studio as the weekly route, where exactly thirty authorized posts can produce a recurring trend or a truthful no-trend stop. The shared pipeline validates each recipe, composes front, back, both sleeves, panel label, and inside label, then asks GPT-5.6 to review the rendered garment itself. Every contract, threshold, and prompt is visible for inspection.",
+      "transcriptSimilarity": 1,
+      "attempt": 1,
+      "tempo": 1,
+      "postProcessing": {
+        "trimLeadingSeconds": 2.754,
+        "reason": "Removed the model acknowledgement before the exact script at the waveform-verified pause."
+      },
+      "sourceTranscript": "Sure, I'll read it exactly as you provided:\n\nThe owner route skips only discovery. It keeps the same guarded studio as the weekly route, where exactly thirty authorized posts can produce a recurring trend or a truthful no-trend stop. The shared pipeline validates each recipe, composes front, back, both sleeves, panel label, and inside label, then asks GPT-5.6 to review the rendered garment itself. Every contract, threshold, and prompt is visible for inspection."
+    },
+    {
+      "id": "evidence",
+      "file": "video/public/audio/segments/05-evidence.wav",
+      "startSeconds": 116,
+      "durationSeconds": 16.95,
+      "transcript": "At the judged Preview commit, eleven products validate, one hundred thirty-three of one hundred thirty-three tests pass, and twelve of twelve browser checks pass locally and against the public deployment. Solward's critic score is eighty-seven out of one hundred.",
+      "transcriptSimilarity": 1,
+      "attempt": 1,
+      "tempo": 1,
+      "postProcessing": null
+    },
+    {
+      "id": "disclosure",
+      "file": "video/public/audio/segments/06-disclosure.wav",
+      "startSeconds": 137,
+      "durationSeconds": 23.656542,
+      "transcript": "AI disclosure: GPT-5.6 produced structured trend and art-direction judgments and reviewed rendered images. Codex image generation assisted the concept board. Six print panels and exact text were composed deterministically. This voice was synthesized with OpenAI gpt-audio-1.5. No payment, provider sync, publication, or fulfillment action is shown.",
+      "transcriptSimilarity": 1,
+      "attempt": 1,
+      "tempo": 1.1163,
+      "postProcessing": null
+    },
+    {
+      "id": "outro",
+      "file": "video/public/audio/segments/07-outro.wav",
+      "startSeconds": 161,
+      "durationSeconds": 7.35,
+      "transcript": "One sentence becomes an inspectable garment system, without a hidden commerce claim. Explore the public Preview.",
+      "transcriptSimilarity": 1,
+      "attempt": 1,
+      "tempo": 1,
+      "postProcessing": null
+    }
+  ]
+}

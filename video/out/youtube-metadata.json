@@ -1,0 +1,25 @@
+{
+  "title": "Codex Merch — An Inspectable AI Garment System | OpenAI Build Week 2026",
+  "visibility": "public",
+  "audience": "not_made_for_kids",
+  "language": "en",
+  "category": "Science & Technology",
+  "video": "video/out/codex-merch-build-week-1080p.mp4",
+  "thumbnail": "video/out/codex-merch-build-week-thumbnail.png",
+  "captions": "video/out/codex-merch-build-week.en.srt",
+  "descriptionSource": "video/out/youtube-description.md",
+  "aiDisclosure": "Narration is an AI-generated voice synthesized with OpenAI gpt-audio-1.5. GPT-5.6 produced bounded structured judgments and reviewed rendered imagery. Codex image generation assisted the concept board.",
+  "independenceDisclosure": "Independent OpenAI Build Week project; not an official OpenAI or Codex merchandise program.",
+  "tags": [
+    "OpenAI Build Week",
+    "Codex",
+    "GPT-5.6",
+    "gpt-audio-1.5",
+    "agentic workflow",
+    "AI engineering",
+    "structured outputs",
+    "Remotion",
+    "TypeScript",
+    "creative operations"
+  ]
+}

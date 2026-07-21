@@ -7,10 +7,10 @@ const previewAccessUrl = process.env.PLAYWRIGHT_PREVIEW_ACCESS_URL_FILE
   : '';
 
 function isVercelPreviewToolbarNoise(message: string) {
-  if (!previewAccessUrl) return false;
   return (
     message.includes("https://vercel.live/_next-live/feedback/feedback.js") ||
-    message.includes('Failed to fetch manifest patches TypeError: Failed to fetch')
+    (Boolean(previewAccessUrl) &&
+      message.includes('Failed to fetch manifest patches TypeError: Failed to fetch'))
   );
 }
 
