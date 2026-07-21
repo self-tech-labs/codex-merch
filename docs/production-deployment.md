@@ -28,8 +28,8 @@ production state is **not approved for real customer purchases**.
 The configured Printful Manual/API store and product/catalog-variant mapping
 passed a credentialed, read-only verification on 2026-07-21 for product
 `436601984`. Local sync IDs are `5338615120`, `5338615121`, and `5338615122`;
-the verifier now compares those IDs exactly with the live response and must be
-rerun successfully after this change before sign-off. A dated estimate
+the upgraded verifier compared those IDs exactly with the live response and
+passed on 2026-07-21 without creating or changing an order. A dated estimate
 for each of M, L, and XL delivered to Lausanne was CHF 29.35 item/print, CHF
 3.11 vendor tax, and CHF 9.10 shipping, or CHF 41.56 total. At a CHF 67.10 customer charge
 and an illustrative Swiss-card Stripe fee of 2.9% + CHF 0.30, estimated
