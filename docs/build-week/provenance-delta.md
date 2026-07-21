@@ -53,12 +53,13 @@ Fill this table from Git after each cohesive commit. Do not backdate, amend away
 | 2026-07-21 | `8a1a33d` | Documented the Printful bigint database migration | Migration contract review passed |
 | 2026-07-21 | `7ae1ecf` | Fixed cart clearing after checkout hydration | Cart and checkout regression coverage passed |
 | 2026-07-21 | `86daa00` | Added a non-mutating Printful cost probe to commerce readiness | Read-only Swiss pilot estimates passed; no order was created |
+| 2026-07-21 | `8017b9f` | Finalized the hackable project narrative, reproducible 2:51 demo package, MIT/code-versus-assets licensing, CH/US jury-only checkout gate, automatic expiry, prominent fan/non-affiliation disclosure, and submission/operator documentation | 11 products validated; 149 tests passed with one database integration skip; typecheck, lint, build, 12/12 Preview E2E, production-mode browser QA, video technical/privacy QA, and embedded-secret scan passed |
 
 ## Evidence to preserve
 
 - Primary Codex task/session ID: `019f7fb1-9352-7b30-ac89-076c94b2eeeb`
 - `/feedback` session ID: **Owner action — run `/feedback` in the primary Codex task and paste the returned ID into Devpost.**
-- Verified owner-triggered feature commit: `42fd968d66985bd41793b20ea7ead1ac29f4c8ec`; copy the final evidence-commit HEAD into Devpost
+- Verified owner-triggered feature commit: `42fd968d66985bd41793b20ea7ead1ac29f4c8ec`; finalized implementation and evidence commit: `8017b9f0a28b9918e03b345d0cf669ebdd75998b`; copy the final pushed HEAD into Devpost
 - Sanitized example run directory: `docs/build-week/evidence/weekly-run-2026-W37-fixture-live-gpt56-prepared.json` and `docs/build-week/evidence/weekly-run-2026-W30-live-no-trend.json`
 - Duplicate-free replay result: W30 terminal replay returned `idempotentReplay: true`
 - Qualification CI run: [GitHub Actions run `29779894993`](https://github.com/self-tech-labs/codex-merch/actions/runs/29779894993) — install, migration, 117 tests, typecheck, lint, build, production dependency audit, and E2E passed; only unresolved owner/submission fields failed the final strict verifier

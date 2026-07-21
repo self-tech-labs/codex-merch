@@ -9,7 +9,7 @@ bodies, private run ledgers, or third-party media without redistribution rights.
 
 | Evidence | Verified value |
 | --- | --- |
-| Current judged Preview branch head | [`4050aec0c0bf925f6f2dded7ea7a9fc28f8ddca2`](https://github.com/self-tech-labs/codex-merch/tree/4050aec0c0bf925f6f2dded7ea7a9fc28f8ddca2); the verified owner-triggered reference feature begins at `42fd968` |
+| Finalized implementation and evidence commit | [`8017b9f0a28b9918e03b345d0cf669ebdd75998b`](https://github.com/self-tech-labs/codex-merch/tree/8017b9f0a28b9918e03b345d0cf669ebdd75998b); the verified owner-triggered reference feature begins at `42fd968`. Use the final pushed descendant SHA in Devpost after this index update is committed. |
 | CI for current Preview branch | [GitHub Actions run `29825394859`](https://github.com/self-tech-labs/codex-merch/actions/runs/29825394859): install, database migration, 11-product catalog, 133/133 tests, typecheck, lint, build, production audit, and 12/12 Playwright checks passed; only the strict owner-input/submission-document gate failed |
 | Primary Codex task/session | `019f7fb1-9352-7b30-ac89-076c94b2eeeb` |
 | `/feedback` result | **Owner action:** run `/feedback` in the primary Codex task and paste the returned session ID into Devpost before submission. |
@@ -123,7 +123,7 @@ is optional and is never required for judging.
 
 | External proof | Verified value |
 | --- | --- |
-| Submitted Preview commit/deployment | Current public branch alias at Preview head `4050aec0c0bf925f6f2dded7ea7a9fc28f8ddca2`; original Solward implementation deployment `dpl_EeYdVHVtecJjKQBWfGFan2M3Mca2`; immutable URL [`codex-merch-8auim2332-ritsl.vercel.app`](https://codex-merch-8auim2332-ritsl.vercel.app) bound to `42fd968d66985bd41793b20ea7ead1ac29f4c8ec`. |
+| Submitted Preview commit/deployment | Last independently recorded branch deployment before final freeze: `4050aec0c0bf925f6f2dded7ea7a9fc28f8ddca2`; original Solward implementation deployment `dpl_EeYdVHVtecJjKQBWfGFan2M3Mca2`; immutable URL [`codex-merch-8auim2332-ritsl.vercel.app`](https://codex-merch-8auim2332-ritsl.vercel.app) bound to `42fd968d66985bd41793b20ea7ead1ac29f4c8ec`. Verify and record the final pushed deployment separately. |
 | Solward catalog/product/assets | Verified through the public branch alias: listing visible; exact product route renders; four mockup images load; print-backed product metadata is present; `noindex,nofollow` remains set. |
 | Checkout behavior | Verified disabled on catalog, product, and cart surfaces; no Stripe redirect is offered in Preview. |
 | Canonical jury-pilot readiness | The current source requires a private access code, closes automatically at `2026-08-06T00:00:00Z`, limits delivery to CH/US, and exposes no checkout unless every live dependency and approval gate passes. Record the final HTTP 200 check here only after deployment. |
