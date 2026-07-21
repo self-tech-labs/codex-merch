@@ -175,10 +175,11 @@ coherent batch and verify the deployment—not just the Settings table.
    Vercel. Retrieve it from Neon or the approved password manager, not Vercel
    Sensitive-value output.
 6. Confirm `orders`, `order_items`, `stripe_events`, and `schema_migrations`
-   exist; both `0000_durable_orders` and `0001_refund_tracking` must be
-   recorded; `orders.refunded_amount`, `orders.policy_version`, and the
-   `stripe_events` processing-lease columns must exist. The application stores
-   order totals, status, the accepted policy version, immutable product
+   exist; `0000_durable_orders`, `0001_refund_tracking`, and
+   `0002_sync_variant_bigint` must be recorded; `order_items.sync_variant_id`
+   must be `bigint`, and `orders.refunded_amount`, `orders.policy_version`, and
+   the `stripe_events` processing-lease columns must exist. The application
+   stores order totals, status, the accepted policy version, immutable product
    snapshots, and provider IDs; it does not persist shipping addresses.
 
 ## 4. Connect Inngest
