@@ -1,5 +1,5 @@
 import {randomUUID} from 'node:crypto';
-import {and, eq, or, sql} from 'drizzle-orm';
+import {and, eq, inArray, isNull, lt, or, sql} from 'drizzle-orm';
 import {getDatabase} from '~/db/client.server';
 import {
   orderItems,
@@ -15,12 +15,14 @@ export async function createPendingOrder({
   currency,
   env,
   items,
+  policyVersion,
   provider,
 }: {
   catalogRevision: string;
   currency: string;
   env: AppEnv;
   items: CheckoutItemSnapshot[];
+  policyVersion: string;
   provider: string;
 }) {
   if (!items.length || items.length > 10) {
@@ -56,6 +58,7 @@ export async function createPendingOrder({
       id,
       publicReference,
       catalogRevision,
+      policyVersion,
       currency,
       subtotalAmount,
       totalAmount: subtotalAmount,
@@ -124,40 +127,82 @@ export async function recordStripeEvent(
   env: AppEnv,
 ) {
   const db = getDatabase(env);
+  const processingToken = randomUUID();
+  const processingStartedAt = new Date();
   const inserted = await db
     .insert(stripeEvents)
-    .values({id: event.id, type: event.type})
+    .values({
+      id: event.id,
+      type: event.type,
+      status: 'processing',
+      processingToken,
+      processingStartedAt,
+    })
     .onConflictDoNothing()
     .returning({id: stripeEvents.id});
-  if (inserted.length > 0) return true;
+  if (inserted.length > 0) {
+    return {state: 'claimed' as const, processingToken};
+  }
+  const staleBefore = new Date(Date.now() - 5 * 60 * 1000);
   const retried = await db
     .update(stripeEvents)
-    .set({status: 'received', lastError: null, processedAt: null})
+    .set({
+      status: 'processing',
+      processingToken,
+      processingStartedAt,
+      lastError: null,
+      processedAt: null,
+    })
     .where(
       and(
         eq(stripeEvents.id, event.id),
-        eq(stripeEvents.status, 'failed'),
+        or(
+          eq(stripeEvents.status, 'failed'),
+          eq(stripeEvents.status, 'received'),
+          and(
+            eq(stripeEvents.status, 'processing'),
+            lt(stripeEvents.processingStartedAt, staleBefore),
+          ),
+        ),
       ),
     )
     .returning({id: stripeEvents.id});
-  return retried.length > 0;
+  if (retried.length > 0) {
+    return {state: 'claimed' as const, processingToken};
+  }
+  const existing = await db.query.stripeEvents.findFirst({
+    columns: {status: true},
+    where: eq(stripeEvents.id, event.id),
+  });
+  if (existing && ['processed', 'ignored'].includes(existing.status)) {
+    return {state: 'complete' as const};
+  }
+  return {state: 'busy' as const};
 }
 
 export async function finishStripeEvent(
   eventId: string,
   status: 'processed' | 'ignored' | 'failed',
   env: AppEnv,
-  options: {error?: unknown; orderId?: string} = {},
+  options: {error?: unknown; orderId?: string; processingToken: string},
 ) {
   await getDatabase(env)
     .update(stripeEvents)
     .set({
       status,
       orderId: options.orderId,
+      processingToken: null,
+      processingStartedAt: null,
       lastError: options.error ? safeError(options.error) : null,
       processedAt: new Date(),
     })
-    .where(eq(stripeEvents.id, eventId));
+    .where(
+      and(
+        eq(stripeEvents.id, eventId),
+        eq(stripeEvents.status, 'processing'),
+        eq(stripeEvents.processingToken, options.processingToken),
+      ),
+    );
 }
 
 export async function markOrderPaid({
@@ -165,7 +210,6 @@ export async function markOrderPaid({
   orderId,
   paymentIntentId,
   shippingAmount,
-  stripeEventId,
   taxAmount,
   totalAmount,
 }: {
@@ -173,7 +217,6 @@ export async function markOrderPaid({
   orderId: string;
   paymentIntentId?: string | null;
   shippingAmount: number;
-  stripeEventId?: string;
   taxAmount: number;
   totalAmount: number;
 }) {
@@ -200,35 +243,19 @@ export async function markOrderPaid({
       ),
     )
       .returning({id: orders.id});
-    if (stripeEventId) {
-      await transaction
-        .update(stripeEvents)
-        .set({
-          orderId,
-          status: 'processed',
-          lastError: null,
-          processedAt: new Date(),
-        })
-        .where(eq(stripeEvents.id, stripeEventId));
-    }
     return updated.length > 0;
   });
 }
 
 export async function setPaymentState(
   orderId: string,
-  payment: 'failed' | 'refunded' | 'disputed',
+  payment: 'failed' | 'disputed',
   env: AppEnv,
 ) {
   const currentState =
     payment === 'failed'
       ? eq(orders.paymentStatus, 'pending')
-      : payment === 'refunded'
-        ? or(
-            eq(orders.paymentStatus, 'paid'),
-            eq(orders.paymentStatus, 'disputed'),
-          )
-        : eq(orders.paymentStatus, 'paid');
+      : inArray(orders.paymentStatus, ['paid', 'partially_refunded']);
   await getDatabase(env)
     .update(orders)
     .set({
@@ -239,13 +266,162 @@ export async function setPaymentState(
     .where(and(eq(orders.id, orderId), currentState));
 }
 
+export async function recordRefund(
+  {
+    amountRefunded,
+    env,
+    orderId,
+    paymentIntentId,
+    shippingAmount,
+    taxAmount,
+    totalAmount,
+  }: {
+    amountRefunded: number;
+    env: AppEnv;
+    orderId: string;
+    paymentIntentId: string;
+    shippingAmount: number;
+    taxAmount: number;
+    totalAmount: number;
+  },
+) {
+  if (
+    !Number.isInteger(amountRefunded) ||
+    !Number.isInteger(totalAmount) ||
+    !Number.isInteger(shippingAmount) ||
+    !Number.isInteger(taxAmount) ||
+    amountRefunded <= 0 ||
+    totalAmount <= 0 ||
+    shippingAmount < 0 ||
+    taxAmount < 0 ||
+    !paymentIntentId ||
+    amountRefunded > totalAmount
+  ) {
+    throw new Error('Stripe refund amounts are invalid');
+  }
+  const fullyRefunded = amountRefunded === totalAmount;
+  const db = getDatabase(env);
+  const updated = await db
+    .update(orders)
+    .set({
+      stripePaymentIntentId: paymentIntentId,
+      checkoutStatus: 'complete',
+      paymentStatus: fullyRefunded ? 'refunded' : 'partially_refunded',
+      refundedAmount: amountRefunded,
+      shippingAmount,
+      taxAmount,
+      totalAmount,
+      paidAt: sql`coalesce(${orders.paidAt}, now())`,
+      fulfillmentStatus: sql`
+        case
+          when ${orders.fulfillmentStatus} = 'confirmed'::fulfillment_status
+            then ${orders.fulfillmentStatus}
+          else 'cancelled'::fulfillment_status
+        end
+      `,
+      lastError: fullyRefunded
+        ? 'Full refund recorded; unconfirmed fulfillment cancelled'
+        : 'Partial refund requires manual fulfillment review',
+      updatedAt: new Date(),
+    })
+    .where(
+      and(
+        eq(orders.id, orderId),
+        or(
+          and(
+            eq(orders.paymentStatus, 'pending'),
+            sql`${orders.subtotalAmount} + ${shippingAmount} = ${totalAmount}`,
+          ),
+          and(
+            eq(orders.totalAmount, totalAmount),
+            inArray(orders.paymentStatus, [
+              'paid',
+              'disputed',
+              'partially_refunded',
+              'refunded',
+            ]),
+          ),
+        ),
+        or(
+          isNull(orders.stripePaymentIntentId),
+          eq(orders.stripePaymentIntentId, paymentIntentId),
+        ),
+        sql`${orders.refundedAmount} <= ${amountRefunded}`,
+      ),
+    )
+    .returning({
+      fulfillmentStatus: orders.fulfillmentStatus,
+      paymentStatus: orders.paymentStatus,
+      providerOrderId: orders.providerOrderId,
+      refundedAmount: orders.refundedAmount,
+    });
+  if (updated[0]) {
+    return {
+      ...updated[0],
+      fullyRefunded: updated[0].refundedAmount === totalAmount,
+    };
+  }
+
+  // Stripe refund snapshots are cumulative and may arrive out of order. A
+  // stale or repeated snapshot is already handled when the local cumulative
+  // amount is equal or greater; other state mismatches remain retryable.
+  const current = await getOrderById(orderId, env);
+  if (
+    current?.totalAmount === totalAmount &&
+    current.stripePaymentIntentId === paymentIntentId &&
+    current.refundedAmount >= amountRefunded &&
+    ['partially_refunded', 'refunded'].includes(current.paymentStatus)
+  ) {
+    return {
+      fulfillmentStatus: current.fulfillmentStatus,
+      paymentStatus: current.paymentStatus,
+      providerOrderId: current.providerOrderId,
+      refundedAmount: current.refundedAmount,
+      fullyRefunded: current.refundedAmount === totalAmount,
+    };
+  }
+  return null;
+}
+
+export async function markPrintfulCommitted(
+  orderId: string,
+  providerOrderId: string,
+  env: AppEnv,
+) {
+  const updated = await getDatabase(env)
+    .update(orders)
+    .set({
+      fulfillmentStatus: 'confirmed',
+      fulfilledAt: new Date(),
+      updatedAt: new Date(),
+      lastError: null,
+    })
+    .where(
+      and(
+        eq(orders.id, orderId),
+        eq(orders.providerOrderId, providerOrderId),
+      ),
+    )
+    .returning({id: orders.id});
+  return updated.length > 0;
+}
+
 export async function restorePaymentAfterWonDispute(
   orderId: string,
   env: AppEnv,
 ) {
   await getDatabase(env)
     .update(orders)
-    .set({paymentStatus: 'paid', updatedAt: new Date()})
+    .set({
+      paymentStatus: sql`
+        case
+          when ${orders.refundedAmount} > 0
+            then 'partially_refunded'::payment_status
+          else 'paid'::payment_status
+        end
+      `,
+      updatedAt: new Date(),
+    })
     .where(
       and(
         eq(orders.id, orderId),
@@ -298,7 +474,7 @@ export async function markPrintfulCreated(
   confirmed: boolean,
   env: AppEnv,
 ) {
-  await getDatabase(env)
+  const updated = await getDatabase(env)
     .update(orders)
     .set({
       providerOrderId,
@@ -308,7 +484,26 @@ export async function markPrintfulCreated(
       updatedAt: new Date(),
       lastError: null,
     })
-    .where(eq(orders.id, orderId));
+    .where(
+      and(
+        eq(orders.id, orderId),
+        eq(orders.paymentStatus, 'paid'),
+        confirmed
+          ? or(
+              and(
+                eq(orders.fulfillmentStatus, 'draft_created'),
+                eq(orders.providerOrderId, providerOrderId),
+              ),
+              and(
+                eq(orders.fulfillmentStatus, 'processing'),
+                isNull(orders.providerOrderId),
+              ),
+            )
+          : eq(orders.fulfillmentStatus, 'processing'),
+      ),
+    )
+    .returning({id: orders.id});
+  return updated.length > 0;
 }
 
 export async function markFulfillmentFailed(
@@ -325,7 +520,13 @@ export async function markFulfillmentFailed(
       lastError: safeError(error),
       updatedAt: new Date(),
     })
-    .where(eq(orders.id, orderId));
+    .where(
+      and(
+        eq(orders.id, orderId),
+        eq(orders.paymentStatus, 'paid'),
+        inArray(orders.fulfillmentStatus, ['queued', 'processing']),
+      ),
+    );
 }
 
 export async function requeueOrder(orderId: string, env: AppEnv) {
@@ -339,7 +540,11 @@ export async function requeueOrder(orderId: string, env: AppEnv) {
       updatedAt: new Date(),
     })
     .where(
-      and(eq(orders.id, orderId), eq(orders.paymentStatus, 'paid')),
+      and(
+        eq(orders.id, orderId),
+        eq(orders.paymentStatus, 'paid'),
+        eq(orders.fulfillmentStatus, 'failed'),
+      ),
     )
     .returning({attempt: orders.retryCount});
   return result[0]?.attempt ?? null;

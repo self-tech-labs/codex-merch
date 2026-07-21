@@ -141,6 +141,10 @@ export function CartProvider({children}: {children: ReactNode}) {
     orderReference: string,
     purchased: CartLine[],
   ) => {
+    // CheckoutSuccess can mount before the provider has hydrated localStorage.
+    // Defer the clear until hydration changes this callback identity; otherwise
+    // an empty in-memory cart is marked as cleared and the stored lines return.
+    if (!loaded) return;
     const previouslyCleared = readClearedOrders();
     if (previouslyCleared.includes(orderReference)) return;
     window.localStorage.setItem(
@@ -157,7 +161,7 @@ export function CartProvider({children}: {children: ReactNode}) {
         return quantity > 0 ? [{...line, quantity}] : [];
       }),
     );
-  }, []);
+  }, [loaded]);
 
   const displayLines = useMemo(() => hydrateLines(lines), [lines]);
   const count = displayLines.reduce((sum, line) => sum + line.quantity, 0);

@@ -191,7 +191,9 @@ checklist. The credential-free sample data is documented in
 
 1. Keep `STOREFRONT_MODE=preview` and `CHECKOUT_ENABLED=false` in the submitted Build Week Preview.
 2. Provision separate Neon databases or branches for staging and production.
-3. Set `DATABASE_URL` and run `npm run db:migrate` once per environment.
+3. Set the environment-specific `DATABASE_URL`, then migrate staging first and
+   production second with the hidden-input, target-specific procedure in
+   [`docs/production-deployment.md`](docs/production-deployment.md#2-provision-and-migrate-postgres).
 4. Install the Inngest Vercel integration and set its event/signing keys.
 5. Configure Stripe Checkout and a signed webhook at `/api/stripe/webhook`.
 6. Configure a valid Printful Manual order/API store token.

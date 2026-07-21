@@ -75,6 +75,26 @@ export interface MerchProduct {
   };
   category: string;
   description: string;
+  productDetails?: {
+    materials: string[];
+    fabricWeight?: string;
+    fit?: string;
+    construction?: string[];
+    care: string[];
+    origin: string;
+    productionTime: string;
+    mockupNotice: string;
+    sizeGuide?: {
+      unit: string;
+      tolerance: string;
+      rows: Array<{
+        size: string;
+        length: string;
+        width: string;
+        sleeve: string;
+      }>;
+    };
+  };
   meme: {
     source: string;
     brief: string;

@@ -17,6 +17,12 @@ import {
   createPendingOrder,
   markCheckoutCreationFailed,
 } from '~/lib/orders.server';
+import {
+  MERCHANT_CONTACT_EMAIL,
+  MERCHANT_POLICY_VERSION,
+  merchantIdentity,
+  merchantPilot,
+} from '~/lib/merchant-policy';
 
 export type CheckoutLineInput = {
   productSlug: string;
@@ -67,6 +73,12 @@ export function assertCheckoutConfiguration(env: AppEnv) {
     'PRINTFUL_TOKEN',
     'PRINTFUL_STORE_ID',
   ]);
+  if (env.MERCH_PILOT_APPROVED !== 'true') {
+    throw new Error('Checkout requires explicit pilot approval');
+  }
+  if (env.PRINTFUL_AUTO_CONFIRM !== 'false') {
+    throw new Error('Checkout requires manual Printful confirmation');
+  }
   if (env.NODE_ENV === 'production') {
     if (env.CHECKOUT_ENABLED !== 'true') throw new Error('Production checkout is disabled');
     if (!env.PUBLIC_SITE_URL) {
@@ -79,21 +91,16 @@ export function assertCheckoutConfiguration(env: AppEnv) {
     ) {
       throw new Error('Vercel production checkout requires a live Stripe secret key');
     }
-    if (!env.STOREFRONT_CONTACT_EMAIL) {
-      throw new Error('Production checkout requires a merchant contact email');
+    if (env.STOREFRONT_CONTACT_EMAIL !== MERCHANT_CONTACT_EMAIL) {
+      throw new Error('Production checkout requires the reviewed merchant contact email');
     }
-    if (
-      !env.STOREFRONT_SHIPPING_POLICY ||
-      !env.STOREFRONT_RETURNS_POLICY ||
-      !env.STOREFRONT_PRIVACY_POLICY ||
-      !env.STOREFRONT_TERMS_POLICY ||
-      !env.STOREFRONT_CONTACT_POLICY
-    ) {
-      throw new Error('Production checkout requires merchant-reviewed policy copy');
+    if (env.STOREFRONT_POLICY_VERSION !== MERCHANT_POLICY_VERSION) {
+      throw new Error('Production checkout requires the deployed merchant policy version');
     }
     if (!env.STRIPE_ALLOWED_SHIPPING_COUNTRIES) {
       throw new Error('Production checkout requires approved shipping countries');
     }
+    allowedShippingCountries(env);
     if (
       Boolean(env.STRIPE_SHIPPING_RATE_ID) ===
       Boolean(env.STRIPE_FLAT_SHIPPING_AMOUNT)
@@ -101,6 +108,12 @@ export function assertCheckoutConfiguration(env: AppEnv) {
       throw new Error(
         'Production checkout requires exactly one approved shipping-rate configuration',
       );
+    }
+    if (
+      env.STRIPE_FLAT_SHIPPING_AMOUNT &&
+      Number(env.STRIPE_FLAT_SHIPPING_AMOUNT) !== merchantPilot.shippingAmount
+    ) {
+      throw new Error('Production checkout shipping does not match the approved pilot');
     }
     if (!['true', 'false'].includes(env.STRIPE_AUTOMATIC_TAX || '')) {
       throw new Error('Production checkout requires an explicit automatic-tax decision');
@@ -184,11 +197,61 @@ export function normalizeCheckoutLines(lines: unknown): StripeCheckoutLine[] {
   if (result.length > MAX_UNIQUE_LINES) {
     throw new Error('Cart has too many unique lines');
   }
+  const totalQuantity = result.reduce((sum, line) => sum + line.quantity, 0);
+  if (totalQuantity > merchantPilot.maximumItemsPerOrder) {
+    throw new Error(
+      `A pilot order may contain at most ${merchantPilot.maximumItemsPerOrder} items`,
+    );
+  }
   const currencies = new Set(result.map((line) => line.product.commerce.currency));
   const providers = new Set(result.map((line) => line.provider));
   if (currencies.size !== 1) throw new Error('A checkout may contain only one currency');
   if (providers.size !== 1) throw new Error('A checkout may contain only one provider');
   return result;
+}
+
+export function assertMerchantPilotLines(lines: StripeCheckoutLine[]) {
+  if (
+    !lines.length ||
+    lines.some(
+      (line) =>
+        line.product.slug !== merchantPilot.productSlug ||
+        line.product.title !== merchantPilot.productTitle ||
+        line.product.commerce.unitAmount !== merchantPilot.unitAmount ||
+        line.product.commerce.currency !== merchantPilot.currency,
+    )
+  ) {
+    throw new Error('Checkout lines do not match the approved merchant pilot');
+  }
+  const products = new Set(lines.map((line) => line.product));
+  if (products.size !== 1) {
+    throw new Error('Checkout lines must use one approved pilot product snapshot');
+  }
+  const [product] = products;
+  const revision = createHash('sha256')
+    .update(JSON.stringify(product))
+    .digest('hex');
+  if (revision !== merchantPilot.approvedProductRevision) {
+    throw new Error('Pilot product revision does not match merchant sign-off');
+  }
+  if (
+    product.production.provider !== 'printful' ||
+    product.providerRefs.printful?.productId !== merchantPilot.printfulProductId
+  ) {
+    throw new Error('Pilot Printful product does not match merchant sign-off');
+  }
+  for (const line of lines) {
+    const approved = merchantPilot.printfulVariants.find(
+      (variant) => variant.variantId === line.variantId,
+    );
+    if (
+      !approved ||
+      line.catalogVariantId !== approved.catalogVariantId ||
+      line.syncVariantId !== approved.syncVariantId
+    ) {
+      throw new Error('Pilot Printful variant does not match merchant sign-off');
+    }
+  }
 }
 
 export async function createCheckoutSession({
@@ -205,8 +268,10 @@ export async function createCheckoutSession({
   const catalogRevision = createHash('sha256')
     .update(JSON.stringify(merchProducts))
     .digest('hex');
+  assertMerchantPilotLines(lines);
   const currency = lines[0].product.commerce.currency;
   const provider = lines[0].provider;
+  const checkoutShippingOptions = await shippingOptions(env, currency);
   const snapshots = lines.map((line) => {
     const variant = getProductVariant(line.product, line.variantId);
     if (!variant) throw new Error(`Unknown variant: ${line.variantId}`);
@@ -228,6 +293,7 @@ export async function createCheckoutSession({
     currency,
     env,
     items: snapshots,
+    policyVersion: MERCHANT_POLICY_VERSION,
     provider,
   });
 
@@ -236,6 +302,7 @@ export async function createCheckoutSession({
       source: 'codex-merch',
       order_id: order.id,
       catalog_revision: catalogRevision,
+      policy_version: MERCHANT_POLICY_VERSION,
     };
     const session = await stripeClient(env).checkout.sessions.create(
       {
@@ -245,18 +312,27 @@ export async function createCheckoutSession({
         client_reference_id: order.id,
         metadata,
         payment_intent_data: {metadata},
+        branding_settings: {display_name: merchantIdentity.legalName},
+        phone_number_collection: {enabled: true},
+        custom_text: {
+          submit: {
+            message: `By paying, you agree to the RITSL Elliot Vaucher Terms and Privacy Policy (version ${MERCHANT_POLICY_VERSION}).`,
+          },
+        },
         automatic_tax: {enabled: env.STRIPE_AUTOMATIC_TAX === 'true'},
         shipping_address_collection: {
           allowed_countries: allowedShippingCountries(env),
         },
-        shipping_options: shippingOptions(env, currency),
+        shipping_options: checkoutShippingOptions,
         line_items: lines.map((line) => ({
           quantity: line.quantity,
           price_data: {
             currency: currency.toLowerCase(),
             unit_amount: line.product.commerce.unitAmount,
+            tax_behavior: merchantPilot.stripeTaxBehavior,
             product_data: {
               name: line.product.title,
+              tax_code: merchantPilot.stripeProductTaxCode,
               images: [new URL(getPrimaryCustomerMockup(line.product), baseUrl).toString()],
               metadata: {
                 slug: line.product.slug,
@@ -308,18 +384,63 @@ export async function checkoutSessionForPaymentIntent(
   return sessions.data[0] || null;
 }
 
-function allowedShippingCountries(env: AppEnv) {
+export function allowedShippingCountries(env: AppEnv) {
   const configured =
     env.STRIPE_ALLOWED_SHIPPING_COUNTRIES ||
-    'US,CA,GB,CH,DE,FR,NL,ES,IT,AU';
-  return configured
+    merchantPilot.shippingCountries.join(',');
+  const countries = configured
     .split(',')
     .map((country) => country.trim().toUpperCase())
-    .filter(Boolean) as Stripe.Checkout.SessionCreateParams.ShippingAddressCollection.AllowedCountry[];
+    .filter(Boolean);
+  if (
+    countries.length !== merchantPilot.shippingCountries.length ||
+    countries.some(
+      (country, index) => country !== merchantPilot.shippingCountries[index],
+    )
+  ) {
+    throw new Error('The production pilot supports shipping to CH only');
+  }
+  return countries as Stripe.Checkout.SessionCreateParams.ShippingAddressCollection.AllowedCountry[];
 }
 
-function shippingOptions(env: AppEnv, currency: string) {
+export async function shippingOptions(
+  env: AppEnv,
+  currency: string,
+  client?: Pick<Stripe, 'shippingRates'>,
+) {
   if (env.STRIPE_SHIPPING_RATE_ID) {
+    const rate = await (client || stripeClient(env)).shippingRates.retrieve(
+      env.STRIPE_SHIPPING_RATE_ID,
+    );
+    if (!rate.active) throw new Error('Configured Stripe shipping rate is inactive');
+    if (rate.fixed_amount?.currency?.toUpperCase() !== currency.toUpperCase()) {
+      throw new Error('Configured Stripe shipping rate currency does not match the order');
+    }
+    if (rate.fixed_amount?.amount !== merchantPilot.shippingAmount) {
+      throw new Error('Configured Stripe shipping rate amount does not match the pilot');
+    }
+    const rateTaxCode =
+      typeof rate.tax_code === 'string' ? rate.tax_code : rate.tax_code?.id;
+    if (
+      rate.tax_behavior !== merchantPilot.stripeTaxBehavior ||
+      rateTaxCode !== merchantPilot.stripeShippingTaxCode
+    ) {
+      throw new Error(
+        'Configured Stripe shipping rate tax treatment does not match the pilot',
+      );
+    }
+    if (
+      rate.delivery_estimate?.minimum?.unit !== 'business_day' ||
+      rate.delivery_estimate.minimum.value !==
+        merchantPilot.deliveryEstimateBusinessDays.minimum ||
+      rate.delivery_estimate?.maximum?.unit !== 'business_day' ||
+      rate.delivery_estimate.maximum.value !==
+        merchantPilot.deliveryEstimateBusinessDays.maximum
+    ) {
+      throw new Error(
+        'Configured Stripe shipping rate delivery estimate does not match the pilot',
+      );
+    }
     return [{shipping_rate: env.STRIPE_SHIPPING_RATE_ID}];
   }
   if (env.STRIPE_FLAT_SHIPPING_AMOUNT) {
@@ -327,12 +448,27 @@ function shippingOptions(env: AppEnv, currency: string) {
     if (!Number.isInteger(amount) || amount < 0) {
       throw new Error('STRIPE_FLAT_SHIPPING_AMOUNT must be a non-negative integer');
     }
+    if (amount !== merchantPilot.shippingAmount) {
+      throw new Error('Flat shipping amount does not match the approved pilot');
+    }
     return [
       {
         shipping_rate_data: {
           type: 'fixed_amount' as const,
           fixed_amount: {amount, currency: currency.toLowerCase()},
           display_name: 'Standard shipping',
+          tax_behavior: merchantPilot.stripeTaxBehavior,
+          tax_code: merchantPilot.stripeShippingTaxCode,
+          delivery_estimate: {
+            minimum: {
+              unit: 'business_day' as const,
+              value: merchantPilot.deliveryEstimateBusinessDays.minimum,
+            },
+            maximum: {
+              unit: 'business_day' as const,
+              value: merchantPilot.deliveryEstimateBusinessDays.maximum,
+            },
+          },
         },
       },
     ];

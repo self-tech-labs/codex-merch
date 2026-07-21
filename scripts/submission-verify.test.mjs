@@ -404,23 +404,20 @@ test('configuration report is explicitly presence-only and covers site, approval
     MERCH_WEEKLY_RELEASE_ENABLED: 'true',
     CHECKOUT_ENABLED: 'true',
     MERCH_PILOT_APPROVED: 'true',
+    MERCH_EXPANSION_APPROVED: 'true',
     STOREFRONT_LEGAL_APPROVED: 'true',
     STOREFRONT_TAX_SHIPPING_APPROVED: 'true',
-    STOREFRONT_CONTACT_EMAIL: 'support@example.com',
-    STOREFRONT_SHIPPING_POLICY: 'Reviewed shipping policy',
-    STOREFRONT_RETURNS_POLICY: 'Reviewed returns policy',
-    STOREFRONT_PRIVACY_POLICY: 'Reviewed privacy policy',
-    STOREFRONT_TERMS_POLICY: 'Reviewed terms policy',
-    STOREFRONT_CONTACT_POLICY: 'Reviewed contact policy',
-    STRIPE_FLAT_SHIPPING_AMOUNT: '500',
-    STRIPE_ALLOWED_SHIPPING_COUNTRIES: 'CH,US',
+    STOREFRONT_CONTACT_EMAIL: 'elliot@ritsl.com',
+    STOREFRONT_POLICY_VERSION: '2026-07-21',
+    STRIPE_FLAT_SHIPPING_AMOUNT: '910',
+    STRIPE_ALLOWED_SHIPPING_COUNTRIES: 'CH',
     STRIPE_AUTOMATIC_TAX: 'false',
   };
   const report = buildSubmissionReport(validInputs({env: configured}));
   assert.equal(Object.values(report.configurationPresence).every(Boolean), true);
   const serialized = JSON.stringify(report);
   for (const secret of Object.values(configured)) {
-    if (['false', 'true', 'gpt-5.6', '500', 'CH,US'].includes(secret)) continue;
+    if (['false', 'true', 'gpt-5.6', '910', 'CH', '2026-07-21'].includes(secret)) continue;
     assert.equal(serialized.includes(secret), false);
   }
 

@@ -1,0 +1,20 @@
+{
+  "status": "pass",
+  "generatedFrom": "video/out/codex-merch-build-week-1080p.mp4",
+  "resolution": "1920x1080",
+  "fps": 30,
+  "durationSeconds": 170,
+  "videoCodec": "h264",
+  "audioCodec": "aac",
+  "audioSampleRate": 48000,
+  "integratedLufs": -15.85,
+  "truePeakDbtp": -1.15,
+  "captionCueCount": 31,
+  "playbackDecode": "pass",
+  "contactSheet": "video/qa/final-contact-sheet.png",
+  "visualPrivacyReview": "pass",
+  "fileSizeBytes": 18267770,
+  "sha256": "eb78bcfd192f346555de3b68397f0dfd8c5fe1a4c1f8d4a95552ba26348cc804",
+  "captionsSha256": "c236eca30fa922f87e97228317948f2fcf7eabd498a56175f85c8adfa2e768a2",
+  "thumbnailSha256": "d187e822d6d7301afb2095b6256ed404f544cb39c882d39db5352b9ce964dd5a"
+}

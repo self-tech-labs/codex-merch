@@ -6,10 +6,14 @@ import {
   isPurchasableVariant,
 } from '~/lib/merch';
 import {
+  allowedShippingCountries,
   assertCheckoutConfiguration,
+  assertMerchantPilotLines,
   normalizeCheckoutLines,
+  shippingOptions,
 } from '~/lib/stripe.server';
 import {probeCheckoutDependencies} from '~/lib/readiness.server';
+import {merchantPilot} from '~/lib/merchant-policy';
 
 const responseHeaders = {'Cache-Control': 'no-store'};
 
@@ -60,9 +64,11 @@ export function createReadinessLoader({
       if (env.PRINTFUL_AUTO_CONFIRM !== 'false') {
         throw new Error('Printful auto-confirm must remain disabled');
       }
-      normalizeCheckoutLines([
+      const pilotLines = normalizeCheckoutLines([
         {productSlug: product.slug, variantId: variant.id, quantity: 1},
       ]);
+      assertMerchantPilotLines(pilotLines);
+      await shippingOptions(env, product.commerce.currency);
       liveReadiness = await probeDependencies(env);
     } catch {
       return Response.json(
@@ -81,8 +87,15 @@ export function createReadinessLoader({
         currency: product.commerce.currency,
         unitAmount: product.commerce.unitAmount,
         provider: product.production.provider,
+        policyVersion: env.STOREFRONT_POLICY_VERSION,
+        shippingCountries: allowedShippingCountries(env),
+        shippingAmount: merchantPilot.shippingAmount,
+        maximumItemsPerOrder: merchantPilot.maximumItemsPerOrder,
+        deliveryEstimateBusinessDays:
+          merchantPilot.deliveryEstimateBusinessDays,
         paymentMode: liveReadiness.paymentMode,
         databaseReady: liveReadiness.databaseReady,
+        printfulReady: liveReadiness.printfulReady,
         stripeReady: liveReadiness.stripeReady,
         printfulAutoConfirm: false,
       },

@@ -1,5 +1,10 @@
 import {Link, useLoaderData, useSearchParams} from 'react-router';
 import type {Route} from './+types/_index';
+import {money} from '~/lib/cart';
+import {
+  merchantPilot,
+  merchantPilotDisplayAmounts,
+} from '~/lib/merchant-policy';
 import {
   assetUrl,
   formatPrice,
@@ -102,11 +107,16 @@ function StoreRail({
 
 function ProductTile({product}: {product: MerchProduct}) {
   const primaryMockup = assetUrl(getPrimaryCustomerMockup(product));
+  const signedPilot = product.slug === merchantPilot.productSlug;
+  const pilotShipping = merchantPilotDisplayAmounts(0).shipping;
+  const shippingDisclosure = signedPilot
+    ? ` + ${money(pilotShipping, merchantPilot.currency)} CH shipping`
+    : '';
 
   return (
     <article className="product-tile">
       <Link
-        aria-label={`${product.title}, ${formatPrice(product)}`}
+        aria-label={`${product.title}, ${formatPrice(product)}${shippingDisclosure}`}
         prefetch="intent"
         to={`/products/${product.commerce.handle}`}
       >
@@ -117,6 +127,11 @@ function ProductTile({product}: {product: MerchProduct}) {
         <span className="tile-meta">
           <span>{product.title}</span>
           <span>{formatPrice(product)}</span>
+          {signedPilot ? (
+            <span>
+              + {money(pilotShipping, merchantPilot.currency)} CH shipping
+            </span>
+          ) : null}
         </span>
       </Link>
     </article>

@@ -9,10 +9,11 @@ const configuredEnv: AppEnv = {
   NODE_ENV: 'production',
   STOREFRONT_MODE: 'production',
   CHECKOUT_ENABLED: 'true',
+  MERCH_PILOT_APPROVED: 'true',
   PUBLIC_SITE_URL: 'https://shop.example',
   STRIPE_SECRET_KEY: ['sk', 'test', 'unit', '1234567890abcdef'].join('_'),
   STRIPE_WEBHOOK_SECRET: 'whsec_example',
-  STRIPE_ALLOWED_SHIPPING_COUNTRIES: 'CH,DE,FR',
+  STRIPE_ALLOWED_SHIPPING_COUNTRIES: 'CH',
   STRIPE_AUTOMATIC_TAX: 'false',
   DATABASE_URL: 'postgres://example',
   INNGEST_EVENT_KEY: ['inngest', 'event', 'unit'].join('-'),
@@ -20,25 +21,24 @@ const configuredEnv: AppEnv = {
   PRINTFUL_TOKEN: 'printful-token',
   PRINTFUL_STORE_ID: 'printful-store',
   PRINTFUL_AUTO_CONFIRM: 'false',
-  STOREFRONT_CONTACT_EMAIL: 'merchant@example.com',
-  STOREFRONT_SHIPPING_POLICY: 'Shipping policy',
-  STOREFRONT_RETURNS_POLICY: 'Returns policy',
-  STOREFRONT_PRIVACY_POLICY: 'Privacy policy',
-  STOREFRONT_TERMS_POLICY: 'Terms policy',
-  STOREFRONT_CONTACT_POLICY: 'Contact policy',
+  STOREFRONT_CONTACT_EMAIL: 'elliot@ritsl.com',
+  STOREFRONT_POLICY_VERSION: '2026-07-21',
   STOREFRONT_LEGAL_APPROVED: 'true',
   STOREFRONT_TAX_SHIPPING_APPROVED: 'true',
-  STRIPE_FLAT_SHIPPING_AMOUNT: '500',
+  STRIPE_FLAT_SHIPPING_AMOUNT: '910',
 };
 
 test('readiness route proves one deployed variant without creating checkout', async () => {
-  const product = merchProducts[0];
+  const product = merchProducts.find(
+    (candidate) => candidate.slug === 'codex-rate-reset-long-sleeve',
+  )!;
   const previousStatus = product.workflow.status;
   product.workflow.status = 'published';
   try {
     const liveLoader = createReadinessLoader({
       probeDependencies: async () => ({
         databaseReady: true,
+        printfulReady: true,
         stripeReady: true,
         paymentMode: 'test' as const,
       }),
@@ -60,8 +60,14 @@ test('readiness route proves one deployed variant without creating checkout', as
       currency: product.commerce.currency,
       unitAmount: product.commerce.unitAmount,
       provider: 'printful',
+      policyVersion: '2026-07-21',
+      shippingCountries: ['CH'],
+      shippingAmount: 910,
+      maximumItemsPerOrder: 10,
+      deliveryEstimateBusinessDays: {minimum: 7, maximum: 15},
       paymentMode: 'test',
       databaseReady: true,
+      printfulReady: true,
       stripeReady: true,
       printfulAutoConfirm: false,
     });
@@ -71,7 +77,9 @@ test('readiness route proves one deployed variant without creating checkout', as
 });
 
 test('readiness route rejects placeholder credentials without making live probes', async () => {
-  const product = merchProducts[0];
+  const product = merchProducts.find(
+    (candidate) => candidate.slug === 'codex-rate-reset-long-sleeve',
+  )!;
   const previousStatus = product.workflow.status;
   product.workflow.status = 'published';
   try {
@@ -99,6 +107,9 @@ test('live dependency probes require database success and matching Stripe mode',
     databaseProbe: async () => {
       events.push('database');
     },
+    printfulProbe: async () => {
+      events.push('printful');
+    },
     stripeProbe: async () => {
       events.push('stripe');
       return {livemode: false};
@@ -106,15 +117,17 @@ test('live dependency probes require database success and matching Stripe mode',
   });
   assert.deepEqual(ready, {
     databaseReady: true,
+    printfulReady: true,
     stripeReady: true,
     paymentMode: 'test',
   });
-  assert.deepEqual(events.sort(), ['database', 'stripe']);
+  assert.deepEqual(events.sort(), ['database', 'printful', 'stripe']);
 
   await assert.rejects(
     () =>
       probeCheckoutDependencies(configuredEnv, {
         databaseProbe: async () => {},
+        printfulProbe: async () => {},
         stripeProbe: async () => ({livemode: true}),
       }),
     /mode does not match/,
@@ -125,14 +138,28 @@ test('live dependency probes require database success and matching Stripe mode',
         databaseProbe: async () => {
           throw new Error('required checkout migrations missing');
         },
+        printfulProbe: async () => {},
         stripeProbe: async () => ({livemode: false}),
       }),
     /migrations missing/,
   );
+  await assert.rejects(
+    () =>
+      probeCheckoutDependencies(configuredEnv, {
+        databaseProbe: async () => {},
+        printfulProbe: async () => {
+          throw new Error('invalid provider token');
+        },
+        stripeProbe: async () => ({livemode: false}),
+      }),
+    /invalid provider token/,
+  );
 });
 
 test('readiness route fails closed when checkout configuration is absent', async () => {
-  const product = merchProducts[0];
+  const product = merchProducts.find(
+    (candidate) => candidate.slug === 'codex-rate-reset-long-sleeve',
+  )!;
   const previousStatus = product.workflow.status;
   product.workflow.status = 'published';
   try {

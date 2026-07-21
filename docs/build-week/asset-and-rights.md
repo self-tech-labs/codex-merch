@@ -46,13 +46,29 @@ must not be presented as newly created during the event.
 - Synthetic fixtures are safe to show in the repository and demo, but must be
   labeled synthetic wherever they appear.
 
-## Repository license decision
+## Demo video provenance
 
-**TODO: owner must choose a code/content license, or keep the repository
-private and grant both judge accounts read access.** Do not infer that a code
-license also grants rights to third-party provider templates, screenshots,
-marks, or historical generated media; list those exceptions explicitly in the
-final license notice.
+- Codex Computer Use operated only the public, checkout-disabled Preview with
+  safe catalog data. The retained walkthrough is cropped to browser content;
+  raw setup and rejected takes were deleted after contact-sheet review.
+- The video uses repository-owned interface captures, deterministic garment
+  renders, geometric slide design, and local/system typefaces. It contains no
+  third-party music, raw X posts, usernames, customer data, or provider UI.
+- GPT-5.6 judgments, Codex-assisted concept-board imagery, deterministic panel
+  composition, and OpenAI `gpt-audio-1.5` narration are disclosed on screen and
+  in the upload description. The voice is always labeled AI-generated.
+- Capture provenance, narration metadata, captions, and visual/audio QA are
+  preserved under [`../../video/`](../../video/). This technical record does
+  not replace the owner's final brand and historical-asset clearance.
+
+## Repository access decision
+
+The repository is private for the Build Week submission. Grant read access to
+`testing@devpost.com` and `build-week-event@openai.com` before submitting and
+keep that access available through the judging period. No public code/content
+license is asserted. Private access does not resolve rights to third-party
+provider templates, screenshots, marks, or historical generated media; the
+owner must still complete the asset clearances above.
 
 ## Release sign-off
 

@@ -1,7 +1,11 @@
 import {useState} from 'react';
 import {Link, useLoaderData} from 'react-router';
 import type {Route} from './+types/products.$handle';
-import {useCart} from '~/lib/cart';
+import {money, useCart} from '~/lib/cart';
+import {
+  merchantPilot,
+  merchantPilotDisplayAmounts,
+} from '~/lib/merchant-policy';
 import {
   canInitiateStorefrontCheckout,
   useStorefrontMode,
@@ -63,6 +67,10 @@ export default function Product() {
   const purchasable = canInitiateStorefrontCheckout(
     storefrontMode,
     isPurchasableProduct(product),
+  );
+  const signedPilot = product.slug === merchantPilot.productSlug;
+  const pilotAmounts = merchantPilotDisplayAmounts(
+    product.commerce.unitAmount / 100,
   );
 
   return (
@@ -139,7 +147,37 @@ export default function Product() {
                 <dt>Price</dt>
                 <dd>{formatPrice(product)}</dd>
               </div>
+              {signedPilot ? (
+                <>
+                  <div>
+                    <dt>CH shipping</dt>
+                    <dd>
+                      {money(
+                        pilotAmounts.shipping,
+                        merchantPilot.currency,
+                      )}{' '}
+                      per order
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>One-item total</dt>
+                    <dd>
+                      {money(
+                        pilotAmounts.total,
+                        merchantPilot.currency,
+                      )}
+                    </dd>
+                  </div>
+                </>
+              ) : null}
             </dl>
+            {signedPilot ? (
+              <p>
+                Switzerland delivery only. RITSL bears normal import, customs,
+                and carrier-clearance charges for the approved route. Review the
+                final CHF total before paying.
+              </p>
+            ) : null}
           </div>
 
           <SizeRow
@@ -173,6 +211,84 @@ export default function Product() {
               View cart
             </Link>
           </div>
+
+          {product.productDetails ? (
+            <section className="product-information" aria-labelledby="product-information-title">
+              <h2 id="product-information-title">Product information</h2>
+              <dl>
+                <div>
+                  <dt>Material</dt>
+                  <dd>{product.productDetails.materials.join('; ')}</dd>
+                </div>
+                {product.productDetails.fabricWeight ? (
+                  <div>
+                    <dt>Fabric weight</dt>
+                    <dd>{product.productDetails.fabricWeight}</dd>
+                  </div>
+                ) : null}
+                {product.productDetails.fit ? (
+                  <div>
+                    <dt>Fit</dt>
+                    <dd>{product.productDetails.fit}</dd>
+                  </div>
+                ) : null}
+                <div>
+                  <dt>Made to order</dt>
+                  <dd>{product.productDetails.productionTime}</dd>
+                </div>
+                <div>
+                  <dt>Origin and fulfillment</dt>
+                  <dd>{product.productDetails.origin}</dd>
+                </div>
+              </dl>
+
+              {product.productDetails.sizeGuide ? (
+                <div className="size-guide">
+                  <h3>Size guide ({product.productDetails.sizeGuide.unit})</h3>
+                  <div className="size-guide-scroll">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th scope="col">Size</th>
+                          <th scope="col">Length</th>
+                          <th scope="col">Width</th>
+                          <th scope="col">Sleeve</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {product.productDetails.sizeGuide.rows.map((row) => (
+                          <tr key={row.size}>
+                            <th scope="row">{row.size}</th>
+                            <td>{row.length}</td>
+                            <td>{row.width}</td>
+                            <td>{row.sleeve}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <p>{product.productDetails.sizeGuide.tolerance}</p>
+                </div>
+              ) : null}
+
+              <details>
+                <summary>Care and construction</summary>
+                {product.productDetails.construction?.length ? (
+                  <ul>
+                    {product.productDetails.construction.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                ) : null}
+                <ul>
+                  {product.productDetails.care.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </details>
+              <p className="mockup-notice">{product.productDetails.mockupNotice}</p>
+            </section>
+          ) : null}
 
           <details className="rights-panel">
             <summary>Rights note</summary>

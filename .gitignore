@@ -14,3 +14,5 @@ tsconfig.tsbuildinfo
 .vercel
 playwright-report
 test-results
+video/raw/
+video/out/*-raw.mp4

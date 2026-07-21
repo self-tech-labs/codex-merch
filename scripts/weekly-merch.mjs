@@ -62,6 +62,7 @@ const DEFAULT_LIST_ID = '2067819170989854863';
 const REQUIRED_POST_COUNT = 30;
 const PREPARATION_RECOVERY_ARTIFACT = 'preparation-recovery';
 const PREPARATION_RECOVERY_VERSION = 1;
+const CURRENT_MERCHANT_POLICY_VERSION = '2026-07-21';
 const PROVIDER_MOCKUP_PATTERN = /(?:^|-)printful-\d+\.(?:jpe?g|png|webp)$/i;
 const WORKFLOW_STATUS_ORDER = [
   'draft',
@@ -2086,12 +2087,16 @@ function requireReleaseEnvironment() {
   if (process.env.MERCH_WEEKLY_RELEASE_ENABLED !== 'true') {
     throw new Error('MERCH_WEEKLY_RELEASE_ENABLED=true is required for release');
   }
+  if (process.env.STOREFRONT_MODE !== 'production') {
+    throw new Error('STOREFRONT_MODE=production is required before release mutations');
+  }
   if (process.env.PRINTFUL_AUTO_CONFIRM !== 'false') {
     throw new Error('PRINTFUL_AUTO_CONFIRM must remain false during the pilot');
   }
   deploymentProviderConfig();
   const requiredTrue = [
     'MERCH_PILOT_APPROVED',
+    'MERCH_EXPANSION_APPROVED',
     'CHECKOUT_ENABLED',
     'STOREFRONT_LEGAL_APPROVED',
     'STOREFRONT_TAX_SHIPPING_APPROVED',
@@ -2111,22 +2116,31 @@ function requireReleaseEnvironment() {
     'INNGEST_EVENT_KEY',
     'INNGEST_SIGNING_KEY',
     'STOREFRONT_CONTACT_EMAIL',
-    'STOREFRONT_SHIPPING_POLICY',
-    'STOREFRONT_RETURNS_POLICY',
-    'STOREFRONT_PRIVACY_POLICY',
-    'STOREFRONT_TERMS_POLICY',
-    'STOREFRONT_CONTACT_POLICY',
+    'STOREFRONT_POLICY_VERSION',
+    'STRIPE_ALLOWED_SHIPPING_COUNTRIES',
+    'STRIPE_AUTOMATIC_TAX',
   ];
   const missing = required.filter((name) => !process.env[name]);
   if (missing.length) throw new Error(`Missing release env vars: ${missing.join(', ')}`);
   if (!/^https:\/\//.test(process.env.PUBLIC_SITE_URL)) {
     throw new Error('Release requires a public HTTPS site URL');
   }
+  if (process.env.STOREFRONT_POLICY_VERSION !== CURRENT_MERCHANT_POLICY_VERSION) {
+    throw new Error(
+      `STOREFRONT_POLICY_VERSION must be ${CURRENT_MERCHANT_POLICY_VERSION}`,
+    );
+  }
+  if (process.env.STRIPE_ALLOWED_SHIPPING_COUNTRIES !== 'CH') {
+    throw new Error('The production pilot supports STRIPE_ALLOWED_SHIPPING_COUNTRIES=CH only');
+  }
+  if (!['true', 'false'].includes(process.env.STRIPE_AUTOMATIC_TAX)) {
+    throw new Error('STRIPE_AUTOMATIC_TAX must be explicitly true or false');
+  }
   if (
-    !process.env.STRIPE_SHIPPING_RATE_ID &&
-    !process.env.STRIPE_FLAT_SHIPPING_AMOUNT
+    Boolean(process.env.STRIPE_SHIPPING_RATE_ID) ===
+    Boolean(process.env.STRIPE_FLAT_SHIPPING_AMOUNT)
   ) {
-    throw new Error('Release requires an approved Stripe shipping rate');
+    throw new Error('Release requires exactly one approved Stripe shipping rate');
   }
 }
 

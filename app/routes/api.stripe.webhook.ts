@@ -29,18 +29,30 @@ export async function action({context, request}: Route.ActionArgs) {
     throw new Response('Invalid Stripe signature', {status: 400});
   }
 
-  if (!(await recordStripeEvent(event, env))) {
+  const claim = await recordStripeEvent(event, env);
+  if (claim.state === 'complete') {
     return Response.json({received: true, duplicate: true});
   }
+  if (claim.state === 'busy') {
+    throw new Response('Webhook event is already processing', {
+      status: 503,
+      headers: {'Retry-After': '300'},
+    });
+  }
+  const {processingToken} = claim;
 
   try {
     const orderId = await processStripeEvent(event, env);
     await finishStripeEvent(event.id, orderId ? 'processed' : 'ignored', env, {
       orderId: orderId || undefined,
+      processingToken,
     });
     return Response.json({received: true});
   } catch (error) {
-    await finishStripeEvent(event.id, 'failed', env, {error});
+    await finishStripeEvent(event.id, 'failed', env, {
+      error,
+      processingToken,
+    });
     console.error(JSON.stringify({
       event: 'stripe_webhook_failed',
       stripeEventId: event.id,

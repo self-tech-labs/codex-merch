@@ -1,0 +1,33 @@
+{
+  "recordedOn": "2026-07-21",
+  "operator": "Codex Computer Use",
+  "application": "Safari",
+  "url": "https://codex-merch-git-codex-build-week-weekly-studio-ritsl.vercel.app",
+  "dataClassification": "public preview; safe demo data; checkout disabled",
+  "capture": {
+    "tool": "FFmpeg avfoundation",
+    "fps": 30,
+    "sourceResolution": "3024x1964",
+    "acceptedTake": 3,
+    "rawTakeRetained": false
+  },
+  "edit": {
+    "crop": "crop=2600:1462:192:170",
+    "scale": "scale=1920:1080",
+    "segments": [
+      {"startSeconds": 8.2, "endSeconds": 17.5, "purpose": "catalog"},
+      {"startSeconds": 32.0, "endSeconds": 48.8, "purpose": "product views"},
+      {"startSeconds": 50.2, "endSeconds": 100.7, "purpose": "technical explainer"}
+    ],
+    "output": "video/public/capture/walkthrough-trimmed.mp4",
+    "durationSeconds": 76.6
+  },
+  "review": {
+    "sourceContactSheet": "video/qa/walkthrough-trimmed-contact-sheet.png",
+    "finalContactSheet": "video/qa/final-contact-sheet.png",
+    "privateDesktopUiVisible": false,
+    "credentialsVisible": false,
+    "rawAndRejectedTakesDeleted": true,
+    "result": "pass"
+  }
+}

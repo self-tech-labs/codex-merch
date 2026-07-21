@@ -1,9 +1,11 @@
 import {sql} from 'drizzle-orm';
 import {getDatabase} from '~/db/client.server';
+import {merchantPilot} from '~/lib/merchant-policy';
 import {stripeClient} from '~/lib/stripe.server';
 
 type ProbeDependencies = {
   databaseProbe?: (env: AppEnv) => Promise<void>;
+  printfulProbe?: (env: AppEnv) => Promise<void>;
   stripeProbe?: (env: AppEnv) => Promise<{livemode: boolean}>;
 };
 
@@ -13,12 +15,14 @@ export async function probeCheckoutDependencies(
   env: AppEnv,
   {
     databaseProbe = probeDatabase,
+    printfulProbe = probePrintful,
     stripeProbe = probeStripe,
   }: ProbeDependencies = {},
 ) {
   const paymentMode = stripePaymentMode(env.STRIPE_SECRET_KEY);
-  const [, stripe] = await Promise.all([
+  const [, , stripe] = await Promise.all([
     withTimeout(databaseProbe(env), 'database'),
+    withTimeout(printfulProbe(env), 'Printful'),
     withTimeout(stripeProbe(env), 'Stripe'),
   ]);
   const expectedLiveMode = paymentMode === 'live';
@@ -28,6 +32,7 @@ export async function probeCheckoutDependencies(
 
   return {
     databaseReady: true,
+    printfulReady: true,
     stripeReady: true,
     paymentMode,
   } as const;
@@ -47,7 +52,28 @@ async function probeDatabase(env: AppEnv) {
       1 as ready,
       to_regclass('public.orders')::text as orders_table,
       to_regclass('public.order_items')::text as order_items_table,
-      to_regclass('public.stripe_events')::text as stripe_events_table
+      to_regclass('public.stripe_events')::text as stripe_events_table,
+      exists (
+        select 1
+        from information_schema.columns
+        where table_schema = 'public'
+          and table_name = 'orders'
+          and column_name = 'refunded_amount'
+      ) as refund_tracking_ready,
+      exists (
+        select 1
+        from information_schema.columns
+        where table_schema = 'public'
+          and table_name = 'orders'
+          and column_name = 'policy_version'
+      ) as policy_version_ready,
+      exists (
+        select 1
+        from information_schema.columns
+        where table_schema = 'public'
+          and table_name = 'stripe_events'
+          and column_name = 'processing_token'
+      ) as webhook_lease_ready
   `);
   const row = result.rows[0] as
     | {
@@ -55,13 +81,19 @@ async function probeDatabase(env: AppEnv) {
         orders_table?: string | null;
         order_items_table?: string | null;
         stripe_events_table?: string | null;
+        refund_tracking_ready?: boolean;
+        policy_version_ready?: boolean;
+        webhook_lease_ready?: boolean;
       }
     | undefined;
   if (
     Number(row?.ready) !== 1 ||
     !row?.orders_table ||
     !row.order_items_table ||
-    !row.stripe_events_table
+    !row.stripe_events_table ||
+    !row.refund_tracking_ready ||
+    !row.policy_version_ready ||
+    !row.webhook_lease_ready
   ) {
     throw new Error('Database is missing required checkout migrations');
   }
@@ -70,6 +102,40 @@ async function probeDatabase(env: AppEnv) {
 async function probeStripe(env: AppEnv) {
   const balance = await stripeClient(env).balance.retrieve();
   return {livemode: balance.livemode};
+}
+
+async function probePrintful(env: AppEnv) {
+  const response = await fetch(
+    `https://api.printful.com/store/products/${merchantPilot.printfulProductId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${env.PRINTFUL_TOKEN || ''}`,
+        'X-PF-Store-Id': env.PRINTFUL_STORE_ID || '',
+      },
+    },
+  );
+  if (!response.ok) {
+    throw new Error(`Printful readiness probe failed (${response.status})`);
+  }
+  const body = (await response.json()) as {
+    result?: {
+      sync_product?: {id?: number};
+      sync_variants?: Array<{id?: number}>;
+    };
+  };
+  if (body.result?.sync_product?.id !== merchantPilot.printfulProductId) {
+    throw new Error('Printful readiness probe returned the wrong product');
+  }
+  const liveVariants = new Set(
+    (body.result.sync_variants || []).map((variant) => variant.id),
+  );
+  if (
+    merchantPilot.printfulVariants.some(
+      (variant) => !liveVariants.has(variant.syncVariantId),
+    )
+  ) {
+    throw new Error('Printful readiness probe is missing an approved variant');
+  }
 }
 
 async function withTimeout<T>(promise: Promise<T>, label: string) {

@@ -41,8 +41,15 @@ test('checkout route rejects missing origins and unsupported bodies', async () =
 
 test('checkout route rejects malformed and oversized carts before side effects', async () => {
   const malformed = request('cart=not-json');
+  const termsResponse = await responseFrom(action({request: malformed} as any));
+  assert.equal(termsResponse.status, 400);
+  assert.match(await termsResponse.text(), /merchant terms/);
+
+  const acceptedMalformed = request(
+    'cart=not-json&merchantTermsAccepted=2026-07-21',
+  );
   assert.equal(
-    (await responseFrom(action({request: malformed} as any))).status,
+    (await responseFrom(action({request: acceptedMalformed} as any))).status,
     400,
   );
 

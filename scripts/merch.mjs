@@ -45,11 +45,15 @@ export const workflowStatuses = [
 
 export const pilotProductSlug = 'codex-rate-reset-long-sleeve';
 
+export function printfulDryRunExternalId(slug) {
+  return `CM-DRY-${String(slug).slice(0, 25)}`;
+}
+
 export function assertPilotPublicationAllowed(selected, env = process.env) {
   const blocked = selected.filter((product) => product.slug !== pilotProductSlug);
-  if (blocked.length && env.MERCH_PILOT_APPROVED !== 'true') {
+  if (blocked.length && env.MERCH_EXPANSION_APPROVED !== 'true') {
     throw new Error(
-      `Publish ${pilotProductSlug} and complete the live pilot before publishing: ${blocked
+      `Publish ${pilotProductSlug}, complete the live pilot, and set MERCH_EXPANSION_APPROVED=true before publishing: ${blocked
         .map((product) => product.slug)
         .join(', ')}`,
     );
@@ -3072,6 +3076,10 @@ export function verifyPrintfulReadiness(product, baseProduct, options = {}) {
     productId: ref.productId || null,
     mockupTaskKey: ref.mockupTaskKey || null,
     variantIds,
+    variantMappings: variantMappings.map((variant) => ({
+      catalogVariantId: Number(variant.catalogVariantId),
+      syncVariantId: Number(variant.syncVariantId),
+    })),
     expectedVariantIds,
     placements: [...placementAreas],
     primaryMockup: primaryMockup || null,
@@ -3176,6 +3184,32 @@ export function missingPrintfulCatalogVariantIds(expectedVariantIds, response) {
         variantId > 0 &&
         !remoteVariantIds.has(variantId),
     );
+}
+
+export function mismatchedPrintfulSyncVariantMappings(expectedMappings, response) {
+  const remoteByCatalogVariant = new Map(
+    printfulStoreSyncVariants(response)
+      .map((variant) => [
+        Number(variant.variant_id),
+        Number(variant.id || variant.sync_variant_id),
+      ])
+      .filter(
+        ([catalogVariantId, syncVariantId]) =>
+          Number.isInteger(catalogVariantId) &&
+          catalogVariantId > 0 &&
+          Number.isInteger(syncVariantId) &&
+          syncVariantId > 0,
+      ),
+  );
+  return (expectedMappings || []).flatMap((mapping) => {
+    const catalogVariantId = Number(mapping.catalogVariantId);
+    const expectedSyncVariantId = Number(mapping.syncVariantId);
+    const actualSyncVariantId = remoteByCatalogVariant.get(catalogVariantId);
+    if (!actualSyncVariantId || actualSyncVariantId === expectedSyncVariantId) {
+      return [];
+    }
+    return [{catalogVariantId, expectedSyncVariantId, actualSyncVariantId}];
+  });
 }
 
 export function printfulPayloadWithSyncVariantIds(payload, response) {
@@ -3438,6 +3472,10 @@ async function runPrintfulVerify(args) {
             productReport.expectedVariantIds,
             syncProduct,
           );
+          const mismatchedVariantMappings = mismatchedPrintfulSyncVariantMappings(
+            productReport.variantMappings,
+            syncProduct,
+          );
 
           productReport.liveProductId = remoteProductId || null;
           if (!remoteProductId) {
@@ -3458,6 +3496,11 @@ async function runPrintfulVerify(args) {
           for (const expectedVariantId of missingVariantIds) {
             productReport.issues.push(
               `${productReport.slug}: live Printful product missing variant ${expectedVariantId}`,
+            );
+          }
+          for (const mismatch of mismatchedVariantMappings) {
+            productReport.issues.push(
+              `${productReport.slug}: Printful sync variant mismatch for catalog variant ${mismatch.catalogVariantId}; local ${mismatch.expectedSyncVariantId}, live ${mismatch.actualSyncVariantId}`,
             );
           }
         } catch (error) {
@@ -3509,16 +3552,17 @@ async function runFulfillmentOrderDryRun(args) {
       return {
         slug: product.slug,
         endpoint: 'POST https://api.printful.com/orders',
+        confirm: false,
+        retailCurrency: product.commerce.currency,
         payload: {
-          external_id: `dry-run-${product.slug}`,
-          confirm: false,
+          external_id: printfulDryRunExternalId(product.slug),
           recipient: {
             name: 'Dry Run Customer',
-            address1: '123 Test St',
-            city: 'San Francisco',
-            state_code: 'CA',
-            country_code: 'US',
-            zip: '94107',
+            address1: 'Avenue Virgile-Rossel 18',
+            city: 'Lausanne',
+            state_code: 'VD',
+            country_code: 'CH',
+            zip: '1012',
             email: 'dry-run@example.com',
           },
           items: [

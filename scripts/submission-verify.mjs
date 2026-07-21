@@ -505,18 +505,13 @@ export function configurationPresence(env = {}) {
   const enabled = (key) => String(env[key] || '').trim().toLowerCase() === 'true';
   const disabled = (key) => String(env[key] || '').trim().toLowerCase() === 'false';
   const gpt56Model = !present('OPENAI_TEXT_MODEL') || env.OPENAI_TEXT_MODEL.trim() === 'gpt-5.6';
-  const merchantPolicies = [
-    'STOREFRONT_CONTACT_EMAIL',
-    'STOREFRONT_SHIPPING_POLICY',
-    'STOREFRONT_RETURNS_POLICY',
-    'STOREFRONT_PRIVACY_POLICY',
-    'STOREFRONT_TERMS_POLICY',
-    'STOREFRONT_CONTACT_POLICY',
-  ].every(present);
+  const merchantPolicies =
+    env.STOREFRONT_CONTACT_EMAIL?.trim() === 'elliot@ritsl.com' &&
+    env.STOREFRONT_POLICY_VERSION?.trim() === '2026-07-21';
   const shipping =
-    (present('STRIPE_SHIPPING_RATE_ID') || present('STRIPE_FLAT_SHIPPING_AMOUNT')) &&
-    present('STRIPE_ALLOWED_SHIPPING_COUNTRIES') &&
-    present('STRIPE_AUTOMATIC_TAX');
+    present('STRIPE_SHIPPING_RATE_ID') !== present('STRIPE_FLAT_SHIPPING_AMOUNT') &&
+    env.STRIPE_ALLOWED_SHIPPING_COUNTRIES?.trim() === 'CH' &&
+    (enabled('STRIPE_AUTOMATIC_TAX') || disabled('STRIPE_AUTOMATIC_TAX'));
   const deploymentProvider = String(env.MERCH_DEPLOY_PROVIDER || '')
     .trim()
     .toLowerCase();
@@ -543,6 +538,7 @@ export function configurationPresence(env = {}) {
     commerceApprovals:
       enabled('CHECKOUT_ENABLED') &&
       enabled('MERCH_PILOT_APPROVED') &&
+      enabled('MERCH_EXPANSION_APPROVED') &&
       enabled('STOREFRONT_LEGAL_APPROVED') &&
       enabled('STOREFRONT_TAX_SHIPPING_APPROVED'),
     merchantPolicies,

@@ -5,21 +5,22 @@ Complete this page before submission. Do not put passwords, API keys, test custo
 ## Links
 
 - Judge Preview base alias: [https://codex-merch-git-codex-build-week-weekly-studio-ritsl.vercel.app](https://codex-merch-git-codex-build-week-weekly-studio-ritsl.vercel.app)
-- Judge access: use the branch-scoped Vercel Shareable Link placed in Devpost. It requires no Vercel account and its `_vercel_share` token is deliberately not committed.
+- Judge access: the branch alias is public and requires no Vercel account, login, or access token.
 - Public YouTube demo: **TODO: URL**
-- Repository and verified owner-triggered Preview commit: [`self-tech-labs/codex-merch` at `42fd968`](https://github.com/self-tech-labs/codex-merch/tree/42fd968d66985bd41793b20ea7ead1ac29f4c8ec). Copy the final branch HEAD into Devpost after the evidence-only commit.
+- Verified local upload master: [`video/out/codex-merch-build-week-1080p.mp4`](../../video/out/codex-merch-build-week-1080p.mp4) — 2:50, 1920×1080/30 fps, H.264/AAC, captions and AI disclosure included
+- Repository and current Preview branch head: [`self-tech-labs/codex-merch` at `4050aec`](https://github.com/self-tech-labs/codex-merch/tree/4050aec0c0bf925f6f2dded7ea7a9fc28f8ddca2). The owner-triggered reference feature begins at `42fd968`; copy the final frozen judged SHA into Devpost.
 - Sanitized example weekly runs: [`evidence/weekly-run-2026-W37-fixture-live-gpt56-prepared.json`](evidence/weekly-run-2026-W37-fixture-live-gpt56-prepared.json) and [`evidence/weekly-run-2026-W30-live-no-trend.json`](evidence/weekly-run-2026-W30-live-no-trend.json)
 - Submission evidence index: [`evidence/README.md`](evidence/README.md)
-- Owner-triggered Preview CI: [GitHub Actions run `29818494790`](https://github.com/self-tech-labs/codex-merch/actions/runs/29818494790) — install, migration, catalog validation, 130 tests, typecheck, lint, build, and production audit passed; Playwright completed with 9 immediate passes and one pass on retry; only the strict owner-input/submission-document gate failed
-- Support contact for judges: **TODO: email**
+- Current Preview branch CI: [GitHub Actions run `29825394859`](https://github.com/self-tech-labs/codex-merch/actions/runs/29825394859) — install, migration, catalog validation, tests, typecheck, lint, build, production audit, and Playwright passed; only the intentional owner-input/submission-document gate failed
+- Support contact for judges: `elliot@ritsl.com`
 
 ## Access model
 
-- Application login required: **No when opened through the scoped Shareable Link**
+- Application login required: **No**
 - Payment mode: **Disabled in the submitted Preview; no payment form or real charge**
 - External fulfillment: **Disabled in the submitted Preview; no Printful product or order is created by the judge path**
 - X input: **sanitized 30-post fixture by default; authorized live list read demonstrated separately**
-- Expected browser/device support: **Chromium desktop and Pixel 7 mobile profiles; 10/10 checks passed locally and against the protected Vercel Preview on 2026-07-21**
+- Expected browser/device support: **Chromium desktop and Pixel 7 mobile profiles; 12/12 current checks passed locally and against the public Vercel Preview on 2026-07-21**
 
 If the repository remains private, grant read access to both:
 
@@ -43,10 +44,11 @@ If the repository remains private, grant read access to both:
 
 ## Pre-submission access check
 
-- [x] Test the scoped Preview link and critical routes in fresh desktop and mobile browser contexts.
+- [x] Test the public Preview link and critical routes in fresh desktop and mobile browser contexts.
 - [x] Confirm the submitted branch contains setup instructions and sanitized sample data.
 - [x] Confirm the embedded-secret scan is clean and no customer data, raw private post content, or inaccessible local path appears in the judge path.
 - [x] Confirm product actions and checkout remain disabled in the submitted Preview.
 - [x] Confirm `/how-it-works` accurately distinguishes demonstrated Preview behavior from production-only integrations.
-- [ ] Verify the video is public, has audio, and is under three minutes.
+- [x] Verify the local upload master has audio, is under three minutes, decodes fully, and passes the visual privacy review.
+- [ ] Verify the uploaded YouTube video is public and preserves the final audio, captions, thumbnail, and description.
 - [ ] Verify private-repository invitations from both judge accounts were accepted or are pending with correct access.

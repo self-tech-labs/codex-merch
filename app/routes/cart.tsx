@@ -7,6 +7,11 @@ import {
   money,
   useCart,
 } from '~/lib/cart';
+import {
+  MERCHANT_POLICY_VERSION,
+  merchantPilot,
+  merchantPilotDisplayAmounts,
+} from '~/lib/merchant-policy';
 import {useStorefrontMode} from '~/lib/storefront-mode';
 
 export const meta: Route.MetaFunction = () => {
@@ -21,6 +26,13 @@ export default function Cart() {
   const storefrontMode = useStorefrontMode();
   const preview = storefrontMode === 'preview';
   const currency = displayLines[0]?.product.commerce.currency || 'USD';
+  const pilotShippingApplies =
+    displayLines.length > 0 &&
+    displayLines.every(
+      (line) => line.product.slug === merchantPilot.productSlug,
+    );
+  const pilotAmounts = merchantPilotDisplayAmounts(subtotal);
+  const displayedTotal = pilotShippingApplies ? pilotAmounts.total : subtotal;
   const fulfillmentProvider = displayLines[0]?.product.production.provider || 'printful';
   const fulfillmentLabel =
     fulfillmentProvider.charAt(0).toUpperCase() + fulfillmentProvider.slice(1);
@@ -99,6 +111,23 @@ export default function Cart() {
                 <dt>Fulfillment</dt>
                 <dd>{fulfillmentLabel}</dd>
               </div>
+              {pilotShippingApplies ? (
+                <>
+                  <div>
+                    <dt>CH shipping</dt>
+                    <dd>
+                      {money(
+                        pilotAmounts.shipping,
+                        merchantPilot.currency,
+                      )}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Total</dt>
+                    <dd>{money(displayedTotal, merchantPilot.currency)}</dd>
+                  </div>
+                </>
+              ) : null}
             </dl>
             {preview ? (
               <button disabled type="button">
@@ -111,6 +140,21 @@ export default function Cart() {
                   name="cart"
                   value={checkoutCartValue(lines)}
                 />
+                <label className="checkout-consent">
+                  <input
+                    required
+                    type="checkbox"
+                    name="merchantTermsAccepted"
+                    value={MERCHANT_POLICY_VERSION}
+                  />
+                  <span>
+                    I accept the <Link to="/policies/terms">Terms of sale</Link>{' '}
+                    and confirm that I have reviewed the{' '}
+                    <Link to="/policies/shipping">Shipping</Link>,{' '}
+                    <Link to="/policies/returns">Returns</Link>, and{' '}
+                    <Link to="/policies/privacy">Privacy</Link> policies.
+                  </span>
+                </label>
                 <button disabled={checkingOut} type="submit">
                   {checkingOut
                     ? 'Opening secure checkout…'
@@ -120,9 +164,23 @@ export default function Cart() {
             )}
             <p>
               {preview
-                ? 'This deployment cannot create a payment or production order.'
-                : 'Taxes and shipping are finalized in Stripe Checkout when configured.'}
+                ? 'This deployment cannot create a payment or production order. Terms acceptance will be required when checkout opens.'
+                : 'Switzerland shipping is fixed at CHF 9.10 per order. Review the same final CHF total in Stripe before paying.'}
             </p>
+            {pilotShippingApplies ? (
+              <p>
+                RITSL bears normal import, customs, and carrier-clearance charges
+                for the approved Swiss delivery route.
+              </p>
+            ) : null}
+            {preview ? (
+              <p className="checkout-policy-links">
+                Review the <Link to="/policies/terms">Terms</Link>,{' '}
+                <Link to="/policies/shipping">Shipping</Link>,{' '}
+                <Link to="/policies/returns">Returns</Link>, and{' '}
+                <Link to="/policies/privacy">Privacy</Link> policies.
+              </p>
+            ) : null}
           </aside>
         </div>
       ) : (
