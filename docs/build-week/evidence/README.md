@@ -12,7 +12,7 @@ bodies, private run ledgers, or third-party media without redistribution rights.
 | Finalized implementation and evidence commit | [`8017b9f0a28b9918e03b345d0cf669ebdd75998b`](https://github.com/self-tech-labs/codex-merch/tree/8017b9f0a28b9918e03b345d0cf669ebdd75998b); the verified owner-triggered reference feature begins at `42fd968`. Use the final pushed descendant SHA in Devpost after this index update is committed. |
 | CI for current Preview branch | [GitHub Actions run `29825394859`](https://github.com/self-tech-labs/codex-merch/actions/runs/29825394859): install, database migration, 11-product catalog, 133/133 tests, typecheck, lint, build, production audit, and 12/12 Playwright checks passed; only the strict owner-input/submission-document gate failed |
 | Primary Codex task/session | `019f7fb1-9352-7b30-ac89-076c94b2eeeb` |
-| `/feedback` result | **Owner action:** run `/feedback` in the primary Codex task and paste the returned session ID into Devpost before submission. |
+| `/feedback` result | `019f7fb1-9352-7b30-ac89-076c94b2eeeb`; verified no-logs feedback submission on 2026-07-21. |
 | Judge Preview deployment | Stable protected alias [`codex-merch-git-codex-build-week-weekly-studio-ritsl.vercel.app`](https://codex-merch-git-codex-build-week-weekly-studio-ritsl.vercel.app); verified immutable deployment [`codex-merch-8auim2332-ritsl.vercel.app`](https://codex-merch-8auim2332-ritsl.vercel.app), ID `dpl_EeYdVHVtecJjKQBWfGFan2M3Mca2`, bound to Git SHA `42fd968d66985bd41793b20ea7ead1ac29f4c8ec`. The scoped Shareable Link is supplied privately in Devpost. |
 | Public YouTube demo | **Owner action:** upload the verified master and record the public YouTube URL in Devpost. |
 | Devpost submission | **Owner action:** record the final Devpost URL after the submission is created. |
@@ -31,7 +31,7 @@ command. Prefer a CI URL over pasted terminal output.
 | `npm run lint` | Pass |
 | `npm run build` | Pass: client and both Vercel server bundles generated |
 | `npm run test:e2e` | Pass locally and against the public Vercel Preview: 12/12 on Chromium desktop and mobile, including the Solward product, owner-supplied technical explainer, critical routes, disabled-commerce contract, carousel, success-page, and cart-migration checks. |
-| `npm run submission:verify` | Run against the clean, pushed final commit. Provider configuration is reported separately and never printed; external Devpost, YouTube, `/feedback`, and private-repository invitations remain owner actions. |
+| `npm run submission:verify` | Run against the clean, pushed final commit. Provider configuration is reported separately and never printed; external Devpost, YouTube, and private-repository invitations remain owner actions. The `/feedback` session ID is recorded above. |
 
 ## Demo video evidence
 

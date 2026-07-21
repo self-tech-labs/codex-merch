@@ -19,7 +19,7 @@ Devpost before the deadline: **2026-07-22 02:00 CEST** (2026-07-21 17:00 PDT).
 - **Demo video:** [`../../video/out/codex-merch-signal-to-product-1080p.mp4`](../../video/out/codex-merch-signal-to-product-1080p.mp4) is the verified 2:51 “Signal In. Merch Out.” upload master. **Owner action — upload it publicly to YouTube and paste the URL.**
 - **YouTube package:** [`../../video/out/youtube-description-v2.md`](../../video/out/youtube-description-v2.md), [`../../video/out/codex-merch-signal-to-product-thumbnail.png`](../../video/out/codex-merch-signal-to-product-thumbnail.png), and [`../../video/out/codex-merch-signal-to-product.en.srt`](../../video/out/codex-merch-signal-to-product.en.srt)
 - **Primary Codex task/session:** `019f7fb1-9352-7b30-ac89-076c94b2eeeb`
-- **Codex `/feedback` session ID:** **Owner action — run `/feedback` in the primary build task and paste the returned ID.**
+- **Codex `/feedback` session ID:** `019f7fb1-9352-7b30-ac89-076c94b2eeeb` (verified by a no-logs feedback submission on 2026-07-21)
 - **Judge support:** `elliot@ritsl.com`
 
 ## Project story
@@ -225,7 +225,7 @@ Recommended captions:
 - Create or open the Devpost draft and paste this page into the matching fields.
 - Upload the thumbnail and gallery images in the order above.
 - Upload the verified 2:51 master with its supplied thumbnail, captions, description, chapters, AI disclosure, and market-example disclaimer; then paste the public YouTube URL.
-- Run `/feedback` in the primary Codex task and paste the returned session ID.
+- Paste the verified `/feedback` session ID from the project overview into Devpost.
 - Confirm eligibility, employer/conflict status, ownership, and brand/asset clearance.
 - Grant both judge email addresses read access to the private repository.
 - If live readiness passes, paste the canonical jury-pilot URL and access code

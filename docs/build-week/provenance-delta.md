@@ -58,7 +58,7 @@ Fill this table from Git after each cohesive commit. Do not backdate, amend away
 ## Evidence to preserve
 
 - Primary Codex task/session ID: `019f7fb1-9352-7b30-ac89-076c94b2eeeb`
-- `/feedback` session ID: **Owner action — run `/feedback` in the primary Codex task and paste the returned ID into Devpost.**
+- `/feedback` session ID: `019f7fb1-9352-7b30-ac89-076c94b2eeeb` (submitted without logs on 2026-07-21)
 - Verified owner-triggered feature commit: `42fd968d66985bd41793b20ea7ead1ac29f4c8ec`; finalized implementation and evidence commit: `8017b9f0a28b9918e03b345d0cf669ebdd75998b`; copy the final pushed HEAD into Devpost
 - Sanitized example run directory: `docs/build-week/evidence/weekly-run-2026-W37-fixture-live-gpt56-prepared.json` and `docs/build-week/evidence/weekly-run-2026-W30-live-no-trend.json`
 - Duplicate-free replay result: W30 terminal replay returned `idempotentReplay: true`

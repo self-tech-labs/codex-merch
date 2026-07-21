@@ -8,7 +8,7 @@ Submission deadline: **2026-07-22 02:00 CEST** (2026-07-21 17:00 PDT). Complete 
 - [ ] Select **Work & Productivity**.
 - [ ] Add the final project name, short description, repository, live URL, and public YouTube URL.
 - [ ] Keep the video below three minutes with spoken English audio explaining Codex and GPT-5.6; use no copyrighted music, third-party artwork, or marks beyond authorized/nominative references.
-- [ ] Run `/feedback` in the primary Codex build task and enter its session ID in Devpost and this pack.
+- [x] Submit `/feedback` without logs for the primary Codex build task and record session ID `019f7fb1-9352-7b30-ac89-076c94b2eeeb` in this pack; paste it into Devpost.
 - [ ] Verify judges receive free access and no production payment is required.
 - [ ] Submit before the deadline and save the confirmation URL/time.
 - [ ] Keep the repository, application, and video available through at least 2026-08-12.

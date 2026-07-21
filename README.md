@@ -8,10 +8,14 @@ deterministic software owns provenance, rights gates, six-panel rendering,
 prepress, artifact hashes, and release safety. A human keeps the keys to every
 external or commercial action.
 
-[Open the Build Week Preview](https://codex-merch-git-codex-build-week-weekly-studio-ritsl.vercel.app)
+[Open the live Build Week storefront](https://codex-merch.vercel.app)
 · [Watch the local jury master](video/out/codex-merch-signal-to-product-1080p.mp4)
 · [Read the submission guide](docs/build-week/README.md)
 · [Inspect the architecture](docs/build-week/architecture.md)
+
+**Current Vercel production:** [`codex-merch.vercel.app`](https://codex-merch.vercel.app).
+The storefront is free to browse and test. Its only real checkout is a separate,
+private-code path reserved for OpenAI Build Week judges; no purchase is required.
 
 ![Codex Merch product Preview](docs/build-week/media/devpost-product-preview.png)
 
@@ -42,14 +46,15 @@ flowchart LR
 - Production-intent: the output is a complete provider-sized garment system
   with repeatable files and hashes.
 - Fail-closed: `no_trend` is a valid outcome, Preview cannot charge or fulfill,
-  and production requires explicit human authority.
+  and the jury-only production path requires explicit human authority and live
+  readiness checks.
 
 ## Judge path — five minutes
 
-1. Open the [public Preview](https://codex-merch-git-codex-build-week-weekly-studio-ritsl.vercel.app); no account or API key is required.
+1. Open the [live Build Week storefront](https://codex-merch.vercel.app); no
+   account, payment, or API key is required to browse and evaluate it.
 2. Select **Solward Index Cotton Sweatshirt** and inspect its front, back,
-   pattern system, production technique, and rights note. Checkout remains
-   disabled.
+   pattern system, production technique, and rights note.
 3. Open **How it works** and follow the five-stage signal → direction → render
    → proof → release loop.
 4. Inspect the [sanitized evidence bundle](docs/build-week/evidence/README.md)
@@ -62,18 +67,16 @@ flowchart LR
    npm run merch:weekly:demo -- --dry-run --week 2026-W30
    ```
 
-The judged deployment is deliberately a non-commerce Preview. It demonstrates
-the complete creative pipeline but cannot create a Stripe payment, Printful
-product, Inngest fulfillment event, or production order.
+The canonical Vercel deployment demonstrates the complete creative pipeline and
+is free to browse, install, test, and evaluate. Commerce is an optional proof,
+not part of the required judge path. Only the signed **Codex Rate Reset Long
+Sleeve Tee** can enter live Stripe Checkout; delivery is limited to Switzerland
+and the United States, checkout requires a private OpenAI Build Week jury code,
+and access expires automatically when judging ends. Printful orders remain
+unconfirmed for human review before manufacturing.
 
-An optional, separate [jury sales pilot](https://codex-merch.vercel.app) makes
-the physical proof real without putting commerce in the required judge path.
-Only the signed **Codex Rate Reset Long Sleeve Tee** can be purchased, delivery
-is limited to Switzerland and the United States, checkout requires a private
-OpenAI Build Week jury code, and the access window expires when judging ends.
-Browsing, installation, testing, and evaluation remain free and never require a
-purchase. This is a fan-made project and its products are not official OpenAI
-merchandise; it is not affiliated with, sponsored by, or endorsed by OpenAI.
+This is a fan-made project and its products are not official OpenAI merchandise;
+it is not affiliated with, sponsored by, or endorsed by OpenAI.
 
 ## Run locally
 
@@ -223,6 +226,11 @@ Real Build Week purchases add another independent boundary:
 `JURY_ACCESS_CODE` of at least 16 characters. The server verifies that code
 before creating an order record or Stripe Checkout Session. Readiness reports
 the jury-only audience and expiry without exposing the code.
+
+The canonical [Vercel production deployment](https://codex-merch.vercel.app)
+was last verified on 2026-07-21 with live Stripe, Printful, and database
+readiness; CH/US shipping; code-protected jury access; automatic expiry; and
+`PRINTFUL_AUTO_CONFIRM=false`.
 
 Operational details live in the [production deployment guide](docs/production-deployment.md)
 and [runbook](docs/production-runbook.md). Build Week architecture, evidence,

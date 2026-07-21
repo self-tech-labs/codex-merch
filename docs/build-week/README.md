@@ -11,7 +11,7 @@
 - Source repository: [`self-tech-labs/codex-merch` at finalized implementation commit `8017b9f`](https://github.com/self-tech-labs/codex-merch/tree/8017b9f0a28b9918e03b345d0cf669ebdd75998b); the owner-triggered reference feature begins at `42fd968`; use the final pushed descendant SHA in Devpost
 - Demo video: verified local [`2:51 “Signal In. Merch Out.” master`](../../video/out/codex-merch-signal-to-product-1080p.mp4); **owner action required before submission: upload publicly to YouTube and record the URL**
 - Primary Codex task/session: `019f7fb1-9352-7b30-ac89-076c94b2eeeb`
-- `/feedback` session ID: **owner action required before submission: run `/feedback` in the primary build task and record the returned ID**
+- `/feedback` session ID: `019f7fb1-9352-7b30-ac89-076c94b2eeeb` (submitted without logs on 2026-07-21)
 - Devpost submission: **owner action required: paste and submit the prepared entry, then record its URL**
 - Eligibility and employer/conflict check: **owner attestation required in Devpost**
 - Brand and commercial-use decision: **owner explicitly accepted a time-limited fan-merch jury pilot with a prominent non-affiliation disclaimer; repository asset inventory remains documented separately**
