@@ -56,6 +56,7 @@ export interface SignalSource {
 export interface ProductionPlacement {
   area: string;
   file: string;
+  text?: string;
   url?: string;
   width?: number;
   height?: number;
@@ -65,9 +66,9 @@ export interface ProductionPlacement {
 export interface MerchProduct {
   id: string;
   slug: string;
+  aliases?: string[];
   title: string;
-  status: MerchStatus;
-  workflow?: {
+  workflow: {
     status: MerchStatus;
     updatedAt?: string;
     lastError?: string | null;
@@ -86,7 +87,7 @@ export interface MerchProduct {
   };
   commerce: {
     handle: string;
-    price: string;
+    unitAmount: number;
     currency: string;
     tags: string[];
     variants?: CommerceVariant[];
@@ -100,10 +101,16 @@ export interface MerchProduct {
   };
   providerRefs: {
     printful?: {
-      productId: number | string | null;
+      productId: number | null;
       mockupTaskKey?: string | null;
-      variantIds: number[];
-      syncVariantIds?: number[];
+      mockupTaskFailures?: number;
+      lastFailedMockupTaskKey?: string | null;
+      variants: Array<{
+        variantId: string;
+        catalogVariantId: number;
+        syncVariantId: number;
+        available: boolean;
+      }>;
     };
     [provider: string]: unknown;
   };
@@ -122,6 +129,11 @@ export interface MerchProduct {
     approvedBy: string | null;
     notes: string;
   };
+  automation?: {
+    runId?: string;
+    runKey?: string;
+    [key: string]: unknown;
+  };
   prompts: string[];
 }
 
@@ -131,32 +143,52 @@ type BaseProductVariant = {
   providerVariantId: number;
 };
 
-type BaseProductPlacement = {
-  area: string;
-  providerPlacementType?: string;
-  mockupPlacement?: string;
-  techniques?: string[];
-};
-
 type BaseProduct = {
   alias: string;
   provider?: ProductionProvider;
   variants?: BaseProductVariant[];
-  placements?: Array<BaseProductPlacement | string>;
 };
 
 export const merchProducts = products as unknown as MerchProduct[];
 const baseProductCatalog = baseProducts as {products: BaseProduct[]};
 const providerMockupPattern = /(?:^|-)printful-\d+\.(?:jpe?g|png|webp)$/i;
 
-export function isCustomerVisibleProduct(product: MerchProduct) {
+export function isPubliclyVisibleProduct(product: MerchProduct) {
   const status = merchWorkflowStatus(product);
+  if (product.automation?.runKey) return status === 'published';
   return status !== 'draft' && status !== 'archived';
+}
+
+export function isPurchasableProduct(product: MerchProduct) {
+  if (merchWorkflowStatus(product) !== 'published') return false;
+  const printful = product.providerRefs.printful;
+  if (!printful?.productId) return false;
+
+  const mappings = new Map(
+    printful.variants.map((variant) => [variant.variantId, variant]),
+  );
+  return getProductVariants(product).some((variant) => {
+    const mapping = mappings.get(variant.id);
+    return Boolean(
+      variant.availableForSale &&
+        mapping?.available &&
+        Number.isInteger(mapping.syncVariantId) &&
+        mapping.syncVariantId > 0,
+    );
+  });
+}
+
+export function isPurchasableVariant(
+  product: MerchProduct,
+  variant: CommerceVariant,
+) {
+  if (!isPurchasableProduct(product) || !variant.availableForSale) return false;
+  return Boolean(getPrintfulVariantMapping(product, variant.id)?.available);
 }
 
 export function getMerchProducts(options: {includeInternal?: boolean} = {}) {
   if (options.includeInternal) return merchProducts;
-  return merchProducts.filter(isCustomerVisibleProduct);
+  return merchProducts.filter(isPubliclyVisibleProduct);
 }
 
 export function getMerchProduct(
@@ -164,7 +196,10 @@ export function getMerchProduct(
   options: {includeInternal?: boolean} = {},
 ) {
   return getMerchProducts(options).find(
-    (product) => product.slug === handle || product.commerce.handle === handle,
+    (product) =>
+      product.slug === handle ||
+      product.commerce.handle === handle ||
+      product.aliases?.includes(handle),
   );
 }
 
@@ -173,7 +208,7 @@ export function getMerchCategories(items: MerchProduct[] = getMerchProducts()) {
 }
 
 export function formatPrice(product: MerchProduct) {
-  const amount = Number(product.commerce.price);
+  const amount = product.commerce.unitAmount / 100;
 
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -184,7 +219,7 @@ export function formatPrice(product: MerchProduct) {
 }
 
 export function merchWorkflowStatus(product: MerchProduct) {
-  return product.workflow?.status || product.status;
+  return product.workflow.status;
 }
 
 export function assetUrl(path: string) {
@@ -217,11 +252,6 @@ export function getPrimaryCustomerMockup(product: MerchProduct) {
   return getCustomerMockups(product)[0] || product.assets.artwork;
 }
 
-export function absoluteAssetUrl(path: string, siteUrl: string) {
-  if (/^https?:\/\//.test(path)) return path;
-  return new URL(assetUrl(path), siteUrl).toString();
-}
-
 export function getBaseProduct(product: MerchProduct) {
   const baseProduct = product.production.baseProduct;
   if (!baseProduct) return null;
@@ -231,8 +261,13 @@ export function getBaseProduct(product: MerchProduct) {
   );
 }
 
-export function getProviderRef(product: MerchProduct, provider = product.production.provider) {
-  return product.providerRefs[provider] || null;
+export function getPrintfulVariantMapping(
+  product: MerchProduct,
+  variantId: string,
+) {
+  return product.providerRefs.printful?.variants.find(
+    (variant) => variant.variantId === variantId,
+  );
 }
 
 export function getProductVariants(product: MerchProduct): CommerceVariant[] {
@@ -251,8 +286,11 @@ export function getProductVariant(product: MerchProduct, variantId: string) {
 export function defaultProductVariant(product: MerchProduct) {
   const variants = getProductVariants(product);
   return (
+    variants.find(
+      (variant) => variant.size === 'M' && isPurchasableVariant(product, variant),
+    ) ||
+    variants.find((variant) => isPurchasableVariant(product, variant)) ||
     variants.find((variant) => variant.size === 'M') ||
-    variants.find((variant) => variant.availableForSale) ||
     variants[0] ||
     null
   );
@@ -261,33 +299,6 @@ export function defaultProductVariant(product: MerchProduct) {
 export function variantLabel(variant: CommerceVariant, duplicateSize = false) {
   if (variant.size && !duplicateSize) return variant.size;
   return [variant.color, variant.size].filter(Boolean).join(' / ') || 'OS';
-}
-
-export function getProductionPlacementFiles(product: MerchProduct, siteUrl: string) {
-  const baseProduct = getBaseProduct(product);
-
-  return product.production.placements.map((placement) => {
-    const printFile = (product.assets.printFiles || []).find(
-      (file) => file.placement === placement.area || file.path === placement.file,
-    );
-    const source = printFile?.url || placement.url || printFile?.path || placement.file;
-    const resolved = resolveBasePlacement(
-      baseProduct,
-      placement.area,
-      product.production.technique,
-    );
-
-    return {
-      type:
-        resolved?.providerPlacementType ||
-        (placement.area === 'front' ? 'default' : placement.area),
-      url: absoluteAssetUrl(source, siteUrl),
-    };
-  });
-}
-
-export function getPrintfulPlacementFiles(product: MerchProduct, siteUrl: string) {
-  return getProductionPlacementFiles(product, siteUrl);
 }
 
 function commerceVariantForBaseVariant(
@@ -311,26 +322,4 @@ function commerceVariantForBaseVariant(
       {name: 'Size', value: variant.size},
     ],
   };
-}
-
-function resolveBasePlacement(
-  baseProduct: BaseProduct | null,
-  area: string,
-  technique: ProductionTechnique,
-) {
-  for (const placement of baseProduct?.placements || []) {
-    if (typeof placement === 'string') {
-      if (placement === area) return {area, providerPlacementType: area};
-      continue;
-    }
-
-    if (
-      placement.area === area &&
-      (!placement.techniques || placement.techniques.includes(technique))
-    ) {
-      return placement;
-    }
-  }
-
-  return null;
 }

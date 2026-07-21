@@ -3,7 +3,6 @@
     "id": "drop-010-research-deployment-co",
     "slug": "research-deployment-co-sweatshirt",
     "title": "Research & Deployment Co. Cotton Sweatshirt",
-    "status": "mockups_ready",
     "category": "Codex",
     "description": "A cut-and-sew cotton sweatshirt built as a quiet research-lab uniform: cream pinstripes, small chest systems, sleeve waves, and restrained deployment typography.",
     "meme": {
@@ -13,6 +12,9 @@
     },
     "assets": {
       "artwork": "assets/artwork/research-deployment-co-concept.png",
+      "customerPhotos": [
+        "assets/mockups/research-deployment-co-worn-front.jpg"
+      ],
       "mockups": [
         "assets/mockups/research-deployment-co-sweatshirt-catalog.png",
         "assets/mockups/research-deployment-co-front.png",
@@ -109,7 +111,7 @@
     },
     "commerce": {
       "handle": "research-deployment-co-sweatshirt",
-      "price": "88.00",
+      "unitAmount": 8800,
       "currency": "USD",
       "tags": [
         "codex",
@@ -366,31 +368,73 @@
       "printful": {
         "productId": 436532136,
         "mockupTaskKey": null,
-        "variantIds": [
-          33963,
-          33964,
-          33965,
-          33966,
-          33967,
-          33968,
-          33969,
-          33970,
-          33971,
-          33972,
-          33973
-        ],
-        "syncVariantIds": [
-          5337903363,
-          5337903365,
-          5337903366,
-          5337903367,
-          5337903369,
-          5337903370,
-          5337903371,
-          5337903373,
-          5337903374,
-          5337903375,
-          5337903377
+        "variants": [
+          {
+            "variantId": "research-deployment-co-sweatshirt:33963",
+            "catalogVariantId": 33963,
+            "syncVariantId": 5337903363,
+            "available": true
+          },
+          {
+            "variantId": "research-deployment-co-sweatshirt:33964",
+            "catalogVariantId": 33964,
+            "syncVariantId": 5337903365,
+            "available": true
+          },
+          {
+            "variantId": "research-deployment-co-sweatshirt:33965",
+            "catalogVariantId": 33965,
+            "syncVariantId": 5337903366,
+            "available": true
+          },
+          {
+            "variantId": "research-deployment-co-sweatshirt:33966",
+            "catalogVariantId": 33966,
+            "syncVariantId": 5337903367,
+            "available": true
+          },
+          {
+            "variantId": "research-deployment-co-sweatshirt:33967",
+            "catalogVariantId": 33967,
+            "syncVariantId": 5337903369,
+            "available": true
+          },
+          {
+            "variantId": "research-deployment-co-sweatshirt:33968",
+            "catalogVariantId": 33968,
+            "syncVariantId": 5337903370,
+            "available": true
+          },
+          {
+            "variantId": "research-deployment-co-sweatshirt:33969",
+            "catalogVariantId": 33969,
+            "syncVariantId": 5337903371,
+            "available": true
+          },
+          {
+            "variantId": "research-deployment-co-sweatshirt:33970",
+            "catalogVariantId": 33970,
+            "syncVariantId": 5337903373,
+            "available": true
+          },
+          {
+            "variantId": "research-deployment-co-sweatshirt:33971",
+            "catalogVariantId": 33971,
+            "syncVariantId": 5337903374,
+            "available": true
+          },
+          {
+            "variantId": "research-deployment-co-sweatshirt:33972",
+            "catalogVariantId": 33972,
+            "syncVariantId": 5337903375,
+            "available": true
+          },
+          {
+            "variantId": "research-deployment-co-sweatshirt:33973",
+            "catalogVariantId": 33973,
+            "syncVariantId": 5337903377,
+            "available": true
+          }
         ]
       }
     },
@@ -404,7 +448,6 @@
     "id": "drop-011-terminal-ritual",
     "slug": "terminal-ritual-sweatshirt",
     "title": "Terminal Ritual Cotton Sweatshirt",
-    "status": "mockups_ready",
     "category": "Runtime",
     "description": "A dark all-over cotton sweatshirt with tone-on-tone grid fabric, sleeve glyph rituals, small chest marks, and a quiet back statement for late-night builders.",
     "meme": {
@@ -510,7 +553,7 @@
     },
     "commerce": {
       "handle": "terminal-ritual-sweatshirt",
-      "price": "88.00",
+      "unitAmount": 8800,
       "currency": "USD",
       "tags": [
         "codex",
@@ -767,31 +810,73 @@
       "printful": {
         "productId": 436532516,
         "mockupTaskKey": null,
-        "variantIds": [
-          33963,
-          33964,
-          33965,
-          33966,
-          33967,
-          33968,
-          33969,
-          33970,
-          33971,
-          33972,
-          33973
-        ],
-        "syncVariantIds": [
-          5337907450,
-          5337907455,
-          5337907456,
-          5337907465,
-          5337907468,
-          5337907469,
-          5337907470,
-          5337907471,
-          5337907473,
-          5337907474,
-          5337907475
+        "variants": [
+          {
+            "variantId": "terminal-ritual-sweatshirt:33963",
+            "catalogVariantId": 33963,
+            "syncVariantId": 5337907450,
+            "available": true
+          },
+          {
+            "variantId": "terminal-ritual-sweatshirt:33964",
+            "catalogVariantId": 33964,
+            "syncVariantId": 5337907455,
+            "available": true
+          },
+          {
+            "variantId": "terminal-ritual-sweatshirt:33965",
+            "catalogVariantId": 33965,
+            "syncVariantId": 5337907456,
+            "available": true
+          },
+          {
+            "variantId": "terminal-ritual-sweatshirt:33966",
+            "catalogVariantId": 33966,
+            "syncVariantId": 5337907465,
+            "available": true
+          },
+          {
+            "variantId": "terminal-ritual-sweatshirt:33967",
+            "catalogVariantId": 33967,
+            "syncVariantId": 5337907468,
+            "available": true
+          },
+          {
+            "variantId": "terminal-ritual-sweatshirt:33968",
+            "catalogVariantId": 33968,
+            "syncVariantId": 5337907469,
+            "available": true
+          },
+          {
+            "variantId": "terminal-ritual-sweatshirt:33969",
+            "catalogVariantId": 33969,
+            "syncVariantId": 5337907470,
+            "available": true
+          },
+          {
+            "variantId": "terminal-ritual-sweatshirt:33970",
+            "catalogVariantId": 33970,
+            "syncVariantId": 5337907471,
+            "available": true
+          },
+          {
+            "variantId": "terminal-ritual-sweatshirt:33971",
+            "catalogVariantId": 33971,
+            "syncVariantId": 5337907473,
+            "available": true
+          },
+          {
+            "variantId": "terminal-ritual-sweatshirt:33972",
+            "catalogVariantId": 33972,
+            "syncVariantId": 5337907474,
+            "available": true
+          },
+          {
+            "variantId": "terminal-ritual-sweatshirt:33973",
+            "catalogVariantId": 33973,
+            "syncVariantId": 5337907475,
+            "available": true
+          }
         ]
       }
     },
@@ -805,7 +890,6 @@
     "id": "drop-012-queue-weather-cotton-sweatshirt",
     "slug": "queue-weather-cotton-sweatshirt",
     "title": "Queue Weather Cotton Sweatshirt",
-    "status": "mockups_ready",
     "workflow": {
       "status": "mockups_ready",
       "updatedAt": "2026-06-03T14:38:30.021Z"
@@ -915,7 +999,7 @@
     },
     "commerce": {
       "handle": "queue-weather-cotton-sweatshirt",
-      "price": "88.00",
+      "unitAmount": 8800,
       "currency": "USD",
       "tags": [
         "codex",
@@ -1173,31 +1257,73 @@
       "printful": {
         "productId": 436532524,
         "mockupTaskKey": null,
-        "variantIds": [
-          33963,
-          33964,
-          33965,
-          33966,
-          33967,
-          33968,
-          33969,
-          33970,
-          33971,
-          33972,
-          33973
-        ],
-        "syncVariantIds": [
-          5337907501,
-          5337907605,
-          5337907606,
-          5337907608,
-          5337907609,
-          5337907610,
-          5337907611,
-          5337907614,
-          5337907616,
-          5337907617,
-          5337907619
+        "variants": [
+          {
+            "variantId": "queue-weather-cotton-sweatshirt:33963",
+            "catalogVariantId": 33963,
+            "syncVariantId": 5337907501,
+            "available": true
+          },
+          {
+            "variantId": "queue-weather-cotton-sweatshirt:33964",
+            "catalogVariantId": 33964,
+            "syncVariantId": 5337907605,
+            "available": true
+          },
+          {
+            "variantId": "queue-weather-cotton-sweatshirt:33965",
+            "catalogVariantId": 33965,
+            "syncVariantId": 5337907606,
+            "available": true
+          },
+          {
+            "variantId": "queue-weather-cotton-sweatshirt:33966",
+            "catalogVariantId": 33966,
+            "syncVariantId": 5337907608,
+            "available": true
+          },
+          {
+            "variantId": "queue-weather-cotton-sweatshirt:33967",
+            "catalogVariantId": 33967,
+            "syncVariantId": 5337907609,
+            "available": true
+          },
+          {
+            "variantId": "queue-weather-cotton-sweatshirt:33968",
+            "catalogVariantId": 33968,
+            "syncVariantId": 5337907610,
+            "available": true
+          },
+          {
+            "variantId": "queue-weather-cotton-sweatshirt:33969",
+            "catalogVariantId": 33969,
+            "syncVariantId": 5337907611,
+            "available": true
+          },
+          {
+            "variantId": "queue-weather-cotton-sweatshirt:33970",
+            "catalogVariantId": 33970,
+            "syncVariantId": 5337907614,
+            "available": true
+          },
+          {
+            "variantId": "queue-weather-cotton-sweatshirt:33971",
+            "catalogVariantId": 33971,
+            "syncVariantId": 5337907616,
+            "available": true
+          },
+          {
+            "variantId": "queue-weather-cotton-sweatshirt:33972",
+            "catalogVariantId": 33972,
+            "syncVariantId": 5337907617,
+            "available": true
+          },
+          {
+            "variantId": "queue-weather-cotton-sweatshirt:33973",
+            "catalogVariantId": 33973,
+            "syncVariantId": 5337907619,
+            "available": true
+          }
         ]
       }
     },
@@ -1210,6 +1336,3745 @@
         }
       ],
       "sources": []
+    }
+  },
+  {
+    "id": "drop-004-codex-rate-reset",
+    "slug": "codex-rate-reset-long-sleeve",
+    "aliases": [
+      "codex-rate-reset"
+    ],
+    "title": "Codex Rate Reset Long Sleeve Tee",
+    "workflow": {
+      "status": "published",
+      "updatedAt": "2026-07-21T11:46:23.355Z",
+      "lastError": null
+    },
+    "category": "Codex",
+    "description": "A black long sleeve tee for the 429-to-200 recovery ritual: compact front reset mark, sleeve telemetry, and a quiet back-office stamp.",
+    "meme": {
+      "source": "Signal provider: x",
+      "brief": "Long sleeve tee inspired by Codex rate-limit lore, reset windows, retry-after headers, queue pressure, and the relief of a clean 200 after a 429. Treat the idea as original systems merch: no copied posts, screenshots, usernames, official marks, or real service branding.",
+      "rightsNote": "Original Codex-native apparel concept using generic HTTP/status and queue language. Do not copy social posts, screenshots, usernames, official marks, protected service branding, public figures, or real team logos."
+    },
+    "signals": {
+      "profile": "codex-trend-research",
+      "queries": [
+        {
+          "provider": "x",
+          "query": "Codex (\"rate limit\" OR \"weekly limit\" OR \"usage reset\" OR reset) lang:en -is:retweet",
+          "maxResults": 10
+        }
+      ],
+      "sources": [
+        {
+          "provider": "x",
+          "id": "2079533827471380769",
+          "url": "https://x.com/i/web/status/2079533827471380769",
+          "createdAt": "2026-07-21T11:47:54.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "Codex (\"rate limit\" OR \"weekly limit\" OR \"usage reset\" OR reset) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079533090012266671",
+          "url": "https://x.com/i/web/status/2079533090012266671",
+          "createdAt": "2026-07-21T11:44:59.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "Codex (\"rate limit\" OR \"weekly limit\" OR \"usage reset\" OR reset) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079533089513230601",
+          "url": "https://x.com/i/web/status/2079533089513230601",
+          "createdAt": "2026-07-21T11:44:59.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "Codex (\"rate limit\" OR \"weekly limit\" OR \"usage reset\" OR reset) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079530682074755216",
+          "url": "https://x.com/i/web/status/2079530682074755216",
+          "createdAt": "2026-07-21T11:35:25.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 3,
+            "quotes": 0
+          },
+          "matchedQuery": "Codex (\"rate limit\" OR \"weekly limit\" OR \"usage reset\" OR reset) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079529161127854138",
+          "url": "https://x.com/i/web/status/2079529161127854138",
+          "createdAt": "2026-07-21T11:29:22.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "Codex (\"rate limit\" OR \"weekly limit\" OR \"usage reset\" OR reset) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079528966986080614",
+          "url": "https://x.com/i/web/status/2079528966986080614",
+          "createdAt": "2026-07-21T11:28:36.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 1,
+            "quotes": 0
+          },
+          "matchedQuery": "Codex (\"rate limit\" OR \"weekly limit\" OR \"usage reset\" OR reset) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079526599494615080",
+          "url": "https://x.com/i/web/status/2079526599494615080",
+          "createdAt": "2026-07-21T11:19:11.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "Codex (\"rate limit\" OR \"weekly limit\" OR \"usage reset\" OR reset) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079525021165523123",
+          "url": "https://x.com/i/web/status/2079525021165523123",
+          "createdAt": "2026-07-21T11:12:55.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "Codex (\"rate limit\" OR \"weekly limit\" OR \"usage reset\" OR reset) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079522667007250785",
+          "url": "https://x.com/i/web/status/2079522667007250785",
+          "createdAt": "2026-07-21T11:03:34.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "Codex (\"rate limit\" OR \"weekly limit\" OR \"usage reset\" OR reset) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079520393715741109",
+          "url": "https://x.com/i/web/status/2079520393715741109",
+          "createdAt": "2026-07-21T10:54:32.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "Codex (\"rate limit\" OR \"weekly limit\" OR \"usage reset\" OR reset) lang:en -is:retweet"
+        }
+      ]
+    },
+    "commerce": {
+      "handle": "codex-rate-reset-long-sleeve",
+      "unitAmount": 5800,
+      "currency": "USD",
+      "tags": [
+        "codex",
+        "long-sleeve",
+        "rate-limit",
+        "reset"
+      ],
+      "variants": [
+        {
+          "id": "codex-rate-reset-long-sleeve:10095",
+          "sku": "CODEX_RATE_RESET_BLACK_M",
+          "color": "Black",
+          "size": "M",
+          "providerVariantId": 10095,
+          "availableForSale": true,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "Black"
+            },
+            {
+              "name": "Size",
+              "value": "M"
+            }
+          ]
+        },
+        {
+          "id": "codex-rate-reset-long-sleeve:10096",
+          "sku": "CODEX_RATE_RESET_BLACK_L",
+          "color": "Black",
+          "size": "L",
+          "providerVariantId": 10096,
+          "availableForSale": true,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "Black"
+            },
+            {
+              "name": "Size",
+              "value": "L"
+            }
+          ]
+        },
+        {
+          "id": "codex-rate-reset-long-sleeve:10097",
+          "sku": "CODEX_RATE_RESET_BLACK_XL",
+          "color": "Black",
+          "size": "XL",
+          "providerVariantId": 10097,
+          "availableForSale": true,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "Black"
+            },
+            {
+              "name": "Size",
+              "value": "XL"
+            }
+          ]
+        }
+      ]
+    },
+    "production": {
+      "provider": "printful",
+      "baseProduct": "bella-canvas-3501-black",
+      "technique": "DTG",
+      "textLayer": "Codex Rate Reset",
+      "placements": [
+        {
+          "area": "front",
+          "file": "assets/print/codex-rate-reset-front.png",
+          "text": "CODEX RATE RESET"
+        },
+        {
+          "area": "back",
+          "file": "assets/print/codex-rate-reset-back.png",
+          "text": "RATE RESET DEPARTMENT"
+        },
+        {
+          "area": "left_sleeve",
+          "file": "assets/print/codex-rate-reset-left_sleeve.png",
+          "text": "429"
+        },
+        {
+          "area": "right_sleeve",
+          "file": "assets/print/codex-rate-reset-right_sleeve.png",
+          "text": "RETRY-OK"
+        }
+      ]
+    },
+    "providerRefs": {
+      "printful": {
+        "productId": 436601984,
+        "mockupTaskKey": "gt-928643458",
+        "variants": [
+          {
+            "variantId": "codex-rate-reset-long-sleeve:10095",
+            "catalogVariantId": 10095,
+            "syncVariantId": 5338615120,
+            "available": true
+          },
+          {
+            "variantId": "codex-rate-reset-long-sleeve:10096",
+            "catalogVariantId": 10096,
+            "syncVariantId": 5338615121,
+            "available": true
+          },
+          {
+            "variantId": "codex-rate-reset-long-sleeve:10097",
+            "catalogVariantId": 10097,
+            "syncVariantId": 5338615122,
+            "available": true
+          }
+        ]
+      }
+    },
+    "assets": {
+      "artwork": "assets/artwork/codex-rate-reset-concept.png",
+      "printFiles": [
+        {
+          "placement": "front",
+          "path": "assets/print/codex-rate-reset-front.png"
+        },
+        {
+          "placement": "back",
+          "path": "assets/print/codex-rate-reset-back.png"
+        },
+        {
+          "placement": "left_sleeve",
+          "path": "assets/print/codex-rate-reset-left_sleeve.png"
+        },
+        {
+          "placement": "right_sleeve",
+          "path": "assets/print/codex-rate-reset-right_sleeve.png"
+        }
+      ],
+      "mockups": [
+        "assets/mockups/codex-rate-reset-catalog.png",
+        "assets/mockups/codex-rate-reset-printful-1.jpg",
+        "assets/mockups/codex-rate-reset-printful-2.jpg",
+        "assets/mockups/codex-rate-reset-front.png",
+        "assets/mockups/codex-rate-reset-back.png",
+        "assets/mockups/codex-rate-reset-detail.png"
+      ],
+      "customerPhotos": [
+        "assets/mockups/codex-rate-reset-photoshoot-front.png"
+      ]
+    },
+    "prompts": [
+      "Create standalone black long-sleeve tee print artwork for a Codex-native rate reset ritual: bold compact RATE RESET mark, HTTP 429 to 200 recovery language, terminal-grid fragments, retry-after label logic, one electric blue accent, no official logos, no screenshots, no copied posts, no garment scene."
+    ],
+    "approval": {
+      "approvedAt": "2026-06-04T11:41:53.813Z",
+      "approvedBy": "elliot",
+      "notes": ""
+    }
+  },
+  {
+    "id": "drop-005-the-sol-shines-cotton-sweatshirt",
+    "slug": "the-sol-shines-cotton-sweatshirt",
+    "title": "Solward Index Cotton Sweatshirt",
+    "workflow": {
+      "status": "generated",
+      "updatedAt": "2026-07-21T06:23:24Z"
+    },
+    "category": "Codex",
+    "description": "A warm all-over cotton sweatshirt that turns the Sol inside joke into a quiet brightness index: angular contour fields, amber signal paths, and concentric sleeve systems.",
+    "meme": {
+      "source": "Owner-supplied trend: The Sol Shines",
+      "brief": "All-over cotton sweatshirt inspired by the owner-supplied team wordplay The Sol Shines. Translate the optimistic model-weather joke into a premium garment system: warm daylight field, measured brightness contours, restrained identity, and intentional ring-based sleeves. Avoid literal sun illustration and poster logic.",
+      "rightsNote": "Owner-supplied wordplay rendered as an original abstract apparel system. No official logos, company marks, model logos, copied post language, screenshots, usernames, likenesses, or protected product layouts."
+    },
+    "signals": {
+      "profile": "owner-supplied-trend",
+      "queries": [],
+      "sources": []
+    },
+    "commerce": {
+      "handle": "the-sol-shines-cotton-sweatshirt",
+      "unitAmount": 8800,
+      "currency": "USD",
+      "tags": [
+        "codex",
+        "sweatshirt",
+        "all-over-cotton"
+      ],
+      "variants": [
+        {
+          "id": "the-sol-shines-cotton-sweatshirt:33963",
+          "sku": "THE_SOL_SHINES_COTTON_SWEATSHIRT_WHITE_2XS",
+          "color": "White",
+          "size": "2XS",
+          "providerVariantId": 33963,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "2XS"
+            }
+          ]
+        },
+        {
+          "id": "the-sol-shines-cotton-sweatshirt:33964",
+          "sku": "THE_SOL_SHINES_COTTON_SWEATSHIRT_WHITE_XS",
+          "color": "White",
+          "size": "XS",
+          "providerVariantId": 33964,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "XS"
+            }
+          ]
+        },
+        {
+          "id": "the-sol-shines-cotton-sweatshirt:33965",
+          "sku": "THE_SOL_SHINES_COTTON_SWEATSHIRT_WHITE_S",
+          "color": "White",
+          "size": "S",
+          "providerVariantId": 33965,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "S"
+            }
+          ]
+        },
+        {
+          "id": "the-sol-shines-cotton-sweatshirt:33966",
+          "sku": "THE_SOL_SHINES_COTTON_SWEATSHIRT_WHITE_M",
+          "color": "White",
+          "size": "M",
+          "providerVariantId": 33966,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "M"
+            }
+          ]
+        },
+        {
+          "id": "the-sol-shines-cotton-sweatshirt:33967",
+          "sku": "THE_SOL_SHINES_COTTON_SWEATSHIRT_WHITE_L",
+          "color": "White",
+          "size": "L",
+          "providerVariantId": 33967,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "L"
+            }
+          ]
+        },
+        {
+          "id": "the-sol-shines-cotton-sweatshirt:33968",
+          "sku": "THE_SOL_SHINES_COTTON_SWEATSHIRT_WHITE_XL",
+          "color": "White",
+          "size": "XL",
+          "providerVariantId": 33968,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "XL"
+            }
+          ]
+        },
+        {
+          "id": "the-sol-shines-cotton-sweatshirt:33969",
+          "sku": "THE_SOL_SHINES_COTTON_SWEATSHIRT_WHITE_2XL",
+          "color": "White",
+          "size": "2XL",
+          "providerVariantId": 33969,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "2XL"
+            }
+          ]
+        },
+        {
+          "id": "the-sol-shines-cotton-sweatshirt:33970",
+          "sku": "THE_SOL_SHINES_COTTON_SWEATSHIRT_WHITE_3XL",
+          "color": "White",
+          "size": "3XL",
+          "providerVariantId": 33970,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "3XL"
+            }
+          ]
+        },
+        {
+          "id": "the-sol-shines-cotton-sweatshirt:33971",
+          "sku": "THE_SOL_SHINES_COTTON_SWEATSHIRT_WHITE_4XL",
+          "color": "White",
+          "size": "4XL",
+          "providerVariantId": 33971,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "4XL"
+            }
+          ]
+        },
+        {
+          "id": "the-sol-shines-cotton-sweatshirt:33972",
+          "sku": "THE_SOL_SHINES_COTTON_SWEATSHIRT_WHITE_5XL",
+          "color": "White",
+          "size": "5XL",
+          "providerVariantId": 33972,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "5XL"
+            }
+          ]
+        },
+        {
+          "id": "the-sol-shines-cotton-sweatshirt:33973",
+          "sku": "THE_SOL_SHINES_COTTON_SWEATSHIRT_WHITE_6XL",
+          "color": "White",
+          "size": "6XL",
+          "providerVariantId": 33973,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "6XL"
+            }
+          ]
+        }
+      ]
+    },
+    "production": {
+      "provider": "printful",
+      "baseProduct": "printful-aop-cotton-sweatshirt-white",
+      "technique": "All-Over Cotton",
+      "textLayer": "SOLWARD",
+      "placements": [
+        {
+          "area": "front",
+          "file": "assets/print/the-sol-shines-cotton-sweatshirt-front_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "back",
+          "file": "assets/print/the-sol-shines-cotton-sweatshirt-back_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "left_sleeve",
+          "file": "assets/print/the-sol-shines-cotton-sweatshirt-left_sleeve_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "right_sleeve",
+          "file": "assets/print/the-sol-shines-cotton-sweatshirt-right_sleeve_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "label_panel",
+          "file": "assets/print/the-sol-shines-cotton-sweatshirt-label_panel_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "label_inside",
+          "file": "assets/print/the-sol-shines-cotton-sweatshirt-label_inside_dtfabric.png",
+          "width": 375,
+          "height": 150
+        }
+      ]
+    },
+    "providerRefs": {
+      "printful": {
+        "productId": null,
+        "mockupTaskKey": null,
+        "variants": []
+      }
+    },
+    "assets": {
+      "artwork": "assets/artwork/the-sol-shines-cotton-sweatshirt-concept.png",
+      "printFiles": [
+        {
+          "placement": "front",
+          "path": "assets/print/the-sol-shines-cotton-sweatshirt-front_dtfabric.png"
+        },
+        {
+          "placement": "back",
+          "path": "assets/print/the-sol-shines-cotton-sweatshirt-back_dtfabric.png"
+        },
+        {
+          "placement": "left_sleeve",
+          "path": "assets/print/the-sol-shines-cotton-sweatshirt-left_sleeve_dtfabric.png"
+        },
+        {
+          "placement": "right_sleeve",
+          "path": "assets/print/the-sol-shines-cotton-sweatshirt-right_sleeve_dtfabric.png"
+        },
+        {
+          "placement": "label_panel",
+          "path": "assets/print/the-sol-shines-cotton-sweatshirt-label_panel_dtfabric.png"
+        },
+        {
+          "placement": "label_inside",
+          "path": "assets/print/the-sol-shines-cotton-sweatshirt-label_inside_dtfabric.png"
+        }
+      ],
+      "mockups": [
+        "assets/mockups/the-sol-shines-cotton-sweatshirt-catalog.png",
+        "assets/mockups/the-sol-shines-cotton-sweatshirt-front.png",
+        "assets/mockups/the-sol-shines-cotton-sweatshirt-back.png",
+        "assets/mockups/the-sol-shines-cotton-sweatshirt-patterns.png"
+      ]
+    },
+    "prompts": [
+      "Flat six-placement all-over cotton sweatshirt system on a warm ivory field. Use three sparse nested angular contour outlines and one short amber accent path. Center-monument front with centered primary typography and geometry on one central axis; repeat the contour family more quietly on the back. Both sleeves use three concentric rings, a crosshair, and a mirrored accent notch. Keep the label panel and inside label restrained with supplied local text. Exact text is rendered locally."
+    ],
+    "workflowNotes": [
+      "Trend premise was supplied directly by the owner on 2026-07-21; no X post records were fabricated or attached.",
+      "This manual candidate is not eligible for the automated weekly release path without separate live provenance and explicit release approval.",
+      "Concept board generated from the accepted garment spec with Codex built-in image generation; deterministic local composition owns production panels and exact text."
+    ],
+    "artDirector": {
+      "mode": "supervised-aop-cotton",
+      "aopSpec": {
+        "garmentFirst": true,
+        "brandLabel": "DAYSHIFT STUDIO",
+        "provenanceLine": "DAYSHIFT / SERIES 01",
+        "layout": "center-monument",
+        "basePattern": "status-isobar-map",
+        "palette": {
+          "fabric": "#F3E7C3",
+          "ink": "#15120D",
+          "muted": "#B4A26D",
+          "accent": "#A64D00"
+        },
+        "front": {
+          "primaryText": "SOLWARD",
+          "chestLabel": "DAYSHIFT INDEX",
+          "mark": "SOL",
+          "subline": "BRIGHT BUILD / CLEAR RUN"
+        },
+        "back": {
+          "statement": "TURN TOWARD THE BRIGHT SIDE",
+          "subline": "MODEL WEATHER / FULL SIGNAL"
+        },
+        "sleeves": {
+          "style": "radar-rings",
+          "motif": "THREE CONCENTRIC RINGS WITH A CROSSHAIR AND MIRRORED ACCENT NOTCH",
+          "leftText": "FIRST LIGHT",
+          "rightText": "FULL SIGNAL",
+          "caption": "RADIANT CYCLE"
+        },
+        "label": {
+          "line": "DAYSHIFT / SOLWARD"
+        }
+      },
+      "review": {
+        "accepted": true,
+        "score": 92,
+        "reviewer": "codex-aop-art-director-validator",
+        "checkedAt": "2026-07-21T06:02:40.080Z",
+        "referenceScreenshots": [
+          "merch/reference/art-direction/supplyco-screenshots/01-market-grid.png",
+          "merch/reference/art-direction/supplyco-screenshots/02-polo-cardigan.png",
+          "merch/reference/art-direction/supplyco-screenshots/03-research-deployment-polo.png",
+          "merch/reference/art-direction/supplyco-screenshots/04-black-hoodie-sleeve.png",
+          "merch/reference/art-direction/supplyco-screenshots/05-blue-lab-long-sleeve.png"
+        ],
+        "templateSpec": {
+          "provider": "printful",
+          "baseProduct": "printful-aop-cotton-sweatshirt-white",
+          "technique": "All-Over Cotton",
+          "requiredPlacements": [
+            "front",
+            "back",
+            "left_sleeve",
+            "right_sleeve",
+            "label_panel",
+            "label_inside"
+          ]
+        },
+        "findings": [
+          "Accepted: garment-first AOP cotton plan with panel-specific sleeves, front, back, label panel, and inside label.",
+          "Accepted: production files can be composed from exact selected template dimensions."
+        ]
+      },
+      "visualCritic": {
+        "decision": "pass",
+        "overallScore": 87,
+        "scores": {
+          "garmentCoherence": 9,
+          "legibility": 8,
+          "panelIntent": 9,
+          "originality": 8,
+          "productionReadiness": 9,
+          "rightsSafety": 10
+        },
+        "criticalDefects": [],
+        "revisionBrief": "No required revision. Optional polish: slightly reduce or reposition the vertical sleeve text so it clears the concentric-ring strokes more cleanly and remains easier to read around the arm.",
+        "model": "gpt-5.6-sol",
+        "responseId": "resp_0a1687e2c21a57a3016a5f1047139481a2a39a09037b7a7007",
+        "checkedAt": "2026-07-21T06:23:24Z"
+      }
+    },
+    "automation": {
+      "pipelineVersion": "owner-trend-preview-v1",
+      "inputMode": "owner-supplied-trend",
+      "inputHash": "993fa351ec820b38ba398d49b2e90205eefaeb148f53d33f8eb1c2de0c9bcb9d",
+      "identityHash": "7033294da79a9f073392c3088308673cb01dac1e7978c2ea7c0d72041664ca21",
+      "previewOnly": true,
+      "releaseEligible": false,
+      "evidenceCount": 0,
+      "criticScore": 87,
+      "prepress": {
+        "validator": "weekly-prepress-v1",
+        "fileCount": 6,
+        "hashes": {
+          "front": "ca46389a9dd440699f36f7f36d176eb388d3181c695d48b010ccef82ad5bf91e",
+          "back": "135e2db85c19d0692a69b025bac87727678a5790e6a6e11b05f6823d2823b378",
+          "left_sleeve": "aba98f2b65855f8e393d0776852a002a0399daadf6a4ee5543cb4c7a2aa90b92",
+          "right_sleeve": "5053c029bde53ce72fd74ef6cb2f53e79f977522441ca30e402cfe7844ce8774",
+          "label_panel": "7163c4c6121a11130965e43dc40ddfcf62a52efa4790b4c8c089251f79317c56",
+          "label_inside": "d216f1c29139ff221eee237ee85ce97c2a568948774e0c00499068d8e7858c88"
+        }
+      }
+    },
+    "approval": {
+      "approvedAt": null,
+      "approvedBy": null,
+      "notes": ""
+    }
+  },
+  {
+    "id": "preview-614693e3466f-field-clearing-cotton-sweatshirt-preview",
+    "slug": "field-clearing-cotton-sweatshirt-preview",
+    "title": "Field Clearing Cotton Sweatshirt",
+    "workflow": {
+      "status": "generated",
+      "updatedAt": "2026-07-21T10:54:39.257Z"
+    },
+    "category": "Build Week Preview",
+    "description": "A preview-only all-over cotton garment generated from a trend supplied directly by the project owner.",
+    "meme": {
+      "source": "Owner-supplied trend: research & deployment",
+      "brief": "Create an original six-panel garment system from the owner-supplied premise. The owner also supplied a creative clarification that is bound into the private input hash. Do not represent this input as X research or reproduce protected names, marks, post language, screenshots, usernames, or likenesses.",
+      "rightsNote": "Owner-supplied premise translated into an original abstract apparel system. No X evidence is claimed; no official logos, company marks, copied post language, screenshots, usernames, likenesses, or protected product layouts may appear."
+    },
+    "signals": {
+      "profile": "owner-supplied-trend",
+      "queries": [],
+      "sources": []
+    },
+    "commerce": {
+      "handle": "field-clearing-cotton-sweatshirt-preview",
+      "unitAmount": 8800,
+      "currency": "USD",
+      "tags": [
+        "build-week-preview",
+        "sweatshirt",
+        "all-over-cotton"
+      ],
+      "variants": [
+        {
+          "id": "field-clearing-cotton-sweatshirt-preview:33963",
+          "sku": "FIELD_CLEARING_COTTON_SWEATSHIRT_PREVIEW_WHITE_2XS",
+          "color": "White",
+          "size": "2XS",
+          "providerVariantId": 33963,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "2XS"
+            }
+          ]
+        },
+        {
+          "id": "field-clearing-cotton-sweatshirt-preview:33964",
+          "sku": "FIELD_CLEARING_COTTON_SWEATSHIRT_PREVIEW_WHITE_XS",
+          "color": "White",
+          "size": "XS",
+          "providerVariantId": 33964,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "XS"
+            }
+          ]
+        },
+        {
+          "id": "field-clearing-cotton-sweatshirt-preview:33965",
+          "sku": "FIELD_CLEARING_COTTON_SWEATSHIRT_PREVIEW_WHITE_S",
+          "color": "White",
+          "size": "S",
+          "providerVariantId": 33965,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "S"
+            }
+          ]
+        },
+        {
+          "id": "field-clearing-cotton-sweatshirt-preview:33966",
+          "sku": "FIELD_CLEARING_COTTON_SWEATSHIRT_PREVIEW_WHITE_M",
+          "color": "White",
+          "size": "M",
+          "providerVariantId": 33966,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "M"
+            }
+          ]
+        },
+        {
+          "id": "field-clearing-cotton-sweatshirt-preview:33967",
+          "sku": "FIELD_CLEARING_COTTON_SWEATSHIRT_PREVIEW_WHITE_L",
+          "color": "White",
+          "size": "L",
+          "providerVariantId": 33967,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "L"
+            }
+          ]
+        },
+        {
+          "id": "field-clearing-cotton-sweatshirt-preview:33968",
+          "sku": "FIELD_CLEARING_COTTON_SWEATSHIRT_PREVIEW_WHITE_XL",
+          "color": "White",
+          "size": "XL",
+          "providerVariantId": 33968,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "XL"
+            }
+          ]
+        },
+        {
+          "id": "field-clearing-cotton-sweatshirt-preview:33969",
+          "sku": "FIELD_CLEARING_COTTON_SWEATSHIRT_PREVIEW_WHITE_2XL",
+          "color": "White",
+          "size": "2XL",
+          "providerVariantId": 33969,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "2XL"
+            }
+          ]
+        },
+        {
+          "id": "field-clearing-cotton-sweatshirt-preview:33970",
+          "sku": "FIELD_CLEARING_COTTON_SWEATSHIRT_PREVIEW_WHITE_3XL",
+          "color": "White",
+          "size": "3XL",
+          "providerVariantId": 33970,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "3XL"
+            }
+          ]
+        },
+        {
+          "id": "field-clearing-cotton-sweatshirt-preview:33971",
+          "sku": "FIELD_CLEARING_COTTON_SWEATSHIRT_PREVIEW_WHITE_4XL",
+          "color": "White",
+          "size": "4XL",
+          "providerVariantId": 33971,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "4XL"
+            }
+          ]
+        },
+        {
+          "id": "field-clearing-cotton-sweatshirt-preview:33972",
+          "sku": "FIELD_CLEARING_COTTON_SWEATSHIRT_PREVIEW_WHITE_5XL",
+          "color": "White",
+          "size": "5XL",
+          "providerVariantId": 33972,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "5XL"
+            }
+          ]
+        },
+        {
+          "id": "field-clearing-cotton-sweatshirt-preview:33973",
+          "sku": "FIELD_CLEARING_COTTON_SWEATSHIRT_PREVIEW_WHITE_6XL",
+          "color": "White",
+          "size": "6XL",
+          "providerVariantId": 33973,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "6XL"
+            }
+          ]
+        }
+      ]
+    },
+    "production": {
+      "provider": "printful",
+      "baseProduct": "printful-aop-cotton-sweatshirt-white",
+      "technique": "All-Over Cotton",
+      "textLayer": "RESEARCH & DEPLOYMENT",
+      "placements": [
+        {
+          "area": "front",
+          "file": "assets/print/field-clearing-cotton-sweatshirt-preview-front_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "back",
+          "file": "assets/print/field-clearing-cotton-sweatshirt-preview-back_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "left_sleeve",
+          "file": "assets/print/field-clearing-cotton-sweatshirt-preview-left_sleeve_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "right_sleeve",
+          "file": "assets/print/field-clearing-cotton-sweatshirt-preview-right_sleeve_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "label_panel",
+          "file": "assets/print/field-clearing-cotton-sweatshirt-preview-label_panel_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "label_inside",
+          "file": "assets/print/field-clearing-cotton-sweatshirt-preview-label_inside_dtfabric.png",
+          "width": 375,
+          "height": 150
+        }
+      ]
+    },
+    "providerRefs": {
+      "printful": {
+        "productId": null,
+        "mockupTaskKey": null,
+        "variants": []
+      }
+    },
+    "assets": {
+      "artwork": "assets/artwork/field-clearing-cotton-sweatshirt-preview-concept.png",
+      "printFiles": [
+        {
+          "placement": "front",
+          "path": "assets/print/field-clearing-cotton-sweatshirt-preview-front_dtfabric.png"
+        },
+        {
+          "placement": "back",
+          "path": "assets/print/field-clearing-cotton-sweatshirt-preview-back_dtfabric.png"
+        },
+        {
+          "placement": "left_sleeve",
+          "path": "assets/print/field-clearing-cotton-sweatshirt-preview-left_sleeve_dtfabric.png"
+        },
+        {
+          "placement": "right_sleeve",
+          "path": "assets/print/field-clearing-cotton-sweatshirt-preview-right_sleeve_dtfabric.png"
+        },
+        {
+          "placement": "label_panel",
+          "path": "assets/print/field-clearing-cotton-sweatshirt-preview-label_panel_dtfabric.png"
+        },
+        {
+          "placement": "label_inside",
+          "path": "assets/print/field-clearing-cotton-sweatshirt-preview-label_inside_dtfabric.png"
+        }
+      ],
+      "customerPhotos": [],
+      "mockups": [
+        "assets/mockups/field-clearing-cotton-sweatshirt-preview-catalog.png",
+        "assets/mockups/field-clearing-cotton-sweatshirt-preview-front.png",
+        "assets/mockups/field-clearing-cotton-sweatshirt-preview-back.png",
+        "assets/mockups/field-clearing-cotton-sweatshirt-preview-patterns.png"
+      ]
+    },
+    "prompts": [
+      "Panel-aware all-over cotton sweatshirt artwork using a dark green flat field, mono-utility typography, an offset-ledger front, renderer-backed queue-radar branching lines with a vertical clearing boundary and right-side check marks, a restrained back ledger, and ladder sleeves with two rails, nine rungs, and offset orange accent rungs. Use only flat production-safe colors and hard-edged geometry."
+    ],
+    "workflowNotes": [
+      "Trend premise was supplied directly by the owner; no X posts, authors, or engagement records were fabricated.",
+      "Preview-only candidate: generated for a Vercel Preview deployment, not approved for Printful synchronization, publication, checkout, or production release.",
+      "GPT-5.6 supplies structured art direction and evaluates the actual deterministic garment renders; exact text and production panels are composed locally."
+    ],
+    "artDirector": {
+      "mode": "gpt-5.6-owner-trend-preview",
+      "selectedConceptId": "field-clearing",
+      "recipe": {
+        "conceptId": "field-clearing",
+        "title": "Field Clearing Cotton Sweatshirt",
+        "rationale": "The strongest direction turns RESEARCH & DEPLOYMENT into an active workshop uniform. A lab-utility world, mono-utility typography, offset-ledger layout, queue-radar field, and ladder sleeves create a clear visual sequence from branching inquiry to cleared release without resembling the prior garment.",
+        "brandLabel": "FIELD SIGNAL",
+        "provenanceLine": "OWNER AUTHORIZED FIELD EDITION",
+        "aestheticWorld": "lab-utility",
+        "typeSystem": "mono-utility",
+        "layout": "offset-ledger",
+        "basePattern": "queue-radar",
+        "palette": {
+          "fabric": "#18211D",
+          "ink": "#F1F0DD",
+          "muted": "#66756B",
+          "accent": "#FF5C35"
+        },
+        "front": {
+          "primaryText": "RESEARCH & DEPLOYMENT",
+          "chestLabel": "ACTIVE FIELD UNIT",
+          "mark": "CLEARING",
+          "subline": "SIGNAL BECOMES STRUCTURE"
+        },
+        "back": {
+          "statement": "TESTED IN MOTION",
+          "subline": "READY FOR RELEASE"
+        },
+        "sleeves": {
+          "style": "ladder",
+          "motif": "Two vertical rails, nine rungs, and one orange accent rung at a different position on each sleeve.",
+          "leftText": "OBSERVE",
+          "rightText": "RELEASE",
+          "caption": "FIELD SEQUENCE"
+        },
+        "label": {
+          "line": "FIELD SIGNAL COTTON WORK UNIFORM"
+        },
+        "visualPrompt": "Panel-aware all-over cotton sweatshirt artwork using a dark green flat field, mono-utility typography, an offset-ledger front, renderer-backed queue-radar branching lines with a vertical clearing boundary and right-side check marks, a restrained back ledger, and ladder sleeves with two rails, nine rungs, and offset orange accent rungs. Use only flat production-safe colors and hard-edged geometry.",
+        "rightsRisk": "low",
+        "scores": {
+          "conceptClarity": 9,
+          "garmentCoherence": 10,
+          "memeLegibility": 9,
+          "originality": 9,
+          "productionSafety": 9,
+          "rightsSafety": 10
+        }
+      },
+      "aopSpec": {
+        "garmentFirst": true,
+        "brandLabel": "FIELD SIGNAL",
+        "provenanceLine": "OWNER AUTHORIZED FIELD EDITION",
+        "aestheticWorld": "lab-utility",
+        "typeSystem": "mono-utility",
+        "layout": "offset-ledger",
+        "basePattern": "queue-radar",
+        "palette": {
+          "fabric": "#18211D",
+          "ink": "#F1F0DD",
+          "muted": "#66756B",
+          "accent": "#FF5C35"
+        },
+        "front": {
+          "primaryText": "RESEARCH & DEPLOYMENT",
+          "chestLabel": "ACTIVE FIELD UNIT",
+          "mark": "CLEARING",
+          "subline": "SIGNAL BECOMES STRUCTURE"
+        },
+        "back": {
+          "statement": "TESTED IN MOTION",
+          "subline": "READY FOR RELEASE"
+        },
+        "sleeves": {
+          "style": "ladder",
+          "motif": "Two vertical rails, nine rungs, and one orange accent rung at a different position on each sleeve.",
+          "leftText": "OBSERVE",
+          "rightText": "RELEASE",
+          "caption": "FIELD SEQUENCE"
+        },
+        "label": {
+          "line": "FIELD SIGNAL COTTON WORK UNIFORM"
+        }
+      },
+      "review": {
+        "accepted": true,
+        "score": 92,
+        "reviewer": "codex-aop-art-director-validator",
+        "checkedAt": "2026-07-21T10:54:21.744Z",
+        "referenceScreenshots": [
+          "merch/reference/art-direction/supplyco-screenshots/01-market-grid.png",
+          "merch/reference/art-direction/supplyco-screenshots/02-polo-cardigan.png",
+          "merch/reference/art-direction/supplyco-screenshots/03-research-deployment-polo.png",
+          "merch/reference/art-direction/supplyco-screenshots/04-black-hoodie-sleeve.png",
+          "merch/reference/art-direction/supplyco-screenshots/05-blue-lab-long-sleeve.png"
+        ],
+        "templateSpec": {
+          "provider": "printful",
+          "baseProduct": "printful-aop-cotton-sweatshirt-white",
+          "technique": "All-Over Cotton",
+          "requiredPlacements": [
+            "front",
+            "back",
+            "left_sleeve",
+            "right_sleeve",
+            "label_panel",
+            "label_inside"
+          ]
+        },
+        "findings": [
+          "Accepted: garment-first AOP cotton plan with panel-specific sleeves, front, back, label panel, and inside label.",
+          "Accepted: production files can be composed from exact selected template dimensions."
+        ]
+      },
+      "visualCritic": {
+        "decision": "revise",
+        "overallScore": 87,
+        "scores": {
+          "garmentCoherence": 9,
+          "legibility": 8,
+          "panelIntent": 9,
+          "originality": 8,
+          "productionReadiness": 7,
+          "rightsSafety": 10
+        },
+        "criticalDefects": [],
+        "strengths": [
+          "Coherent lab-utility system across the dark field, circuit pattern, ledger graphics, typography, and orange status accents.",
+          "Front and back have clearly differentiated hierarchy while remaining part of the same visual sequence.",
+          "Sleeves are deliberately differentiated through OBSERVE/RELEASE text and offset orange ladder rungs.",
+          "Primary garment text is readable, intentional, and free of apparent protected marks or copied social content.",
+          "All six required placements passed deterministic format and dimension validation."
+        ],
+        "revisionBrief": "Preserve the approved garment direction. Revise only label_inside: reduce or reflow “FIELD SIGNAL COTTON WORK UNIFORM” so the complete line sits inside the cream border with clear left and right padding; retain the FIELD SIGNAL heading and fiber/made-on-demand line unchanged. Re-render the inside-label preview to confirm no text touches or crosses the image edges.",
+        "model": "gpt-5.6-sol",
+        "responseId": "resp_0e8a2ac3b1c2eefe016a5f4fe18de8819fbe5dfd14e2f1b937",
+        "checkedAt": "2026-07-21T10:54:39.257Z"
+      }
+    },
+    "automation": {
+      "pipelineVersion": "owner-trend-preview-v1",
+      "inputMode": "owner-supplied-trend",
+      "inputHash": "614693e3466f5aea4730dcb16f62f724f83993cc158db13d6aa533bc69c4c26c",
+      "identityHash": "3cb6d4942ab57f08ff9bb7b357143b7e0b9a5f0178f7026c2b2b494f014fedba",
+      "ownerContextProvided": true,
+      "previewOnly": true,
+      "releaseEligible": false,
+      "evidenceCount": 0,
+      "criticScore": 87,
+      "prepress": {
+        "validator": "weekly-prepress-v1",
+        "fileCount": 6,
+        "hashes": {
+          "front": "aa68e3fde326983f1fb2435a49f892d2868954edb662432c9dd382e2af1a2b28",
+          "back": "97f518b08a6be9cdaf64600eb351598902fb5759ac6e87154bc5ff30002cbaf8",
+          "left_sleeve": "5982e022949c7c55a45a3167d474673ba5fd9b97b9b40f2d83a876c35af0bb0c",
+          "right_sleeve": "e7e4a90ce24f758599677ad230e29f4a4b6e106844fd75ed1a7debd18ab68438",
+          "label_panel": "0089ba381fa4a9282fb47301449aaded856a9a8b82dc941572f74602c39c1305",
+          "label_inside": "b0c824526fa403d3150fb295baddec7ec795b3a1d049c50aadd412bba084daf8"
+        }
+      }
+    },
+    "approval": {
+      "approvedAt": null,
+      "approvedBy": null,
+      "notes": "Preview only. A separate sourced research run, human approval, provider synchronization, and explicit release authority are required before publication."
+    }
+  },
+  {
+    "id": "preview-3ca0faf43327-clean-slate-club-cotton-sweatshirt-preview",
+    "slug": "clean-slate-club-cotton-sweatshirt-preview",
+    "title": "Clean Slate Club Cotton Sweatshirt",
+    "workflow": {
+      "status": "generated",
+      "updatedAt": "2026-07-21T10:58:28.466Z"
+    },
+    "category": "Build Week Preview",
+    "description": "A preview-only all-over cotton garment generated from a trend supplied directly by the project owner.",
+    "meme": {
+      "source": "Owner-supplied trend: codex reset",
+      "brief": "Create an original six-panel garment system from the owner-supplied premise. The owner also supplied a creative clarification that is bound into the private input hash. Do not represent this input as X research or reproduce protected names, marks, post language, screenshots, usernames, or likenesses.",
+      "rightsNote": "Owner-supplied premise translated into an original abstract apparel system. No X evidence is claimed; no official logos, company marks, copied post language, screenshots, usernames, likenesses, or protected product layouts may appear."
+    },
+    "signals": {
+      "profile": "owner-supplied-trend",
+      "queries": [],
+      "sources": []
+    },
+    "commerce": {
+      "handle": "clean-slate-club-cotton-sweatshirt-preview",
+      "unitAmount": 8800,
+      "currency": "USD",
+      "tags": [
+        "build-week-preview",
+        "sweatshirt",
+        "all-over-cotton"
+      ],
+      "variants": [
+        {
+          "id": "clean-slate-club-cotton-sweatshirt-preview:33963",
+          "sku": "CLEAN_SLATE_CLUB_COTTON_SWEATSHIRT_PREVIEW_WHITE_2XS",
+          "color": "White",
+          "size": "2XS",
+          "providerVariantId": 33963,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "2XS"
+            }
+          ]
+        },
+        {
+          "id": "clean-slate-club-cotton-sweatshirt-preview:33964",
+          "sku": "CLEAN_SLATE_CLUB_COTTON_SWEATSHIRT_PREVIEW_WHITE_XS",
+          "color": "White",
+          "size": "XS",
+          "providerVariantId": 33964,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "XS"
+            }
+          ]
+        },
+        {
+          "id": "clean-slate-club-cotton-sweatshirt-preview:33965",
+          "sku": "CLEAN_SLATE_CLUB_COTTON_SWEATSHIRT_PREVIEW_WHITE_S",
+          "color": "White",
+          "size": "S",
+          "providerVariantId": 33965,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "S"
+            }
+          ]
+        },
+        {
+          "id": "clean-slate-club-cotton-sweatshirt-preview:33966",
+          "sku": "CLEAN_SLATE_CLUB_COTTON_SWEATSHIRT_PREVIEW_WHITE_M",
+          "color": "White",
+          "size": "M",
+          "providerVariantId": 33966,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "M"
+            }
+          ]
+        },
+        {
+          "id": "clean-slate-club-cotton-sweatshirt-preview:33967",
+          "sku": "CLEAN_SLATE_CLUB_COTTON_SWEATSHIRT_PREVIEW_WHITE_L",
+          "color": "White",
+          "size": "L",
+          "providerVariantId": 33967,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "L"
+            }
+          ]
+        },
+        {
+          "id": "clean-slate-club-cotton-sweatshirt-preview:33968",
+          "sku": "CLEAN_SLATE_CLUB_COTTON_SWEATSHIRT_PREVIEW_WHITE_XL",
+          "color": "White",
+          "size": "XL",
+          "providerVariantId": 33968,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "XL"
+            }
+          ]
+        },
+        {
+          "id": "clean-slate-club-cotton-sweatshirt-preview:33969",
+          "sku": "CLEAN_SLATE_CLUB_COTTON_SWEATSHIRT_PREVIEW_WHITE_2XL",
+          "color": "White",
+          "size": "2XL",
+          "providerVariantId": 33969,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "2XL"
+            }
+          ]
+        },
+        {
+          "id": "clean-slate-club-cotton-sweatshirt-preview:33970",
+          "sku": "CLEAN_SLATE_CLUB_COTTON_SWEATSHIRT_PREVIEW_WHITE_3XL",
+          "color": "White",
+          "size": "3XL",
+          "providerVariantId": 33970,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "3XL"
+            }
+          ]
+        },
+        {
+          "id": "clean-slate-club-cotton-sweatshirt-preview:33971",
+          "sku": "CLEAN_SLATE_CLUB_COTTON_SWEATSHIRT_PREVIEW_WHITE_4XL",
+          "color": "White",
+          "size": "4XL",
+          "providerVariantId": 33971,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "4XL"
+            }
+          ]
+        },
+        {
+          "id": "clean-slate-club-cotton-sweatshirt-preview:33972",
+          "sku": "CLEAN_SLATE_CLUB_COTTON_SWEATSHIRT_PREVIEW_WHITE_5XL",
+          "color": "White",
+          "size": "5XL",
+          "providerVariantId": 33972,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "5XL"
+            }
+          ]
+        },
+        {
+          "id": "clean-slate-club-cotton-sweatshirt-preview:33973",
+          "sku": "CLEAN_SLATE_CLUB_COTTON_SWEATSHIRT_PREVIEW_WHITE_6XL",
+          "color": "White",
+          "size": "6XL",
+          "providerVariantId": 33973,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "6XL"
+            }
+          ]
+        }
+      ]
+    },
+    "production": {
+      "provider": "printful",
+      "baseProduct": "printful-aop-cotton-sweatshirt-white",
+      "technique": "All-Over Cotton",
+      "textLayer": "CODEX RESET",
+      "placements": [
+        {
+          "area": "front",
+          "file": "assets/print/clean-slate-club-cotton-sweatshirt-preview-front_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "back",
+          "file": "assets/print/clean-slate-club-cotton-sweatshirt-preview-back_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "left_sleeve",
+          "file": "assets/print/clean-slate-club-cotton-sweatshirt-preview-left_sleeve_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "right_sleeve",
+          "file": "assets/print/clean-slate-club-cotton-sweatshirt-preview-right_sleeve_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "label_panel",
+          "file": "assets/print/clean-slate-club-cotton-sweatshirt-preview-label_panel_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "label_inside",
+          "file": "assets/print/clean-slate-club-cotton-sweatshirt-preview-label_inside_dtfabric.png",
+          "width": 375,
+          "height": 150
+        }
+      ]
+    },
+    "providerRefs": {
+      "printful": {
+        "productId": null,
+        "mockupTaskKey": null,
+        "variants": []
+      }
+    },
+    "assets": {
+      "artwork": "assets/artwork/clean-slate-club-cotton-sweatshirt-preview-concept.png",
+      "printFiles": [
+        {
+          "placement": "front",
+          "path": "assets/print/clean-slate-club-cotton-sweatshirt-preview-front_dtfabric.png"
+        },
+        {
+          "placement": "back",
+          "path": "assets/print/clean-slate-club-cotton-sweatshirt-preview-back_dtfabric.png"
+        },
+        {
+          "placement": "left_sleeve",
+          "path": "assets/print/clean-slate-club-cotton-sweatshirt-preview-left_sleeve_dtfabric.png"
+        },
+        {
+          "placement": "right_sleeve",
+          "path": "assets/print/clean-slate-club-cotton-sweatshirt-preview-right_sleeve_dtfabric.png"
+        },
+        {
+          "placement": "label_panel",
+          "path": "assets/print/clean-slate-club-cotton-sweatshirt-preview-label_panel_dtfabric.png"
+        },
+        {
+          "placement": "label_inside",
+          "path": "assets/print/clean-slate-club-cotton-sweatshirt-preview-label_inside_dtfabric.png"
+        }
+      ],
+      "customerPhotos": [],
+      "mockups": [
+        "assets/mockups/clean-slate-club-cotton-sweatshirt-preview-catalog.png",
+        "assets/mockups/clean-slate-club-cotton-sweatshirt-preview-front.png",
+        "assets/mockups/clean-slate-club-cotton-sweatshirt-preview-back.png",
+        "assets/mockups/clean-slate-club-cotton-sweatshirt-preview-patterns.png"
+      ]
+    },
+    "prompts": [
+      "Panel-aware standalone print artwork using the sports-club world, varsity-block typography, badge-stack layout, and a large two-tone checkerboard field. Build the front around an original circular badge system with stacked locally rendered type. Repeat three geometric badge rings vertically on each sleeve with alternating amber accent fills. Keep the back bilaterally balanced with bold local typography. Use only flat burgundy, warm ivory, muted rose, and amber colors."
+    ],
+    "workflowNotes": [
+      "Trend premise was supplied directly by the owner; no X posts, authors, or engagement records were fabricated.",
+      "Preview-only candidate: generated for a Vercel Preview deployment, not approved for Printful synchronization, publication, checkout, or production release.",
+      "GPT-5.6 supplies structured art direction and evaluates the actual deterministic garment renders; exact text and production panels are composed locally."
+    ],
+    "artDirector": {
+      "mode": "gpt-5.6-owner-trend-preview",
+      "selectedConceptId": "reset-club-02",
+      "recipe": {
+        "conceptId": "reset-club-02",
+        "title": "Clean Slate Club Cotton Sweatshirt",
+        "rationale": "This direction reads the reset as a fictional sports-club ritual. A badge-stack layout and original circular badge geometry give the joke collectible uniform energy, while the checkerboard field and vertically repeated badge rings create strong bilateral panel logic. Badge-repeat sleeves make the whole sweatshirt feel like one deliberate club kit.",
+        "brandLabel": "AFTER HOURS ATHLETIC CLUB",
+        "provenanceLine": "INDEPENDENT CLUB EDITION",
+        "aestheticWorld": "sports-club",
+        "typeSystem": "varsity-block",
+        "layout": "badge-stack",
+        "basePattern": "checkerboard",
+        "palette": {
+          "fabric": "#4A1633",
+          "ink": "#FFF2D8",
+          "muted": "#C48A9F",
+          "accent": "#FFB000"
+        },
+        "front": {
+          "primaryText": "CODEX RESET",
+          "chestLabel": "CLEAN SLATE CLUB",
+          "mark": "THREE RING R",
+          "subline": "READY FOR ANOTHER ROUND"
+        },
+        "back": {
+          "statement": "RESET CLUB",
+          "subline": "CLEAR MINDS RETURN"
+        },
+        "sleeves": {
+          "style": "badge-repeat",
+          "motif": "THREE ORIGINAL GEOMETRIC BADGE RINGS WITH ALTERNATING ACCENT FILLS",
+          "leftText": "CLEAR",
+          "rightText": "READY",
+          "caption": "CLUB STANDARD"
+        },
+        "label": {
+          "line": "ALL OVER COTTON CLUB EDITION"
+        },
+        "visualPrompt": "Panel-aware standalone print artwork using the sports-club world, varsity-block typography, badge-stack layout, and a large two-tone checkerboard field. Build the front around an original circular badge system with stacked locally rendered type. Repeat three geometric badge rings vertically on each sleeve with alternating amber accent fills. Keep the back bilaterally balanced with bold local typography. Use only flat burgundy, warm ivory, muted rose, and amber colors.",
+        "rightsRisk": "low",
+        "scores": {
+          "conceptClarity": 1,
+          "garmentCoherence": 1,
+          "memeLegibility": 1,
+          "originality": 1,
+          "productionSafety": 1,
+          "rightsSafety": 1
+        }
+      },
+      "aopSpec": {
+        "garmentFirst": true,
+        "brandLabel": "AFTER HOURS ATHLETIC CLUB",
+        "provenanceLine": "INDEPENDENT CLUB EDITION",
+        "aestheticWorld": "sports-club",
+        "typeSystem": "varsity-block",
+        "layout": "badge-stack",
+        "basePattern": "checkerboard",
+        "palette": {
+          "fabric": "#4A1633",
+          "ink": "#FFF2D8",
+          "muted": "#C48A9F",
+          "accent": "#FFB000"
+        },
+        "front": {
+          "primaryText": "CODEX RESET",
+          "chestLabel": "CLEAN SLATE CLUB",
+          "mark": "THREE RING R",
+          "subline": "READY FOR ANOTHER ROUND"
+        },
+        "back": {
+          "statement": "RESET CLUB",
+          "subline": "CLEAR MINDS RETURN"
+        },
+        "sleeves": {
+          "style": "badge-repeat",
+          "motif": "THREE ORIGINAL GEOMETRIC BADGE RINGS WITH ALTERNATING ACCENT FILLS",
+          "leftText": "CLEAR",
+          "rightText": "READY",
+          "caption": "CLUB STANDARD"
+        },
+        "label": {
+          "line": "ALL OVER COTTON CLUB EDITION"
+        }
+      },
+      "review": {
+        "accepted": true,
+        "score": 92,
+        "reviewer": "codex-aop-art-director-validator",
+        "checkedAt": "2026-07-21T10:58:08.699Z",
+        "referenceScreenshots": [
+          "merch/reference/art-direction/supplyco-screenshots/01-market-grid.png",
+          "merch/reference/art-direction/supplyco-screenshots/02-polo-cardigan.png",
+          "merch/reference/art-direction/supplyco-screenshots/03-research-deployment-polo.png",
+          "merch/reference/art-direction/supplyco-screenshots/04-black-hoodie-sleeve.png",
+          "merch/reference/art-direction/supplyco-screenshots/05-blue-lab-long-sleeve.png"
+        ],
+        "templateSpec": {
+          "provider": "printful",
+          "baseProduct": "printful-aop-cotton-sweatshirt-white",
+          "technique": "All-Over Cotton",
+          "requiredPlacements": [
+            "front",
+            "back",
+            "left_sleeve",
+            "right_sleeve",
+            "label_panel",
+            "label_inside"
+          ]
+        },
+        "findings": [
+          "Accepted: garment-first AOP cotton plan with panel-specific sleeves, front, back, label panel, and inside label.",
+          "Accepted: production files can be composed from exact selected template dimensions."
+        ]
+      },
+      "visualCritic": {
+        "decision": "revise",
+        "overallScore": 84,
+        "scores": {
+          "garmentCoherence": 9,
+          "legibility": 7,
+          "panelIntent": 9,
+          "originality": 8,
+          "productionReadiness": 8,
+          "rightsSafety": 10
+        },
+        "criticalDefects": [],
+        "strengths": [
+          "Checkerboard, burgundy/ivory/amber palette, ring geometry, and repeated sleeve badges form a coherent whole-garment club system.",
+          "Front and back have deliberate hierarchy and distinct statements while retaining shared geometry.",
+          "Sleeves are intentionally differentiated with CLEAR and READY typography.",
+          "Primary front text is high contrast and immediately readable.",
+          "No protected marks, public figures, copied social text, or confusing official affiliation are visible.",
+          "All six required placement files passed deterministic format and dimension validation."
+        ],
+        "revisionBrief": "Preserve the approved sports-club direction. Move the back subline \"CLEAR MINDS RETURN\" downward or interrupt the outer ivory ring behind it so the full phrase remains unobstructed. On each sleeve, separate the small \"CLUB STANDARD\" caption from the large vertical CLEAR/READY word by at least one cap-height, and shift the upper badge stack slightly inward so meaningful ring details are less vulnerable at the outer sleeve seam. Do not alter the palette, checkerboard field, primary front badge, or front/back statements.",
+        "model": "gpt-5.6-sol",
+        "responseId": "resp_057fdd0018dfc307016a5f50c40c54819c8ad67e4eeb01e8a0",
+        "checkedAt": "2026-07-21T10:58:28.466Z"
+      }
+    },
+    "automation": {
+      "pipelineVersion": "owner-trend-preview-v1",
+      "inputMode": "owner-supplied-trend",
+      "inputHash": "3ca0faf433279a697299d4a71f9b3cb6085427f0ca538c2759f80d938dd04d83",
+      "identityHash": "7b6b175b20f88db4084e697fb220ef7690d554211850e56bf738f6cf5a405c64",
+      "ownerContextProvided": true,
+      "previewOnly": true,
+      "releaseEligible": false,
+      "evidenceCount": 0,
+      "criticScore": 84,
+      "prepress": {
+        "validator": "weekly-prepress-v1",
+        "fileCount": 6,
+        "hashes": {
+          "front": "4e88bd6b165a75cc196451a46cf99b942875c588eee7bf6f8202972a55d399fb",
+          "back": "566a5c9f2a46730d28daa67ec3da3df8f183de5994ec83ba56259796d21262ff",
+          "left_sleeve": "f2faf2ea38a844970de5ac8d0c6b9182586ae22576fe57d5dfd084740542ee57",
+          "right_sleeve": "3eb230a25ff49cd11ad7c0da1c3bd7d0cc28b3492a4c87518707583fc822fb1c",
+          "label_panel": "213a7483053c89cf0540fc0b4de39549caa41623319d1e5b88f6fe3713a0b3e2",
+          "label_inside": "d0f2c88ad6ea129e1d297c31ba430e9803a35b86510c15910703cb48173d97bf"
+        }
+      }
+    },
+    "approval": {
+      "approvedAt": null,
+      "approvedBy": null,
+      "notes": "Preview only. A separate sourced research run, human approval, provider synchronization, and explicit release authority are required before publication."
+    }
+  },
+  {
+    "id": "preview-ce505d6c11a8-parallel-noise-poster-cotton-sweatshirt-preview",
+    "slug": "parallel-noise-poster-cotton-sweatshirt-preview",
+    "title": "Parallel Noise Poster Cotton Sweatshirt",
+    "workflow": {
+      "status": "generated",
+      "updatedAt": "2026-07-21T10:59:43.416Z"
+    },
+    "category": "Build Week Preview",
+    "description": "A preview-only all-over cotton garment generated from a trend supplied directly by the project owner.",
+    "meme": {
+      "source": "Owner-supplied trend: parallel subagents",
+      "brief": "Create an original six-panel garment system from the owner-supplied premise. The owner also supplied a creative clarification that is bound into the private input hash. Do not represent this input as X research or reproduce protected names, marks, post language, screenshots, usernames, or likenesses.",
+      "rightsNote": "Owner-supplied premise translated into an original abstract apparel system. No X evidence is claimed; no official logos, company marks, copied post language, screenshots, usernames, likenesses, or protected product layouts may appear."
+    },
+    "signals": {
+      "profile": "owner-supplied-trend",
+      "queries": [],
+      "sources": []
+    },
+    "commerce": {
+      "handle": "parallel-noise-poster-cotton-sweatshirt-preview",
+      "unitAmount": 8800,
+      "currency": "USD",
+      "tags": [
+        "build-week-preview",
+        "sweatshirt",
+        "all-over-cotton"
+      ],
+      "variants": [
+        {
+          "id": "parallel-noise-poster-cotton-sweatshirt-preview:33963",
+          "sku": "PARALLEL_NOISE_POSTER_COTTON_SWEATSHIRT_PREVIEW_WHITE_2XS",
+          "color": "White",
+          "size": "2XS",
+          "providerVariantId": 33963,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "2XS"
+            }
+          ]
+        },
+        {
+          "id": "parallel-noise-poster-cotton-sweatshirt-preview:33964",
+          "sku": "PARALLEL_NOISE_POSTER_COTTON_SWEATSHIRT_PREVIEW_WHITE_XS",
+          "color": "White",
+          "size": "XS",
+          "providerVariantId": 33964,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "XS"
+            }
+          ]
+        },
+        {
+          "id": "parallel-noise-poster-cotton-sweatshirt-preview:33965",
+          "sku": "PARALLEL_NOISE_POSTER_COTTON_SWEATSHIRT_PREVIEW_WHITE_S",
+          "color": "White",
+          "size": "S",
+          "providerVariantId": 33965,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "S"
+            }
+          ]
+        },
+        {
+          "id": "parallel-noise-poster-cotton-sweatshirt-preview:33966",
+          "sku": "PARALLEL_NOISE_POSTER_COTTON_SWEATSHIRT_PREVIEW_WHITE_M",
+          "color": "White",
+          "size": "M",
+          "providerVariantId": 33966,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "M"
+            }
+          ]
+        },
+        {
+          "id": "parallel-noise-poster-cotton-sweatshirt-preview:33967",
+          "sku": "PARALLEL_NOISE_POSTER_COTTON_SWEATSHIRT_PREVIEW_WHITE_L",
+          "color": "White",
+          "size": "L",
+          "providerVariantId": 33967,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "L"
+            }
+          ]
+        },
+        {
+          "id": "parallel-noise-poster-cotton-sweatshirt-preview:33968",
+          "sku": "PARALLEL_NOISE_POSTER_COTTON_SWEATSHIRT_PREVIEW_WHITE_XL",
+          "color": "White",
+          "size": "XL",
+          "providerVariantId": 33968,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "XL"
+            }
+          ]
+        },
+        {
+          "id": "parallel-noise-poster-cotton-sweatshirt-preview:33969",
+          "sku": "PARALLEL_NOISE_POSTER_COTTON_SWEATSHIRT_PREVIEW_WHITE_2XL",
+          "color": "White",
+          "size": "2XL",
+          "providerVariantId": 33969,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "2XL"
+            }
+          ]
+        },
+        {
+          "id": "parallel-noise-poster-cotton-sweatshirt-preview:33970",
+          "sku": "PARALLEL_NOISE_POSTER_COTTON_SWEATSHIRT_PREVIEW_WHITE_3XL",
+          "color": "White",
+          "size": "3XL",
+          "providerVariantId": 33970,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "3XL"
+            }
+          ]
+        },
+        {
+          "id": "parallel-noise-poster-cotton-sweatshirt-preview:33971",
+          "sku": "PARALLEL_NOISE_POSTER_COTTON_SWEATSHIRT_PREVIEW_WHITE_4XL",
+          "color": "White",
+          "size": "4XL",
+          "providerVariantId": 33971,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "4XL"
+            }
+          ]
+        },
+        {
+          "id": "parallel-noise-poster-cotton-sweatshirt-preview:33972",
+          "sku": "PARALLEL_NOISE_POSTER_COTTON_SWEATSHIRT_PREVIEW_WHITE_5XL",
+          "color": "White",
+          "size": "5XL",
+          "providerVariantId": 33972,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "5XL"
+            }
+          ]
+        },
+        {
+          "id": "parallel-noise-poster-cotton-sweatshirt-preview:33973",
+          "sku": "PARALLEL_NOISE_POSTER_COTTON_SWEATSHIRT_PREVIEW_WHITE_6XL",
+          "color": "White",
+          "size": "6XL",
+          "providerVariantId": 33973,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "6XL"
+            }
+          ]
+        }
+      ]
+    },
+    "production": {
+      "provider": "printful",
+      "baseProduct": "printful-aop-cotton-sweatshirt-white",
+      "technique": "All-Over Cotton",
+      "textLayer": "PARALLEL SUBAGENTS",
+      "placements": [
+        {
+          "area": "front",
+          "file": "assets/print/parallel-noise-poster-cotton-sweatshirt-preview-front_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "back",
+          "file": "assets/print/parallel-noise-poster-cotton-sweatshirt-preview-back_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "left_sleeve",
+          "file": "assets/print/parallel-noise-poster-cotton-sweatshirt-preview-left_sleeve_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "right_sleeve",
+          "file": "assets/print/parallel-noise-poster-cotton-sweatshirt-preview-right_sleeve_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "label_panel",
+          "file": "assets/print/parallel-noise-poster-cotton-sweatshirt-preview-label_panel_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "label_inside",
+          "file": "assets/print/parallel-noise-poster-cotton-sweatshirt-preview-label_inside_dtfabric.png",
+          "width": 375,
+          "height": 150
+        }
+      ]
+    },
+    "providerRefs": {
+      "printful": {
+        "productId": null,
+        "mockupTaskKey": null,
+        "variants": []
+      }
+    },
+    "assets": {
+      "artwork": "assets/artwork/parallel-noise-poster-cotton-sweatshirt-preview-concept.png",
+      "printFiles": [
+        {
+          "placement": "front",
+          "path": "assets/print/parallel-noise-poster-cotton-sweatshirt-preview-front_dtfabric.png"
+        },
+        {
+          "placement": "back",
+          "path": "assets/print/parallel-noise-poster-cotton-sweatshirt-preview-back_dtfabric.png"
+        },
+        {
+          "placement": "left_sleeve",
+          "path": "assets/print/parallel-noise-poster-cotton-sweatshirt-preview-left_sleeve_dtfabric.png"
+        },
+        {
+          "placement": "right_sleeve",
+          "path": "assets/print/parallel-noise-poster-cotton-sweatshirt-preview-right_sleeve_dtfabric.png"
+        },
+        {
+          "placement": "label_panel",
+          "path": "assets/print/parallel-noise-poster-cotton-sweatshirt-preview-label_panel_dtfabric.png"
+        },
+        {
+          "placement": "label_inside",
+          "path": "assets/print/parallel-noise-poster-cotton-sweatshirt-preview-label_inside_dtfabric.png"
+        }
+      ],
+      "customerPhotos": [],
+      "mockups": [
+        "assets/mockups/parallel-noise-poster-cotton-sweatshirt-preview-catalog.png",
+        "assets/mockups/parallel-noise-poster-cotton-sweatshirt-preview-front.png",
+        "assets/mockups/parallel-noise-poster-cotton-sweatshirt-preview-back.png",
+        "assets/mockups/parallel-noise-poster-cotton-sweatshirt-preview-patterns.png"
+      ]
+    },
+    "prompts": [
+      "Flat production-safe zine-punk panel artwork with a deterministic halftone-noise field, cropped poster block, rotated diagonal-poster composition, diagonal support rule, condensed-zine typography zones, and checker-cuff sleeves. Render exact text locally with hard edges and no gradients. No screenshots, logos, figures, photographs, or semantic glyphs."
+    ],
+    "workflowNotes": [
+      "Trend premise was supplied directly by the owner; no X posts, authors, or engagement records were fabricated.",
+      "Preview-only candidate: generated for a Vercel Preview deployment, not approved for Printful synchronization, publication, checkout, or production release.",
+      "GPT-5.6 supplies structured art direction and evaluates the actual deterministic garment renders; exact text and production panels are composed locally."
+    ],
+    "artDirector": {
+      "mode": "gpt-5.6-owner-trend-preview",
+      "selectedConceptId": "parallel-noise-poster",
+      "recipe": {
+        "conceptId": "parallel-noise-poster",
+        "title": "Parallel Noise Poster Cotton Sweatshirt",
+        "rationale": "This direction treats coordinated concurrency like an urgent underground announcement. The diagonal-poster layout, halftone-noise field, abrupt condensed-zine typography, and checker-cuff sleeves create controlled collision while keeping the approved phrase unmistakable.",
+        "brandLabel": "MULTI PRESS",
+        "provenanceLine": "OWNER APPROVED CULTURE SIGNAL",
+        "aestheticWorld": "zine-punk",
+        "typeSystem": "condensed-zine",
+        "layout": "diagonal-poster",
+        "basePattern": "halftone-noise",
+        "palette": {
+          "fabric": "#D9FF3F",
+          "ink": "#171717",
+          "muted": "#8CA62C",
+          "accent": "#F23B7A"
+        },
+        "front": {
+          "primaryText": "PARALLEL SUBAGENTS",
+          "chestLabel": "MULTI PRESS",
+          "mark": "LIVE EDITION",
+          "subline": "WORK HAPPENS SIDEWAYS"
+        },
+        "back": {
+          "statement": "RUN TOGETHER LAND TOGETHER",
+          "subline": "SIMULTANEOUS BY DESIGN"
+        },
+        "sleeves": {
+          "style": "checker-cuff",
+          "motif": "LARGE TWO TONE CHECKER FIELD RESOLVING INTO A STRONG CUFF BAND",
+          "leftText": "RUN TOGETHER",
+          "rightText": "LAND TOGETHER",
+          "caption": "MULTIPLE PATHS ONE RELEASE"
+        },
+        "label": {
+          "line": "MULTI PRESS COTTON EDITION"
+        },
+        "visualPrompt": "Flat production-safe zine-punk panel artwork with a deterministic halftone-noise field, cropped poster block, rotated diagonal-poster composition, diagonal support rule, condensed-zine typography zones, and checker-cuff sleeves. Render exact text locally with hard edges and no gradients. No screenshots, logos, figures, photographs, or semantic glyphs.",
+        "rightsRisk": "low",
+        "scores": {
+          "conceptClarity": 9,
+          "garmentCoherence": 8,
+          "memeLegibility": 9,
+          "originality": 9,
+          "productionSafety": 8,
+          "rightsSafety": 10
+        }
+      },
+      "aopSpec": {
+        "garmentFirst": true,
+        "brandLabel": "MULTI PRESS",
+        "provenanceLine": "OWNER APPROVED CULTURE SIGNAL",
+        "aestheticWorld": "zine-punk",
+        "typeSystem": "condensed-zine",
+        "layout": "diagonal-poster",
+        "basePattern": "halftone-noise",
+        "palette": {
+          "fabric": "#D9FF3F",
+          "ink": "#171717",
+          "muted": "#8CA62C",
+          "accent": "#F23B7A"
+        },
+        "front": {
+          "primaryText": "PARALLEL SUBAGENTS",
+          "chestLabel": "MULTI PRESS",
+          "mark": "LIVE EDITION",
+          "subline": "WORK HAPPENS SIDEWAYS"
+        },
+        "back": {
+          "statement": "RUN TOGETHER LAND TOGETHER",
+          "subline": "SIMULTANEOUS BY DESIGN"
+        },
+        "sleeves": {
+          "style": "checker-cuff",
+          "motif": "LARGE TWO TONE CHECKER FIELD RESOLVING INTO A STRONG CUFF BAND",
+          "leftText": "RUN TOGETHER",
+          "rightText": "LAND TOGETHER",
+          "caption": "MULTIPLE PATHS ONE RELEASE"
+        },
+        "label": {
+          "line": "MULTI PRESS COTTON EDITION"
+        }
+      },
+      "review": {
+        "accepted": true,
+        "score": 92,
+        "reviewer": "codex-aop-art-director-validator",
+        "checkedAt": "2026-07-21T10:59:28.216Z",
+        "referenceScreenshots": [
+          "merch/reference/art-direction/supplyco-screenshots/01-market-grid.png",
+          "merch/reference/art-direction/supplyco-screenshots/02-polo-cardigan.png",
+          "merch/reference/art-direction/supplyco-screenshots/03-research-deployment-polo.png",
+          "merch/reference/art-direction/supplyco-screenshots/04-black-hoodie-sleeve.png",
+          "merch/reference/art-direction/supplyco-screenshots/05-blue-lab-long-sleeve.png"
+        ],
+        "templateSpec": {
+          "provider": "printful",
+          "baseProduct": "printful-aop-cotton-sweatshirt-white",
+          "technique": "All-Over Cotton",
+          "requiredPlacements": [
+            "front",
+            "back",
+            "left_sleeve",
+            "right_sleeve",
+            "label_panel",
+            "label_inside"
+          ]
+        },
+        "findings": [
+          "Accepted: garment-first AOP cotton plan with panel-specific sleeves, front, back, label panel, and inside label.",
+          "Accepted: production files can be composed from exact selected template dimensions."
+        ]
+      },
+      "visualCritic": {
+        "decision": "pass",
+        "overallScore": 9,
+        "scores": {
+          "garmentCoherence": 9,
+          "legibility": 8,
+          "panelIntent": 9,
+          "originality": 8,
+          "productionReadiness": 9,
+          "rightsSafety": 10
+        },
+        "criticalDefects": [],
+        "strengths": [
+          "Coherent neon, black, and pink zine-poster system carries consistently across the body, sleeves, and labels.",
+          "Front hero phrase is unmistakable, high-contrast, and supported by a clear secondary hierarchy.",
+          "Back uses a distinct but coordinated open-poster treatment rather than duplicating the front.",
+          "Left and right sleeves have deliberate phrase differences and a strong checker-cuff structure.",
+          "All visible text appears intentional and readable; no protected marks, public figures, or confusing affiliations are present.",
+          "Both label previews contain clear, consistent brand and edition information.",
+          "Deterministic prepress passed all six required PNG placement and dimension checks."
+        ],
+        "revisionBrief": "No required revision. Optional polish: move the vertical sleeve text slightly away from the checker transition and increase the pink caption weight or contrast to preserve readability when the sleeves fold.",
+        "model": "gpt-5.6-sol",
+        "responseId": "resp_03f8e3c1c9d2d42f016a5f511419848192b415ae62a1b6dddb",
+        "checkedAt": "2026-07-21T10:59:43.416Z"
+      }
+    },
+    "automation": {
+      "pipelineVersion": "owner-trend-preview-v1",
+      "inputMode": "owner-supplied-trend",
+      "inputHash": "ce505d6c11a88d01f5858e7aecac7d82b00f0f98b600889965d1868ffc298c0d",
+      "identityHash": "de58342c96fe607b0e4fd1e0c012e0faba359840954f39589ccb152d4b5bfdfc",
+      "ownerContextProvided": true,
+      "previewOnly": true,
+      "releaseEligible": false,
+      "evidenceCount": 0,
+      "criticScore": 9,
+      "prepress": {
+        "validator": "weekly-prepress-v1",
+        "fileCount": 6,
+        "hashes": {
+          "front": "8500d72596ad55d526e955037d7a8867fb8c12ea40d37be53a93331e085cfc77",
+          "back": "56d9bd63fcad4a69483e503936470e42438f8d2b36f3153902b985b189553bb7",
+          "left_sleeve": "85ae8d4b50068f8b6910f55e94b69e365f7c6fb6d8d897710123a1a848ddc2c3",
+          "right_sleeve": "b93e8838125fe7306950d7a98b9ca5e019693ea17a98f79518c336ef1cee50de",
+          "label_panel": "d2b8e62a97ef67d85d28ff707d6269abd1b63c195e8f30ce6d4d037711005706",
+          "label_inside": "151ad8527a2bff7b37742db1c082d60f2e3dffe236bee7e0569b9fea103999a2"
+        }
+      }
+    },
+    "approval": {
+      "approvedAt": null,
+      "approvedBy": null,
+      "notes": "Preview only. A separate sourced research run, human approval, provider synchronization, and explicit release authority are required before publication."
+    }
+  },
+  {
+    "id": "preview-40555456ba4a-sun-break-victory-cotton-sweatshirt-preview",
+    "slug": "sun-break-victory-cotton-sweatshirt-preview",
+    "title": "Sun Break Victory Cotton Sweatshirt",
+    "workflow": {
+      "status": "generated",
+      "updatedAt": "2026-07-21T11:01:30.108Z"
+    },
+    "category": "Build Week Preview",
+    "description": "A preview-only all-over cotton garment generated from a trend supplied directly by the project owner.",
+    "meme": {
+      "source": "Owner-supplied trend: sol is shining",
+      "brief": "Create an original six-panel garment system from the owner-supplied premise. The owner also supplied a creative clarification that is bound into the private input hash. Do not represent this input as X research or reproduce protected names, marks, post language, screenshots, usernames, or likenesses.",
+      "rightsNote": "Owner-supplied premise translated into an original abstract apparel system. No X evidence is claimed; no official logos, company marks, copied post language, screenshots, usernames, likenesses, or protected product layouts may appear."
+    },
+    "signals": {
+      "profile": "owner-supplied-trend",
+      "queries": [],
+      "sources": []
+    },
+    "commerce": {
+      "handle": "sun-break-victory-cotton-sweatshirt-preview",
+      "unitAmount": 8800,
+      "currency": "USD",
+      "tags": [
+        "build-week-preview",
+        "sweatshirt",
+        "all-over-cotton"
+      ],
+      "variants": [
+        {
+          "id": "sun-break-victory-cotton-sweatshirt-preview:33963",
+          "sku": "SUN_BREAK_VICTORY_COTTON_SWEATSHIRT_PREVIEW_WHITE_2XS",
+          "color": "White",
+          "size": "2XS",
+          "providerVariantId": 33963,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "2XS"
+            }
+          ]
+        },
+        {
+          "id": "sun-break-victory-cotton-sweatshirt-preview:33964",
+          "sku": "SUN_BREAK_VICTORY_COTTON_SWEATSHIRT_PREVIEW_WHITE_XS",
+          "color": "White",
+          "size": "XS",
+          "providerVariantId": 33964,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "XS"
+            }
+          ]
+        },
+        {
+          "id": "sun-break-victory-cotton-sweatshirt-preview:33965",
+          "sku": "SUN_BREAK_VICTORY_COTTON_SWEATSHIRT_PREVIEW_WHITE_S",
+          "color": "White",
+          "size": "S",
+          "providerVariantId": 33965,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "S"
+            }
+          ]
+        },
+        {
+          "id": "sun-break-victory-cotton-sweatshirt-preview:33966",
+          "sku": "SUN_BREAK_VICTORY_COTTON_SWEATSHIRT_PREVIEW_WHITE_M",
+          "color": "White",
+          "size": "M",
+          "providerVariantId": 33966,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "M"
+            }
+          ]
+        },
+        {
+          "id": "sun-break-victory-cotton-sweatshirt-preview:33967",
+          "sku": "SUN_BREAK_VICTORY_COTTON_SWEATSHIRT_PREVIEW_WHITE_L",
+          "color": "White",
+          "size": "L",
+          "providerVariantId": 33967,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "L"
+            }
+          ]
+        },
+        {
+          "id": "sun-break-victory-cotton-sweatshirt-preview:33968",
+          "sku": "SUN_BREAK_VICTORY_COTTON_SWEATSHIRT_PREVIEW_WHITE_XL",
+          "color": "White",
+          "size": "XL",
+          "providerVariantId": 33968,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "XL"
+            }
+          ]
+        },
+        {
+          "id": "sun-break-victory-cotton-sweatshirt-preview:33969",
+          "sku": "SUN_BREAK_VICTORY_COTTON_SWEATSHIRT_PREVIEW_WHITE_2XL",
+          "color": "White",
+          "size": "2XL",
+          "providerVariantId": 33969,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "2XL"
+            }
+          ]
+        },
+        {
+          "id": "sun-break-victory-cotton-sweatshirt-preview:33970",
+          "sku": "SUN_BREAK_VICTORY_COTTON_SWEATSHIRT_PREVIEW_WHITE_3XL",
+          "color": "White",
+          "size": "3XL",
+          "providerVariantId": 33970,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "3XL"
+            }
+          ]
+        },
+        {
+          "id": "sun-break-victory-cotton-sweatshirt-preview:33971",
+          "sku": "SUN_BREAK_VICTORY_COTTON_SWEATSHIRT_PREVIEW_WHITE_4XL",
+          "color": "White",
+          "size": "4XL",
+          "providerVariantId": 33971,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "4XL"
+            }
+          ]
+        },
+        {
+          "id": "sun-break-victory-cotton-sweatshirt-preview:33972",
+          "sku": "SUN_BREAK_VICTORY_COTTON_SWEATSHIRT_PREVIEW_WHITE_5XL",
+          "color": "White",
+          "size": "5XL",
+          "providerVariantId": 33972,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "5XL"
+            }
+          ]
+        },
+        {
+          "id": "sun-break-victory-cotton-sweatshirt-preview:33973",
+          "sku": "SUN_BREAK_VICTORY_COTTON_SWEATSHIRT_PREVIEW_WHITE_6XL",
+          "color": "White",
+          "size": "6XL",
+          "providerVariantId": 33973,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "6XL"
+            }
+          ]
+        }
+      ]
+    },
+    "production": {
+      "provider": "printful",
+      "baseProduct": "printful-aop-cotton-sweatshirt-white",
+      "technique": "All-Over Cotton",
+      "textLayer": "SOL IS SHINING",
+      "placements": [
+        {
+          "area": "front",
+          "file": "assets/print/sun-break-victory-cotton-sweatshirt-preview-front_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "back",
+          "file": "assets/print/sun-break-victory-cotton-sweatshirt-preview-back_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "left_sleeve",
+          "file": "assets/print/sun-break-victory-cotton-sweatshirt-preview-left_sleeve_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "right_sleeve",
+          "file": "assets/print/sun-break-victory-cotton-sweatshirt-preview-right_sleeve_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "label_panel",
+          "file": "assets/print/sun-break-victory-cotton-sweatshirt-preview-label_panel_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "label_inside",
+          "file": "assets/print/sun-break-victory-cotton-sweatshirt-preview-label_inside_dtfabric.png",
+          "width": 375,
+          "height": 150
+        }
+      ]
+    },
+    "providerRefs": {
+      "printful": {
+        "productId": null,
+        "mockupTaskKey": null,
+        "variants": []
+      }
+    },
+    "assets": {
+      "artwork": "assets/artwork/sun-break-victory-cotton-sweatshirt-preview-concept.png",
+      "printFiles": [
+        {
+          "placement": "front",
+          "path": "assets/print/sun-break-victory-cotton-sweatshirt-preview-front_dtfabric.png"
+        },
+        {
+          "placement": "back",
+          "path": "assets/print/sun-break-victory-cotton-sweatshirt-preview-back_dtfabric.png"
+        },
+        {
+          "placement": "left_sleeve",
+          "path": "assets/print/sun-break-victory-cotton-sweatshirt-preview-left_sleeve_dtfabric.png"
+        },
+        {
+          "placement": "right_sleeve",
+          "path": "assets/print/sun-break-victory-cotton-sweatshirt-preview-right_sleeve_dtfabric.png"
+        },
+        {
+          "placement": "label_panel",
+          "path": "assets/print/sun-break-victory-cotton-sweatshirt-preview-label_panel_dtfabric.png"
+        },
+        {
+          "placement": "label_inside",
+          "path": "assets/print/sun-break-victory-cotton-sweatshirt-preview-label_inside_dtfabric.png"
+        }
+      ],
+      "customerPhotos": [],
+      "mockups": [
+        "assets/mockups/sun-break-victory-cotton-sweatshirt-preview-catalog.png",
+        "assets/mockups/sun-break-victory-cotton-sweatshirt-preview-front.png",
+        "assets/mockups/sun-break-victory-cotton-sweatshirt-preview-back.png",
+        "assets/mockups/sun-break-victory-cotton-sweatshirt-preview-patterns.png"
+      ]
+    },
+    "prompts": [
+      "Build a panel-aware coastal-surf sweatshirt using flat production-safe colors. Place locally rendered rounded hero typography across a broad horizon band on the front. Continue wide horizontal sun bands and a flat rising-disc geometry across the torso panels with open space above. Use three broad rolling wave lines and one flat accent sun down each sleeve. Keep the back statement spacious within the same horizontal rhythm. Extend simplified sun bands onto the label panel and reserve the inside label for locally rendered label text."
+    ],
+    "workflowNotes": [
+      "Trend premise was supplied directly by the owner; no X posts, authors, or engagement records were fabricated.",
+      "Preview-only candidate: generated for a Vercel Preview deployment, not approved for Printful synchronization, publication, checkout, or production release.",
+      "GPT-5.6 supplies structured art direction and evaluates the actual deterministic garment renders; exact text and production panels are composed locally."
+    ],
+    "artDirector": {
+      "mode": "gpt-5.6-owner-trend-preview",
+      "selectedConceptId": "sol-shining-01-coastal-release",
+      "recipe": {
+        "conceptId": "sol-shining-01-coastal-release",
+        "title": "Sun Break Victory Cotton Sweatshirt",
+        "rationale": "The strongest direction turns the joke into a relaxed Northern California release-day victory lap. The coastal-surf world, rounded-surf typography, horizon-band layout, sun-stripes field, and sun-wave sleeves create one immediate garment gesture: the entire sweatshirt feels like daylight rolling across it. Large quiet areas keep the exact hero phrase dominant while coordinated back, sleeve, and label copy make the all-over system feel intentional.",
+        "brandLabel": "LOCAL SIGNAL STUDIO",
+        "provenanceLine": "OWNER APPROVED DEVELOPER CULTURE PREMISE",
+        "aestheticWorld": "coastal-surf",
+        "typeSystem": "rounded-surf",
+        "layout": "horizon-band",
+        "basePattern": "sun-stripes",
+        "palette": {
+          "fabric": "#D9EAD3",
+          "ink": "#173F45",
+          "muted": "#77A7A1",
+          "accent": "#FF6A3D"
+        },
+        "front": {
+          "primaryText": "SOL IS SHINING",
+          "chestLabel": "PACIFIC DAY SHIFT",
+          "mark": "HIGH CONTRA",
+          "subline": "BUILD COMPLETE WEATHER CLEAR"
+        },
+        "back": {
+          "statement": "GOOD WORK LOOKS BETTER OUTSIDE",
+          "subline": "RELEASE DAY VICTORY LAP"
+        },
+        "sleeves": {
+          "style": "sun-wave",
+          "motif": "THREE BROAD ROLLING WAVE LINES WITH ONE FLAT ACCENT SUN",
+          "leftText": "ROLL WITH IT",
+          "rightText": "STAY BRIGHT",
+          "caption": "CLEAR SIGNAL GOOD DAY"
+        },
+        "label": {
+          "line": "LOCAL SIGNAL STUDIO ALL OVER COTTON"
+        },
+        "visualPrompt": "Build a panel-aware coastal-surf sweatshirt using flat production-safe colors. Place locally rendered rounded hero typography across a broad horizon band on the front. Continue wide horizontal sun bands and a flat rising-disc geometry across the torso panels with open space above. Use three broad rolling wave lines and one flat accent sun down each sleeve. Keep the back statement spacious within the same horizontal rhythm. Extend simplified sun bands onto the label panel and reserve the inside label for locally rendered label text.",
+        "rightsRisk": "low",
+        "scores": {
+          "conceptClarity": 5,
+          "garmentCoherence": 1,
+          "memeLegibility": 6,
+          "originality": 7,
+          "productionSafety": 4,
+          "rightsSafety": 8
+        }
+      },
+      "aopSpec": {
+        "garmentFirst": true,
+        "brandLabel": "LOCAL SIGNAL STUDIO",
+        "provenanceLine": "OWNER APPROVED DEVELOPER CULTURE PREMISE",
+        "aestheticWorld": "coastal-surf",
+        "typeSystem": "rounded-surf",
+        "layout": "horizon-band",
+        "basePattern": "sun-stripes",
+        "palette": {
+          "fabric": "#D9EAD3",
+          "ink": "#173F45",
+          "muted": "#77A7A1",
+          "accent": "#FF6A3D"
+        },
+        "front": {
+          "primaryText": "SOL IS SHINING",
+          "chestLabel": "PACIFIC DAY SHIFT",
+          "mark": "HIGH CONTRA",
+          "subline": "BUILD COMPLETE WEATHER CLEAR"
+        },
+        "back": {
+          "statement": "GOOD WORK LOOKS BETTER OUTSIDE",
+          "subline": "RELEASE DAY VICTORY LAP"
+        },
+        "sleeves": {
+          "style": "sun-wave",
+          "motif": "THREE BROAD ROLLING WAVE LINES WITH ONE FLAT ACCENT SUN",
+          "leftText": "ROLL WITH IT",
+          "rightText": "STAY BRIGHT",
+          "caption": "CLEAR SIGNAL GOOD DAY"
+        },
+        "label": {
+          "line": "LOCAL SIGNAL STUDIO ALL OVER COTTON"
+        }
+      },
+      "review": {
+        "accepted": true,
+        "score": 92,
+        "reviewer": "codex-aop-art-director-validator",
+        "checkedAt": "2026-07-21T11:01:01.736Z",
+        "referenceScreenshots": [
+          "merch/reference/art-direction/supplyco-screenshots/01-market-grid.png",
+          "merch/reference/art-direction/supplyco-screenshots/02-polo-cardigan.png",
+          "merch/reference/art-direction/supplyco-screenshots/03-research-deployment-polo.png",
+          "merch/reference/art-direction/supplyco-screenshots/04-black-hoodie-sleeve.png",
+          "merch/reference/art-direction/supplyco-screenshots/05-blue-lab-long-sleeve.png"
+        ],
+        "templateSpec": {
+          "provider": "printful",
+          "baseProduct": "printful-aop-cotton-sweatshirt-white",
+          "technique": "All-Over Cotton",
+          "requiredPlacements": [
+            "front",
+            "back",
+            "left_sleeve",
+            "right_sleeve",
+            "label_panel",
+            "label_inside"
+          ]
+        },
+        "findings": [
+          "Accepted: garment-first AOP cotton plan with panel-specific sleeves, front, back, label panel, and inside label.",
+          "Accepted: production files can be composed from exact selected template dimensions."
+        ]
+      },
+      "visualCritic": {
+        "decision": "revise",
+        "overallScore": 82,
+        "scores": {
+          "garmentCoherence": 8,
+          "legibility": 7,
+          "panelIntent": 9,
+          "originality": 8,
+          "productionReadiness": 7,
+          "rightsSafety": 9
+        },
+        "criticalDefects": [],
+        "strengths": [
+          "Front, back, and sleeves form a coherent coastal-surf system through the shared horizontal bands, sun geometry, wave lines, and restrained palette.",
+          "The front hero phrase is immediately readable and clearly dominates the hierarchy.",
+          "The back has a deliberate, distinct statement while preserving the front's visual rhythm.",
+          "Left and right sleeves use coordinated but differentiated copy, making the all-over placement system feel intentional.",
+          "No protected marks, public figures, official-affiliation cues, or unapproved social text are visible.",
+          "Deterministic prepress passed all required PNG presence and provider-dimension checks."
+        ],
+        "revisionBrief": "Apply local legibility and label-safe-area polish without changing the approved direction: reduce or reposition the orange sleeve captions so they do not intersect the large vertical sleeve phrases; move the front subline clear of the dark horizontal rule; and scale the label-inside secondary line to fit fully within the outlined box with consistent inset margins on all sides. Preserve the existing palette, hero phrase, horizon-band composition, and distinct front/back/sleeve content.",
+        "model": "gpt-5.6-sol",
+        "responseId": "resp_0c6dbca7c67ea04e016a5f51716d9081a38d030e90d7f2ddee",
+        "checkedAt": "2026-07-21T11:01:30.108Z"
+      }
+    },
+    "automation": {
+      "pipelineVersion": "owner-trend-preview-v1",
+      "inputMode": "owner-supplied-trend",
+      "inputHash": "40555456ba4a8099f4fed031b892212e68433c299d8c14e3db6d6ac3027ce228",
+      "identityHash": "b943500627cb6a6a749c843320536317392ae54382e6c08b0550cb68bc439a48",
+      "ownerContextProvided": true,
+      "previewOnly": true,
+      "releaseEligible": false,
+      "evidenceCount": 0,
+      "criticScore": 82,
+      "prepress": {
+        "validator": "weekly-prepress-v1",
+        "fileCount": 6,
+        "hashes": {
+          "front": "4ee39f5b8cc492647aeedf637d61b311b384ed5cb787add663cd2419d5f5a132",
+          "back": "8b08ddbfdad0890a569c02a1362b07e8977a88dce8f251685965cc455cde4c80",
+          "left_sleeve": "5b3d8073c69e05c16fd219c39a14eebad910560d99298766a6df7c1c59c0ca11",
+          "right_sleeve": "bea14849efe77fba3412db081d3aabbb3f271b9d2a954bf90abcfc1ea215414e",
+          "label_panel": "be12f46fe2739282b02d80f802ea6a6786c9ecab66e9de20c22cc06c046fbd18",
+          "label_inside": "c0a74962d0f9f523bd19887fa07b1de69266e29eb63875d2d87513780fc22e2e"
+        }
+      }
+    },
+    "approval": {
+      "approvedAt": null,
+      "approvedBy": null,
+      "notes": "Preview only. A separate sourced research run, human approval, provider synchronization, and explicit release authority are required before publication."
+    }
+  },
+  {
+    "id": "preview-9b1e04c183a9-tastemaxxing-cutline-cotton-sweatshirt-preview",
+    "slug": "tastemaxxing-cutline-cotton-sweatshirt-preview",
+    "title": "Tastemaxxing Cutline Cotton Sweatshirt",
+    "workflow": {
+      "status": "generated",
+      "updatedAt": "2026-07-21T11:10:24.611Z"
+    },
+    "category": "Build Week Preview",
+    "description": "A preview-only all-over cotton garment generated from a trend supplied directly by the project owner.",
+    "meme": {
+      "source": "Owner-supplied trend: tastemaxxing",
+      "brief": "Create an original six-panel garment system from the owner-supplied premise. The owner also supplied a creative clarification that is bound into the private input hash. Do not represent this input as X research or reproduce protected names, marks, post language, screenshots, usernames, or likenesses.",
+      "rightsNote": "Owner-supplied premise translated into an original abstract apparel system. No X evidence is claimed; no official logos, company marks, copied post language, screenshots, usernames, likenesses, or protected product layouts may appear."
+    },
+    "signals": {
+      "profile": "owner-supplied-trend",
+      "queries": [],
+      "sources": []
+    },
+    "commerce": {
+      "handle": "tastemaxxing-cutline-cotton-sweatshirt-preview",
+      "unitAmount": 8800,
+      "currency": "USD",
+      "tags": [
+        "build-week-preview",
+        "sweatshirt",
+        "all-over-cotton"
+      ],
+      "variants": [
+        {
+          "id": "tastemaxxing-cutline-cotton-sweatshirt-preview:33963",
+          "sku": "TASTEMAXXING_CUTLINE_COTTON_SWEATSHIRT_PREVIEW_WHITE_2XS",
+          "color": "White",
+          "size": "2XS",
+          "providerVariantId": 33963,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "2XS"
+            }
+          ]
+        },
+        {
+          "id": "tastemaxxing-cutline-cotton-sweatshirt-preview:33964",
+          "sku": "TASTEMAXXING_CUTLINE_COTTON_SWEATSHIRT_PREVIEW_WHITE_XS",
+          "color": "White",
+          "size": "XS",
+          "providerVariantId": 33964,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "XS"
+            }
+          ]
+        },
+        {
+          "id": "tastemaxxing-cutline-cotton-sweatshirt-preview:33965",
+          "sku": "TASTEMAXXING_CUTLINE_COTTON_SWEATSHIRT_PREVIEW_WHITE_S",
+          "color": "White",
+          "size": "S",
+          "providerVariantId": 33965,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "S"
+            }
+          ]
+        },
+        {
+          "id": "tastemaxxing-cutline-cotton-sweatshirt-preview:33966",
+          "sku": "TASTEMAXXING_CUTLINE_COTTON_SWEATSHIRT_PREVIEW_WHITE_M",
+          "color": "White",
+          "size": "M",
+          "providerVariantId": 33966,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "M"
+            }
+          ]
+        },
+        {
+          "id": "tastemaxxing-cutline-cotton-sweatshirt-preview:33967",
+          "sku": "TASTEMAXXING_CUTLINE_COTTON_SWEATSHIRT_PREVIEW_WHITE_L",
+          "color": "White",
+          "size": "L",
+          "providerVariantId": 33967,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "L"
+            }
+          ]
+        },
+        {
+          "id": "tastemaxxing-cutline-cotton-sweatshirt-preview:33968",
+          "sku": "TASTEMAXXING_CUTLINE_COTTON_SWEATSHIRT_PREVIEW_WHITE_XL",
+          "color": "White",
+          "size": "XL",
+          "providerVariantId": 33968,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "XL"
+            }
+          ]
+        },
+        {
+          "id": "tastemaxxing-cutline-cotton-sweatshirt-preview:33969",
+          "sku": "TASTEMAXXING_CUTLINE_COTTON_SWEATSHIRT_PREVIEW_WHITE_2XL",
+          "color": "White",
+          "size": "2XL",
+          "providerVariantId": 33969,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "2XL"
+            }
+          ]
+        },
+        {
+          "id": "tastemaxxing-cutline-cotton-sweatshirt-preview:33970",
+          "sku": "TASTEMAXXING_CUTLINE_COTTON_SWEATSHIRT_PREVIEW_WHITE_3XL",
+          "color": "White",
+          "size": "3XL",
+          "providerVariantId": 33970,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "3XL"
+            }
+          ]
+        },
+        {
+          "id": "tastemaxxing-cutline-cotton-sweatshirt-preview:33971",
+          "sku": "TASTEMAXXING_CUTLINE_COTTON_SWEATSHIRT_PREVIEW_WHITE_4XL",
+          "color": "White",
+          "size": "4XL",
+          "providerVariantId": 33971,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "4XL"
+            }
+          ]
+        },
+        {
+          "id": "tastemaxxing-cutline-cotton-sweatshirt-preview:33972",
+          "sku": "TASTEMAXXING_CUTLINE_COTTON_SWEATSHIRT_PREVIEW_WHITE_5XL",
+          "color": "White",
+          "size": "5XL",
+          "providerVariantId": 33972,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "5XL"
+            }
+          ]
+        },
+        {
+          "id": "tastemaxxing-cutline-cotton-sweatshirt-preview:33973",
+          "sku": "TASTEMAXXING_CUTLINE_COTTON_SWEATSHIRT_PREVIEW_WHITE_6XL",
+          "color": "White",
+          "size": "6XL",
+          "providerVariantId": 33973,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "6XL"
+            }
+          ]
+        }
+      ]
+    },
+    "production": {
+      "provider": "printful",
+      "baseProduct": "printful-aop-cotton-sweatshirt-white",
+      "technique": "All-Over Cotton",
+      "textLayer": "TASTEMAXXING",
+      "placements": [
+        {
+          "area": "front",
+          "file": "assets/print/tastemaxxing-cutline-cotton-sweatshirt-preview-front_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "back",
+          "file": "assets/print/tastemaxxing-cutline-cotton-sweatshirt-preview-back_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "left_sleeve",
+          "file": "assets/print/tastemaxxing-cutline-cotton-sweatshirt-preview-left_sleeve_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "right_sleeve",
+          "file": "assets/print/tastemaxxing-cutline-cotton-sweatshirt-preview-right_sleeve_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "label_panel",
+          "file": "assets/print/tastemaxxing-cutline-cotton-sweatshirt-preview-label_panel_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "label_inside",
+          "file": "assets/print/tastemaxxing-cutline-cotton-sweatshirt-preview-label_inside_dtfabric.png",
+          "width": 375,
+          "height": 150
+        }
+      ]
+    },
+    "providerRefs": {
+      "printful": {
+        "productId": null,
+        "mockupTaskKey": null,
+        "variants": []
+      }
+    },
+    "assets": {
+      "artwork": "assets/artwork/tastemaxxing-cutline-cotton-sweatshirt-preview-concept.png",
+      "printFiles": [
+        {
+          "placement": "front",
+          "path": "assets/print/tastemaxxing-cutline-cotton-sweatshirt-preview-front_dtfabric.png"
+        },
+        {
+          "placement": "back",
+          "path": "assets/print/tastemaxxing-cutline-cotton-sweatshirt-preview-back_dtfabric.png"
+        },
+        {
+          "placement": "left_sleeve",
+          "path": "assets/print/tastemaxxing-cutline-cotton-sweatshirt-preview-left_sleeve_dtfabric.png"
+        },
+        {
+          "placement": "right_sleeve",
+          "path": "assets/print/tastemaxxing-cutline-cotton-sweatshirt-preview-right_sleeve_dtfabric.png"
+        },
+        {
+          "placement": "label_panel",
+          "path": "assets/print/tastemaxxing-cutline-cotton-sweatshirt-preview-label_panel_dtfabric.png"
+        },
+        {
+          "placement": "label_inside",
+          "path": "assets/print/tastemaxxing-cutline-cotton-sweatshirt-preview-label_inside_dtfabric.png"
+        }
+      ],
+      "customerPhotos": [],
+      "mockups": [
+        "assets/mockups/tastemaxxing-cutline-cotton-sweatshirt-preview-catalog.png",
+        "assets/mockups/tastemaxxing-cutline-cotton-sweatshirt-preview-front.png",
+        "assets/mockups/tastemaxxing-cutline-cotton-sweatshirt-preview-back.png",
+        "assets/mockups/tastemaxxing-cutline-cotton-sweatshirt-preview-patterns.png"
+      ]
+    },
+    "prompts": [
+      "Render a panel-aware all-over cotton sweatshirt composition in the sf-skate world. Build a split-field front with left-weighted condensed-zine hero typography and a vertical accent divider on the right. Use a vertical pinstripe field with its centered rectangular aperture, side connectors, and one accent bar. Resolve each sleeve into a large checker field and strong checked cuff band. Use flat high-contrast colors and preserve clear margins around all local typography."
+    ],
+    "workflowNotes": [
+      "Trend premise was supplied directly by the owner; no X posts, authors, or engagement records were fabricated.",
+      "Preview-only candidate: generated for a Vercel Preview deployment, not approved for Printful synchronization, publication, checkout, or production release.",
+      "GPT-5.6 supplies structured art direction and evaluates the actual deterministic garment renders; exact text and production panels are composed locally."
+    ],
+    "artDirector": {
+      "mode": "gpt-5.6-owner-trend-preview",
+      "selectedConceptId": "tastemaxxing-cutline-02",
+      "recipe": {
+        "conceptId": "tastemaxxing-cutline-02",
+        "title": "Tastemaxxing Cutline Cotton Sweatshirt",
+        "rationale": "This direction translates the joke into decisive Bay Area skate-poster energy. A condensed-zine type system occupies a split-field layout, while the pinstripe aperture and checker-cuff sleeves turn editing into a sharp visual cut without using literal tools or interface imagery.",
+        "brandLabel": "WESTERN EDIT DEPARTMENT",
+        "provenanceLine": "OWNER APPROVED TREND PREMISE",
+        "aestheticWorld": "sf-skate",
+        "typeSystem": "condensed-zine",
+        "layout": "split-field",
+        "basePattern": "pinstripe",
+        "palette": {
+          "fabric": "#102A35",
+          "ink": "#F2E7D5",
+          "muted": "#49636B",
+          "accent": "#C8FF3D"
+        },
+        "front": {
+          "primaryText": "TASTEMAXXING",
+          "chestLabel": "LOCAL TASTE STUDY",
+          "mark": "SHIFT",
+          "subline": "CUT THE OBVIOUS"
+        },
+        "back": {
+          "statement": "KEEP THE STRONG PART",
+          "subline": "DROP THE REST"
+        },
+        "sleeves": {
+          "style": "checker-cuff",
+          "motif": "A large two-tone checker field resolves into a strong checked cuff band on each sleeve.",
+          "leftText": "KEEP",
+          "rightText": "CUT",
+          "caption": "HARD CHOICES DAILY"
+        },
+        "label": {
+          "line": "WESTERN EDIT DEPARTMENT ISSUE TWO"
+        },
+        "visualPrompt": "Render a panel-aware all-over cotton sweatshirt composition in the sf-skate world. Build a split-field front with left-weighted condensed-zine hero typography and a vertical accent divider on the right. Use a vertical pinstripe field with its centered rectangular aperture, side connectors, and one accent bar. Resolve each sleeve into a large checker field and strong checked cuff band. Use flat high-contrast colors and preserve clear margins around all local typography.",
+        "rightsRisk": "low",
+        "scores": {
+          "conceptClarity": 9,
+          "garmentCoherence": 9,
+          "memeLegibility": 10,
+          "originality": 9,
+          "productionSafety": 8,
+          "rightsSafety": 10
+        }
+      },
+      "aopSpec": {
+        "garmentFirst": true,
+        "brandLabel": "WESTERN EDIT DEPARTMENT",
+        "provenanceLine": "OWNER APPROVED TREND PREMISE",
+        "aestheticWorld": "sf-skate",
+        "typeSystem": "condensed-zine",
+        "layout": "split-field",
+        "basePattern": "pinstripe",
+        "palette": {
+          "fabric": "#102A35",
+          "ink": "#F2E7D5",
+          "muted": "#49636B",
+          "accent": "#C8FF3D"
+        },
+        "front": {
+          "primaryText": "TASTEMAXXING",
+          "chestLabel": "LOCAL TASTE STUDY",
+          "mark": "SHIFT",
+          "subline": "CUT THE OBVIOUS"
+        },
+        "back": {
+          "statement": "KEEP THE STRONG PART",
+          "subline": "DROP THE REST"
+        },
+        "sleeves": {
+          "style": "checker-cuff",
+          "motif": "A large two-tone checker field resolves into a strong checked cuff band on each sleeve.",
+          "leftText": "KEEP",
+          "rightText": "CUT",
+          "caption": "HARD CHOICES DAILY"
+        },
+        "label": {
+          "line": "WESTERN EDIT DEPARTMENT ISSUE TWO"
+        }
+      },
+      "review": {
+        "accepted": true,
+        "score": 92,
+        "reviewer": "codex-aop-art-director-validator",
+        "checkedAt": "2026-07-21T11:10:06.236Z",
+        "referenceScreenshots": [
+          "merch/reference/art-direction/supplyco-screenshots/01-market-grid.png",
+          "merch/reference/art-direction/supplyco-screenshots/02-polo-cardigan.png",
+          "merch/reference/art-direction/supplyco-screenshots/03-research-deployment-polo.png",
+          "merch/reference/art-direction/supplyco-screenshots/04-black-hoodie-sleeve.png",
+          "merch/reference/art-direction/supplyco-screenshots/05-blue-lab-long-sleeve.png"
+        ],
+        "templateSpec": {
+          "provider": "printful",
+          "baseProduct": "printful-aop-cotton-sweatshirt-white",
+          "technique": "All-Over Cotton",
+          "requiredPlacements": [
+            "front",
+            "back",
+            "left_sleeve",
+            "right_sleeve",
+            "label_panel",
+            "label_inside"
+          ]
+        },
+        "findings": [
+          "Accepted: garment-first AOP cotton plan with panel-specific sleeves, front, back, label panel, and inside label.",
+          "Accepted: production files can be composed from exact selected template dimensions."
+        ]
+      },
+      "visualCritic": {
+        "decision": "revise",
+        "overallScore": 91,
+        "scores": {
+          "garmentCoherence": 9,
+          "legibility": 9,
+          "panelIntent": 10,
+          "originality": 8,
+          "productionReadiness": 9,
+          "rightsSafety": 10
+        },
+        "criticalDefects": [],
+        "strengths": [
+          "Strong whole-garment system: dark pinstripes, cream geometry, and acid-green accents remain consistent across all panels.",
+          "Front, back, and sleeves have deliberate roles: front establishes the hero phrase, back carries the supporting statement, and sleeves create a clear KEEP/CUT opposition.",
+          "Typography is readable at garment scale with strong contrast and adequate separation from visible seams.",
+          "Checker sleeve bands provide an effective visual anchor and distinguish the sleeves without disrupting torso coherence.",
+          "Label artwork is present, legible, consistent with the brand system, and contains no apparent unintended text.",
+          "Deterministic prepress passed all six required PNG placements at exact provider dimensions.",
+          "No protected marks, public figures, copied social content, or misleading official affiliation are visible."
+        ],
+        "revisionBrief": "Regenerate only the catalog mockup so the ribbed collar is visibly attached to the neckline rather than floating above it. Preserve all placement artwork, typography, colors, panel differences, and validated production files unchanged.",
+        "model": "gpt-5.6-sol",
+        "responseId": "resp_044d7f1e7788a5b8016a5f5392f07c819ebbd06c0f1240c120",
+        "checkedAt": "2026-07-21T11:10:24.611Z"
+      }
+    },
+    "automation": {
+      "pipelineVersion": "owner-trend-preview-v1",
+      "inputMode": "owner-supplied-trend",
+      "inputHash": "9b1e04c183a996198c89f579671d14f6fcf7fa9fe57f27e74e10208f632a8959",
+      "identityHash": "bfad3cf4b740d059ec114c00e461cf9462443cce4229be1c03d32ff1a633f7c1",
+      "ownerContextProvided": true,
+      "previewOnly": true,
+      "releaseEligible": false,
+      "evidenceCount": 0,
+      "criticScore": 91,
+      "prepress": {
+        "validator": "weekly-prepress-v1",
+        "fileCount": 6,
+        "hashes": {
+          "front": "b90b46cb77fc8a6cec7798ee9cc0687022b6ce0db411a5a9b34f071e27d359c3",
+          "back": "f36dffe314d95025f1d91d5083e196d95c73d9c7cce9db274bcd6d3d983fae29",
+          "left_sleeve": "6e88bf0767742e50712c2e6eac83a1f828915d63641006546ec8ab54dd67e9c8",
+          "right_sleeve": "3a5bdebf318bd58ff345c26ec76d281bc7c24439ed137167611efbc10a7061d4",
+          "label_panel": "365fe1c01b317cdf0ac90cffc072290ea691e424a19c4786c180a03067f8332a",
+          "label_inside": "18f8cab5137b3e640cb32234a72bde82845449920e405ff868c3b9a44938fd65"
+        }
+      }
+    },
+    "approval": {
+      "approvedAt": null,
+      "approvedBy": null,
+      "notes": "Preview only. A separate sourced research run, human approval, provider synchronization, and explicit release authority are required before publication."
+    }
+  },
+  {
+    "id": "preview-4d5c05f888ec-archive-monument-cotton-sweatshirt-preview",
+    "slug": "archive-monument-cotton-sweatshirt-preview",
+    "title": "Archive Monument Cotton Sweatshirt",
+    "workflow": {
+      "status": "generated",
+      "updatedAt": "2026-07-21T11:11:50.353Z"
+    },
+    "category": "Build Week Preview",
+    "description": "A preview-only all-over cotton garment generated from a trend supplied directly by the project owner.",
+    "meme": {
+      "source": "Owner-supplied trend: davinci-002",
+      "brief": "Create an original six-panel garment system from the owner-supplied premise. The owner also supplied a creative clarification that is bound into the private input hash. Do not represent this input as X research or reproduce protected names, marks, post language, screenshots, usernames, or likenesses.",
+      "rightsNote": "Owner-supplied premise translated into an original abstract apparel system. No X evidence is claimed; no official logos, company marks, copied post language, screenshots, usernames, likenesses, or protected product layouts may appear."
+    },
+    "signals": {
+      "profile": "owner-supplied-trend",
+      "queries": [],
+      "sources": []
+    },
+    "commerce": {
+      "handle": "archive-monument-cotton-sweatshirt-preview",
+      "unitAmount": 8800,
+      "currency": "USD",
+      "tags": [
+        "build-week-preview",
+        "sweatshirt",
+        "all-over-cotton"
+      ],
+      "variants": [
+        {
+          "id": "archive-monument-cotton-sweatshirt-preview:33963",
+          "sku": "ARCHIVE_MONUMENT_COTTON_SWEATSHIRT_PREVIEW_WHITE_2XS",
+          "color": "White",
+          "size": "2XS",
+          "providerVariantId": 33963,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "2XS"
+            }
+          ]
+        },
+        {
+          "id": "archive-monument-cotton-sweatshirt-preview:33964",
+          "sku": "ARCHIVE_MONUMENT_COTTON_SWEATSHIRT_PREVIEW_WHITE_XS",
+          "color": "White",
+          "size": "XS",
+          "providerVariantId": 33964,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "XS"
+            }
+          ]
+        },
+        {
+          "id": "archive-monument-cotton-sweatshirt-preview:33965",
+          "sku": "ARCHIVE_MONUMENT_COTTON_SWEATSHIRT_PREVIEW_WHITE_S",
+          "color": "White",
+          "size": "S",
+          "providerVariantId": 33965,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "S"
+            }
+          ]
+        },
+        {
+          "id": "archive-monument-cotton-sweatshirt-preview:33966",
+          "sku": "ARCHIVE_MONUMENT_COTTON_SWEATSHIRT_PREVIEW_WHITE_M",
+          "color": "White",
+          "size": "M",
+          "providerVariantId": 33966,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "M"
+            }
+          ]
+        },
+        {
+          "id": "archive-monument-cotton-sweatshirt-preview:33967",
+          "sku": "ARCHIVE_MONUMENT_COTTON_SWEATSHIRT_PREVIEW_WHITE_L",
+          "color": "White",
+          "size": "L",
+          "providerVariantId": 33967,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "L"
+            }
+          ]
+        },
+        {
+          "id": "archive-monument-cotton-sweatshirt-preview:33968",
+          "sku": "ARCHIVE_MONUMENT_COTTON_SWEATSHIRT_PREVIEW_WHITE_XL",
+          "color": "White",
+          "size": "XL",
+          "providerVariantId": 33968,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "XL"
+            }
+          ]
+        },
+        {
+          "id": "archive-monument-cotton-sweatshirt-preview:33969",
+          "sku": "ARCHIVE_MONUMENT_COTTON_SWEATSHIRT_PREVIEW_WHITE_2XL",
+          "color": "White",
+          "size": "2XL",
+          "providerVariantId": 33969,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "2XL"
+            }
+          ]
+        },
+        {
+          "id": "archive-monument-cotton-sweatshirt-preview:33970",
+          "sku": "ARCHIVE_MONUMENT_COTTON_SWEATSHIRT_PREVIEW_WHITE_3XL",
+          "color": "White",
+          "size": "3XL",
+          "providerVariantId": 33970,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "3XL"
+            }
+          ]
+        },
+        {
+          "id": "archive-monument-cotton-sweatshirt-preview:33971",
+          "sku": "ARCHIVE_MONUMENT_COTTON_SWEATSHIRT_PREVIEW_WHITE_4XL",
+          "color": "White",
+          "size": "4XL",
+          "providerVariantId": 33971,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "4XL"
+            }
+          ]
+        },
+        {
+          "id": "archive-monument-cotton-sweatshirt-preview:33972",
+          "sku": "ARCHIVE_MONUMENT_COTTON_SWEATSHIRT_PREVIEW_WHITE_5XL",
+          "color": "White",
+          "size": "5XL",
+          "providerVariantId": 33972,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "5XL"
+            }
+          ]
+        },
+        {
+          "id": "archive-monument-cotton-sweatshirt-preview:33973",
+          "sku": "ARCHIVE_MONUMENT_COTTON_SWEATSHIRT_PREVIEW_WHITE_6XL",
+          "color": "White",
+          "size": "6XL",
+          "providerVariantId": 33973,
+          "availableForSale": false,
+          "selectedOptions": [
+            {
+              "name": "Color",
+              "value": "White"
+            },
+            {
+              "name": "Size",
+              "value": "6XL"
+            }
+          ]
+        }
+      ]
+    },
+    "production": {
+      "provider": "printful",
+      "baseProduct": "printful-aop-cotton-sweatshirt-white",
+      "technique": "All-Over Cotton",
+      "textLayer": "DAVINCI-002",
+      "placements": [
+        {
+          "area": "front",
+          "file": "assets/print/archive-monument-cotton-sweatshirt-preview-front_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "back",
+          "file": "assets/print/archive-monument-cotton-sweatshirt-preview-back_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "left_sleeve",
+          "file": "assets/print/archive-monument-cotton-sweatshirt-preview-left_sleeve_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "right_sleeve",
+          "file": "assets/print/archive-monument-cotton-sweatshirt-preview-right_sleeve_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "label_panel",
+          "file": "assets/print/archive-monument-cotton-sweatshirt-preview-label_panel_dtfabric.png",
+          "width": 5037,
+          "height": 6600
+        },
+        {
+          "area": "label_inside",
+          "file": "assets/print/archive-monument-cotton-sweatshirt-preview-label_inside_dtfabric.png",
+          "width": 375,
+          "height": 150
+        }
+      ]
+    },
+    "providerRefs": {
+      "printful": {
+        "productId": null,
+        "mockupTaskKey": null,
+        "variants": []
+      }
+    },
+    "assets": {
+      "artwork": "assets/artwork/archive-monument-cotton-sweatshirt-preview-concept.png",
+      "printFiles": [
+        {
+          "placement": "front",
+          "path": "assets/print/archive-monument-cotton-sweatshirt-preview-front_dtfabric.png"
+        },
+        {
+          "placement": "back",
+          "path": "assets/print/archive-monument-cotton-sweatshirt-preview-back_dtfabric.png"
+        },
+        {
+          "placement": "left_sleeve",
+          "path": "assets/print/archive-monument-cotton-sweatshirt-preview-left_sleeve_dtfabric.png"
+        },
+        {
+          "placement": "right_sleeve",
+          "path": "assets/print/archive-monument-cotton-sweatshirt-preview-right_sleeve_dtfabric.png"
+        },
+        {
+          "placement": "label_panel",
+          "path": "assets/print/archive-monument-cotton-sweatshirt-preview-label_panel_dtfabric.png"
+        },
+        {
+          "placement": "label_inside",
+          "path": "assets/print/archive-monument-cotton-sweatshirt-preview-label_inside_dtfabric.png"
+        }
+      ],
+      "customerPhotos": [],
+      "mockups": [
+        "assets/mockups/archive-monument-cotton-sweatshirt-preview-catalog.png",
+        "assets/mockups/archive-monument-cotton-sweatshirt-preview-front.png",
+        "assets/mockups/archive-monument-cotton-sweatshirt-preview-back.png",
+        "assets/mockups/archive-monument-cotton-sweatshirt-preview-patterns.png"
+      ]
+    },
+    "prompts": [
+      "Create flat panel-aware artwork in the minimal-type world using a serif-editorial type system, center-monument layout, and restrained pinstripe field. Place the locally rendered hero phrase within the centered rectangular aperture with generous safe margins. Include side connectors and one vermilion accent bar. Use ladder sleeves with two rails, nine rungs, and offset accent rungs. Keep the back sparse and preserve clear seam margins across every panel."
+    ],
+    "workflowNotes": [
+      "Trend premise was supplied directly by the owner; no X posts, authors, or engagement records were fabricated.",
+      "Preview-only candidate: generated for a Vercel Preview deployment, not approved for Printful synchronization, publication, checkout, or production release.",
+      "GPT-5.6 supplies structured art direction and evaluates the actual deterministic garment renders; exact text and production panels are composed locally."
+    ],
+    "artDirector": {
+      "mode": "gpt-5.6-owner-trend-preview",
+      "selectedConceptId": "archive-monument-01",
+      "recipe": {
+        "conceptId": "archive-monument-01",
+        "title": "Archive Monument Cotton Sweatshirt",
+        "rationale": "The strongest direction treats the joke as a quiet museum acquisition. The minimal-type world and serif-editorial system place the phrase on a center-monument axis inside the pinstripe pattern's rectangular aperture. Generous margins, sparse ladder sleeves, and one vermilion accent create a collectible archival garment without false institutional branding.",
+        "brandLabel": "INDEX ROOM",
+        "provenanceLine": "OWNER AUTHORIZED CREATIVE PREMISE",
+        "aestheticWorld": "minimal-type",
+        "typeSystem": "serif-editorial",
+        "layout": "center-monument",
+        "basePattern": "pinstripe",
+        "palette": {
+          "fabric": "#D8D9D4",
+          "ink": "#20242A",
+          "muted": "#8A8D8B",
+          "accent": "#D94A35"
+        },
+        "front": {
+          "primaryText": "DAVINCI-002",
+          "chestLabel": "ARCHIVE EDITION",
+          "mark": "ARCHIVE",
+          "subline": "COMPUTE MEMORY"
+        },
+        "back": {
+          "statement": "ARCHIVAL COMPUTE",
+          "subline": "RELEASE MEMORY"
+        },
+        "sleeves": {
+          "style": "ladder",
+          "motif": "TWO VERTICAL RAILS WITH NINE RUNGS AND ONE VERMILION ACCENT RUNG AT A DIFFERENT POSITION ON EACH SLEEVE",
+          "leftText": "SIGNAL",
+          "rightText": "SHIFT",
+          "caption": "ARCHIVE SERIES"
+        },
+        "label": {
+          "line": "CUT AND PRINTED FOR INDEX ROOM"
+        },
+        "visualPrompt": "Create flat panel-aware artwork in the minimal-type world using a serif-editorial type system, center-monument layout, and restrained pinstripe field. Place the locally rendered hero phrase within the centered rectangular aperture with generous safe margins. Include side connectors and one vermilion accent bar. Use ladder sleeves with two rails, nine rungs, and offset accent rungs. Keep the back sparse and preserve clear seam margins across every panel.",
+        "rightsRisk": "low",
+        "scores": {
+          "conceptClarity": 10,
+          "garmentCoherence": 10,
+          "memeLegibility": 9,
+          "originality": 8,
+          "productionSafety": 9,
+          "rightsSafety": 10
+        }
+      },
+      "aopSpec": {
+        "garmentFirst": true,
+        "brandLabel": "INDEX ROOM",
+        "provenanceLine": "OWNER AUTHORIZED CREATIVE PREMISE",
+        "aestheticWorld": "minimal-type",
+        "typeSystem": "serif-editorial",
+        "layout": "center-monument",
+        "basePattern": "pinstripe",
+        "palette": {
+          "fabric": "#D8D9D4",
+          "ink": "#20242A",
+          "muted": "#8A8D8B",
+          "accent": "#D94A35"
+        },
+        "front": {
+          "primaryText": "DAVINCI-002",
+          "chestLabel": "ARCHIVE EDITION",
+          "mark": "ARCHIVE",
+          "subline": "COMPUTE MEMORY"
+        },
+        "back": {
+          "statement": "ARCHIVAL COMPUTE",
+          "subline": "RELEASE MEMORY"
+        },
+        "sleeves": {
+          "style": "ladder",
+          "motif": "TWO VERTICAL RAILS WITH NINE RUNGS AND ONE VERMILION ACCENT RUNG AT A DIFFERENT POSITION ON EACH SLEEVE",
+          "leftText": "SIGNAL",
+          "rightText": "SHIFT",
+          "caption": "ARCHIVE SERIES"
+        },
+        "label": {
+          "line": "CUT AND PRINTED FOR INDEX ROOM"
+        }
+      },
+      "review": {
+        "accepted": true,
+        "score": 92,
+        "reviewer": "codex-aop-art-director-validator",
+        "checkedAt": "2026-07-21T11:11:30.769Z",
+        "referenceScreenshots": [
+          "merch/reference/art-direction/supplyco-screenshots/01-market-grid.png",
+          "merch/reference/art-direction/supplyco-screenshots/02-polo-cardigan.png",
+          "merch/reference/art-direction/supplyco-screenshots/03-research-deployment-polo.png",
+          "merch/reference/art-direction/supplyco-screenshots/04-black-hoodie-sleeve.png",
+          "merch/reference/art-direction/supplyco-screenshots/05-blue-lab-long-sleeve.png"
+        ],
+        "templateSpec": {
+          "provider": "printful",
+          "baseProduct": "printful-aop-cotton-sweatshirt-white",
+          "technique": "All-Over Cotton",
+          "requiredPlacements": [
+            "front",
+            "back",
+            "left_sleeve",
+            "right_sleeve",
+            "label_panel",
+            "label_inside"
+          ]
+        },
+        "findings": [
+          "Accepted: garment-first AOP cotton plan with panel-specific sleeves, front, back, label panel, and inside label.",
+          "Accepted: production files can be composed from exact selected template dimensions."
+        ]
+      },
+      "visualCritic": {
+        "decision": "revise",
+        "overallScore": 88,
+        "scores": {
+          "garmentCoherence": 9,
+          "legibility": 8,
+          "panelIntent": 9,
+          "originality": 8,
+          "productionReadiness": 8,
+          "rightsSafety": 10
+        },
+        "criticalDefects": [],
+        "strengths": [
+          "Front, back, and sleeves form a coherent archival system through consistent pinstripes, typography, ladder geometry, and restrained vermilion accents.",
+          "The front establishes a clear hierarchy around DAVINCI-002, while the back is deliberately differentiated with ARCHIVAL COMPUTE and RELEASE MEMORY.",
+          "Sleeves are intentionally asymmetric, with distinct SIGNAL and SHIFT text and offset accent rungs.",
+          "Main garment text has strong contrast and remains readable in the mockups.",
+          "No protected mark, public figure, false institutional affiliation, or unintended text is visible.",
+          "Deterministic prepress passed for all six required PNG placements at exact provider dimensions."
+        ],
+        "revisionBrief": "Preserve the approved garment direction. On the label_panel artwork, reduce or reflow “CUT AND PRINTED FOR INDEX ROOM” so the complete line sits inside the rectangular border with at least an 8% horizontal inset and no border intersection. On label_inside, slightly reduce the same line to add clear left/right padding while retaining all existing wording and hierarchy. Re-export both placements at their currently validated provider dimensions.",
+        "model": "gpt-5.6-sol",
+        "responseId": "resp_0142f9fed041ca12016a5f53e720a881a29b8d6c172deccdf4",
+        "checkedAt": "2026-07-21T11:11:50.353Z"
+      }
+    },
+    "automation": {
+      "pipelineVersion": "owner-trend-preview-v1",
+      "inputMode": "owner-supplied-trend",
+      "inputHash": "4d5c05f888ec8f23229ecb0f9ab54be2189896d5f31091ea89b148f20d431e45",
+      "identityHash": "467b303dffc96b5b3e3d8c5fb3ec19f363a39841f4f6bcce64413c24486f1da4",
+      "ownerContextProvided": true,
+      "previewOnly": true,
+      "releaseEligible": false,
+      "evidenceCount": 0,
+      "criticScore": 88,
+      "prepress": {
+        "validator": "weekly-prepress-v1",
+        "fileCount": 6,
+        "hashes": {
+          "front": "eb0158d0892f0017a84626c880413b352540ae801c7331e475a657aa744bb1e9",
+          "back": "a675361ade6ec5f6d713e78e76febcbe96ae19832abac039e52de2a8bf8ea0d8",
+          "left_sleeve": "daf80f20ec3985efd2d7c8051a6b109d8c8b0cd38d13dace8579d07467d058d0",
+          "right_sleeve": "53923ce455172589128a49f4856fffe9901d10df05dc92208db82e76c17b884e",
+          "label_panel": "11cb9bda329d9b5094be7779392ae2ecab3db5a5065d46f74ba25470a52c9fb7",
+          "label_inside": "da1ce74dc7a995deed1b53e79629f93c44f3677e11757996177073e33ea33306"
+        }
+      }
+    },
+    "approval": {
+      "approvedAt": null,
+      "approvedBy": null,
+      "notes": "Preview only. A separate sourced research run, human approval, provider synchronization, and explicit release authority are required before publication."
     }
   }
 ]

@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["products"],
+  "properties": {
+    "$schema": {"type": "string"},
+    "products": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["provider", "alias", "title", "catalogProductId", "techniques", "variants", "placements"],
+        "properties": {
+          "provider": {"enum": ["printful"]},
+          "alias": {"type": "string", "minLength": 1},
+          "title": {"type": "string", "minLength": 1},
+          "catalogProductId": {"type": "integer", "minimum": 1},
+          "techniques": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+          "variants": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["color", "size", "providerVariantId"],
+              "properties": {
+                "color": {"type": "string"},
+                "size": {"type": "string"},
+                "providerVariantId": {"type": "integer", "minimum": 1}
+              }
+            }
+          },
+          "placements": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["area", "providerPlacementType"],
+              "properties": {
+                "area": {"type": "string", "minLength": 1},
+                "providerPlacementType": {"type": "string", "minLength": 1},
+                "techniques": {"type": "array", "items": {"type": "string"}}
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

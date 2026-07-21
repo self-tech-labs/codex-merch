@@ -3,25 +3,35 @@ import {Link, useLoaderData} from 'react-router';
 import type {Route} from './+types/products.$handle';
 import {useCart} from '~/lib/cart';
 import {
+  canInitiateStorefrontCheckout,
+  useStorefrontMode,
+} from '~/lib/storefront-mode';
+import {
   assetUrl,
   defaultProductVariant,
   formatPrice,
   getCustomerMockups,
   getMerchProduct,
   getProductVariants,
+  isPurchasableProduct,
+  isPurchasableVariant,
   variantLabel,
   type CommerceVariant,
   type MerchProduct,
 } from '~/lib/merch';
 
 export const meta: Route.MetaFunction = ({data}) => {
-  return [
+  const metadata = [
     {title: `Codex Meme Merch | ${data?.product.title ?? 'Product'}`},
     {
       name: 'description',
       content: data?.product.description ?? 'Codex meme merch product.',
     },
   ];
+  if (data?.product && !isPurchasableProduct(data.product)) {
+    metadata.push({name: 'robots', content: 'noindex,nofollow'});
+  }
+  return metadata;
 };
 
 export async function loader({params}: Route.LoaderArgs) {
@@ -49,6 +59,11 @@ export default function Product() {
   const mockups = getCustomerMockups(product);
   const currentMockup = mockups[activeMockup] || mockups[0];
   const {addLine} = useCart();
+  const storefrontMode = useStorefrontMode();
+  const purchasable = canInitiateStorefrontCheckout(
+    storefrontMode,
+    isPurchasableProduct(product),
+  );
 
   return (
     <div className="product-page">
@@ -107,6 +122,13 @@ export default function Product() {
           />
 
           <div className="product-copy">
+            {!purchasable ? (
+              <p className="preview-badge">
+                {storefrontMode === 'preview'
+                  ? 'Prototype preview — checkout disabled'
+                  : 'Preview — not yet available'}
+              </p>
+            ) : null}
             <p>{product.description}</p>
             <dl>
               <div>
@@ -121,6 +143,7 @@ export default function Product() {
           </div>
 
           <SizeRow
+            disabled={!purchasable}
             onSelect={setSelectedVariantId}
             selectedVariantId={selectedVariant?.id || ''}
             variants={variants}
@@ -129,7 +152,7 @@ export default function Product() {
           <div className="product-actions">
             <button
               className="add-to-cart-button"
-              disabled={!selectedVariant}
+              disabled={!selectedVariant || !purchasable || !isPurchasableVariant(product, selectedVariant)}
               type="button"
               onClick={() => {
                 if (!selectedVariant) return;
@@ -140,7 +163,11 @@ export default function Product() {
                 });
               }}
             >
-              Add to cart
+              {purchasable
+                ? 'Add to cart'
+                : storefrontMode === 'preview'
+                  ? 'Checkout disabled'
+                  : 'Preview only'}
             </button>
             <Link className="buy-link" to="/cart">
               View cart
@@ -188,10 +215,12 @@ function MockupStrip({
 }
 
 function SizeRow({
+  disabled,
   onSelect,
   selectedVariantId,
   variants,
 }: {
+  disabled: boolean;
   onSelect: (variantId: string) => void;
   selectedVariantId: string;
   variants: CommerceVariant[];
@@ -217,6 +246,7 @@ function SizeRow({
             aria-label={`Choose size ${label}`}
             aria-pressed={isSelected}
             className={isSelected ? 'selected' : ''}
+            disabled={disabled || !variant.availableForSale}
             key={variant.id}
             onClick={() => onSelect(variant.id)}
             type="button"

@@ -1,0 +1,24 @@
+{
+  "fixtureVersion": 1,
+  "synthetic": true,
+  "scenario": "weekly-pipeline-no-trend",
+  "trend": {
+    "status": "no_trend",
+    "trendName": "",
+    "summary": "The synthetic input contains unrelated engineering updates without a recurring joke, phrase pattern, or shared visual metaphor.",
+    "memeMechanic": "",
+    "teamConnection": "",
+    "evidencePostIds": [],
+    "visualMetaphors": [],
+    "originalPhrases": [],
+    "fingerprintTerms": [],
+    "rightsRisk": "low",
+    "modelScores": {
+      "codexSpecificity": 0,
+      "merchability": 0,
+      "novelty": 0,
+      "rightsSafety": 10
+    },
+    "reason": "No idea recurs across at least four posts from three authors, so the safe weekly outcome is to create no merch."
+  }
+}

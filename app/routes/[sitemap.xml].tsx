@@ -1,12 +1,14 @@
 import type {Route} from './+types/[sitemap.xml]';
-import {getMerchProducts} from '~/lib/merch';
+import {getMerchProducts, isPurchasableProduct} from '~/lib/merch';
 
 export function loader({request}: Route.LoaderArgs) {
   const origin = new URL(request.url).origin;
   const urls = [
     '/',
-    '/cart',
-    ...getMerchProducts().map((product) => `/products/${product.commerce.handle}`),
+    '/how-it-works',
+    ...getMerchProducts()
+      .filter(isPurchasableProduct)
+      .map((product) => `/products/${product.commerce.handle}`),
   ];
 
   const body = `<?xml version="1.0" encoding="UTF-8"?>

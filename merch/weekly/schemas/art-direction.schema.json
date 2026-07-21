@@ -1,0 +1,188 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["candidates"],
+  "properties": {
+    "candidates": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "conceptId",
+          "title",
+          "rationale",
+          "brandLabel",
+          "provenanceLine",
+          "aestheticWorld",
+          "typeSystem",
+          "layout",
+          "basePattern",
+          "palette",
+          "front",
+          "back",
+          "sleeves",
+          "label",
+          "visualPrompt",
+          "rightsRisk",
+          "scores"
+        ],
+        "properties": {
+          "conceptId": {"type": "string", "pattern": "^[a-z0-9-]+$", "maxLength": 48},
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 48,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9 .,/&+:#()'!?-]*$"
+          },
+          "rationale": {"type": "string", "minLength": 1, "maxLength": 500},
+          "brandLabel": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 28,
+            "pattern": "^[A-Z0-9][A-Z0-9 .,/&+:#()'!?-]*$"
+          },
+          "provenanceLine": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 48,
+            "pattern": "^[A-Z0-9][A-Z0-9 .,/&+:#()'!?-]*$"
+          },
+          "aestheticWorld": {
+            "type": "string",
+            "enum": [
+              "sf-skate",
+              "coastal-surf",
+              "zine-punk",
+              "sports-club",
+              "lab-utility",
+              "minimal-type"
+            ]
+          },
+          "typeSystem": {
+            "type": "string",
+            "enum": [
+              "grotesk-poster",
+              "serif-editorial",
+              "mono-utility",
+              "rounded-surf",
+              "varsity-block",
+              "condensed-zine"
+            ]
+          },
+          "layout": {
+            "type": "string",
+            "enum": [
+              "offset-ledger",
+              "center-monument",
+              "split-field",
+              "giant-type",
+              "badge-stack",
+              "horizon-band",
+              "diagonal-poster"
+            ]
+          },
+          "basePattern": {
+            "type": "string",
+            "enum": [
+              "microgrid",
+              "pinstripe",
+              "status-isobar-map",
+              "queue-radar",
+              "checkerboard",
+              "sun-stripes",
+              "halftone-noise",
+              "wavy-bands"
+            ]
+          },
+          "palette": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["fabric", "ink", "muted", "accent"],
+            "properties": {
+              "fabric": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+              "ink": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+              "muted": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+              "accent": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"}
+            }
+          },
+          "front": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["primaryText", "chestLabel", "mark", "subline"],
+            "properties": {
+              "primaryText": {"type": "string", "minLength": 1, "maxLength": 36, "pattern": "^[A-Z0-9][A-Z0-9 .,/&+:#()'!?-]*$"},
+              "chestLabel": {"type": "string", "minLength": 1, "maxLength": 24, "pattern": "^[A-Z0-9][A-Z0-9 .,/&+:#()'!?-]*$"},
+              "mark": {"type": "string", "minLength": 1, "maxLength": 12, "pattern": "^[A-Z0-9][A-Z0-9 .,/&+:#()'!?-]*$"},
+              "subline": {"type": "string", "minLength": 1, "maxLength": 52, "pattern": "^[A-Z0-9][A-Z0-9 .,/&+:#()'!?-]*$"}
+            }
+          },
+          "back": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["statement", "subline"],
+            "properties": {
+              "statement": {"type": "string", "minLength": 1, "maxLength": 48, "pattern": "^[A-Z0-9][A-Z0-9 .,/&+:#()'!?-]*$"},
+              "subline": {"type": "string", "minLength": 1, "maxLength": 52, "pattern": "^[A-Z0-9][A-Z0-9 .,/&+:#()'!?-]*$"}
+            }
+          },
+          "sleeves": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["style", "motif", "leftText", "rightText", "caption"],
+            "properties": {
+              "style": {
+                "type": "string",
+                "enum": [
+                  "wave",
+                  "glyph-stack",
+                  "radar-rings",
+                  "ladder",
+                  "racing-stripe",
+                  "checker-cuff",
+                  "sun-wave",
+                  "badge-repeat"
+                ]
+              },
+              "motif": {"type": "string", "minLength": 1, "maxLength": 160},
+              "leftText": {"type": "string", "minLength": 1, "maxLength": 24, "pattern": "^[A-Z0-9][A-Z0-9 .,/&+:#()'!?-]*$"},
+              "rightText": {"type": "string", "minLength": 1, "maxLength": 24, "pattern": "^[A-Z0-9][A-Z0-9 .,/&+:#()'!?-]*$"},
+              "caption": {"type": "string", "minLength": 1, "maxLength": 36, "pattern": "^[A-Z0-9][A-Z0-9 .,/&+:#()'!?-]*$"}
+            }
+          },
+          "label": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["line"],
+            "properties": {"line": {"type": "string", "minLength": 1, "maxLength": 40, "pattern": "^[A-Z0-9][A-Z0-9 .,/&+:#()'!?-]*$"}}
+          },
+          "visualPrompt": {"type": "string", "minLength": 1, "maxLength": 800},
+          "rightsRisk": {"type": "string", "enum": ["low", "medium", "high"]},
+          "scores": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "conceptClarity",
+              "garmentCoherence",
+              "memeLegibility",
+              "originality",
+              "productionSafety",
+              "rightsSafety"
+            ],
+            "properties": {
+              "conceptClarity": {"type": "integer", "minimum": 0, "maximum": 10},
+              "garmentCoherence": {"type": "integer", "minimum": 0, "maximum": 10},
+              "memeLegibility": {"type": "integer", "minimum": 0, "maximum": 10},
+              "originality": {"type": "integer", "minimum": 0, "maximum": 10},
+              "productionSafety": {"type": "integer", "minimum": 0, "maximum": 10},
+              "rightsSafety": {"type": "integer", "minimum": 0, "maximum": 10}
+            }
+          }
+        }
+      }
+    }
+  }
+}

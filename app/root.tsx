@@ -5,14 +5,17 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
   useRouteError,
+  useRouteLoaderData,
 } from 'react-router';
 import type {Route} from './+types/root';
 import favicon from '~/assets/favicon.svg';
 import resetStyles from '~/styles/reset.css?url';
 import appStyles from '~/styles/app.css?url';
-import tailwindCss from './styles/tailwind.css?url';
 import {PageLayout} from './components/PageLayout';
+import {getEnv} from '~/lib/env.server';
+import {resolveStorefrontMode} from '~/lib/storefront-mode';
 
 export const meta: Route.MetaFunction = () => [
   {title: 'Codex Meme Merch'},
@@ -21,6 +24,13 @@ export const meta: Route.MetaFunction = () => [
     content: 'Codex-native merch drops fulfilled through production providers.',
   },
 ];
+
+export function loader({context, request}: Route.LoaderArgs) {
+  return {
+    requestId: request.headers.get('x-request-id'),
+    storefrontMode: resolveStorefrontMode(getEnv(context).STOREFRONT_MODE),
+  };
+}
 
 export function links() {
   return [{rel: 'icon', type: 'image/svg+xml', href: favicon}];
@@ -32,11 +42,10 @@ export function Layout({children}: {children?: React.ReactNode}) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
-        <link rel="stylesheet" href={tailwindCss}></link>
         <link rel="stylesheet" href={resetStyles}></link>
         <link rel="stylesheet" href={appStyles}></link>
         <Meta />
-        <Links />
+        <Links nonce="" />
       </head>
       <body>
         {children}
@@ -48,8 +57,10 @@ export function Layout({children}: {children?: React.ReactNode}) {
 }
 
 export default function App() {
+  const {storefrontMode} = useLoaderData<typeof loader>();
+
   return (
-    <PageLayout>
+    <PageLayout storefrontMode={storefrontMode}>
       <Outlet />
     </PageLayout>
   );
@@ -57,13 +68,15 @@ export default function App() {
 
 export function ErrorBoundary() {
   const error = useRouteError();
-  let errorMessage = 'Unknown error';
+  const rootData = useRouteLoaderData<typeof loader>('root');
+  let errorMessage = 'Something went wrong. Please try again.';
   let errorStatus = 500;
 
   if (isRouteErrorResponse(error)) {
     errorMessage = error?.data?.message ?? error.data;
     errorStatus = error.status;
-  } else if (error instanceof Error) {
+    if (error.status >= 500) errorMessage = 'Something went wrong. Please try again.';
+  } else if (import.meta.env.DEV && error instanceof Error) {
     errorMessage = error.message;
   }
 
@@ -71,11 +84,8 @@ export function ErrorBoundary() {
     <div className="route-error">
       <h1>Oops</h1>
       <h2>{errorStatus}</h2>
-      {errorMessage && (
-        <fieldset>
-          <pre>{errorMessage}</pre>
-        </fieldset>
-      )}
+      <p>{errorMessage}</p>
+      {rootData?.requestId ? <p>Reference: {rootData.requestId}</p> : null}
     </div>
   );
 }

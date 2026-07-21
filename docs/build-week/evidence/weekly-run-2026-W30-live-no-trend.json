@@ -1,0 +1,557 @@
+{
+  "schemaVersion": "weekly-evidence-v1",
+  "identity": {
+    "runId": "x-list--2067819170989854863--2026-W30--weekly-merch-v1",
+    "runKey": "x-list:2067819170989854863:2026-W30:weekly-merch-v1",
+    "isoWeek": "2026-W30",
+    "listId": "2067819170989854863",
+    "pipelineVersion": "weekly-merch-v1",
+    "timeZone": "Europe/Zurich"
+  },
+  "state": {
+    "status": "no_trend",
+    "startedAt": "2026-07-20T20:41:11.289Z",
+    "completedAt": "2026-07-20T20:41:22.399Z",
+    "failedAt": null,
+    "publishedAt": null,
+    "failureRecorded": false,
+    "failureFingerprint": null
+  },
+  "provenance": {
+    "evidenceClass": "verified-live-x",
+    "inputMode": "live-x",
+    "isFixture": false,
+    "isVerifiedLiveX": true,
+    "modelMode": "live-api",
+    "configuredModel": "gpt-5.6",
+    "dryRun": false,
+    "releasableProvenance": true
+  },
+  "definitions": [
+    {
+      "kind": "structured-output-schema",
+      "name": "merch/weekly/schemas/art-direction.schema.json",
+      "sha256": "41e63edc5699f27a46449bfa713f9abdb33a7e2baa7a8a84e9ce57b2c9e35780"
+    },
+    {
+      "kind": "structured-output-schema",
+      "name": "merch/weekly/schemas/trend.schema.json",
+      "sha256": "050419eb099780c4c6c9a2b1b9db361991fc38b5bf4c4078b4ed2cba5c039e8b"
+    },
+    {
+      "kind": "structured-output-schema",
+      "name": "merch/weekly/schemas/visual-critic.schema.json",
+      "sha256": "023ec6446c9139fc7c017f4f40d2aa0f79bd9dfb13f2c8fc6dbb482e1083a067"
+    },
+    {
+      "kind": "system-prompt",
+      "name": "scripts/prompts/weekly-art-director.md",
+      "sha256": "e80e062daf68dc6bfee2f7a7212a9c162358396a50e65a15ca2dceb306b0a47f"
+    },
+    {
+      "kind": "system-prompt",
+      "name": "scripts/prompts/weekly-trend.md",
+      "sha256": "89cd109587ea9754b1d9aa7de4a84d7ffcc9ada0405124053268386d342eef45"
+    },
+    {
+      "kind": "system-prompt",
+      "name": "scripts/prompts/weekly-visual-critic.md",
+      "sha256": "9840fd2ea4232104f2a992d868183150d891b4d2d1f284e12369948b05df15ba"
+    }
+  ],
+  "signals": {
+    "declaredMode": "live-x",
+    "snapshotMode": "live-x",
+    "requestedCount": 30,
+    "recordedCount": 30,
+    "attestedCount": 30,
+    "listId": "2067819170989854863",
+    "inputHash": {
+      "run": "08a6f80e3da4be3ceef8c32b2fef5003624038f79cee605ca0a3b6f5a5697439",
+      "snapshot": "08a6f80e3da4be3ceef8c32b2fef5003624038f79cee605ca0a3b6f5a5697439",
+      "recomputedPrivately": "08a6f80e3da4be3ceef8c32b2fef5003624038f79cee605ca0a3b6f5a5697439",
+      "matches": true
+    },
+    "oldestCreatedAt": "2026-07-20T18:05:35.000Z",
+    "newestCreatedAt": "2026-07-20T20:27:27.000Z",
+    "distinctAuthorCount": 13,
+    "sources": [
+      {
+        "provider": "x",
+        "kind": null,
+        "listId": "2067819170989854863"
+      }
+    ],
+    "allSourcesMatchDeclaredList": true,
+    "records": [
+      {
+        "sequence": 1,
+        "id": "2079302188191600878",
+        "createdAt": "2026-07-20T20:27:27.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 0,
+          "reposts": 68,
+          "likes": 0,
+          "quotes": 0
+        }
+      },
+      {
+        "sequence": 2,
+        "id": "2079299092232945947",
+        "createdAt": "2026-07-20T20:15:09.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 0,
+          "reposts": 0,
+          "likes": 1,
+          "quotes": 0
+        }
+      },
+      {
+        "sequence": 3,
+        "id": "2079297059820114345",
+        "createdAt": "2026-07-20T20:07:05.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 1,
+          "reposts": 0,
+          "likes": 1,
+          "quotes": 0
+        }
+      },
+      {
+        "sequence": 4,
+        "id": "2079291224633094150",
+        "createdAt": "2026-07-20T19:43:53.000Z",
+        "lang": "zxx",
+        "metrics": {
+          "replies": 0,
+          "reposts": 0,
+          "likes": 2,
+          "quotes": 0
+        }
+      },
+      {
+        "sequence": 5,
+        "id": "2079291192500514971",
+        "createdAt": "2026-07-20T19:43:46.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 0,
+          "reposts": 0,
+          "likes": 2,
+          "quotes": 0
+        }
+      },
+      {
+        "sequence": 6,
+        "id": "2079291191271608796",
+        "createdAt": "2026-07-20T19:43:46.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 1,
+          "reposts": 0,
+          "likes": 2,
+          "quotes": 0
+        }
+      },
+      {
+        "sequence": 7,
+        "id": "2079291190130720896",
+        "createdAt": "2026-07-20T19:43:45.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 1,
+          "reposts": 0,
+          "likes": 4,
+          "quotes": 0
+        }
+      },
+      {
+        "sequence": 8,
+        "id": "2079291189077876775",
+        "createdAt": "2026-07-20T19:43:45.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 1,
+          "reposts": 0,
+          "likes": 2,
+          "quotes": 0
+        }
+      },
+      {
+        "sequence": 9,
+        "id": "2079291186481614851",
+        "createdAt": "2026-07-20T19:43:44.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 5,
+          "reposts": 2,
+          "likes": 56,
+          "quotes": 0
+        }
+      },
+      {
+        "sequence": 10,
+        "id": "2079289784623624591",
+        "createdAt": "2026-07-20T19:38:10.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 2,
+          "reposts": 0,
+          "likes": 14,
+          "quotes": 0
+        }
+      },
+      {
+        "sequence": 11,
+        "id": "2079287631989424221",
+        "createdAt": "2026-07-20T19:29:37.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 1,
+          "reposts": 0,
+          "likes": 2,
+          "quotes": 0
+        }
+      },
+      {
+        "sequence": 12,
+        "id": "2079287183731724313",
+        "createdAt": "2026-07-20T19:27:50.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 2,
+          "reposts": 0,
+          "likes": 1,
+          "quotes": 0
+        }
+      },
+      {
+        "sequence": 13,
+        "id": "2079285652630446081",
+        "createdAt": "2026-07-20T19:21:45.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 0,
+          "reposts": 0,
+          "likes": 0,
+          "quotes": 0
+        }
+      },
+      {
+        "sequence": 14,
+        "id": "2079285588885377295",
+        "createdAt": "2026-07-20T19:21:30.000Z",
+        "lang": "und",
+        "metrics": {
+          "replies": 0,
+          "reposts": 0,
+          "likes": 1,
+          "quotes": 0
+        }
+      },
+      {
+        "sequence": 15,
+        "id": "2079285503908880805",
+        "createdAt": "2026-07-20T19:21:10.000Z",
+        "lang": "zxx",
+        "metrics": {
+          "replies": 0,
+          "reposts": 0,
+          "likes": 0,
+          "quotes": 0
+        }
+      },
+      {
+        "sequence": 16,
+        "id": "2079285502650572915",
+        "createdAt": "2026-07-20T19:21:09.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 1,
+          "reposts": 0,
+          "likes": 6,
+          "quotes": 0
+        }
+      },
+      {
+        "sequence": 17,
+        "id": "2079285390234571025",
+        "createdAt": "2026-07-20T19:20:42.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 2,
+          "reposts": 1,
+          "likes": 12,
+          "quotes": 0
+        }
+      },
+      {
+        "sequence": 18,
+        "id": "2079285350346760528",
+        "createdAt": "2026-07-20T19:20:33.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 28,
+          "reposts": 3,
+          "likes": 162,
+          "quotes": 0
+        }
+      },
+      {
+        "sequence": 19,
+        "id": "2079281804268187997",
+        "createdAt": "2026-07-20T19:06:27.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 8,
+          "reposts": 0,
+          "likes": 31,
+          "quotes": 0
+        }
+      },
+      {
+        "sequence": 20,
+        "id": "2079277885018226780",
+        "createdAt": "2026-07-20T18:50:53.000Z",
+        "lang": "zxx",
+        "metrics": {
+          "replies": 0,
+          "reposts": 0,
+          "likes": 3,
+          "quotes": 0
+        }
+      },
+      {
+        "sequence": 21,
+        "id": "2079277855813337194",
+        "createdAt": "2026-07-20T18:50:46.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 5,
+          "reposts": 0,
+          "likes": 23,
+          "quotes": 0
+        }
+      },
+      {
+        "sequence": 22,
+        "id": "2079277348445458729",
+        "createdAt": "2026-07-20T18:48:45.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 0,
+          "reposts": 12,
+          "likes": 0,
+          "quotes": 0
+        }
+      },
+      {
+        "sequence": 23,
+        "id": "2079276289241075868",
+        "createdAt": "2026-07-20T18:44:33.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 10,
+          "reposts": 9,
+          "likes": 82,
+          "quotes": 0
+        }
+      },
+      {
+        "sequence": 24,
+        "id": "2079275153016451415",
+        "createdAt": "2026-07-20T18:40:02.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 23,
+          "reposts": 3,
+          "likes": 128,
+          "quotes": 1
+        }
+      },
+      {
+        "sequence": 25,
+        "id": "2079273632308609452",
+        "createdAt": "2026-07-20T18:33:59.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 0,
+          "reposts": 0,
+          "likes": 1,
+          "quotes": 0
+        }
+      },
+      {
+        "sequence": 26,
+        "id": "2079272281474322455",
+        "createdAt": "2026-07-20T18:28:37.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 2,
+          "reposts": 1,
+          "likes": 17,
+          "quotes": 1
+        }
+      },
+      {
+        "sequence": 27,
+        "id": "2079272077803065556",
+        "createdAt": "2026-07-20T18:27:49.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 4,
+          "reposts": 0,
+          "likes": 82,
+          "quotes": 0
+        }
+      },
+      {
+        "sequence": 28,
+        "id": "2079267424030044492",
+        "createdAt": "2026-07-20T18:09:19.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 1,
+          "reposts": 1,
+          "likes": 9,
+          "quotes": 0
+        }
+      },
+      {
+        "sequence": 29,
+        "id": "2079266485655249092",
+        "createdAt": "2026-07-20T18:05:35.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 1,
+          "reposts": 1,
+          "likes": 11,
+          "quotes": 0
+        }
+      },
+      {
+        "sequence": 30,
+        "id": "2079266484044648949",
+        "createdAt": "2026-07-20T18:05:35.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 17,
+          "reposts": 13,
+          "likes": 149,
+          "quotes": 3
+        }
+      }
+    ],
+    "recordAttestationHash": "672e0b0d223a01e7a432dead7da736586a898b8e3828a0f2f4bb8c89c5cfc7e0",
+    "sourceAttestationHash": "9c606af03f2a63cd277f62ffdc466cc87bd58e6a7f5c106444a891017bf62d28",
+    "privateFieldsOmitted": [
+      "post body",
+      "source username",
+      "source author identifier",
+      "source link"
+    ]
+  },
+  "modelCalls": [
+    {
+      "stage": "trend-analysis",
+      "responseId": "resp_0b4bb2173d808783016a5e87e8a7048191ae5985756b764cf5",
+      "model": "gpt-5.6-sol",
+      "usage": {
+        "inputTokens": 3211,
+        "outputTokens": 351,
+        "totalTokens": 3562,
+        "cachedInputTokens": 0,
+        "cacheWriteInputTokens": 3208,
+        "reasoningOutputTokens": 182
+      },
+      "outputHash": {
+        "recorded": "d4c45bae5dd21808887df5488313cb62bca60453799f8caa0e1c4cb38858dac4",
+        "computed": "d4c45bae5dd21808887df5488313cb62bca60453799f8caa0e1c4cb38858dac4",
+        "matches": true
+      },
+      "fixtureResponse": false,
+      "verifiedGpt56Response": true
+    }
+  ],
+  "trend": {
+    "modelStatus": "no_trend",
+    "decisionStatus": "no_trend",
+    "publishEligible": false,
+    "score": 15,
+    "minimumScore": 72,
+    "noveltySimilarity": 0,
+    "rightsRisk": "low",
+    "evidencePostIds": [],
+    "evidenceAuthorCount": 0,
+    "fingerprintTerms": [],
+    "checks": {
+      "modelFoundTrend": false,
+      "enoughInputPosts": true,
+      "enoughEvidencePosts": false,
+      "enoughAuthors": false,
+      "lowRightsRisk": true,
+      "safeOriginalLanguage": false,
+      "meaningfulFingerprint": false,
+      "novelEnough": true,
+      "scoreReached": false
+    },
+    "components": {
+      "recurrence": 0,
+      "crossAuthor": 0,
+      "codexSpecificity": 3,
+      "merchability": 2,
+      "novelty": 1,
+      "rightsSafety": 9
+    },
+    "modelScores": {
+      "codexSpecificity": 3,
+      "merchability": 2,
+      "novelty": 2,
+      "rightsSafety": 9
+    },
+    "derivedCopyHashes": {
+      "trendName": null,
+      "summary": "4a5bbca9879ed849f2eff383f0c832c41aa73ecf66b4ca945669adf894ffba66",
+      "memeMechanic": null,
+      "teamConnection": null,
+      "reason": "95e956e48de32163eba04b5d51a35784bee59ce0a64ca95a04b7fbc2cd297d8a",
+      "deterministicReason": "771ef50373367f0f46f39f01aafab79cf98603e4c3bf19197cdd9ef138e4438a",
+      "safeOriginalPhrases": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "outputHash": {
+      "recorded": "d4c45bae5dd21808887df5488313cb62bca60453799f8caa0e1c4cb38858dac4",
+      "computed": "d4c45bae5dd21808887df5488313cb62bca60453799f8caa0e1c4cb38858dac4",
+      "matches": true
+    },
+    "decisionHash": "ae7f59b1a4eda1eceada136c7cca6ea648e718c3159ecdab570e7eaeb5a9086d"
+  },
+  "recipes": [],
+  "visualReview": null,
+  "release": null,
+  "sourceArtifacts": [
+    {
+      "name": "run.json",
+      "sha256": "5be891131319326456c2903d008c3b907bcc5e74c7e50ba13e1e16ac7559cee6"
+    },
+    {
+      "name": "signal-snapshot.json",
+      "sha256": "afabef0954155003515b2024657e4c9c1af145938f6f6604cc5c91190e2dac8e"
+    },
+    {
+      "name": "trend-decision.json",
+      "sha256": "ef644d4f8c48340b52dc318b4eabf9148131009721b43a0d91a51a8a543e4990"
+    },
+    {
+      "name": "trend-model-output.json",
+      "sha256": "6b90427c6c358a54d00167a03cd711698c7b2be7d41ef055d79d391f3129338d"
+    }
+  ],
+  "integrity": {
+    "payloadSha256": "50e97c93cf0e4ae0bb7fd643d82fde7577671a882f7fb616c27fa6453e4d9902",
+    "canonicalization": "RFC-8785-like sorted JSON keys via repository canonicalJson",
+    "safetyProfile": "allowlisted metadata; private source content omitted"
+  }
+}

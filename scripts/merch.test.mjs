@@ -1,26 +1,37 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
+import {mkdtemp, readFile, rm, writeFile} from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
 import {
   AOP_COTTON_REQUIRED_PLACEMENTS,
   advanceWorkflowStatus,
   allowedTechniques,
+  assertPilotPublicationAllowed,
   artDirectionPrompt,
   artDirectorReview,
   catalogMockupPath,
   composePrintFilePlan,
   customerPhotoPath,
+  ensurePhotoshootOutput,
   ensureCatalogMockupFirst,
   generationDirectionPrompt,
   generationPreflight,
+  missingPrintfulCatalogVariantIds,
   parseNewProductArgs,
   photoshootPrompt,
   photoshootSourceCandidates,
   printfulMockupTaskPayload,
   printfulPayloadWithSyncVariantIds,
   printfulPayload,
+  printfulStoreProductExternalId,
+  printfulStoreProductMatchesAnyExternalId,
+  printfulStoreProductMatchesExternalId,
   printfulStoreSyncVariantIds,
   printfulTechniquePrompt,
+  recordPrintfulMockupTaskFailure,
+  setWorkflowStatus,
   validateProducts,
   verifyPhotoshootReadiness,
   verifyPrintfulReadiness,
@@ -41,7 +52,6 @@ const baseProduct = {
   id: 'drop-test',
   slug: 'test-shirt',
   title: 'Test Shirt',
-  status: 'draft',
   workflow: {status: 'draft'},
   category: 'Codex',
   description: 'Test description.',
@@ -58,7 +68,7 @@ const baseProduct = {
   },
   commerce: {
     handle: 'test-shirt',
-    price: '42.00',
+    unitAmount: 4200,
     currency: 'USD',
     tags: ['codex'],
     variants: [
@@ -91,7 +101,7 @@ const baseProduct = {
     printful: {
       productId: null,
       mockupTaskKey: null,
-      variantIds: [4017],
+      variants: [],
     },
   },
   assets: {
@@ -222,7 +232,7 @@ const aopProduct = {
     printful: {
       productId: null,
       mockupTaskKey: null,
-      variantIds: [33966],
+      variants: [],
     },
   },
   artDirector: {
@@ -240,22 +250,23 @@ test('validates complete draft products with commerce fields', () => {
   assert.deepEqual(validateProducts([baseProduct]), []);
 });
 
-test('customer catalog manifest is restricted to the three AOP sweatshirts', () => {
+test('customer catalog manifest includes AOP sweatshirts and rate reset long sleeve', () => {
   const manifest = JSON.parse(
     readFileSync(new URL('../merch/products.json', import.meta.url), 'utf8'),
   );
-  const targetSlugs = [
+  const aopSlugs = [
     'research-deployment-co-sweatshirt',
     'terminal-ritual-sweatshirt',
     'queue-weather-cotton-sweatshirt',
   ];
 
-  assert.deepEqual(
-    manifest.map((product) => product.slug),
-    targetSlugs,
-  );
+  const slugs = manifest.map((product) => product.slug);
+  for (const requiredSlug of [...aopSlugs, 'codex-rate-reset-long-sleeve']) {
+    assert.ok(slugs.includes(requiredSlug), `missing canonical product ${requiredSlug}`);
+  }
+  assert.equal(new Set(slugs).size, slugs.length, 'product slugs must remain unique');
 
-  for (const product of manifest) {
+  for (const product of manifest.filter((item) => aopSlugs.includes(item.slug))) {
     assert.equal(product.production.baseProduct, 'printful-aop-cotton-sweatshirt-white');
     assert.equal(product.production.technique, 'All-Over Cotton');
     assert.equal(product.assets.mockups[0], catalogMockupPath(product));
@@ -264,6 +275,21 @@ test('customer catalog manifest is restricted to the three AOP sweatshirts', () 
       AOP_COTTON_REQUIRED_PLACEMENTS,
     );
   }
+
+  const researchDeployment = manifest.find(
+    (product) => product.slug === 'research-deployment-co-sweatshirt',
+  );
+  assert.equal(
+    researchDeployment.assets.customerPhotos[0],
+    'assets/mockups/research-deployment-co-worn-front.jpg',
+  );
+
+  const rateReset = manifest.find(
+    (product) => product.slug === 'codex-rate-reset-long-sleeve',
+  );
+  assert.equal(rateReset.production.baseProduct, 'bella-canvas-3501-black');
+  assert.equal(rateReset.production.technique, 'DTG');
+  assert.equal(rateReset.assets.customerPhotos[0], 'assets/mockups/codex-rate-reset-photoshoot-front.png');
 });
 
 test('rejects legacy provider-specific product fields', () => {
@@ -305,7 +331,7 @@ test('requires rights note, placements, commerce, and supported technique', () =
   const invalid = {
     ...baseProduct,
     meme: {...baseProduct.meme, rightsNote: ''},
-    commerce: {...baseProduct.commerce, handle: '', price: ''},
+    commerce: {...baseProduct.commerce, handle: '', unitAmount: 0},
     production: {...baseProduct.production, technique: 'Laser', placements: []},
   };
 
@@ -376,6 +402,65 @@ test('adds existing Printful sync variant IDs to update payloads', () => {
   assert.equal(updatePayload.sync_variants[0].external_id, 'test-shirt:4017');
 });
 
+test('binds a stored Printful product reference to the expected external ID', () => {
+  const response = {
+    result: {
+      sync_product: {id: 42, external_id: 'weekly-safe-product'},
+    },
+  };
+
+  assert.equal(printfulStoreProductExternalId(response), 'weekly-safe-product');
+  assert.equal(
+    printfulStoreProductMatchesExternalId(response, 'weekly-safe-product'),
+    true,
+  );
+  assert.equal(
+    printfulStoreProductMatchesExternalId(response, 'unrelated-product'),
+    false,
+  );
+  assert.equal(
+    printfulStoreProductMatchesAnyExternalId(response, [
+      'canonical-product',
+      'weekly-safe-product',
+    ]),
+    true,
+  );
+  assert.equal(
+    printfulStoreProductMatchesAnyExternalId(response, [
+      'canonical-product',
+      'unrelated-product',
+    ]),
+    false,
+  );
+  assert.equal(printfulStoreProductMatchesExternalId({result: {id: 42}}, 'missing'), false);
+});
+
+test('treats empty or incomplete live Printful variants as missing', () => {
+  assert.deepEqual(missingPrintfulCatalogVariantIds([4017, 4018], {result: {}}), [
+    4017,
+    4018,
+  ]);
+  assert.deepEqual(
+    missingPrintfulCatalogVariantIds([4017, 4018], {
+      result: {sync_variants: [{variant_id: '4017'}]},
+    }),
+    [4018],
+  );
+});
+
+test('records terminal mockup failures and clears the task for a bounded retry', () => {
+  const ref = {
+    mockupTaskKey: 'task-completed-without-assets',
+    mockupTaskFailures: 1,
+  };
+
+  recordPrintfulMockupTaskFailure(ref);
+
+  assert.equal(ref.lastFailedMockupTaskKey, 'task-completed-without-assets');
+  assert.equal(ref.mockupTaskFailures, 2);
+  assert.equal(ref.mockupTaskKey, null);
+});
+
 test('builds Printful mockup task payload using public site URLs', () => {
   const payload = printfulMockupTaskPayload(baseProduct, baseBlank, {
     siteUrl: 'https://merch.example',
@@ -444,12 +529,18 @@ test('photoshooter uses provider mockups before catalog and technical fallbacks'
 });
 
 test('photoshooter prompt preserves mockup source of truth', () => {
-  const prompt = photoshootPrompt(aopProduct, aopBlank, artDirection, {
+  const product = structuredClone(aopProduct);
+  product.production.placements[0].text = 'RATE RESET';
+  product.production.placements[3].text = 'RETRY-OK';
+
+  const prompt = photoshootPrompt(product, aopBlank, artDirection, {
     view: 'front',
   });
 
   assert.match(prompt, /final Codex merch photoshooter/);
   assert.match(prompt, /source of truth/);
+  assert.match(prompt, /front: "RATE RESET"/);
+  assert.match(prompt, /right_sleeve: "RETRY-OK"/);
   assert.match(prompt, /realistic cotton fleece texture/);
   assert.match(prompt, /Do not invent new slogans/);
 });
@@ -465,16 +556,75 @@ test('photoshooter readiness requires generated customer photos', () => {
   assert.equal(ready.ok, true);
 });
 
+test('photoshooter replaces a corrupt checkpoint atomically and then reuses it', async () => {
+  const directory = await mkdtemp(path.join(os.tmpdir(), 'merch-photoshoot-'));
+  const outputPath = path.join(directory, 'customer-photo.png');
+  const sharp = (await import('sharp')).default;
+  const validImage = await sharp({
+    create: {
+      width: 4,
+      height: 4,
+      channels: 4,
+      background: {r: 30, g: 60, b: 90, alpha: 1},
+    },
+  })
+    .png()
+    .toBuffer();
+  let generations = 0;
+
+  try {
+    await writeFile(outputPath, validImage.subarray(0, 24));
+    const repaired = await ensurePhotoshootOutput({
+      outputPath,
+      generate: async () => {
+        generations += 1;
+        return validImage;
+      },
+    });
+
+    assert.equal(repaired.skippedExisting, false);
+    assert.equal(generations, 1);
+    assert.deepEqual(await readFile(outputPath), validImage);
+    assert.equal(await sharp(outputPath).metadata().then(() => true), true);
+    assert.equal(
+      await readFile(`${outputPath}.tmp`).then(
+        () => true,
+        (error) => error?.code !== 'ENOENT',
+      ),
+      false,
+    );
+
+    const replay = await ensurePhotoshootOutput({
+      outputPath,
+      generate: async () => {
+        generations += 1;
+        return validImage;
+      },
+    });
+    assert.equal(replay.skippedExisting, true);
+    assert.equal(generations, 1);
+  } finally {
+    await rm(directory, {recursive: true, force: true});
+  }
+});
+
 test('verifies local Printful readiness for complete AOP products', () => {
   const product = structuredClone(aopProduct);
-  product.status = 'mockups_ready';
   product.workflow = {status: 'mockups_ready'};
   product.providerRefs.printful = {
     productId: 123,
     mockupTaskKey: 'gt-test',
-    variantIds: [33966],
+    variants: [
+      {
+        variantId: 'test-aop-sweatshirt:33966',
+        catalogVariantId: 33966,
+        syncVariantId: 9001,
+        available: true,
+      },
+    ],
   };
   ensureCatalogMockupFirst(product);
+  product.assets.mockups.splice(1, 0, 'assets/mockups/test-aop-printful-1.jpg');
 
   const report = verifyPrintfulReadiness(product, aopBlank, {checkFiles: false});
   assert.equal(report.ok, true);
@@ -483,7 +633,6 @@ test('verifies local Printful readiness for complete AOP products', () => {
 
 test('rejects Printful readiness when sync refs are missing', () => {
   const product = structuredClone(aopProduct);
-  product.status = 'mockups_ready';
   product.workflow = {status: 'mockups_ready'};
   ensureCatalogMockupFirst(product);
 
@@ -496,7 +645,7 @@ test('rejects Printful readiness when sync refs are missing', () => {
   );
   assert.ok(
     report.issues.some((issue) =>
-      issue.includes('missing Printful mockup task key'),
+      issue.includes('missing downloaded Printful provider mockup'),
     ),
   );
 });
@@ -599,8 +748,10 @@ test('builds X recent search URL and stores metadata without post text', () => {
     'codex',
   );
 
-  assert.equal(summary[0].url, 'https://x.com/coder/status/42');
+  assert.equal(summary[0].url, 'https://x.com/i/web/status/42');
   assert.equal('text' in summary[0], false);
+  assert.equal('authorUsername' in summary[0], false);
+  assert.equal('authorVerified' in summary[0], false);
   assert.equal(summary[0].metrics.likes, 3);
 });
 
@@ -624,7 +775,6 @@ test('known Printful techniques and workflow states include commerce defaults', 
 
 test('workflow advancement does not regress later states', () => {
   const product = structuredClone(baseProduct);
-  product.status = 'mockups_ready';
   product.workflow = {status: 'mockups_ready'};
 
   advanceWorkflowStatus(product, 'generated');
@@ -632,4 +782,46 @@ test('workflow advancement does not regress later states', () => {
 
   advanceWorkflowStatus(product, 'published');
   assert.equal(product.workflow.status, 'published');
+});
+
+test('publication is constrained to the pilot until operational sign-off', () => {
+  assert.doesNotThrow(() =>
+    assertPilotPublicationAllowed(
+      [{slug: 'codex-rate-reset-long-sleeve'}],
+      {},
+    ),
+  );
+  assert.throws(
+    () => assertPilotPublicationAllowed([{slug: 'another-product'}], {}),
+    /complete the live pilot/,
+  );
+  assert.doesNotThrow(() =>
+    assertPilotPublicationAllowed(
+      [{slug: 'another-product'}],
+      {MERCH_PILOT_APPROVED: 'true'},
+    ),
+  );
+});
+
+test('explicit upstream changes invalidate approval and Printful synchronization', () => {
+  const product = structuredClone(baseProduct);
+  product.workflow = {status: 'approved'};
+  product.approval = {approvedAt: '2026-01-01', approvedBy: 'reviewer', notes: ''};
+  product.providerRefs.printful = {
+    productId: 123,
+    mockupTaskKey: 'task',
+    variants: [
+      {
+        variantId: 'test-shirt:4017',
+        catalogVariantId: 4017,
+        syncVariantId: 99,
+        available: true,
+      },
+    ],
+  };
+
+  setWorkflowStatus(product, 'generated');
+  assert.equal(product.approval.approvedAt, null);
+  assert.equal(product.providerRefs.printful.productId, null);
+  assert.deepEqual(product.providerRefs.printful.variants, []);
 });

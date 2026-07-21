@@ -1,37 +1,56 @@
+import type Stripe from 'stripe';
 import type {Route} from './+types/api.stripe.webhook';
-import {fulfillStripeCheckout} from '~/lib/fulfillment.server';
 import {getEnv} from '~/lib/env.server';
 import {
-  retrieveCheckoutSessionLineItems,
-  verifyStripeWebhook,
-  type StripeSession,
+  finishStripeEvent,
+  recordStripeEvent,
+} from '~/lib/orders.server';
+import {
+  assertProductionStorefrontMode,
+  constructStripeEvent,
 } from '~/lib/stripe.server';
-
-type StripeWebhookEvent = {
-  type: string;
-  data: {
-    object: StripeSession;
-  };
-};
+import {processStripeEvent} from '~/lib/stripe-webhook.server';
 
 export async function action({context, request}: Route.ActionArgs) {
   const env = getEnv(context);
+  try {
+    assertProductionStorefrontMode(env);
+  } catch {
+    throw new Response('Stripe webhooks are disabled', {status: 503});
+  }
   const rawBody = await request.text();
   const signature = request.headers.get('stripe-signature');
   if (!signature) throw new Response('Missing Stripe signature', {status: 400});
 
-  verifyStripeWebhook(rawBody, signature, env);
-  const event = JSON.parse(rawBody) as StripeWebhookEvent;
-
-  if (event.type === 'checkout.session.completed') {
-    const session = event.data.object;
-    const lineItems = await retrieveCheckoutSessionLineItems(session.id, env);
-    await fulfillStripeCheckout({env, lineItems, request, session});
+  let event: Stripe.Event;
+  try {
+    event = constructStripeEvent(rawBody, signature, env);
+  } catch {
+    throw new Response('Invalid Stripe signature', {status: 400});
   }
 
-  return Response.json({received: true});
+  if (!(await recordStripeEvent(event, env))) {
+    return Response.json({received: true, duplicate: true});
+  }
+
+  try {
+    const orderId = await processStripeEvent(event, env);
+    await finishStripeEvent(event.id, orderId ? 'processed' : 'ignored', env, {
+      orderId: orderId || undefined,
+    });
+    return Response.json({received: true});
+  } catch (error) {
+    await finishStripeEvent(event.id, 'failed', env, {error});
+    console.error(JSON.stringify({
+      event: 'stripe_webhook_failed',
+      stripeEventId: event.id,
+      stripeEventType: event.type,
+      error: error instanceof Error ? error.message : String(error),
+    }));
+    throw new Response('Webhook processing failed', {status: 500});
+  }
 }
 
 export async function loader() {
-  return new Response('Stripe webhook endpoint', {status: 405});
+  return new Response('Method not allowed', {status: 405});
 }

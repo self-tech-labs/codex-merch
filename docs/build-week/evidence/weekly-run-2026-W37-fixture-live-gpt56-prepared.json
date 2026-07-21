@@ -1,0 +1,1116 @@
+{
+  "schemaVersion": "weekly-evidence-v1",
+  "identity": {
+    "runId": "x-list--2067819170989854863--2026-W37--weekly-merch-v1",
+    "runKey": "x-list:2067819170989854863:2026-W37:weekly-merch-v1",
+    "isoWeek": "2026-W37",
+    "listId": "2067819170989854863",
+    "pipelineVersion": "weekly-merch-v1",
+    "timeZone": "Europe/Zurich"
+  },
+  "state": {
+    "status": "prepared",
+    "startedAt": "2026-07-20T18:39:41.266Z",
+    "completedAt": "2026-07-20T18:41:56.491Z",
+    "failedAt": null,
+    "publishedAt": null,
+    "failureRecorded": false,
+    "failureFingerprint": null
+  },
+  "provenance": {
+    "evidenceClass": "fixture",
+    "inputMode": "fixture",
+    "isFixture": true,
+    "isVerifiedLiveX": false,
+    "modelMode": "live-api",
+    "configuredModel": "gpt-5.6",
+    "dryRun": false,
+    "releasableProvenance": false
+  },
+  "definitions": [
+    {
+      "kind": "structured-output-schema",
+      "name": "merch/weekly/schemas/art-direction.schema.json",
+      "sha256": "41e63edc5699f27a46449bfa713f9abdb33a7e2baa7a8a84e9ce57b2c9e35780"
+    },
+    {
+      "kind": "structured-output-schema",
+      "name": "merch/weekly/schemas/trend.schema.json",
+      "sha256": "050419eb099780c4c6c9a2b1b9db361991fc38b5bf4c4078b4ed2cba5c039e8b"
+    },
+    {
+      "kind": "structured-output-schema",
+      "name": "merch/weekly/schemas/visual-critic.schema.json",
+      "sha256": "023ec6446c9139fc7c017f4f40d2aa0f79bd9dfb13f2c8fc6dbb482e1083a067"
+    },
+    {
+      "kind": "system-prompt",
+      "name": "scripts/prompts/weekly-art-director.md",
+      "sha256": "e80e062daf68dc6bfee2f7a7212a9c162358396a50e65a15ca2dceb306b0a47f"
+    },
+    {
+      "kind": "system-prompt",
+      "name": "scripts/prompts/weekly-trend.md",
+      "sha256": "89cd109587ea9754b1d9aa7de4a84d7ffcc9ada0405124053268386d342eef45"
+    },
+    {
+      "kind": "system-prompt",
+      "name": "scripts/prompts/weekly-visual-critic.md",
+      "sha256": "9840fd2ea4232104f2a992d868183150d891b4d2d1f284e12369948b05df15ba"
+    }
+  ],
+  "signals": {
+    "declaredMode": "fixture",
+    "snapshotMode": "fixture",
+    "requestedCount": 30,
+    "recordedCount": 30,
+    "attestedCount": 30,
+    "listId": "2067819170989854863",
+    "inputHash": {
+      "run": "02139eea2ecb65dbfe62c0b96dd4f3e511dd53c1b68f89fd0da79bdf824b6772",
+      "snapshot": "02139eea2ecb65dbfe62c0b96dd4f3e511dd53c1b68f89fd0da79bdf824b6772",
+      "recomputedPrivately": "02139eea2ecb65dbfe62c0b96dd4f3e511dd53c1b68f89fd0da79bdf824b6772",
+      "matches": true
+    },
+    "oldestCreatedAt": "2026-07-20T03:24:00.000Z",
+    "newestCreatedAt": "2026-07-20T08:29:00.000Z",
+    "distinctAuthorCount": 30,
+    "sources": [
+      {
+        "provider": "synthetic",
+        "kind": "x-list-fixture",
+        "listId": null
+      }
+    ],
+    "allSourcesMatchDeclaredList": false,
+    "records": [
+      {
+        "sequence": 1,
+        "id": "synthetic-trend-001",
+        "createdAt": "2026-07-20T08:29:00.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 6,
+          "reposts": 9,
+          "likes": 48,
+          "quotes": 2
+        }
+      },
+      {
+        "sequence": 2,
+        "id": "synthetic-trend-002",
+        "createdAt": "2026-07-20T08:21:00.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 4,
+          "reposts": 7,
+          "likes": 41,
+          "quotes": 1
+        }
+      },
+      {
+        "sequence": 3,
+        "id": "synthetic-trend-003",
+        "createdAt": "2026-07-20T08:14:00.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 5,
+          "reposts": 8,
+          "likes": 46,
+          "quotes": 3
+        }
+      },
+      {
+        "sequence": 4,
+        "id": "synthetic-trend-004",
+        "createdAt": "2026-07-20T08:03:00.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 3,
+          "reposts": 5,
+          "likes": 39,
+          "quotes": 1
+        }
+      },
+      {
+        "sequence": 5,
+        "id": "synthetic-trend-005",
+        "createdAt": "2026-07-20T07:51:00.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 7,
+          "reposts": 11,
+          "likes": 56,
+          "quotes": 2
+        }
+      },
+      {
+        "sequence": 6,
+        "id": "synthetic-trend-006",
+        "createdAt": "2026-07-20T07:44:00.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 2,
+          "reposts": 6,
+          "likes": 37,
+          "quotes": 0
+        }
+      },
+      {
+        "sequence": 7,
+        "id": "synthetic-trend-007",
+        "createdAt": "2026-07-20T07:32:00.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 5,
+          "reposts": 4,
+          "likes": 34,
+          "quotes": 1
+        }
+      },
+      {
+        "sequence": 8,
+        "id": "synthetic-trend-008",
+        "createdAt": "2026-07-20T07:25:00.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 4,
+          "reposts": 8,
+          "likes": 45,
+          "quotes": 2
+        }
+      },
+      {
+        "sequence": 9,
+        "id": "synthetic-trend-009",
+        "createdAt": "2026-07-20T07:13:00.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 3,
+          "reposts": 5,
+          "likes": 31,
+          "quotes": 1
+        }
+      },
+      {
+        "sequence": 10,
+        "id": "synthetic-trend-010",
+        "createdAt": "2026-07-20T07:04:00.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 6,
+          "reposts": 10,
+          "likes": 52,
+          "quotes": 2
+        }
+      },
+      {
+        "sequence": 11,
+        "id": "synthetic-trend-011",
+        "createdAt": "2026-07-20T06:56:00.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 2,
+          "reposts": 6,
+          "likes": 38,
+          "quotes": 1
+        }
+      },
+      {
+        "sequence": 12,
+        "id": "synthetic-trend-012",
+        "createdAt": "2026-07-20T06:43:00.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 5,
+          "reposts": 9,
+          "likes": 49,
+          "quotes": 2
+        }
+      },
+      {
+        "sequence": 13,
+        "id": "synthetic-trend-013",
+        "createdAt": "2026-07-20T06:35:00.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 3,
+          "reposts": 4,
+          "likes": 29,
+          "quotes": 0
+        }
+      },
+      {
+        "sequence": 14,
+        "id": "synthetic-trend-014",
+        "createdAt": "2026-07-20T06:22:00.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 4,
+          "reposts": 7,
+          "likes": 40,
+          "quotes": 1
+        }
+      },
+      {
+        "sequence": 15,
+        "id": "synthetic-trend-015",
+        "createdAt": "2026-07-20T06:14:00.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 7,
+          "reposts": 12,
+          "likes": 61,
+          "quotes": 3
+        }
+      },
+      {
+        "sequence": 16,
+        "id": "synthetic-trend-016",
+        "createdAt": "2026-07-20T06:02:00.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 5,
+          "reposts": 8,
+          "likes": 44,
+          "quotes": 2
+        }
+      },
+      {
+        "sequence": 17,
+        "id": "synthetic-trend-017",
+        "createdAt": "2026-07-20T05:49:00.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 8,
+          "reposts": 9,
+          "likes": 57,
+          "quotes": 4
+        }
+      },
+      {
+        "sequence": 18,
+        "id": "synthetic-trend-018",
+        "createdAt": "2026-07-20T05:38:00.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 4,
+          "reposts": 6,
+          "likes": 36,
+          "quotes": 1
+        }
+      },
+      {
+        "sequence": 19,
+        "id": "synthetic-trend-019",
+        "createdAt": "2026-07-20T05:24:00.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 2,
+          "reposts": 1,
+          "likes": 13,
+          "quotes": 0
+        }
+      },
+      {
+        "sequence": 20,
+        "id": "synthetic-trend-020",
+        "createdAt": "2026-07-20T05:17:00.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 1,
+          "reposts": 2,
+          "likes": 16,
+          "quotes": 0
+        }
+      },
+      {
+        "sequence": 21,
+        "id": "synthetic-trend-021",
+        "createdAt": "2026-07-20T05:03:00.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 3,
+          "reposts": 1,
+          "likes": 18,
+          "quotes": 0
+        }
+      },
+      {
+        "sequence": 22,
+        "id": "synthetic-trend-022",
+        "createdAt": "2026-07-20T04:56:00.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 2,
+          "reposts": 3,
+          "likes": 21,
+          "quotes": 0
+        }
+      },
+      {
+        "sequence": 23,
+        "id": "synthetic-trend-023",
+        "createdAt": "2026-07-20T04:42:00.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 1,
+          "reposts": 2,
+          "likes": 17,
+          "quotes": 0
+        }
+      },
+      {
+        "sequence": 24,
+        "id": "synthetic-trend-024",
+        "createdAt": "2026-07-20T04:34:00.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 2,
+          "reposts": 2,
+          "likes": 19,
+          "quotes": 0
+        }
+      },
+      {
+        "sequence": 25,
+        "id": "synthetic-trend-025",
+        "createdAt": "2026-07-20T04:21:00.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 1,
+          "reposts": 3,
+          "likes": 20,
+          "quotes": 1
+        }
+      },
+      {
+        "sequence": 26,
+        "id": "synthetic-trend-026",
+        "createdAt": "2026-07-20T04:13:00.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 2,
+          "reposts": 2,
+          "likes": 22,
+          "quotes": 0
+        }
+      },
+      {
+        "sequence": 27,
+        "id": "synthetic-trend-027",
+        "createdAt": "2026-07-20T03:59:00.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 1,
+          "reposts": 1,
+          "likes": 14,
+          "quotes": 0
+        }
+      },
+      {
+        "sequence": 28,
+        "id": "synthetic-trend-028",
+        "createdAt": "2026-07-20T03:48:00.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 3,
+          "reposts": 2,
+          "likes": 23,
+          "quotes": 0
+        }
+      },
+      {
+        "sequence": 29,
+        "id": "synthetic-trend-029",
+        "createdAt": "2026-07-20T03:36:00.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 2,
+          "reposts": 3,
+          "likes": 25,
+          "quotes": 1
+        }
+      },
+      {
+        "sequence": 30,
+        "id": "synthetic-trend-030",
+        "createdAt": "2026-07-20T03:24:00.000Z",
+        "lang": "en",
+        "metrics": {
+          "replies": 4,
+          "reposts": 2,
+          "likes": 27,
+          "quotes": 0
+        }
+      }
+    ],
+    "recordAttestationHash": "876d2c8f7d031d52b7282d7bfbb58bc5689a1ed09afc8079dde92b4aba00061e",
+    "sourceAttestationHash": "698c9cf0019ab25833145cc82bdd2b5e85e93008a5d394f63c9783bb5120feb9",
+    "privateFieldsOmitted": [
+      "post body",
+      "source username",
+      "source author identifier",
+      "source link"
+    ]
+  },
+  "modelCalls": [
+    {
+      "stage": "trend-analysis",
+      "responseId": "resp_06252f8a8d0c3d71016a5e6b6d7cbc819fbc3f42bd85eb2488",
+      "model": "gpt-5.6-sol",
+      "usage": {
+        "inputTokens": 2920,
+        "outputTokens": 848,
+        "totalTokens": 3768,
+        "cachedInputTokens": 2917,
+        "cacheWriteInputTokens": 0,
+        "reasoningOutputTokens": 380
+      },
+      "outputHash": {
+        "recorded": "4d1d7f386f97a3584d1950e772ee2a8ae51c81e88345d2cf8169521ccedf9bd8",
+        "computed": "4d1d7f386f97a3584d1950e772ee2a8ae51c81e88345d2cf8169521ccedf9bd8",
+        "matches": true
+      },
+      "fixtureResponse": false,
+      "verifiedGpt56Response": true
+    },
+    {
+      "stage": "art-direction",
+      "responseId": "resp_0421eb4b98453a84016a5e6b7d8f8c81a0a415089e27e3ac41",
+      "model": "gpt-5.6-sol",
+      "usage": {
+        "inputTokens": 2364,
+        "outputTokens": 2827,
+        "totalTokens": 5191,
+        "cachedInputTokens": 0,
+        "cacheWriteInputTokens": 2361,
+        "reasoningOutputTokens": 1453
+      },
+      "outputHash": {
+        "recorded": "55da03a6c8e3d5afcbb2bc8a28c371e5516c7483e7ea5b43a265c00bd545e1b4",
+        "computed": "55da03a6c8e3d5afcbb2bc8a28c371e5516c7483e7ea5b43a265c00bd545e1b4",
+        "matches": true
+      },
+      "fixtureResponse": false,
+      "verifiedGpt56Response": true
+    },
+    {
+      "stage": "visual-critic-attempt-1",
+      "responseId": "resp_0b6c013f3fee950b016a5e6bbb935c819da5322842c55dbb70",
+      "model": "gpt-5.6-sol",
+      "usage": {
+        "inputTokens": 12562,
+        "outputTokens": 1098,
+        "totalTokens": 13660,
+        "cachedInputTokens": 0,
+        "cacheWriteInputTokens": 12559,
+        "reasoningOutputTokens": 783
+      },
+      "outputHash": {
+        "recorded": null,
+        "computed": "df403c8a179d9bc4600750969915d37c86a4e13fed9bc827b9ee508e4b28b120",
+        "matches": false
+      },
+      "fixtureResponse": false,
+      "verifiedGpt56Response": true
+    },
+    {
+      "stage": "visual-critic-attempt-2",
+      "responseId": "resp_0f0c5707dfb0c806016a5e6bdbb368819fbf92ae2f7a349fc1",
+      "model": "gpt-5.6-sol",
+      "usage": {
+        "inputTokens": 12567,
+        "outputTokens": 474,
+        "totalTokens": 13041,
+        "cachedInputTokens": 0,
+        "cacheWriteInputTokens": 12564,
+        "reasoningOutputTokens": 238
+      },
+      "outputHash": {
+        "recorded": null,
+        "computed": "c8845617a3fcb9c8ab1fd44a17063cb110349c0ce6dafe08065a3281f79d06b9",
+        "matches": false
+      },
+      "fixtureResponse": false,
+      "verifiedGpt56Response": true
+    }
+  ],
+  "trend": {
+    "modelStatus": "trend",
+    "decisionStatus": "trend",
+    "publishEligible": true,
+    "score": 74,
+    "minimumScore": 72,
+    "noveltySimilarity": 0,
+    "rightsRisk": "low",
+    "evidencePostIds": [
+      "synthetic-trend-001",
+      "synthetic-trend-003",
+      "synthetic-trend-005",
+      "synthetic-trend-007",
+      "synthetic-trend-008",
+      "synthetic-trend-010",
+      "synthetic-trend-015",
+      "synthetic-trend-016",
+      "synthetic-trend-018"
+    ],
+    "evidenceAuthorCount": 9,
+    "fingerprintTerms": [
+      "approval",
+      "cloud",
+      "fog",
+      "forecast",
+      "green",
+      "lane",
+      "merge",
+      "pressure",
+      "queue",
+      "radar",
+      "review",
+      "station",
+      "weather",
+      "window"
+    ],
+    "checks": {
+      "modelFoundTrend": true,
+      "enoughInputPosts": true,
+      "enoughEvidencePosts": true,
+      "enoughAuthors": true,
+      "lowRightsRisk": true,
+      "safeOriginalLanguage": true,
+      "meaningfulFingerprint": true,
+      "novelEnough": true,
+      "scoreReached": true
+    },
+    "components": {
+      "recurrence": 25,
+      "crossAuthor": 20,
+      "codexSpecificity": 8,
+      "merchability": 7,
+      "novelty": 4,
+      "rightsSafety": 10
+    },
+    "modelScores": {
+      "codexSpecificity": 8,
+      "merchability": 9,
+      "novelty": 8,
+      "rightsSafety": 10
+    },
+    "derivedCopyHashes": {
+      "trendName": "8b0fe32669d89757bc9432d9e89e3bdd88844dd11ce727545619e847d28e349a",
+      "summary": "64fa629abfe5abb1534039b1713a8dbfc1229a0da206ad612904c838b1a5ee41",
+      "memeMechanic": "2d2b0672e90af78f3a3a5adfa0e183eb9e9daa9953103ebf4b1b8777bfa3582c",
+      "teamConnection": "d402b1a7ffa09b4228dd589de8bb301b1fc7705299592ac09b03145339fe4334",
+      "reason": "5759025e5fba86e0c6dc7c9bdd7f130d2f802894cf77c9f428bb07ec32021293",
+      "deterministicReason": "5c86954ce5f792f78d5ac62876284472f6dab549f4fc1062cf0592c1be2ddef8",
+      "safeOriginalPhrases": "5707d9d533aa684eb41f9af680ba22950761cf0193db6e40822094b73bd12aa7"
+    },
+    "outputHash": {
+      "recorded": "4d1d7f386f97a3584d1950e772ee2a8ae51c81e88345d2cf8169521ccedf9bd8",
+      "computed": "4d1d7f386f97a3584d1950e772ee2a8ae51c81e88345d2cf8169521ccedf9bd8",
+      "matches": true
+    },
+    "decisionHash": "957356d48aebaaee7d9e17f86c1e8bddb7bec15f59d62769b8c86aacce61b1c5"
+  },
+  "recipes": [
+    {
+      "rank": 1,
+      "conceptId": "clearance-interval-01",
+      "eligible": true,
+      "weightedScore": 90,
+      "deterministicChecks": {
+        "lowRightsRisk": true,
+        "noProtectedProductTerms": true,
+        "noSourceTextOverlap": true,
+        "distinctRendererRecipe": true,
+        "productionScores": true,
+        "completePanels": true
+      },
+      "renderer": {
+        "layout": "offset-ledger",
+        "basePattern": "queue-radar",
+        "sleeveStyle": "wave",
+        "palette": {
+          "fabric": "#F2F0E8",
+          "ink": "#111318",
+          "muted": "#8A8D88",
+          "accent": "#FF4D00"
+        }
+      },
+      "rightsRisk": "low",
+      "scores": {
+        "conceptClarity": 9,
+        "garmentCoherence": 9,
+        "memeLegibility": 8,
+        "originality": 8,
+        "productionSafety": 9,
+        "rightsSafety": 10
+      },
+      "surfacesPresent": {
+        "front": true,
+        "back": true,
+        "sleeves": true,
+        "label": true
+      },
+      "creativeCopyHashes": {
+        "title": "54c4b3a7a2a2dc1a23910f831e6ab02c23a8bc51f362441e51e00b90b7efa830",
+        "rationale": "01004025a528ee8c53b34c1ea75d8f9cdd50bea7f11a34bb2d162c066b11a99b",
+        "front": "feada0f59201657baacb1a3c744de7d79502c6b0dd5c7535a30f83e82cf0b8b2",
+        "back": "7b706c7c5b18660d3bcf4710494c3178b6a36fa26aa5d32470b2214a44d46ef3",
+        "sleeves": "ae2f72e43b4304e66e0c870cad059c1488fcb0477432636954972ffcd388972b",
+        "label": "dc47cb8de2860ff10ccd8444767118d278b43f21b628e279626a085b190e87bb",
+        "visualDirection": "56484bc963ad0c61336531f54c3a59c526794b2c63f083a391d7b1f0f0ff123b"
+      },
+      "recipeHash": "1902556063ca2357a05da6d7c0472ac0a2fb28226529b8b260dac2927be2d97e"
+    },
+    {
+      "rank": 2,
+      "conceptId": "load-contour-02",
+      "eligible": true,
+      "weightedScore": 88,
+      "deterministicChecks": {
+        "lowRightsRisk": true,
+        "noProtectedProductTerms": true,
+        "noSourceTextOverlap": true,
+        "distinctRendererRecipe": true,
+        "productionScores": true,
+        "completePanels": true
+      },
+      "renderer": {
+        "layout": "split-field",
+        "basePattern": "status-isobar-map",
+        "sleeveStyle": "radar-rings",
+        "palette": {
+          "fabric": "#121417",
+          "ink": "#F5F2E9",
+          "muted": "#777D82",
+          "accent": "#B8FF2C"
+        }
+      },
+      "rightsRisk": "low",
+      "scores": {
+        "conceptClarity": 8,
+        "garmentCoherence": 9,
+        "memeLegibility": 7,
+        "originality": 9,
+        "productionSafety": 9,
+        "rightsSafety": 10
+      },
+      "surfacesPresent": {
+        "front": true,
+        "back": true,
+        "sleeves": true,
+        "label": true
+      },
+      "creativeCopyHashes": {
+        "title": "5ba4c2c1df89f97a36889c6f6d61ab006351cec40de19881653402e01bec02b3",
+        "rationale": "92d0a437f73ad9918c203693625acb75c3fabfaec9ce58f22c935c2cfc41d606",
+        "front": "42f7e55db6db4ce56013d4184ec0d005d9a3eb0f31e650f3ab38baa3b416f5d2",
+        "back": "65373d8822506cb3d501d6e325f01c3b395a1289577cd080cc38ade33af45ee5",
+        "sleeves": "371335d2f074e99ad5080d45a5d664daf36254e08bacb20e3b93b7c0805072e3",
+        "label": "81422a57166122b7104c6fe1b6bae3a7cf59353ccc05c2309d04e32827ccdcb0",
+        "visualDirection": "42814d17e545a8be96d294da0b74f0cce71b9d85b6632c3f6cfaf15f3e7e70b0"
+      },
+      "recipeHash": "898ca1620ae1d36604f056382cc087cb7593a72e470a1237aa746e5f7f8b6cc3"
+    },
+    {
+      "rank": 3,
+      "conceptId": "ready-gap-03",
+      "eligible": true,
+      "weightedScore": 85,
+      "deterministicChecks": {
+        "lowRightsRisk": true,
+        "noProtectedProductTerms": true,
+        "noSourceTextOverlap": true,
+        "distinctRendererRecipe": true,
+        "productionScores": true,
+        "completePanels": true
+      },
+      "renderer": {
+        "layout": "center-monument",
+        "basePattern": "pinstripe",
+        "sleeveStyle": "glyph-stack",
+        "palette": {
+          "fabric": "#E9E7DF",
+          "ink": "#0A0B0D",
+          "muted": "#9A9890",
+          "accent": "#246BFD"
+        }
+      },
+      "rightsRisk": "low",
+      "scores": {
+        "conceptClarity": 8,
+        "garmentCoherence": 8,
+        "memeLegibility": 7,
+        "originality": 8,
+        "productionSafety": 9,
+        "rightsSafety": 10
+      },
+      "surfacesPresent": {
+        "front": true,
+        "back": true,
+        "sleeves": true,
+        "label": true
+      },
+      "creativeCopyHashes": {
+        "title": "97491bf30d63a1e8b4bae0abf2cd4dd46ef3fafe06d6e4f0ebb244db9650e89f",
+        "rationale": "6c6fb38e0e12545d80489baa024d4486f77033cb2f09da8d93c5d09f1a2715e7",
+        "front": "f1c385a0695100ca14dd6ce4a60bc693472afcd3fb5d853b3eb15ec907232c64",
+        "back": "1e54f14766ff91fb845c2ba28a0d9f831e63f3ceb30e4e7772b2a07089beb07a",
+        "sleeves": "e59affbc0970d49770f26ca8b9ed1c2b35de8bf960faff1ee09ec9a7bc3c7519",
+        "label": "47429a3891765bcab530ef92fff928698a11a35a3522323d6a5f251bcf42b585",
+        "visualDirection": "0478bd28df79733fd543ef263cb9a40235998f202dd0130a8d162610624fa0f1"
+      },
+      "recipeHash": "c6fa627fe0eb7b90d9846e67c7bba37523ce8e094eac18ee8466cdaebf3510eb"
+    }
+  ],
+  "visualReview": {
+    "preparation": {
+      "selected": {
+        "conceptId": "load-contour-02",
+        "productSlug": "load-contour-cotton-sweatshirt-2026-w37",
+        "titleHash": "5ba4c2c1df89f97a36889c6f6d61ab006351cec40de19881653402e01bec02b3"
+      },
+      "attempts": [
+        {
+          "attempt": 1,
+          "conceptId": "clearance-interval-01",
+          "productSlug": "clearance-interval-cotton-sweatshirt-2026-w37",
+          "structuralReview": {
+            "accepted": true,
+            "score": 92,
+            "checkedAt": "2026-07-20T18:40:55.955Z",
+            "findingCount": 2,
+            "findingsHash": "4c71ab94cb8dc146be9726fc7b985dfec55e4dd9dc73bd39a35aae8d0227125f",
+            "reviewHash": "c68f18d74eceb6d55719aaab24f304fcee342d843cc07e5dc3080cb692dac88c"
+          },
+          "prepress": {
+            "ok": true,
+            "checkedAt": "2026-07-20T18:40:58.690Z",
+            "technique": "redacted-sha256-6d89b6606fecda36",
+            "baseProduct": "printful-aop-cotton-sweatshirt-white",
+            "issueCount": 0,
+            "issuesHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "files": [
+              {
+                "area": "front",
+                "path": "assets/print/clearance-interval-cotton-sweatshirt-2026-w37-front_dtfabric.png",
+                "width": 5037,
+                "height": 6600,
+                "format": "png",
+                "bytes": 1073955,
+                "sha256": "b3bf3bfac813fcaa0c95b1323642e9e4906648eb0be1a13b464b76ed9f243f77"
+              },
+              {
+                "area": "back",
+                "path": "assets/print/clearance-interval-cotton-sweatshirt-2026-w37-back_dtfabric.png",
+                "width": 5037,
+                "height": 6600,
+                "format": "png",
+                "bytes": 1050129,
+                "sha256": "2541fb9f07c0b5bb42c4be8857da41062fd0fbebb5fc181c4ecbfb1e6f3c5264"
+              },
+              {
+                "area": "left_sleeve",
+                "path": "assets/print/clearance-interval-cotton-sweatshirt-2026-w37-left_sleeve_dtfabric.png",
+                "width": 5037,
+                "height": 6600,
+                "format": "png",
+                "bytes": 928715,
+                "sha256": "eb345e289c66442e49a417bf510286b6cddc3612b842728107afa3aba43578b3"
+              },
+              {
+                "area": "right_sleeve",
+                "path": "assets/print/clearance-interval-cotton-sweatshirt-2026-w37-right_sleeve_dtfabric.png",
+                "width": 5037,
+                "height": 6600,
+                "format": "png",
+                "bytes": 934475,
+                "sha256": "e2b26d63307c5349ff7f01590a72fc66e1e55de4516da3c2455f2b291be61325"
+              },
+              {
+                "area": "label_panel",
+                "path": "assets/print/clearance-interval-cotton-sweatshirt-2026-w37-label_panel_dtfabric.png",
+                "width": 5037,
+                "height": 6600,
+                "format": "png",
+                "bytes": 892730,
+                "sha256": "ea8f7206ad0fad2ef65fe88767c226492293973322ae5ea4ad30c3260d2a6548"
+              },
+              {
+                "area": "label_inside",
+                "path": "assets/print/clearance-interval-cotton-sweatshirt-2026-w37-label_inside_dtfabric.png",
+                "width": 375,
+                "height": 150,
+                "format": "png",
+                "bytes": 12293,
+                "sha256": "6fa408e4f9730ce5b419595241c9f61d76a4a8ea0e4bdf920478490cf3d5cf42"
+              }
+            ],
+            "prepressHash": "1d3efe3b74f4aabf86c0ddd263aa0084ca027a0ae0fcf78c60d34672efffd15f"
+          },
+          "critic": {
+            "decision": "quarantine",
+            "overallScore": 74,
+            "scores": {
+              "garmentCoherence": 9,
+              "legibility": 7,
+              "panelIntent": 9,
+              "originality": 8,
+              "productionReadiness": 5,
+              "rightsSafety": 10
+            },
+            "criticalDefectCount": 2,
+            "criticalDefectsHash": "aea8a3ce1b699978ead55cb9ea0928d3af6d124377a9ec639c903a0294063261",
+            "strengthCount": 5,
+            "strengthsHash": "124c7a645948d3da6ce3d8cf9e867d90adc01c0d56335d5e4232ad61ae2cfc32",
+            "revisionBriefHash": "66da0e98a54d1a2617a037bc47044a59d9d32e7185539c4edc00e99f402f1aea",
+            "outputHash": "df403c8a179d9bc4600750969915d37c86a4e13fed9bc827b9ee508e4b28b120"
+          },
+          "gate": {
+            "passed": false,
+            "decision": "quarantine",
+            "minimumOverallScore": 80,
+            "minimumCoreScore": 7,
+            "gateHash": "f495dca1ee10741251530f248956a219e76dc8b2e27218fc0acf97c1d155515f"
+          },
+          "attemptHash": "1fb54bb7906aae77f8cf4dff50b31a4c3ebc75cfadcee938f63fa09b195eab52"
+        },
+        {
+          "attempt": 2,
+          "conceptId": "load-contour-02",
+          "productSlug": "load-contour-cotton-sweatshirt-2026-w37",
+          "structuralReview": {
+            "accepted": true,
+            "score": 92,
+            "checkedAt": "2026-07-20T18:41:27.754Z",
+            "findingCount": 2,
+            "findingsHash": "4c71ab94cb8dc146be9726fc7b985dfec55e4dd9dc73bd39a35aae8d0227125f",
+            "reviewHash": "4bff45df0c1ffcd0b884ec0f13c10010b5699bfc829917bfd49daa33215fe154"
+          },
+          "prepress": {
+            "ok": true,
+            "checkedAt": "2026-07-20T18:41:30.882Z",
+            "technique": "redacted-sha256-6d89b6606fecda36",
+            "baseProduct": "printful-aop-cotton-sweatshirt-white",
+            "issueCount": 0,
+            "issuesHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "files": [
+              {
+                "area": "front",
+                "path": "assets/print/load-contour-cotton-sweatshirt-2026-w37-front_dtfabric.png",
+                "width": 5037,
+                "height": 6600,
+                "format": "png",
+                "bytes": 1328396,
+                "sha256": "b1bbb24a016c80fe371b6b41d38a1f2b78fd36735a96e5ae4145b840584ffced"
+              },
+              {
+                "area": "back",
+                "path": "assets/print/load-contour-cotton-sweatshirt-2026-w37-back_dtfabric.png",
+                "width": 5037,
+                "height": 6600,
+                "format": "png",
+                "bytes": 1315264,
+                "sha256": "d1589b01d389a05039c77a80d5bf6a1eadebc8d183af58ddf62a89d6f0744993"
+              },
+              {
+                "area": "left_sleeve",
+                "path": "assets/print/load-contour-cotton-sweatshirt-2026-w37-left_sleeve_dtfabric.png",
+                "width": 5037,
+                "height": 6600,
+                "format": "png",
+                "bytes": 1392391,
+                "sha256": "2a0ca506ee19f2240bb9b510774a1bc592b974f80ca15b1f5c80a1625397d572"
+              },
+              {
+                "area": "right_sleeve",
+                "path": "assets/print/load-contour-cotton-sweatshirt-2026-w37-right_sleeve_dtfabric.png",
+                "width": 5037,
+                "height": 6600,
+                "format": "png",
+                "bytes": 1396853,
+                "sha256": "bfa33d7b4ff968bd8fc70cc4378118b347744630bc23169d5f6ac3f3e5a996d8"
+              },
+              {
+                "area": "label_panel",
+                "path": "assets/print/load-contour-cotton-sweatshirt-2026-w37-label_panel_dtfabric.png",
+                "width": 5037,
+                "height": 6600,
+                "format": "png",
+                "bytes": 1134859,
+                "sha256": "741aaf782612bdb1d6c2f5f35b27d593c26b764885b8485df861a535195520b5"
+              },
+              {
+                "area": "label_inside",
+                "path": "assets/print/load-contour-cotton-sweatshirt-2026-w37-label_inside_dtfabric.png",
+                "width": 375,
+                "height": 150,
+                "format": "png",
+                "bytes": 11988,
+                "sha256": "6a0d7966f6a698721e1fdf6d2dd92da51ad35ef21b20a94c6846062aa2e4e396"
+              }
+            ],
+            "prepressHash": "c954c425085f53e028ec30daee26cbaf8b78df68ece23bacd7c2b33aec7632e2"
+          },
+          "critic": {
+            "decision": "pass",
+            "overallScore": 88,
+            "scores": {
+              "garmentCoherence": 9,
+              "legibility": 8,
+              "panelIntent": 9,
+              "originality": 8,
+              "productionReadiness": 9,
+              "rightsSafety": 10
+            },
+            "criticalDefectCount": 0,
+            "criticalDefectsHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "strengthCount": 7,
+            "strengthsHash": "49175a162620c592bd48372b6357ce6544bdb8d725f79768d89bb05834150cc2",
+            "revisionBriefHash": "bb7d6dcd21783dcb545d7ca17419ba5549456ef5da0ef924a5c78fb0dce8c398",
+            "outputHash": "c8845617a3fcb9c8ab1fd44a17063cb110349c0ce6dafe08065a3281f79d06b9"
+          },
+          "gate": {
+            "passed": true,
+            "decision": "pass",
+            "minimumOverallScore": 80,
+            "minimumCoreScore": 7,
+            "gateHash": "d3166c77b4995b75476a3e37f99976f8d4717bd7b19b81e8b70be3406e3b10db"
+          },
+          "attemptHash": "d252b660c1db7bc89a9c93708c5bb04ca01c435c24f4198a2e1141cb3c62e545"
+        }
+      ],
+      "outputHash": {
+        "recorded": "3c7750bce376c08a28b47d857cc6913fe63c1512250f445aa1370078fc6f6a01",
+        "computed": "3c7750bce376c08a28b47d857cc6913fe63c1512250f445aa1370078fc6f6a01",
+        "matches": true
+      }
+    },
+    "final": null
+  },
+  "release": {
+    "recordedStage": "prepared",
+    "resumeStage": "prepared",
+    "releasePlan": {
+      "present": true,
+      "recordedHash": "02d61f996444ec480f2b203109853db9739d47bb34a8585ac2509caf8c9139b2",
+      "recomputedHash": "02d61f996444ec480f2b203109853db9739d47bb34a8585ac2509caf8c9139b2",
+      "matches": true
+    },
+    "preparationCheckpoint": {
+      "recorded": true,
+      "branch": "main",
+      "baseCommit": "51a4839dd2ce4f562a5af9368461abd1ea4cbacf",
+      "productHash": "c938a8a5a2d440144b44b9e5d3da910f186064997600a314fb69e7157436dfc7",
+      "designHash": "6a57ca462e8072f12a939ab56c54e1ab689f28d2f9db6e6c0d6935b6f7f28115",
+      "assetHashes": [
+        {
+          "path": "assets/artwork/load-contour-cotton-sweatshirt-2026-w37-concept.png",
+          "sha256": "9b7e146c6784c58b6cf5e5ce5f169be8e24f7a05ce713e9ca51ba41468344016"
+        },
+        {
+          "path": "assets/mockups/load-contour-cotton-sweatshirt-2026-w37-back.png",
+          "sha256": "cf35d209b0fb6941749153c4ee10ffa1f911069a0be272a1cf65b835cb89861b"
+        },
+        {
+          "path": "assets/mockups/load-contour-cotton-sweatshirt-2026-w37-catalog.png",
+          "sha256": "1ce818dd64de263fba4afed6c35095282c02ecf56b48953ea8d13c0f671b41af"
+        },
+        {
+          "path": "assets/mockups/load-contour-cotton-sweatshirt-2026-w37-front.png",
+          "sha256": "036d95dfda6a83a10261b840f4600310ff3c815200fdbbf1ff6edcc986507a51"
+        },
+        {
+          "path": "assets/mockups/load-contour-cotton-sweatshirt-2026-w37-patterns.png",
+          "sha256": "0f00aa7b4fbfb0da2e950ddd27f7d2164650c74d58c640286951e78e8722fd66"
+        },
+        {
+          "path": "assets/print/load-contour-cotton-sweatshirt-2026-w37-back_dtfabric.png",
+          "sha256": "d1589b01d389a05039c77a80d5bf6a1eadebc8d183af58ddf62a89d6f0744993"
+        },
+        {
+          "path": "assets/print/load-contour-cotton-sweatshirt-2026-w37-front_dtfabric.png",
+          "sha256": "b1bbb24a016c80fe371b6b41d38a1f2b78fd36735a96e5ae4145b840584ffced"
+        },
+        {
+          "path": "assets/print/load-contour-cotton-sweatshirt-2026-w37-label_inside_dtfabric.png",
+          "sha256": "6a0d7966f6a698721e1fdf6d2dd92da51ad35ef21b20a94c6846062aa2e4e396"
+        },
+        {
+          "path": "assets/print/load-contour-cotton-sweatshirt-2026-w37-label_panel_dtfabric.png",
+          "sha256": "741aaf782612bdb1d6c2f5f35b27d593c26b764885b8485df861a535195520b5"
+        },
+        {
+          "path": "assets/print/load-contour-cotton-sweatshirt-2026-w37-left_sleeve_dtfabric.png",
+          "sha256": "2a0ca506ee19f2240bb9b510774a1bc592b974f80ca15b1f5c80a1625397d572"
+        },
+        {
+          "path": "assets/print/load-contour-cotton-sweatshirt-2026-w37-right_sleeve_dtfabric.png",
+          "sha256": "bfa33d7b4ff968bd8fc70cc4378118b347744630bc23169d5f6ac3f3e5a996d8"
+        }
+      ]
+    },
+    "candidateCheckpoint": {
+      "recorded": false,
+      "commit": null,
+      "deploymentCheckReached": false
+    },
+    "providerCheckpoint": {
+      "recorded": false,
+      "providerReferencePresent": false,
+      "providerReferenceHash": null,
+      "postCriticProductHash": null,
+      "postCriticAssetHashes": [],
+      "finalCriticArtifactHash": null,
+      "finalCriticResponseId": null,
+      "finalCriticModel": null,
+      "finalCriticArtifactMatches": false
+    },
+    "publicationCheckpoint": {
+      "recorded": false,
+      "commit": null,
+      "productHash": null,
+      "assetHashes": [],
+      "publicReferenceRecorded": false,
+      "publicDeploymentCheckReached": false,
+      "publishedAt": null
+    }
+  },
+  "sourceArtifacts": [
+    {
+      "name": "garment-recipes.json",
+      "sha256": "688592c0c9015413f85b3ad1ae68df7577ed441888cb81645b7bb1b930d1570f"
+    },
+    {
+      "name": "release-plan.json",
+      "sha256": "ad8f29278a40f683f8da20266d8b0a507f561a1724e30d0a15dc742804361122"
+    },
+    {
+      "name": "run.json",
+      "sha256": "b6d75017215fdb2e77267eec8bfdb3f2e4b8d00e66378bd959d47e2be8638026"
+    },
+    {
+      "name": "signal-snapshot.json",
+      "sha256": "8a1152c460ba5abe40dc5fe8cafd26066d6d626c01896bf7079dbf1f93826f6e"
+    },
+    {
+      "name": "trend-decision.json",
+      "sha256": "6038ff588d8fe593d9924b89d4f9018cd376ce9ddb73a8b37e9cd1c1100df8ad"
+    },
+    {
+      "name": "trend-model-output.json",
+      "sha256": "6a9bbf81bb6f8acc8a632e0bf4738bc6bb1e31e02e335c1d3e12c5a46fa21dd5"
+    },
+    {
+      "name": "visual-critic.json",
+      "sha256": "18c46d7029db406c166ad1a1d0b18cd1a706d7aebf89ddad326fad20b7442a35"
+    }
+  ],
+  "integrity": {
+    "payloadSha256": "d8803ed98000189bfef551567cb7826bc405dc23de7f4a184d56ed098baf2aeb",
+    "canonicalization": "RFC-8785-like sorted JSON keys via repository canonicalJson",
+    "safetyProfile": "allowlisted metadata; private source content omitted"
+  }
+}

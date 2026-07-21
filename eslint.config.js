@@ -7,7 +7,6 @@ import globals from 'globals';
 import typescriptEslint from '@typescript-eslint/eslint-plugin';
 import _import from 'eslint-plugin-import';
 import tsParser from '@typescript-eslint/parser';
-import jest from 'eslint-plugin-jest';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import js from '@eslint/js';
@@ -212,6 +211,7 @@ export default [
       '@typescript-eslint/no-misused-promises': 'error',
       'react/prop-types': 'off',
       'import/no-unresolved': ['error', {ignore: ['^virtual:']}],
+      'import/no-named-as-default': 'off',
     },
   },
   {
@@ -222,26 +222,27 @@ export default [
       },
     },
   },
-  ...compat.extends('plugin:jest/recommended').map((config) => ({
-    ...config,
-    files: ['**/*.{test,spec}.{js,jsx,ts,tsx}'],
-  })),
   {
     files: ['**/*.{test,spec}.{js,jsx,ts,tsx}'],
-    plugins: {
-      jest,
-    },
     languageOptions: {
       globals: {
         ...globals.node,
-        ...globals.jest,
       },
+    },
+    rules: {
+      '@typescript-eslint/no-floating-promises': 'off',
     },
   },
   {
     files: ['**/*.server.*'],
     rules: {
       'react-hooks/rules-of-hooks': 'off',
+    },
+  },
+  {
+    files: ['scripts/**/*.{js,mjs,ts}'],
+    rules: {
+      'no-console': 'off',
     },
   },
 ];

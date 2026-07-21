@@ -8,7 +8,6 @@
       "id",
       "slug",
       "title",
-      "status",
       "workflow",
       "meme",
       "commerce",
@@ -19,12 +18,14 @@
       "prompts"
     ],
     "properties": {
-      "id": {"type": "string"},
-      "slug": {"type": "string"},
-      "title": {"type": "string"},
-      "status": {
-        "enum": ["draft", "generated", "mockups_ready", "approved", "published", "archived"]
+      "id": {"type": "string", "pattern": "^[a-z0-9-]+$"},
+      "slug": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+      "aliases": {
+        "type": "array",
+        "uniqueItems": true,
+        "items": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"}
       },
+      "title": {"type": "string", "minLength": 1},
       "workflow": {
         "type": "object",
         "required": ["status"],
@@ -32,7 +33,7 @@
           "status": {
             "enum": ["draft", "generated", "mockups_ready", "approved", "published", "archived"]
           },
-          "updatedAt": {"type": "string"},
+          "updatedAt": {"type": "string", "format": "date-time"},
           "lastError": {"type": ["string", "null"]}
         }
       },
@@ -42,9 +43,9 @@
         "type": "object",
         "required": ["source", "brief", "rightsNote"],
         "properties": {
-          "source": {"type": "string"},
-          "brief": {"type": "string"},
-          "rightsNote": {"type": "string"}
+          "source": {"type": "string", "minLength": 1},
+          "brief": {"type": "string", "minLength": 1},
+          "rightsNote": {"type": "string", "minLength": 20}
         }
       },
       "signals": {
@@ -58,9 +59,9 @@
               "type": "object",
               "required": ["provider", "query"],
               "properties": {
-                "provider": {"type": "string"},
+                "provider": {"enum": ["x"]},
                 "query": {"type": "string"},
-                "maxResults": {"type": "number"}
+                "maxResults": {"type": "integer", "minimum": 10, "maximum": 100}
               }
             }
           },
@@ -70,7 +71,7 @@
               "type": "object",
               "required": ["provider"],
               "properties": {
-                "provider": {"type": "string"}
+                "provider": {"enum": ["x"]}
               },
               "additionalProperties": true
             }
@@ -79,23 +80,24 @@
       },
       "commerce": {
         "type": "object",
-        "required": ["handle", "price", "currency", "tags", "variants"],
+        "required": ["handle", "unitAmount", "currency", "tags", "variants"],
         "properties": {
-          "handle": {"type": "string"},
-          "price": {"type": "string"},
-          "currency": {"type": "string"},
+          "handle": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+          "unitAmount": {"type": "integer", "minimum": 1},
+          "currency": {"type": "string", "pattern": "^[A-Z]{3}$"},
           "tags": {"type": "array", "items": {"type": "string"}},
           "variants": {
             "type": "array",
+            "minItems": 1,
             "items": {
               "type": "object",
-              "required": ["id", "sku", "color", "size", "providerVariantId", "selectedOptions"],
+              "required": ["id", "sku", "color", "size", "providerVariantId", "availableForSale", "selectedOptions"],
               "properties": {
-                "id": {"type": "string"},
-                "sku": {"type": "string"},
-                "color": {"type": "string"},
-                "size": {"type": "string"},
-                "providerVariantId": {"type": "number"},
+                "id": {"type": "string", "minLength": 1},
+                "sku": {"type": "string", "pattern": "^[A-Z0-9_]+$"},
+                "color": {"type": "string", "minLength": 1},
+                "size": {"type": "string", "minLength": 1},
+                "providerVariantId": {"type": "integer", "minimum": 1},
                 "availableForSale": {"type": "boolean"},
                 "selectedOptions": {"type": "array"}
               }
@@ -107,8 +109,8 @@
         "type": "object",
         "required": ["provider", "baseProduct", "technique", "placements"],
         "properties": {
-          "provider": {"type": "string"},
-          "baseProduct": {"type": ["string", "null"]},
+          "provider": {"enum": ["printful"]},
+          "baseProduct": {"type": "string", "minLength": 1},
           "technique": {
             "enum": [
               "DTG",
@@ -123,15 +125,17 @@
           "textLayer": {"type": "string"},
           "placements": {
             "type": "array",
+            "minItems": 1,
             "items": {
               "type": "object",
               "required": ["area", "file"],
               "properties": {
-                "area": {"type": "string"},
-                "file": {"type": "string"},
+                "area": {"type": "string", "minLength": 1},
+                "file": {"type": "string", "pattern": "^assets/"},
+                "text": {"type": "string"},
                 "url": {"type": "string"},
-                "width": {"type": "number"},
-                "height": {"type": "number"},
+                "width": {"type": "integer", "minimum": 1},
+                "height": {"type": "integer", "minimum": 1},
                 "position": {"type": "object"}
               }
             }
@@ -143,11 +147,26 @@
         "properties": {
           "printful": {
             "type": "object",
-            "required": ["productId", "variantIds"],
+            "required": ["productId", "variants"],
             "properties": {
-              "productId": {"type": ["number", "string", "null"]},
+              "productId": {"type": ["integer", "null"], "minimum": 1},
               "mockupTaskKey": {"type": ["string", "null"]},
-              "variantIds": {"type": "array", "items": {"type": "number"}}
+              "mockupTaskFailures": {"type": "integer", "minimum": 0},
+              "lastFailedMockupTaskKey": {"type": ["string", "null"]},
+              "variants": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["variantId", "catalogVariantId", "syncVariantId", "available"],
+                  "properties": {
+                    "variantId": {"type": "string", "minLength": 1},
+                    "catalogVariantId": {"type": "integer", "minimum": 1},
+                    "syncVariantId": {"type": "integer", "minimum": 1},
+                    "available": {"type": "boolean"}
+                  },
+                  "additionalProperties": false
+                }
+              }
             }
           }
         },
@@ -157,7 +176,7 @@
         "type": "object",
         "required": ["artwork", "mockups"],
         "properties": {
-          "artwork": {"type": "string"},
+          "artwork": {"type": "string", "pattern": "^assets/"},
           "printFiles": {
             "type": "array",
             "items": {
@@ -165,24 +184,24 @@
               "required": ["placement", "path"],
               "properties": {
                 "placement": {"type": "string"},
-                "path": {"type": "string"},
+                "path": {"type": "string", "pattern": "^assets/"},
                 "url": {"type": "string"}
               }
             }
           },
-          "customerPhotos": {"type": "array", "items": {"type": "string"}},
-          "mockups": {"type": "array", "items": {"type": "string"}}
+          "customerPhotos": {"type": "array", "items": {"type": "string", "pattern": "^assets/"}},
+          "mockups": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^assets/"}}
         }
       },
       "approval": {
         "type": "object",
         "properties": {
-          "approvedAt": {"type": ["string", "null"]},
+          "approvedAt": {"type": ["string", "null"], "format": "date-time"},
           "approvedBy": {"type": ["string", "null"]},
           "notes": {"type": "string"}
         }
       },
-      "prompts": {"type": "array", "items": {"type": "string"}}
+      "prompts": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
     }
   }
 }

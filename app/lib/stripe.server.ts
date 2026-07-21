@@ -1,11 +1,22 @@
-import {createHmac, timingSafeEqual} from 'node:crypto';
+import {createHash} from 'node:crypto';
+import Stripe from 'stripe';
 import {
   getMerchProduct,
   getPrimaryCustomerMockup,
+  getPrintfulVariantMapping,
   getProductVariant,
+  isPurchasableProduct,
+  isPurchasableVariant,
+  merchProducts,
+  variantLabel,
   type MerchProduct,
 } from '~/lib/merch';
 import {requireEnv, siteUrl} from '~/lib/env.server';
+import {
+  attachStripeSession,
+  createPendingOrder,
+  markCheckoutCreationFailed,
+} from '~/lib/orders.server';
 
 export type CheckoutLineInput = {
   productSlug: string;
@@ -17,69 +28,167 @@ export type StripeCheckoutLine = {
   product: MerchProduct;
   variantId: string;
   provider: string;
-  providerVariantId: number;
+  catalogVariantId: number;
+  syncVariantId: number;
   quantity: number;
 };
 
-export type StripeSession = {
-  id: string;
-  url?: string | null;
-  customer_details?: {
-    email?: string | null;
-    name?: string | null;
-    phone?: string | null;
-  } | null;
-  shipping_details?: {
-    name?: string | null;
-    address?: StripeAddress | null;
-  } | null;
-};
+export type StripeSession = Stripe.Checkout.Session;
+export type StripeEvent = Stripe.Event;
 
-export type StripeLineItem = {
-  quantity?: number | null;
-  price?: {
-    product?:
-      | string
-      | {
-          metadata?: Record<string, string>;
-        };
-  } | null;
-};
+const stripeClients = new Map<string, Stripe>();
+const MAX_UNIQUE_LINES = 10;
+const MAX_INPUT_LINES = 100;
+const MAX_QUANTITY = 10;
 
-export type StripeAddress = {
-  line1?: string | null;
-  line2?: string | null;
-  city?: string | null;
-  state?: string | null;
-  country?: string | null;
-  postal_code?: string | null;
-};
+export function stripeClient(env: AppEnv) {
+  requireEnv(env, ['STRIPE_SECRET_KEY']);
+  const key = env.STRIPE_SECRET_KEY || '';
+  let client = stripeClients.get(key);
+  if (!client) {
+    client = new Stripe(key, {
+      apiVersion: '2026-06-24.dahlia',
+      maxNetworkRetries: 2,
+      timeout: 10_000,
+    });
+    stripeClients.set(key, client);
+  }
+  return client;
+}
 
-const STRIPE_API_BASE = 'https://api.stripe.com/v1';
-const DEFAULT_STRIPE_API_VERSION = '2026-02-25.clover';
+export function assertCheckoutConfiguration(env: AppEnv) {
+  assertProductionStorefrontMode(env);
+  requireEnv(env, [
+    'STRIPE_SECRET_KEY',
+    'STRIPE_WEBHOOK_SECRET',
+    'DATABASE_URL',
+    'INNGEST_EVENT_KEY',
+    'INNGEST_SIGNING_KEY',
+    'PRINTFUL_TOKEN',
+    'PRINTFUL_STORE_ID',
+  ]);
+  if (env.NODE_ENV === 'production') {
+    if (env.CHECKOUT_ENABLED !== 'true') throw new Error('Production checkout is disabled');
+    if (!env.PUBLIC_SITE_URL) {
+      throw new Error('Production checkout requires a canonical public site URL');
+    }
+    assertCanonicalProductionSiteUrl(env.PUBLIC_SITE_URL);
+    if (
+      env.VERCEL_ENV === 'production' &&
+      !env.STRIPE_SECRET_KEY?.startsWith('sk_live_')
+    ) {
+      throw new Error('Vercel production checkout requires a live Stripe secret key');
+    }
+    if (!env.STOREFRONT_CONTACT_EMAIL) {
+      throw new Error('Production checkout requires a merchant contact email');
+    }
+    if (
+      !env.STOREFRONT_SHIPPING_POLICY ||
+      !env.STOREFRONT_RETURNS_POLICY ||
+      !env.STOREFRONT_PRIVACY_POLICY ||
+      !env.STOREFRONT_TERMS_POLICY ||
+      !env.STOREFRONT_CONTACT_POLICY
+    ) {
+      throw new Error('Production checkout requires merchant-reviewed policy copy');
+    }
+    if (!env.STRIPE_ALLOWED_SHIPPING_COUNTRIES) {
+      throw new Error('Production checkout requires approved shipping countries');
+    }
+    if (
+      Boolean(env.STRIPE_SHIPPING_RATE_ID) ===
+      Boolean(env.STRIPE_FLAT_SHIPPING_AMOUNT)
+    ) {
+      throw new Error(
+        'Production checkout requires exactly one approved shipping-rate configuration',
+      );
+    }
+    if (!['true', 'false'].includes(env.STRIPE_AUTOMATIC_TAX || '')) {
+      throw new Error('Production checkout requires an explicit automatic-tax decision');
+    }
+    if (
+      env.STOREFRONT_LEGAL_APPROVED !== 'true' ||
+      env.STOREFRONT_TAX_SHIPPING_APPROVED !== 'true'
+    ) {
+      throw new Error('Production checkout requires legal and tax/shipping approval');
+    }
+  }
+}
+
+function assertCanonicalProductionSiteUrl(value: string) {
+  let url: URL;
+  try {
+    url = new URL(value);
+  } catch {
+    throw new Error('Production checkout requires a valid canonical public site URL');
+  }
+  if (
+    url.protocol !== 'https:' ||
+    url.username ||
+    url.password ||
+    url.search ||
+    url.hash ||
+    (url.pathname !== '/' && url.pathname !== '')
+  ) {
+    throw new Error('Production checkout requires a canonical HTTPS origin without a path');
+  }
+}
+
+export function assertProductionStorefrontMode(env: AppEnv) {
+  if (env.STOREFRONT_MODE !== 'production') {
+    throw new Error('Storefront operations require explicit production storefront mode');
+  }
+}
 
 export function normalizeCheckoutLines(lines: unknown): StripeCheckoutLine[] {
   if (!Array.isArray(lines)) throw new Error('Cart payload must be an array');
+  if (!lines.length) throw new Error('Cart is empty');
+  if (lines.length > MAX_INPUT_LINES) throw new Error('Cart payload has too many lines');
 
-  return lines.map((line) => {
-    const input = line as CheckoutLineInput;
+  const normalized = new Map<string, StripeCheckoutLine>();
+  for (const rawLine of lines) {
+    if (!rawLine || typeof rawLine !== 'object') throw new Error('Invalid cart line');
+    const input = rawLine as CheckoutLineInput;
     const productSlug = String(input.productSlug || '');
     const variantId = String(input.variantId || '');
-    const product = getMerchProduct(productSlug);
-    if (!product) throw new Error(`Unknown product: ${productSlug}`);
+    const quantity = Number(input.quantity);
+    if (!Number.isInteger(quantity) || quantity < 1 || quantity > MAX_QUANTITY) {
+      throw new Error('Cart quantities must be integers between 1 and 10');
+    }
 
+    const product = getMerchProduct(productSlug, {includeInternal: true});
+    if (!product || !isPurchasableProduct(product)) {
+      throw new Error(`Product is not available for purchase: ${productSlug}`);
+    }
     const variant = getProductVariant(product, variantId);
-    if (!variant) throw new Error(`Unknown variant: ${variantId}`);
+    if (!variant || !isPurchasableVariant(product, variant)) {
+      throw new Error(`Variant is not available for purchase: ${variantId}`);
+    }
+    const mapping = getPrintfulVariantMapping(product, variant.id);
+    if (!mapping) throw new Error(`Missing provider mapping: ${variant.id}`);
 
-    const quantity = Math.max(1, Math.min(Number(input.quantity) || 1, 10));
-    return {
+    const key = `${product.slug}:${variant.id}`;
+    const previous = normalized.get(key);
+    const nextQuantity = (previous?.quantity || 0) + quantity;
+    if (nextQuantity > MAX_QUANTITY) throw new Error('Combined line quantity exceeds 10');
+    normalized.set(key, {
       product,
       variantId: variant.id,
       provider: product.production.provider,
-      providerVariantId: variant.providerVariantId,
-      quantity,
-    };
-  });
+      catalogVariantId: mapping.catalogVariantId,
+      syncVariantId: mapping.syncVariantId,
+      quantity: nextQuantity,
+    });
+  }
+
+  const result = [...normalized.values()];
+  if (result.length > MAX_UNIQUE_LINES) {
+    throw new Error('Cart has too many unique lines');
+  }
+  const currencies = new Set(result.map((line) => line.product.commerce.currency));
+  const providers = new Set(result.map((line) => line.provider));
+  if (currencies.size !== 1) throw new Error('A checkout may contain only one currency');
+  if (providers.size !== 1) throw new Error('A checkout may contain only one provider');
+  return result;
 }
 
 export async function createCheckoutSession({
@@ -91,187 +200,142 @@ export async function createCheckoutSession({
   lines: StripeCheckoutLine[];
   request: Request;
 }) {
-  requireEnv(env, ['STRIPE_SECRET_KEY']);
-  if (!lines.length) throw new Error('Cart is empty');
-
+  assertCheckoutConfiguration(env);
   const baseUrl = siteUrl(env, request);
-  const params = new URLSearchParams();
-  params.set('mode', 'payment');
-  params.set('success_url', `${baseUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`);
-  params.set('cancel_url', `${baseUrl}/cart`);
-  params.set('client_reference_id', `codex-merch-${Date.now()}`);
-  params.set('metadata[source]', 'codex-merch');
-  params.set('metadata[line_count]', String(lines.length));
-  params.set(
-    'automatic_tax[enabled]',
-    env.STRIPE_AUTOMATIC_TAX === 'true' ? 'true' : 'false',
-  );
-
-  const countries = allowedShippingCountries(env);
-  countries.forEach((country, index) => {
-    params.set(`shipping_address_collection[allowed_countries][${index}]`, country);
+  const catalogRevision = createHash('sha256')
+    .update(JSON.stringify(merchProducts))
+    .digest('hex');
+  const currency = lines[0].product.commerce.currency;
+  const provider = lines[0].provider;
+  const snapshots = lines.map((line) => {
+    const variant = getProductVariant(line.product, line.variantId);
+    if (!variant) throw new Error(`Unknown variant: ${line.variantId}`);
+    return {
+      productSlug: line.product.slug,
+      productTitle: line.product.title,
+      variantId: line.variantId,
+      variantLabel: variantLabel(variant, true),
+      quantity: line.quantity,
+      unitAmount: line.product.commerce.unitAmount,
+      currency,
+      provider,
+      catalogVariantId: line.catalogVariantId,
+      syncVariantId: line.syncVariantId,
+    };
   });
-
-  if (env.STRIPE_SHIPPING_RATE_ID) {
-    params.set('shipping_options[0][shipping_rate]', env.STRIPE_SHIPPING_RATE_ID);
-  } else if (env.STRIPE_FLAT_SHIPPING_AMOUNT) {
-    params.set(
-      'shipping_options[0][shipping_rate_data][type]',
-      'fixed_amount',
-    );
-    params.set(
-      'shipping_options[0][shipping_rate_data][fixed_amount][amount]',
-      String(Math.max(0, Number(env.STRIPE_FLAT_SHIPPING_AMOUNT) || 0)),
-    );
-    params.set(
-      'shipping_options[0][shipping_rate_data][fixed_amount][currency]',
-      lines[0].product.commerce.currency.toLowerCase(),
-    );
-    params.set(
-      'shipping_options[0][shipping_rate_data][display_name]',
-      'Standard shipping',
-    );
-  }
-
-  lines.forEach((line, index) => {
-    const unitAmount = Math.round(Number(line.product.commerce.price) * 100);
-    params.set(`line_items[${index}][quantity]`, String(line.quantity));
-    params.set(
-      `line_items[${index}][price_data][currency]`,
-      line.product.commerce.currency.toLowerCase(),
-    );
-    params.set(
-      `line_items[${index}][price_data][unit_amount]`,
-      String(unitAmount),
-    );
-    params.set(
-      `line_items[${index}][price_data][product_data][name]`,
-      line.product.title,
-    );
-    params.set(
-      `line_items[${index}][price_data][product_data][metadata][slug]`,
-      line.product.slug,
-    );
-    params.set(
-      `line_items[${index}][price_data][product_data][metadata][variant_id]`,
-      line.variantId,
-    );
-    params.set(
-      `line_items[${index}][price_data][product_data][metadata][provider]`,
-      line.provider,
-    );
-    params.set(
-      `line_items[${index}][price_data][product_data][metadata][provider_variant_id]`,
-      String(line.providerVariantId),
-    );
-    params.set(
-      `line_items[${index}][price_data][product_data][images][0]`,
-      new URL(getPrimaryCustomerMockup(line.product), baseUrl).toString(),
-    );
-  });
-
-  return stripeRequest<StripeSession>('/checkout/sessions', {
+  const order = await createPendingOrder({
+    catalogRevision,
+    currency,
     env,
-    method: 'POST',
-    params,
+    items: snapshots,
+    provider,
   });
+
+  try {
+    const metadata = {
+      source: 'codex-merch',
+      order_id: order.id,
+      catalog_revision: catalogRevision,
+    };
+    const session = await stripeClient(env).checkout.sessions.create(
+      {
+        mode: 'payment',
+        success_url: `${baseUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${baseUrl}/cart`,
+        client_reference_id: order.id,
+        metadata,
+        payment_intent_data: {metadata},
+        automatic_tax: {enabled: env.STRIPE_AUTOMATIC_TAX === 'true'},
+        shipping_address_collection: {
+          allowed_countries: allowedShippingCountries(env),
+        },
+        shipping_options: shippingOptions(env, currency),
+        line_items: lines.map((line) => ({
+          quantity: line.quantity,
+          price_data: {
+            currency: currency.toLowerCase(),
+            unit_amount: line.product.commerce.unitAmount,
+            product_data: {
+              name: line.product.title,
+              images: [new URL(getPrimaryCustomerMockup(line.product), baseUrl).toString()],
+              metadata: {
+                slug: line.product.slug,
+                variant_id: line.variantId,
+                provider: line.provider,
+                catalog_variant_id: String(line.catalogVariantId),
+                sync_variant_id: String(line.syncVariantId),
+              },
+            },
+          },
+        })),
+      },
+      {idempotencyKey: `checkout:${order.id}`},
+    );
+    await attachStripeSession(order.id, session.id, env);
+    return {order, session};
+  } catch (error) {
+    await markCheckoutCreationFailed(order.id, error, env);
+    throw error;
+  }
 }
 
-export async function retrieveCheckoutSessionLineItems(
-  sessionId: string,
+export async function retrieveCheckoutSession(sessionId: string, env: AppEnv) {
+  return stripeClient(env).checkout.sessions.retrieve(sessionId);
+}
+
+export function constructStripeEvent(
+  rawBody: string,
+  signature: string,
   env: AppEnv,
 ) {
-  const params = new URLSearchParams({
-    limit: '100',
-    'expand[]': 'data.price.product',
-  });
-
-  const response = await stripeRequest<{data: StripeLineItem[]}>(
-    `/checkout/sessions/${encodeURIComponent(sessionId)}/line_items?${params}`,
-    {env},
-  );
-
-  return response.data || [];
-}
-
-export function verifyStripeWebhook(rawBody: string, signature: string, env: AppEnv) {
   requireEnv(env, ['STRIPE_WEBHOOK_SECRET']);
-  const parsed = parseStripeSignature(signature);
-  const signedPayload = `${parsed.timestamp}.${rawBody}`;
-  const expected = createHmac('sha256', env.STRIPE_WEBHOOK_SECRET || '')
-    .update(signedPayload)
-    .digest('hex');
-
-  const expectedBuffer = Buffer.from(expected);
-  const valid = parsed.signatures.some((candidate) => {
-    const candidateBuffer = Buffer.from(candidate);
-    return (
-      candidateBuffer.length === expectedBuffer.length &&
-      timingSafeEqual(candidateBuffer, expectedBuffer)
-    );
-  });
-
-  if (!valid) throw new Error('Invalid Stripe webhook signature');
+  return stripeClient(env).webhooks.constructEvent(
+    rawBody,
+    signature,
+    env.STRIPE_WEBHOOK_SECRET || '',
+    300,
+  );
 }
 
-async function stripeRequest<T>(
-  path: string,
-  {
-    env,
-    method = 'GET',
-    params,
-  }: {
-    env: AppEnv;
-    method?: 'GET' | 'POST';
-    params?: URLSearchParams;
-  },
+export async function checkoutSessionForPaymentIntent(
+  paymentIntentId: string,
+  env: AppEnv,
 ) {
-  requireEnv(env, ['STRIPE_SECRET_KEY']);
-
-  const response = await fetch(`${STRIPE_API_BASE}${path}`, {
-    method,
-    headers: {
-      Authorization: `Bearer ${env.STRIPE_SECRET_KEY}`,
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'Stripe-Version': env.STRIPE_API_VERSION || DEFAULT_STRIPE_API_VERSION,
-    },
-    body: method === 'POST' ? params : undefined,
+  const sessions = await stripeClient(env).checkout.sessions.list({
+    payment_intent: paymentIntentId,
+    limit: 1,
   });
-
-  if (!response.ok) {
-    throw new Error(`Stripe request failed (${response.status}): ${await response.text()}`);
-  }
-
-  return response.json() as Promise<T>;
+  return sessions.data[0] || null;
 }
 
 function allowedShippingCountries(env: AppEnv) {
   const configured =
     env.STRIPE_ALLOWED_SHIPPING_COUNTRIES ||
     'US,CA,GB,CH,DE,FR,NL,ES,IT,AU';
-
   return configured
     .split(',')
     .map((country) => country.trim().toUpperCase())
-    .filter(Boolean);
+    .filter(Boolean) as Stripe.Checkout.SessionCreateParams.ShippingAddressCollection.AllowedCountry[];
 }
 
-function parseStripeSignature(header: string) {
-  const parts = Object.fromEntries(
-    header.split(',').map((part) => {
-      const [key, value] = part.split('=');
-      return [key, value];
-    }),
-  );
-  const timestamp = parts.t;
-  const signatures = header
-    .split(',')
-    .filter((part) => part.startsWith('v1='))
-    .map((part) => part.slice(3));
-
-  if (!timestamp || !signatures.length) {
-    throw new Error('Malformed Stripe signature header');
+function shippingOptions(env: AppEnv, currency: string) {
+  if (env.STRIPE_SHIPPING_RATE_ID) {
+    return [{shipping_rate: env.STRIPE_SHIPPING_RATE_ID}];
   }
-
-  return {timestamp, signatures};
+  if (env.STRIPE_FLAT_SHIPPING_AMOUNT) {
+    const amount = Number(env.STRIPE_FLAT_SHIPPING_AMOUNT);
+    if (!Number.isInteger(amount) || amount < 0) {
+      throw new Error('STRIPE_FLAT_SHIPPING_AMOUNT must be a non-negative integer');
+    }
+    return [
+      {
+        shipping_rate_data: {
+          type: 'fixed_amount' as const,
+          fixed_amount: {amount, currency: currency.toLowerCase()},
+          display_name: 'Standard shipping',
+        },
+      },
+    ];
+  }
+  return undefined;
 }

@@ -1,8 +1,11 @@
 #!/usr/bin/env node
-import {mkdir, readFile, writeFile} from 'node:fs/promises';
+import {mkdir, readFile, rename, unlink, writeFile} from 'node:fs/promises';
 import {existsSync, readFileSync} from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {createHash} from 'node:crypto';
+import {atomicWriteJson} from './services/weekly-run-store.mjs';
+import {sanitizeXmlText} from './services/text-safety.mjs';
 import {
   artDirectionPrompt as isolatedArtDirectionPrompt,
   artDirectorReview as isolatedArtDirectorReview,
@@ -11,6 +14,7 @@ import {
   productionProviders,
   providerForProduction,
 } from './services/production-providers.mjs';
+import {validateCatalog} from './validate-catalog.mjs';
 
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const productsPath = path.join(rootDir, 'merch/products.json');
@@ -39,6 +43,34 @@ export const workflowStatuses = [
   'archived',
 ];
 
+export const pilotProductSlug = 'codex-rate-reset-long-sleeve';
+
+export function assertPilotPublicationAllowed(selected, env = process.env) {
+  const blocked = selected.filter((product) => product.slug !== pilotProductSlug);
+  if (blocked.length && env.MERCH_PILOT_APPROVED !== 'true') {
+    throw new Error(
+      `Publish ${pilotProductSlug} and complete the live pilot before publishing: ${blocked
+        .map((product) => product.slug)
+        .join(', ')}`,
+    );
+  }
+}
+
+export function assertProviderMutationAllowed(selected, action = 'provider mutation') {
+  const blocked = selected.filter(
+    (product) =>
+      product.automation?.previewOnly === true ||
+      product.automation?.releaseEligible === false,
+  );
+  if (blocked.length) {
+    throw new Error(
+      `${action} is disabled for preview-only products: ${blocked
+        .map((product) => product.slug)
+        .join(', ')}`,
+    );
+  }
+}
+
 export const allowedTechniques = new Set([
   'DTG',
   'DTFlex',
@@ -57,7 +89,7 @@ export async function readProducts() {
 }
 
 export async function writeProducts(products) {
-  await writeFile(productsPath, `${JSON.stringify(products, null, 2)}\n`);
+  await atomicWriteJson(productsPath, products);
 }
 
 export async function readBaseProducts() {
@@ -73,7 +105,7 @@ export async function readArtDirection() {
 }
 
 export function workflowStatus(product) {
-  return product?.workflow?.status || product?.status || 'draft';
+  return product?.workflow?.status || 'draft';
 }
 
 export function setWorkflowStatus(product, status) {
@@ -81,7 +113,23 @@ export function setWorkflowStatus(product, status) {
     throw new Error(`Unsupported workflow status: ${status}`);
   }
 
-  product.status = status;
+  const current = workflowStatus(product);
+  if (current === status) return;
+  const currentIndex = workflowStatuses.indexOf(current);
+  const nextIndex = workflowStatuses.indexOf(status);
+  if (nextIndex < currentIndex && status !== 'archived') {
+    product.approval = {approvedAt: null, approvedBy: null, notes: 'Invalidated by upstream artifact change.'};
+    const printful = product.providerRefs?.printful;
+    if (printful) {
+      printful.productId = null;
+      printful.mockupTaskKey = null;
+      printful.variants = [];
+    }
+    if (status === 'generated') {
+      product.assets.customerPhotos = [];
+    }
+  }
+
   product.workflow = {
     ...(product.workflow || {}),
     status,
@@ -141,7 +189,7 @@ export function validateProducts(products) {
       'id',
       'slug',
       'title',
-      'status',
+      'workflow',
       'meme',
       'commerce',
       'production',
@@ -250,7 +298,11 @@ export function validateProducts(products) {
       errors.push(`${label}: commerce handle is required`);
     }
 
-    if (!product?.commerce?.price || !product?.commerce?.currency) {
+    if (
+      !Number.isInteger(product?.commerce?.unitAmount) ||
+      product.commerce.unitAmount <= 0 ||
+      !product?.commerce?.currency
+    ) {
       errors.push(`${label}: commerce price and currency are required`);
     }
   });
@@ -294,7 +346,7 @@ export function buildPrintfulSyncProductPayload(
           .replace(/[^A-Z0-9]+/g, '_')
           .replace(/^_+|_+$/g, ''),
       variant_id: variant.providerVariantId,
-      retail_price: product.commerce.price,
+      retail_price: moneyFromMinorUnits(product.commerce.unitAmount),
       files,
       options: variantOptions,
     })),
@@ -539,19 +591,36 @@ function printfulProductVariants(product, baseProduct) {
   }
 
   const ref = productProviderRef(product, 'printful');
-  return (ref.variantIds || []).map((providerVariantId) => ({
-    id: `${product.slug}:${providerVariantId}`,
-    sku: `${product.slug}-${providerVariantId}`
+  return (ref.variants || []).map((mapping) => ({
+    id: mapping.variantId,
+    sku: `${product.slug}-${mapping.catalogVariantId}`
       .toUpperCase()
       .replace(/[^A-Z0-9]+/g, '_')
       .replace(/^_+|_+$/g, ''),
-    providerVariantId,
+    providerVariantId: mapping.catalogVariantId,
   }));
+}
+
+function moneyFromMinorUnits(unitAmount) {
+  return (Number(unitAmount) / 100).toFixed(2);
 }
 
 function publicAssetUrl(file, siteUrl) {
   if (!file || isRemoteUrl(file)) return file;
-  return new URL(`/${String(file).replace(/^\/+/, '')}`, siteUrl).toString();
+  const url = new URL(`/${String(file).replace(/^\/+/, '')}`, siteUrl);
+  const version = localAssetVersion(file);
+  if (version) url.searchParams.set('v', version);
+  return url.toString();
+}
+
+function localAssetVersion(file) {
+  if (!file || isRemoteUrl(file)) return null;
+  const filePath = localPath(file);
+  if (!existsSync(filePath)) return null;
+  return createHash('sha256')
+    .update(readFileSync(filePath))
+    .digest('hex')
+    .slice(0, 12);
 }
 
 function assertPrintfulPublicAssetUrl(siteUrl) {
@@ -617,7 +686,7 @@ function commerceVariantForBaseVariant(slug, variant) {
 }
 
 function escapeHtml(value) {
-  return String(value)
+  return sanitizeXmlText(value)
     .replaceAll('&', '&amp;')
     .replaceAll('<', '&lt;')
     .replaceAll('>', '&gt;')
@@ -777,6 +846,11 @@ export function photoshootPrompt(product, baseProduct, artDirection, options = {
   const spec = product.artDirector?.aopSpec || {};
   const palette = spec.palette || {};
   const production = productProduction(product);
+  const placementText = (production.placements || [])
+    .map((placement) =>
+      placement.text ? `${placement.area}: "${placement.text}"` : '',
+    )
+    .filter(Boolean);
 
   return [
     'You are the final Codex merch photoshooter.',
@@ -787,8 +861,12 @@ export function photoshootPrompt(product, baseProduct, artDirection, options = {
     `Garment brief: ${product.meme?.brief || product.description || product.title}.`,
     `Known fabric palette: fabric ${palette.fabric || 'match source images'}, ink ${palette.ink || 'match source images'}, accent ${palette.accent || 'match source images'}.`,
     `Deterministic text layer to preserve: ${production.textLayer || product.title}.`,
+    placementText.length
+      ? `Exact visible print text by placement: ${placementText.join('; ')}. Preserve these strings when visible; do not hallucinate, rewrite, or mutate letters.`
+      : '',
     'Art direction: isolated premium merch photography on a very light warm-gray ecommerce background, straight-on composition, soft studio shadow, realistic cotton fleece texture, ribbed cuffs/collar/hem, subtle wrinkles, natural stitching, product filled like real merch but unworn.',
     'Match the established Codex Supply House direction: quiet research-lab/skater merchandise, restrained negative space, precise sleeve story, and realistic garment depth like the hoodie and long-sleeve reference shots.',
+    'Keep the background blank except for the garment shadow; do not add titles, captions, labels, badges, UI, or any text outside the garment itself.',
     artDirection?.aopGarmentRules?.length
       ? `Garment rules: ${artDirection.aopGarmentRules.join(' ')}`
       : '',
@@ -914,7 +992,6 @@ async function newAopCottonProduct({products, slug, title}) {
     id: `drop-${String(products.length + 1).padStart(3, '0')}-${slug}`,
     slug,
     title,
-    status: 'draft',
     workflow: {status: 'draft', updatedAt: new Date().toISOString()},
     category: 'Codex',
     description:
@@ -939,7 +1016,7 @@ async function newAopCottonProduct({products, slug, title}) {
     },
     commerce: {
       handle: slug,
-      price: '88.00',
+      unitAmount: 8800,
       currency: 'USD',
       tags: ['codex', 'sweatshirt', 'all-over-cotton'],
       variants: baseProduct.variants.map((variant) =>
@@ -957,7 +1034,7 @@ async function newAopCottonProduct({products, slug, title}) {
       printful: {
         productId: null,
         mockupTaskKey: null,
-        variantIds: baseProduct.variants.map((variant) => variant.providerVariantId),
+        variants: [],
       },
     },
     assets: {
@@ -1020,7 +1097,6 @@ function newStandardPlacementProduct({products, slug, title}) {
     id: `drop-${String(products.length + 1).padStart(3, '0')}-${slug}`,
     slug,
     title,
-    status: 'draft',
     workflow: {status: 'draft', updatedAt: new Date().toISOString()},
     category: 'Codex',
     description: 'Draft product created from a Codex merch conversation.',
@@ -1037,7 +1113,7 @@ function newStandardPlacementProduct({products, slug, title}) {
     },
     commerce: {
       handle: slug,
-      price: '42.00',
+      unitAmount: 4200,
       currency: 'USD',
       tags: ['codex'],
       variants: [],
@@ -1052,7 +1128,7 @@ function newStandardPlacementProduct({products, slug, title}) {
       printful: {
         productId: null,
         mockupTaskKey: null,
-        variantIds: [],
+        variants: [],
       },
     },
     assets: {
@@ -1071,7 +1147,9 @@ function newStandardPlacementProduct({products, slug, title}) {
 
 async function runValidate() {
   const products = await readProducts();
-  const errors = validateProducts(products);
+  const legacyErrors = validateProducts(products);
+  const {errors: schemaErrors} = await validateCatalog();
+  const errors = [...legacyErrors, ...schemaErrors];
   if (errors.length) {
     console.error(errors.join('\n'));
     process.exitCode = 1;
@@ -1290,14 +1368,14 @@ async function runComposePrintFiles(args) {
 
   for (const {product, base} of plans) {
     await composeProductPrintFiles(product, base);
-    if (workflowStatus(product) === 'draft') setWorkflowStatus(product, 'generated');
+    setWorkflowStatus(product, 'generated');
   }
 
   await writeProducts(products);
   printJson(plans.map(({product}) => ({slug: product.slug, printFiles: product.assets.printFiles})));
 }
 
-async function composeProductPrintFiles(product, baseProduct) {
+export async function composeProductPrintFiles(product, baseProduct) {
   const production = productProduction(product);
   if (production.technique === 'All-Over Cotton') {
     return composeAopCottonProductFiles(product, baseProduct);
@@ -1305,7 +1383,6 @@ async function composeProductPrintFiles(product, baseProduct) {
 
   const sharp = (await import('sharp')).default;
   const dimensions = baseProduct?.printfile || {width: 1800, height: 2400};
-  const text = production.textLayer || product.title;
   const placements = production.placements || [];
   product.assets.printFiles = product.assets.printFiles || [];
 
@@ -1319,6 +1396,7 @@ async function composeProductPrintFiles(product, baseProduct) {
     const artworkPath = localPath(product.assets.artwork);
 
     const layout = printPlacementLayout({width, height, placement: placement.area});
+    const text = placement.text || production.textLayer || product.title;
 
     if (existsSync(artworkPath)) {
       const artwork = await sharp(artworkPath)
@@ -1458,7 +1536,7 @@ function aopPalette(spec) {
   };
 }
 
-function aopPanelSvg({product, spec, area, width, height}) {
+export function aopPanelSvg({product, spec, area, width, height}) {
   const palette = aopPalette(spec);
   const production = productProduction(product);
   const text = {
@@ -1475,21 +1553,27 @@ function aopPanelSvg({product, spec, area, width, height}) {
 <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${escapeXml(product.title)} ${area} AOP panel">
   ${aopDefs(palette)}
   <rect width="${width}" height="${height}" fill="${palette.fabric}"/>
-  ${aopBasePattern({area, spec, palette, width, height})}
-  ${aopPanelComposition({area, text, spec, palette, width, height})}
+  <g data-aop-aesthetic-world="${escapeXml(spec.aestheticWorld || 'legacy')}" data-aop-type-system="${escapeXml(spec.typeSystem || 'serif-editorial')}">
+    ${aopBasePattern({area, spec, palette, width, height})}
+    ${aopPanelComposition({area, text, spec, palette, width, height})}
+  </g>
 </svg>`;
 }
 
 function aopInsideLabelSvg({product, spec, width, height}) {
   const palette = aopPalette(spec);
   const production = productProduction(product);
+  const brandLabel = spec.brandLabel || 'CODEX SUPPLY';
+  const labelLine = spec.label?.line || production.textLayer || product.title;
+  const contentWidth = Math.max(1, width - 72);
+  const type = aopTypeSystem(spec);
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${escapeXml(product.title)} inside label">
   <rect width="${width}" height="${height}" fill="${palette.fabric}"/>
   <rect x="8" y="8" width="${width - 16}" height="${height - 16}" fill="none" stroke="${palette.ink}" stroke-width="3"/>
-  <text x="${width / 2}" y="54" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="800" fill="${palette.ink}">CODEX SUPPLY</text>
-  <text x="${width / 2}" y="91" text-anchor="middle" font-family="Georgia, serif" font-size="20" fill="${palette.ink}">${escapeXml(spec.label?.line || production.textLayer || product.title)}</text>
-  <text x="${width / 2}" y="124" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="${palette.ink}">95% COTTON / 5% ELASTANE / MADE ON DEMAND</text>
+  ${fittedTextSvg({text: brandLabel, x: width / 2, y: 29, maxWidth: contentWidth, maxHeight: 29, fontMax: 26, fontMin: 14, family: type.supportFamily, weight: 800, fill: palette.ink, maxLineLength: 28, maxLines: 1, role: 'inside-label-brand'})}
+  ${fittedTextSvg({text: labelLine, x: width / 2, y: 68, maxWidth: contentWidth, maxHeight: 25, fontMax: 20, fontMin: 12, family: type.displayFamily, weight: type.displayWeight, fill: palette.ink, maxLineLength: 32, maxLines: 1, role: 'inside-label-line'})}
+  ${fittedTextSvg({text: '95% COTTON / 5% ELASTANE / MADE ON DEMAND', x: width / 2, y: 111, maxWidth: contentWidth, maxHeight: 18, fontMax: 13, fontMin: 8, family: type.supportFamily, weight: 700, fill: palette.ink, maxLineLength: 52, maxLines: 1, role: 'inside-label-fiber'})}
 </svg>`;
 }
 
@@ -1505,16 +1589,49 @@ function aopDefs(palette) {
     </pattern>
     <pattern id="statusmap" width="360" height="360" patternUnits="userSpaceOnUse">
       <path d="M0 0H360M0 0V360" stroke="${palette.muted}" stroke-width="4" opacity="0.18"/>
-      <path d="M-40 270C80 210 160 315 300 240C390 192 420 218 520 166" fill="none" stroke="${palette.ink}" stroke-width="5" opacity="0.22"/>
-      <path d="M-20 90C90 34 174 122 286 78C360 48 414 54 472 18" fill="none" stroke="${palette.muted}" stroke-width="4" opacity="0.28"/>
-      <circle cx="288" cy="92" r="28" fill="none" stroke="${palette.accent}" stroke-width="5" opacity="0.72"/>
+      <path d="M-30 282L72 228L154 256L246 190L390 218" fill="none" stroke="${palette.ink}" stroke-width="5" opacity="0.22"/>
+      <path d="M-18 96L86 46L172 112L276 64L390 82" fill="none" stroke="${palette.muted}" stroke-width="4" opacity="0.28"/>
+      <path d="M270 80h44v44h-44z" fill="none" stroke="${palette.accent}" stroke-width="5" opacity="0.72"/>
+    </pattern>
+    <pattern id="queuegrid" width="320" height="320" patternUnits="userSpaceOnUse">
+      <path d="M0 52H320M0 168H320M0 284H320" stroke="${palette.muted}" stroke-width="4" opacity="0.16"/>
+      <circle cx="52" cy="52" r="10" fill="${palette.ink}" opacity="0.3"/>
+      <circle cx="150" cy="168" r="10" fill="${palette.ink}" opacity="0.28"/>
+      <path d="M52 52V168H150V284H258" fill="none" stroke="${palette.ink}" stroke-width="5" opacity="0.22"/>
+    </pattern>
+    <pattern id="checkerboard" width="320" height="320" patternUnits="userSpaceOnUse">
+      <rect width="320" height="320" fill="transparent"/>
+      <rect width="160" height="160" fill="${palette.ink}" opacity="0.2"/>
+      <rect x="160" y="160" width="160" height="160" fill="${palette.ink}" opacity="0.2"/>
+    </pattern>
+    <pattern id="sunstripes" width="400" height="520" patternUnits="userSpaceOnUse">
+      <rect width="400" height="120" fill="${palette.accent}" opacity="0.32"/>
+      <rect y="170" width="400" height="72" fill="${palette.ink}" opacity="0.12"/>
+      <rect y="300" width="400" height="150" fill="${palette.muted}" opacity="0.2"/>
+    </pattern>
+    <pattern id="halftone" width="180" height="180" patternUnits="userSpaceOnUse">
+      <circle cx="35" cy="35" r="18" fill="${palette.ink}" opacity="0.22"/>
+      <circle cx="125" cy="125" r="28" fill="${palette.accent}" opacity="0.24"/>
+    </pattern>
+    <pattern id="wavybands" width="480" height="360" patternUnits="userSpaceOnUse">
+      <path d="M-40 88C70 18 168 158 280 88S490 18 560 88" fill="none" stroke="${palette.accent}" stroke-width="54" opacity="0.28"/>
+      <path d="M-40 244C70 174 168 314 280 244S490 174 560 244" fill="none" stroke="${palette.ink}" stroke-width="32" opacity="0.14"/>
     </pattern>
   </defs>`;
 }
 
+function usesRecipeAopRenderer(spec) {
+  return Boolean(spec.layout || spec.sleeves?.style);
+}
+
 function aopPatternId(spec) {
   if (spec.basePattern === 'pinstripe') return 'pinstripe';
-  if (spec.basePattern === 'status-isobar-map' || spec.basePattern === 'queue-radar') {
+  if (spec.basePattern === 'queue-radar') return 'queuegrid';
+  if (spec.basePattern === 'checkerboard') return 'checkerboard';
+  if (spec.basePattern === 'sun-stripes') return 'sunstripes';
+  if (spec.basePattern === 'halftone-noise') return 'halftone';
+  if (spec.basePattern === 'wavy-bands') return 'wavybands';
+  if (spec.basePattern === 'status-isobar-map') {
     return 'statusmap';
   }
   return 'microgrid';
@@ -1522,70 +1639,593 @@ function aopPatternId(spec) {
 
 function aopBasePattern({area, spec, palette, width, height}) {
   const pattern = aopPatternId(spec);
-  const bg = `<rect width="${width}" height="${height}" fill="url(#${pattern})" opacity="${pattern === 'pinstripe' ? 0.65 : 0.85}"/>`;
+  const recipeMode = usesRecipeAopRenderer(spec);
+  const bg = `<rect width="${width}" height="${height}" fill="url(#${pattern})" opacity="${
+    recipeMode ? (pattern === 'pinstripe' ? 0.28 : 0.44) : pattern === 'pinstripe' ? 0.65 : 0.85
+  }"/>`;
   const statusOverlay =
-    pattern === 'statusmap'
+    pattern === 'statusmap' && !recipeMode
       ? `<g opacity="0.62">
           <path d="M${width * 0.08} ${height * 0.22}C${width * 0.22} ${height * 0.08} ${width * 0.42} ${height * 0.34} ${width * 0.62} ${height * 0.2}C${width * 0.78} ${height * 0.09} ${width * 0.88} ${height * 0.2} ${width * 0.96} ${height * 0.13}" fill="none" stroke="${palette.ink}" stroke-width="${width * 0.006}"/>
           <path d="M${width * 0.04} ${height * 0.64}C${width * 0.2} ${height * 0.52} ${width * 0.34} ${height * 0.76} ${width * 0.5} ${height * 0.62}C${width * 0.66} ${height * 0.48} ${width * 0.76} ${height * 0.68} ${width * 0.95} ${height * 0.55}" fill="none" stroke="${palette.muted}" stroke-width="${width * 0.005}"/>
-          <g transform="translate(${width * 0.78} ${height * 0.23})" fill="none" stroke="${palette.accent}" stroke-width="${width * 0.006}">
-            <circle r="${width * 0.055}"/>
-            <circle r="${width * 0.085}" opacity="0.42"/>
-            <path d="M${-width * 0.09} 0H${width * 0.09}M0 ${-width * 0.09}V${width * 0.09}"/>
-          </g>
         </g>`
       : '';
   const sleeve =
     area.includes('sleeve')
-      ? `${aopTribalWave({x: width * 0.36, y: height * 0.11, width: width * 0.28, height: height * 0.72, color: palette.accent})}
-         ${aopTribalWave({x: width * 0.57, y: height * 0.19, width: width * 0.18, height: height * 0.58, color: palette.ink, opacity: 0.4})}`
-      : '';
+      ? aopSleeveMotif({spec, palette, width, height, area})
+      : recipeMode && (area === 'front' || area === 'back')
+        ? aopBodyMotif({spec, palette, width, height, area})
+        : '';
   return `${bg}${statusOverlay}${sleeve}`;
 }
 
-function aopPanelComposition({area, text, spec, palette, width, height}) {
-  if (area === 'front') {
-    return `
-      ${fittedTextSvg({text: text.chest, x: width * 0.27, y: height * 0.24, maxWidth: width * 0.34, fontMax: width * 0.04, fontMin: width * 0.022, family: 'Arial, Helvetica, sans-serif', weight: 800, fill: palette.accent})}
-      ${aopAbstractMark({x: width * 0.69, y: height * 0.25, size: width * 0.12, palette})}
-      ${fittedTextSvg({text: text.front, x: width * 0.5, y: height * 0.38, maxWidth: width * 0.72, fontMax: width * 0.064, fontMin: width * 0.036, family: 'Georgia, serif', fill: palette.ink, maxLineLength: 18})}
-      <text x="${width * 0.5}" y="${height * 0.45}" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="${width * 0.026}" font-weight="700" letter-spacing="0" fill="${palette.ink}" opacity="0.74">${escapeXml(spec.front?.subline || 'CUT AND SEWN FOR RESEARCH CREWS')}</text>
-      ${aopFooterCode({palette, width, height})}`;
+function aopBodyMotif({spec, palette, width, height, area}) {
+  const mutedStroke = Math.max(5, width * 0.008);
+  const strongStroke = Math.max(8, width * 0.014);
+  const backShift = area === 'back' ? width * 0.045 : 0;
+
+  if (spec.basePattern === 'status-isobar-map') {
+    const x = width * 0.5 + backShift;
+    const y = height * (area === 'back' ? 0.55 : 0.58);
+    const rings = [
+      [0.32, 0.16, 0.34],
+      [0.25, 0.12, 0.56],
+      [0.18, 0.085, 0.82],
+    ];
+    return `<g data-aop-motif="status-isobar-map" fill="none" stroke-linejoin="miter">
+      ${rings
+        .map(([rx, ry, opacity]) => {
+          const left = x - width * rx;
+          const right = x + width * rx;
+          const top = y - height * ry;
+          const bottom = y + height * ry;
+          const notch = width * 0.055;
+          return `<path d="M${left + notch} ${top}H${right - notch}L${right} ${top + notch}V${bottom - notch}L${right - notch} ${bottom}H${left + notch}L${left} ${bottom - notch}V${top + notch}Z" stroke="${palette.ink}" stroke-width="${mutedStroke}" opacity="${opacity}"/>`;
+        })
+        .join('')}
+      <path d="M${x + width * 0.17} ${y - height * 0.085}H${x + width * 0.28}L${x + width * 0.32} ${y - height * 0.045}" stroke="${palette.accent}" stroke-width="${strongStroke}"/>
+    </g>`;
   }
 
-  if (area === 'back') {
-    return `
-      ${fittedTextSvg({text: text.back, x: width * 0.5, y: height * 0.22, maxWidth: width * 0.68, fontMax: width * 0.058, fontMin: width * 0.032, family: 'Georgia, serif', fill: palette.ink, maxLineLength: 18})}
-      <text x="${width * 0.5}" y="${height * 0.31}" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="${width * 0.027}" font-weight="800" fill="${palette.accent}">${escapeXml(spec.back?.subline || 'SAN FRANCISCO / MODEL WORKSHOP')}</text>
-      ${aopTribalWave({x: width * 0.14, y: height * 0.42, width: width * 0.72, height: height * 0.14, color: palette.ink, opacity: 0.42, horizontal: true})}
-      ${aopFooterCode({palette, width, height})}`;
+  if (spec.basePattern === 'pinstripe') {
+    const windowX = width * 0.5;
+    const windowY = height * (area === 'back' ? 0.58 : 0.56);
+    return `<g data-aop-motif="pinstripe-window" fill="none" stroke-linejoin="miter">
+      <path d="M${width * 0.12} ${windowY}H${windowX - width * 0.2}L${windowX - width * 0.14} ${windowY - height * 0.07}" stroke="${palette.muted}" stroke-width="${strongStroke}"/>
+      <rect x="${windowX - width * 0.14}" y="${windowY - height * 0.075}" width="${width * 0.28}" height="${height * 0.15}" stroke="${palette.ink}" stroke-width="${strongStroke}"/>
+      <path d="M${windowX + width * 0.14} ${windowY + height * 0.075}L${windowX + width * 0.2} ${windowY}H${width * 0.88}" stroke="${palette.muted}" stroke-width="${strongStroke}"/>
+      <path d="M${windowX - width * 0.09} ${windowY}H${windowX + width * 0.09}" stroke="${palette.accent}" stroke-width="${strongStroke * 1.25}"/>
+    </g>`;
   }
 
-  if (area === 'left_sleeve' || area === 'right_sleeve') {
-    const sleeveText = area === 'left_sleeve' ? text.sleeveLeft : text.sleeveRight;
-    return `
-      <g transform="translate(${width * 0.5} ${height * 0.53}) rotate(-90)">
-        <text x="0" y="0" text-anchor="middle" font-family="Georgia, serif" font-size="${width * 0.11}" fill="${palette.ink}">${escapeXml(sleeveText)}</text>
-        <text x="0" y="${width * 0.08}" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="${width * 0.032}" font-weight="800" fill="${palette.accent}">${escapeXml(spec.sleeves?.caption || 'RESEARCH CREW')}</text>
-      </g>
-      ${aopSleeveGlyphStack({palette, width, height, flip: area === 'right_sleeve'})}`;
+  if (spec.basePattern === 'queue-radar') {
+    const splitX = width * (area === 'back' ? 0.52 : 0.62);
+    const branchLines = Array.from({length: 4}, (_, index) => {
+      const y = height * (0.48 + index * 0.065);
+      const endX = splitX - width * (0.06 + index * 0.025);
+      return `<path d="M${width * 0.1} ${y}H${endX - width * 0.08}L${endX} ${y + height * 0.025}"/>`;
+    }).join('');
+    const checks = Array.from({length: 3}, (_, index) => {
+      const x = splitX + width * (0.09 + index * 0.085);
+      const y = height * (0.51 + index * 0.075);
+      return `<path d="M${x - width * 0.025} ${y}l${width * 0.018} ${height * 0.018}l${width * 0.04} ${-height * 0.04}"/>`;
+    }).join('');
+    return `<g data-aop-motif="queue-radar" fill="none" stroke-linecap="square" stroke-linejoin="miter">
+      <g stroke="${palette.ink}" stroke-width="${mutedStroke}" opacity="0.62">${branchLines}</g>
+      <path d="M${splitX} ${height * 0.45}V${height * 0.76}" stroke="${palette.muted}" stroke-width="${mutedStroke}" opacity="0.5"/>
+      <g stroke="${palette.accent}" stroke-width="${strongStroke}">${checks}</g>
+    </g>`;
   }
 
-  if (area === 'label_panel') {
-    return `
-      <rect x="${width * 0.31}" y="${height * 0.28}" width="${width * 0.38}" height="${height * 0.18}" fill="${palette.fabric}" stroke="${palette.ink}" stroke-width="12"/>
-      <text x="${width * 0.5}" y="${height * 0.35}" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="${width * 0.05}" font-weight="800" fill="${palette.ink}">CODEX SUPPLY</text>
-      <text x="${width * 0.5}" y="${height * 0.405}" text-anchor="middle" font-family="Georgia, serif" font-size="${width * 0.035}" fill="${palette.accent}">${escapeXml(spec.label?.line || text.title)}</text>`;
+  if (spec.basePattern === 'checkerboard') {
+    const y = height * (area === 'back' ? 0.58 : 0.56);
+    return `<g data-aop-motif="checkerboard" fill="none">
+      <rect x="${width * 0.12}" y="${y - height * 0.12}" width="${width * 0.76}" height="${height * 0.24}" rx="${width * 0.05}" stroke="${palette.ink}" stroke-width="${strongStroke}"/>
+      <path d="M${width * 0.2} ${y}H${width * 0.8}" stroke="${palette.accent}" stroke-width="${strongStroke * 1.35}"/>
+    </g>`;
+  }
+
+  if (spec.basePattern === 'sun-stripes') {
+    const sunX = width * (area === 'back' ? 0.66 : 0.32);
+    const sunY = height * 0.58;
+    return `<g data-aop-motif="sun-stripes">
+      <circle cx="${sunX}" cy="${sunY}" r="${width * 0.19}" fill="${palette.accent}" opacity="0.92"/>
+      <rect x="${width * 0.08}" y="${sunY}" width="${width * 0.84}" height="${height * 0.052}" fill="${palette.fabric}"/>
+      <rect x="${width * 0.08}" y="${sunY + height * 0.07}" width="${width * 0.84}" height="${height * 0.025}" fill="${palette.ink}" opacity="0.78"/>
+    </g>`;
+  }
+
+  if (spec.basePattern === 'halftone-noise') {
+    const rotation = area === 'back' ? -7 : 7;
+    return `<g data-aop-motif="halftone-noise" transform="rotate(${rotation} ${width * 0.5} ${height * 0.58})">
+      <rect x="${width * 0.14}" y="${height * 0.45}" width="${width * 0.72}" height="${height * 0.28}" fill="${palette.ink}" opacity="0.12"/>
+      <rect x="${width * 0.2}" y="${height * 0.5}" width="${width * 0.6}" height="${height * 0.18}" fill="none" stroke="${palette.accent}" stroke-width="${strongStroke}"/>
+    </g>`;
+  }
+
+  if (spec.basePattern === 'wavy-bands') {
+    return `<g data-aop-motif="wavy-bands" fill="none" stroke-linecap="round">
+      <path d="M${-width * 0.08} ${height * 0.52}C${width * 0.18} ${height * 0.42} ${width * 0.32} ${height * 0.64} ${width * 0.55} ${height * 0.52}S${width * 0.92} ${height * 0.4} ${width * 1.08} ${height * 0.52}" stroke="${palette.accent}" stroke-width="${width * 0.075}"/>
+      <path d="M${-width * 0.08} ${height * 0.65}C${width * 0.18} ${height * 0.55} ${width * 0.32} ${height * 0.77} ${width * 0.55} ${height * 0.65}S${width * 0.92} ${height * 0.53} ${width * 1.08} ${height * 0.65}" stroke="${palette.ink}" stroke-width="${width * 0.035}" opacity="0.68"/>
+    </g>`;
   }
 
   return '';
 }
 
-function aopFooterCode({palette, width, height}) {
-  return `<g opacity="0.8">
-    <rect x="${width * 0.33}" y="${height * 0.79}" width="${width * 0.34}" height="${height * 0.052}" fill="${palette.ink}"/>
-    <text x="${width * 0.5}" y="${height * 0.824}" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="${width * 0.024}" font-weight="800" fill="${palette.fabric}">CODEX / CUT-SEW / ${new Date().getFullYear()}</text>
+function aopSleeveMotif({spec, palette, width, height, area}) {
+  const style = spec.sleeves?.style;
+  const right = area === 'right_sleeve';
+  const motifX = width * (right ? 0.65 : 0.35);
+  if (style === 'glyph-stack') {
+    return aopSleeveNodeStack({
+      palette,
+      width,
+      height,
+      flip: right,
+    });
+  }
+  if (style === 'radar-rings') {
+    return `<g data-aop-motif="radar-rings" transform="translate(${motifX} ${height * 0.54})" fill="none" stroke-linejoin="miter">
+      <g stroke="${palette.ink}" stroke-width="${Math.max(7, width * 0.012)}">
+        <circle r="${width * 0.095}"/><circle r="${width * 0.19}" opacity="0.7"/><circle r="${width * 0.285}" opacity="0.42"/>
+      </g>
+      <path d="M${right ? width * 0.19 : -width * 0.19} ${-width * 0.19}h${right ? width * 0.13 : -width * 0.13}v${right ? width * 0.055 : -width * 0.055}" stroke="${palette.accent}" stroke-width="${Math.max(10, width * 0.018)}"/>
+      <path d="M0 ${-width * 0.32}V${width * 0.32}M${-width * 0.32} 0H${width * 0.32}" stroke="${palette.muted}" stroke-width="${Math.max(4, width * 0.006)}" opacity="0.46"/>
+    </g>`;
+  }
+  if (style === 'ladder') {
+    const rungs = Array.from({length: 9}, (_, index) => {
+      const y = height * (0.18 + index * 0.075);
+      const accent = index === (right ? 5 : 3);
+      return `<path d="M${width * 0.35} ${y}H${width * 0.65}" stroke="${accent ? palette.accent : palette.ink}" stroke-width="${accent ? width * 0.025 : width * 0.014}" opacity="${accent ? 1 : 0.58}"/>`;
+    }).join('');
+    return `<g data-aop-motif="ladder" fill="none">
+      <path d="M${width * 0.35} ${height * 0.15}V${height * 0.82}M${width * 0.65} ${height * 0.15}V${height * 0.82}" stroke="${palette.ink}" stroke-width="${width * 0.018}" opacity="0.58"/>
+      ${rungs}
+    </g>`;
+  }
+  if (style === 'racing-stripe') {
+    return `<g data-aop-motif="racing-stripe">
+      <rect x="${width * (right ? 0.18 : 0.58)}" y="${height * 0.08}" width="${width * 0.13}" height="${height * 0.82}" fill="${palette.ink}" opacity="0.82"/>
+      <rect x="${width * (right ? 0.33 : 0.43)}" y="${height * 0.08}" width="${width * 0.075}" height="${height * 0.82}" fill="${palette.accent}"/>
+      <rect x="${width * (right ? 0.43 : 0.35)}" y="${height * 0.08}" width="${width * 0.025}" height="${height * 0.82}" fill="${palette.muted}"/>
+    </g>`;
+  }
+  if (style === 'checker-cuff') {
+    const cells = Array.from({length: 8}, (_, index) => {
+      const x = (index % 4) * width * 0.25;
+      const y = height * (0.66 + Math.floor(index / 4) * 0.12);
+      const filled = (index + Math.floor(index / 4)) % 2 === 0;
+      return `<rect x="${x}" y="${y}" width="${width * 0.25}" height="${height * 0.12}" fill="${filled ? palette.ink : palette.accent}" opacity="${filled ? 0.82 : 0.9}"/>`;
+    }).join('');
+    return `<g data-aop-motif="checker-cuff">${cells}</g>`;
+  }
+  if (style === 'sun-wave') {
+    return `<g data-aop-motif="sun-wave" fill="none" stroke-linecap="round">
+      <circle cx="${width * (right ? 0.68 : 0.32)}" cy="${height * 0.24}" r="${width * 0.13}" fill="${palette.accent}" stroke="none"/>
+      <path d="M${width * 0.08} ${height * 0.48}C${width * 0.28} ${height * 0.4} ${width * 0.42} ${height * 0.56} ${width * 0.62} ${height * 0.48}S${width * 0.9} ${height * 0.4} ${width * 1.05} ${height * 0.48}" stroke="${palette.ink}" stroke-width="${width * 0.04}"/>
+      <path d="M${-width * 0.05} ${height * 0.59}C${width * 0.18} ${height * 0.51} ${width * 0.38} ${height * 0.67} ${width * 0.58} ${height * 0.59}S${width * 0.86} ${height * 0.51} ${width * 1.08} ${height * 0.59}" stroke="${palette.muted}" stroke-width="${width * 0.026}"/>
+    </g>`;
+  }
+  if (style === 'badge-repeat') {
+    const badges = Array.from({length: 3}, (_, index) => {
+      const y = height * (0.24 + index * 0.22);
+      return `<g transform="translate(${motifX} ${y})">
+        <circle r="${width * 0.12}" fill="${index === 1 ? palette.accent : 'none'}" stroke="${palette.ink}" stroke-width="${width * 0.018}"/>
+        <path d="M${-width * 0.065} 0H${width * 0.065}M0 ${-width * 0.065}V${width * 0.065}" stroke="${index === 1 ? palette.fabric : palette.accent}" stroke-width="${width * 0.018}"/>
+      </g>`;
+    }).join('');
+    return `<g data-aop-motif="badge-repeat">${badges}</g>`;
+  }
+  if (style === 'wave') {
+    const lineCount = right ? 3 : 6;
+    const waveLines = Array.from({length: lineCount}, (_, index) => {
+      const y = height * (0.26 + index * (right ? 0.13 : 0.075));
+      const startX = width * (right ? 0.26 : 0.14);
+      const endX = width * (right ? 0.68 : 0.78);
+      const step = width * (right ? 0.1 : 0.065);
+      return `<path d="M${startX} ${y}H${endX - step}L${endX} ${y + height * 0.035}"/>`;
+    }).join('');
+    const clearingMarks = right
+      ? `<g stroke="${palette.accent}" stroke-width="${Math.max(9, width * 0.017)}">
+          <path d="M${width * 0.62} ${height * 0.68}l${width * 0.035} ${height * 0.025}l${width * 0.075} ${-height * 0.06}"/>
+          <path d="M${width * 0.48} ${height * 0.78}l${width * 0.035} ${height * 0.025}l${width * 0.075} ${-height * 0.06}"/>
+        </g>`
+      : '';
+    return `<g data-aop-motif="wave" fill="none" stroke-linejoin="miter">
+      <g stroke="${palette.ink}" stroke-width="${Math.max(7, width * 0.012)}" opacity="${right ? 0.38 : 0.68}">${waveLines}</g>
+      ${clearingMarks}
+    </g>`;
+  }
+  return `${aopTribalWave({x: width * 0.36, y: height * 0.11, width: width * 0.28, height: height * 0.72, color: palette.accent})}
+    ${aopTribalWave({x: width * 0.57, y: height * 0.19, width: width * 0.18, height: height * 0.58, color: palette.ink, opacity: 0.4})}`;
+}
+
+function aopPanelComposition({area, text, spec, palette, width, height}) {
+  if (!usesRecipeAopRenderer(spec)) {
+    return legacyAopPanelComposition({area, text, spec, palette, width, height});
+  }
+
+  const layout = spec.layout || 'center-monument';
+  const safeX = width * 0.065;
+  const safeY = height * 0.07;
+  const frontX = layout === 'offset-ledger' ? width * 0.46 : layout === 'split-field' ? width * 0.42 : width * 0.5;
+  const frontWidth = layout === 'split-field' ? width * 0.48 : layout === 'offset-ledger' ? width * 0.64 : width * 0.68;
+  const brandLabel = spec.brandLabel || 'CODEX SUPPLY';
+  const provenance = spec.provenanceLine || 'CODEX / CUT-SEW / 2026';
+  const type = aopTypeSystem(spec);
+
+  if (area === 'front') {
+    if (['giant-type', 'badge-stack', 'horizon-band', 'diagonal-poster'].includes(layout)) {
+      return aopExpressiveFrontComposition({
+        layout,
+        text,
+        spec,
+        palette,
+        width,
+        height,
+        brandLabel,
+        provenance,
+        type,
+      });
+    }
+    const mainTop = height * (layout === 'split-field' ? 0.31 : 0.3);
+    const mainLayout = fitTextLayout({
+      text: text.front,
+      maxWidth: frontWidth,
+      maxHeight: height * 0.17,
+      fontMax: width * 0.064,
+      fontMin: width * 0.026,
+      maxLineLength: layout === 'split-field' ? 16 : 18,
+      maxLines: 3,
+      family: type.displayFamily,
+    });
+    const subTop = mainTop + mainLayout.height + height * 0.025;
+    return `
+      ${fittedTextSvg({text: text.chest, x: width * 0.34, y: height * 0.17, maxWidth: width * 0.28, maxHeight: height * 0.07, fontMax: width * 0.034, fontMin: width * 0.018, family: type.supportFamily, weight: 800, fill: palette.accent, maxLineLength: 18, maxLines: 2, role: 'front-chest'})}
+      ${fittedTextSvg({text: text.mark, x: width * 0.72, y: height * 0.165, maxWidth: width * 0.14, maxHeight: height * 0.075, fontMax: width * 0.05, fontMin: width * 0.022, family: type.supportFamily, weight: 800, fill: palette.ink, maxLineLength: 8, maxLines: 1, role: 'front-mark'})}
+      ${fittedTextSvg({text: text.front, x: frontX, y: mainTop, maxWidth: frontWidth, maxHeight: height * 0.17, fontMax: width * 0.064, fontMin: width * 0.026, family: type.displayFamily, weight: type.displayWeight, fill: palette.ink, maxLineLength: layout === 'split-field' ? 16 : 18, maxLines: 3, role: 'front-primary', layout: mainLayout})}
+      ${fittedTextSvg({text: spec.front?.subline || 'CUT AND SEWN FOR RESEARCH CREWS', x: frontX, y: subTop, maxWidth: Math.min(frontWidth, width - safeX * 2), maxHeight: height * 0.055, fontMax: width * 0.024, fontMin: width * 0.014, family: type.supportFamily, weight: 700, fill: palette.ink, maxLineLength: 28, maxLines: 2, role: 'front-subline'})}
+      ${layout === 'split-field' ? `<rect x="${width * 0.68}" y="${height * 0.32}" width="${width * 0.008}" height="${height * 0.3}" fill="${palette.accent}"/>` : ''}
+      ${aopFooterCode({palette, width, height, provenance})}`;
+  }
+
+  if (area === 'back') {
+    if (['giant-type', 'badge-stack', 'horizon-band', 'diagonal-poster'].includes(layout)) {
+      return aopExpressiveBackComposition({
+        layout,
+        text,
+        spec,
+        palette,
+        width,
+        height,
+        brandLabel,
+        provenance,
+        type,
+      });
+    }
+    const mainTop = height * 0.16;
+    const mainLayout = fitTextLayout({
+      text: text.back,
+      maxWidth: width * 0.72,
+      maxHeight: height * 0.2,
+      fontMax: width * 0.058,
+      fontMin: width * 0.024,
+      maxLineLength: 18,
+      maxLines: 3,
+      family: type.displayFamily,
+    });
+    const subTop = mainTop + mainLayout.height + Math.max(height * 0.03, mainLayout.fontSize);
+    return `
+      ${fittedTextSvg({text: text.back, x: width * 0.5, y: mainTop, maxWidth: width * 0.72, maxHeight: height * 0.2, fontMax: width * 0.058, fontMin: width * 0.024, family: type.displayFamily, weight: type.displayWeight, fill: palette.ink, maxLineLength: 18, maxLines: 3, role: 'back-primary', layout: mainLayout})}
+      ${fittedTextSvg({text: spec.back?.subline || 'SAN FRANCISCO / MODEL WORKSHOP', x: width * 0.5, y: subTop, maxWidth: width * 0.66, maxHeight: height * 0.06, fontMax: width * 0.026, fontMin: width * 0.014, family: type.supportFamily, weight: 800, fill: palette.accent, maxLineLength: 28, maxLines: 2, role: 'back-subline'})}
+      ${aopFooterCode({palette, width, height, provenance})}`;
+  }
+
+  if (area === 'left_sleeve' || area === 'right_sleeve') {
+    const sleeveText = area === 'left_sleeve' ? text.sleeveLeft : text.sleeveRight;
+    const right = area === 'right_sleeve';
+    const rotation = right ? 90 : -90;
+    const textX = width * (right ? 0.42 : 0.58);
+    const textY = height * 0.56;
+    const primaryMaxWidth = height * 0.38;
+    const captionMaxWidth = height * 0.32;
+    const primaryLane = -width * 0.06;
+    const captionLane = -width * 0.16;
+    const primaryLayout = fitTextLayout({
+      text: sleeveText,
+      maxWidth: primaryMaxWidth,
+      maxHeight: width * 0.1,
+      fontMax: width * 0.075,
+      fontMin: width * 0.026,
+      family: type.displayFamily,
+      maxLineLength: 28,
+      maxLines: 1,
+    });
+    const caption = spec.sleeves?.caption || 'RESEARCH CREW';
+    const captionLayout = fitTextLayout({
+      text: caption,
+      maxWidth: captionMaxWidth,
+      maxHeight: width * 0.06,
+      fontMax: width * 0.03,
+      fontMin: width * 0.016,
+      family: type.supportFamily,
+      maxLineLength: 28,
+      maxLines: 1,
+    });
+    return `
+      <g transform="translate(${textX} ${textY}) rotate(${rotation})" data-aop-role="sleeve-type-${right ? 'right' : 'left'}" data-aop-text-lane="outer" data-aop-primary-lane="${primaryLane}" data-aop-caption-lane="${captionLane}">
+        ${fittedTextSvg({text: sleeveText, x: 0, y: primaryLane - primaryLayout.fontSize, maxWidth: primaryMaxWidth, maxHeight: width * 0.1, fontMax: width * 0.075, fontMin: width * 0.026, family: type.displayFamily, weight: type.displayWeight, fill: palette.ink, maxLineLength: 28, maxLines: 1, role: 'sleeve-primary', layout: primaryLayout})}
+        ${fittedTextSvg({text: caption, x: 0, y: captionLane - captionLayout.fontSize, maxWidth: captionMaxWidth, maxHeight: width * 0.06, fontMax: width * 0.03, fontMin: width * 0.016, family: type.supportFamily, weight: 800, fill: palette.accent, maxLineLength: 28, maxLines: 1, role: 'sleeve-caption', layout: captionLayout})}
+      </g>
+      <rect x="${safeX}" y="${safeY}" width="${width - safeX * 2}" height="${height - safeY * 2}" fill="none" stroke="none" data-aop-safe-margin="true"/>`;
+  }
+
+  if (area === 'label_panel') {
+    return `
+      <rect x="${width * 0.23}" y="${height * 0.29}" width="${width * 0.54}" height="${height * 0.2}" fill="${palette.fabric}" stroke="${palette.ink}" stroke-width="${Math.max(8, width * 0.008)}"/>
+      ${fittedTextSvg({text: brandLabel, x: width * 0.5, y: height * 0.325, maxWidth: width * 0.46, maxHeight: height * 0.055, fontMax: width * 0.042, fontMin: width * 0.018, family: type.supportFamily, weight: 800, fill: palette.ink, maxLineLength: 28, maxLines: 1, role: 'label-brand'})}
+      ${fittedTextSvg({text: spec.label?.line || text.title, x: width * 0.5, y: height * 0.405, maxWidth: width * 0.46, maxHeight: height * 0.045, fontMax: width * 0.03, fontMin: width * 0.015, family: type.displayFamily, weight: type.displayWeight, fill: palette.accent, maxLineLength: 32, maxLines: 1, role: 'label-line'})}`;
+  }
+
+  return '';
+}
+
+function aopExpressiveFrontComposition({
+  layout,
+  text,
+  spec,
+  palette,
+  width,
+  height,
+  brandLabel,
+  provenance,
+  type,
+}) {
+  const support = spec.front?.subline || 'ORIGINAL CUT AND SEWN EDITION';
+  const brand = fittedTextSvg({
+    text: brandLabel,
+    x: width * 0.5,
+    y: height * 0.105,
+    maxWidth: width * 0.72,
+    maxHeight: height * 0.055,
+    fontMax: width * 0.032,
+    fontMin: width * 0.014,
+    family: type.supportFamily,
+    weight: 800,
+    fill: palette.ink,
+    maxLineLength: 28,
+    maxLines: 1,
+    role: 'front-chest',
+  });
+  const provenanceText = aopPlainProvenance({
+    palette,
+    width,
+    height,
+    provenance,
+    family: type.supportFamily,
+  });
+
+  if (layout === 'giant-type') {
+    return `<g data-aop-layout="giant-type"></g>${brand}
+      ${fittedTextSvg({text: text.front, x: width * 0.5, y: height * 0.23, maxWidth: width * 0.68, maxHeight: height * 0.34, fontMax: width * 0.135, fontMin: width * 0.04, family: type.displayFamily, weight: type.displayWeight, fill: palette.ink, maxLineLength: 11, maxLines: 3, role: 'front-primary'})}
+      <rect x="${width * 0.09}" y="${height * 0.63}" width="${width * 0.82}" height="${height * 0.018}" fill="${palette.accent}"/>
+      ${fittedTextSvg({text: support, x: width * 0.5, y: height * 0.675, maxWidth: width * 0.74, maxHeight: height * 0.06, fontMax: width * 0.032, fontMin: width * 0.015, family: type.supportFamily, weight: 800, fill: palette.ink, maxLineLength: 30, maxLines: 2, role: 'front-subline'})}
+      ${provenanceText}`;
+  }
+
+  if (layout === 'badge-stack') {
+    return `${brand}
+      <g data-aop-layout="badge-stack">
+        <circle cx="${width * 0.5}" cy="${height * 0.47}" r="${width * 0.31}" fill="${palette.fabric}" stroke="${palette.ink}" stroke-width="${width * 0.026}"/>
+        <circle cx="${width * 0.5}" cy="${height * 0.47}" r="${width * 0.255}" fill="none" stroke="${palette.accent}" stroke-width="${width * 0.014}"/>
+      </g>
+      ${fittedTextSvg({text: text.front, x: width * 0.5, y: height * 0.355, maxWidth: width * 0.46, maxHeight: height * 0.19, fontMax: width * 0.082, fontMin: width * 0.032, family: type.displayFamily, weight: type.displayWeight, fill: palette.ink, maxLineLength: 12, maxLines: 3, role: 'front-primary'})}
+      ${fittedTextSvg({text: support, x: width * 0.5, y: height * 0.63, maxWidth: width * 0.58, maxHeight: height * 0.055, fontMax: width * 0.026, fontMin: width * 0.014, family: type.supportFamily, weight: 800, fill: palette.ink, maxLineLength: 26, maxLines: 2, role: 'front-subline'})}
+      ${provenanceText}`;
+  }
+
+  if (layout === 'horizon-band') {
+    return `${brand}
+      <g data-aop-layout="horizon-band">
+        <rect x="0" y="${height * 0.34}" width="${width}" height="${height * 0.24}" fill="${palette.ink}"/>
+        <rect x="0" y="${height * 0.58}" width="${width}" height="${height * 0.035}" fill="${palette.accent}"/>
+      </g>
+      ${fittedTextSvg({text: text.front, x: width * 0.5, y: height * 0.385, maxWidth: width * 0.86, maxHeight: height * 0.145, fontMax: width * 0.105, fontMin: width * 0.038, family: type.displayFamily, weight: type.displayWeight, fill: palette.fabric, maxLineLength: 15, maxLines: 2, role: 'front-primary'})}
+      ${fittedTextSvg({text: support, x: width * 0.5, y: height * 0.67, maxWidth: width * 0.72, maxHeight: height * 0.06, fontMax: width * 0.03, fontMin: width * 0.014, family: type.supportFamily, weight: 800, fill: palette.ink, maxLineLength: 28, maxLines: 2, role: 'front-subline'})}
+      ${provenanceText}`;
+  }
+
+  return `${brand}
+    <g data-aop-layout="diagonal-poster" transform="rotate(-7 ${width * 0.5} ${height * 0.47})">
+      <rect x="${width * 0.11}" y="${height * 0.24}" width="${width * 0.78}" height="${height * 0.43}" fill="${palette.ink}"/>
+      <rect x="${width * 0.14}" y="${height * 0.27}" width="${width * 0.72}" height="${height * 0.37}" fill="none" stroke="${palette.accent}" stroke-width="${width * 0.018}"/>
+      ${fittedTextSvg({text: text.front, x: width * 0.5, y: height * 0.335, maxWidth: width * 0.62, maxHeight: height * 0.19, fontMax: width * 0.105, fontMin: width * 0.038, family: type.displayFamily, weight: type.displayWeight, fill: palette.fabric, maxLineLength: 12, maxLines: 3, role: 'front-primary'})}
+      ${fittedTextSvg({text: support, x: width * 0.5, y: height * 0.565, maxWidth: width * 0.6, maxHeight: height * 0.055, fontMax: width * 0.027, fontMin: width * 0.013, family: type.supportFamily, weight: 800, fill: palette.accent, maxLineLength: 28, maxLines: 2, role: 'front-subline'})}
+    </g>
+    ${provenanceText}`;
+}
+
+function aopExpressiveBackComposition({
+  layout,
+  text,
+  spec,
+  palette,
+  width,
+  height,
+  brandLabel,
+  provenance,
+  type,
+}) {
+  const support = spec.back?.subline || brandLabel;
+  const alignedX = layout === 'diagonal-poster' ? width * 0.46 : width * 0.5;
+  const mainY = layout === 'horizon-band' ? height * 0.5 : height * 0.2;
+  const band = layout === 'horizon-band'
+    ? `<rect x="0" y="${height * 0.44}" width="${width}" height="${height * 0.25}" fill="${palette.accent}" opacity="0.92" data-aop-layout="horizon-band"/>`
+    : '';
+  const badge = layout === 'badge-stack'
+    ? `<g data-aop-layout="badge-stack"><circle cx="${width * 0.5}" cy="${height * 0.54}" r="${width * 0.27}" fill="none" stroke="${palette.ink}" stroke-width="${width * 0.024}"/><circle cx="${width * 0.5}" cy="${height * 0.54}" r="${width * 0.21}" fill="none" stroke="${palette.accent}" stroke-width="${width * 0.012}"/></g>`
+    : '';
+  const posterOpen = layout === 'diagonal-poster'
+    ? `<g data-aop-layout="diagonal-poster" transform="rotate(7 ${width * 0.5} ${height * 0.42})"><rect x="${width * 0.09}" y="${height * 0.14}" width="${width * 0.82}" height="${height * 0.42}" fill="${palette.fabric}" stroke="${palette.ink}" stroke-width="${width * 0.024}"/>`
+    : '';
+  const posterClose = layout === 'diagonal-poster' ? '</g>' : '';
+  const supportY = layout === 'badge-stack' ? height * 0.79 : height * 0.73;
+  return `${band}${badge}${posterOpen}
+    ${fittedTextSvg({text: text.back, x: alignedX, y: mainY, maxWidth: width * 0.66, maxHeight: height * 0.24, fontMax: width * (layout === 'giant-type' ? 0.12 : 0.085), fontMin: width * 0.028, family: type.displayFamily, weight: type.displayWeight, fill: layout === 'horizon-band' ? palette.ink : palette.ink, maxLineLength: 14, maxLines: 3, role: 'back-primary'})}
+    ${fittedTextSvg({text: support, x: width * 0.5, y: supportY, maxWidth: width * 0.62, maxHeight: height * 0.05, fontMax: width * 0.026, fontMin: width * 0.012, family: type.supportFamily, weight: 800, fill: palette.ink, maxLineLength: 28, maxLines: 2, role: 'back-subline'})}
+    ${posterClose}
+    ${aopPlainProvenance({palette, width, height, provenance, family: type.supportFamily})}`;
+}
+
+function aopPlainProvenance({palette, width, height, provenance, family}) {
+  return fittedTextSvg({
+    text: provenance,
+    x: width * 0.5,
+    y: height * 0.86,
+    maxWidth: width * 0.7,
+    maxHeight: height * 0.04,
+    fontMax: width * 0.022,
+    fontMin: width * 0.01,
+    family,
+    weight: 800,
+    fill: palette.ink,
+    maxLineLength: 44,
+    maxLines: 1,
+    role: 'provenance',
+  });
+}
+
+function aopTypeSystem(spec) {
+  const systems = {
+    'grotesk-poster': {
+      displayFamily: 'Arial Black, Helvetica, sans-serif',
+      supportFamily: 'Arial, Helvetica, sans-serif',
+      displayWeight: 900,
+    },
+    'serif-editorial': {
+      displayFamily: 'Georgia, Times New Roman, serif',
+      supportFamily: 'Arial, Helvetica, sans-serif',
+      displayWeight: 700,
+    },
+    'mono-utility': {
+      displayFamily: 'Courier New, monospace',
+      supportFamily: 'Courier New, monospace',
+      displayWeight: 800,
+    },
+    'rounded-surf': {
+      displayFamily: 'Arial Rounded MT Bold, Arial, sans-serif',
+      supportFamily: 'Arial, Helvetica, sans-serif',
+      displayWeight: 900,
+    },
+    'varsity-block': {
+      displayFamily: 'Impact, Arial Black, sans-serif',
+      supportFamily: 'Arial Narrow, Arial, sans-serif',
+      displayWeight: 900,
+    },
+    'condensed-zine': {
+      displayFamily: 'Impact, Arial Narrow, sans-serif',
+      supportFamily: 'Arial Narrow, Arial, sans-serif',
+      displayWeight: 900,
+    },
+  };
+  return systems[spec.typeSystem] || systems['serif-editorial'];
+}
+
+function legacyAopPanelComposition({area, text, spec, palette, width, height}) {
+  const brandLabel = spec.brandLabel || 'CODEX SUPPLY';
+  const provenance = spec.provenanceLine || 'CODEX / CUT-SEW / 2026';
+  if (area === 'front') {
+    return `
+      ${fittedTextSvg({text: text.chest, x: width * 0.27, y: height * 0.22, maxWidth: width * 0.34, maxHeight: height * 0.06, fontMax: width * 0.04, fontMin: width * 0.022, family: 'Arial, Helvetica, sans-serif', weight: 800, fill: palette.accent})}
+      ${aopAbstractMark({x: width * 0.69, y: height * 0.25, size: width * 0.12, palette})}
+      ${fittedTextSvg({text: text.front, x: width * 0.5, y: height * 0.35, maxWidth: width * 0.72, maxHeight: height * 0.14, fontMax: width * 0.064, fontMin: width * 0.03, family: 'Georgia, serif', fill: palette.ink, maxLineLength: 18})}
+      ${fittedTextSvg({text: spec.front?.subline || 'CUT AND SEWN FOR RESEARCH CREWS', x: width * 0.5, y: height * 0.47, maxWidth: width * 0.68, maxHeight: height * 0.05, fontMax: width * 0.026, fontMin: width * 0.015, family: 'Arial, Helvetica, sans-serif', weight: 700, fill: palette.ink, maxLineLength: 32, maxLines: 1})}
+      ${aopFooterCode({palette, width, height, provenance})}`;
+  }
+  if (area === 'back') {
+    return `
+      ${fittedTextSvg({text: text.back, x: width * 0.5, y: height * 0.19, maxWidth: width * 0.68, maxHeight: height * 0.16, fontMax: width * 0.058, fontMin: width * 0.028, family: 'Georgia, serif', fill: palette.ink, maxLineLength: 18})}
+      ${fittedTextSvg({text: spec.back?.subline || 'SAN FRANCISCO / MODEL WORKSHOP', x: width * 0.5, y: height * 0.35, maxWidth: width * 0.68, maxHeight: height * 0.05, fontMax: width * 0.027, fontMin: width * 0.015, family: 'Arial, Helvetica, sans-serif', weight: 800, fill: palette.accent, maxLineLength: 32, maxLines: 1})}
+      ${aopTribalWave({x: width * 0.14, y: height * 0.42, width: width * 0.72, height: height * 0.14, color: palette.ink, opacity: 0.42, horizontal: true})}
+      ${aopFooterCode({palette, width, height, provenance})}`;
+  }
+  if (area === 'left_sleeve' || area === 'right_sleeve') {
+    const sleeveText = area === 'left_sleeve' ? text.sleeveLeft : text.sleeveRight;
+    return `<g transform="translate(${width * 0.5} ${height * 0.53}) rotate(-90)">
+      ${fittedTextSvg({text: sleeveText, x: 0, y: -width * 0.055, maxWidth: height * 0.58, maxHeight: width * 0.11, fontMax: width * 0.095, fontMin: width * 0.03, family: 'Georgia, serif', fill: palette.ink, maxLineLength: 28, maxLines: 1})}
+      ${fittedTextSvg({text: spec.sleeves?.caption || 'RESEARCH CREW', x: 0, y: width * 0.04, maxWidth: height * 0.5, maxHeight: width * 0.06, fontMax: width * 0.03, fontMin: width * 0.016, family: 'Arial, Helvetica, sans-serif', weight: 800, fill: palette.accent, maxLineLength: 28, maxLines: 1})}
+    </g>${aopSleeveNodeStack({palette, width, height, flip: area === 'right_sleeve'})}`;
+  }
+  if (area === 'label_panel') {
+    return `<rect x="${width * 0.31}" y="${height * 0.28}" width="${width * 0.38}" height="${height * 0.18}" fill="${palette.fabric}" stroke="${palette.ink}" stroke-width="12"/>
+      ${fittedTextSvg({text: brandLabel, x: width * 0.5, y: height * 0.32, maxWidth: width * 0.32, maxHeight: height * 0.055, fontMax: width * 0.04, fontMin: width * 0.018, family: 'Arial, Helvetica, sans-serif', weight: 800, fill: palette.ink, maxLineLength: 24, maxLines: 1})}
+      ${fittedTextSvg({text: spec.label?.line || text.title, x: width * 0.5, y: height * 0.39, maxWidth: width * 0.32, maxHeight: height * 0.045, fontMax: width * 0.03, fontMin: width * 0.014, family: 'Georgia, serif', fill: palette.accent, maxLineLength: 28, maxLines: 1})}`;
+  }
+  return '';
+}
+
+function aopFooterCode({palette, width, height, provenance}) {
+  const x = width * 0.27;
+  const y = height * 0.82;
+  const footerWidth = width * 0.46;
+  const footerHeight = height * 0.065;
+  return `<g opacity="0.88" data-aop-role="provenance">
+    <rect x="${x}" y="${y}" width="${footerWidth}" height="${footerHeight}" fill="${palette.ink}"/>
+    ${fittedTextSvg({text: provenance, x: width * 0.5, y: y + footerHeight * 0.23, maxWidth: footerWidth * 0.88, maxHeight: footerHeight * 0.55, fontMax: width * 0.021, fontMin: width * 0.01, family: 'Arial, Helvetica, sans-serif', weight: 800, fill: palette.fabric, maxLineLength: 44, maxLines: 1, role: 'provenance-text'})}
   </g>`;
+}
+
+function estimatedTextUnits(text, family = '') {
+  const serif = /Georgia|serif/i.test(family);
+  return [...String(text)].reduce((total, character) => {
+    if (/\s/.test(character)) return total + 0.32;
+    if (/[I1|!.,:;'`]/.test(character)) return total + 0.34;
+    if (/[MW@%&]/.test(character)) return total + (serif ? 0.98 : 0.9);
+    if (/[\[\](){}<>/\\\-+]/.test(character)) return total + 0.48;
+    return total + (serif ? 0.61 : 0.57);
+  }, 0);
+}
+
+function wrapTextForFit(text, maxLineLength, maxLines) {
+  const normalized = String(text || '').trim().replace(/\s+/g, ' ');
+  if (!normalized) return [''];
+  let lineLength = Math.max(1, maxLineLength);
+  let lines = wrapText(normalized, lineLength);
+  while (lines.length > maxLines && lineLength < normalized.length) {
+    lineLength += 1;
+    lines = wrapText(normalized, lineLength);
+  }
+  return lines;
+}
+
+export function fitTextLayout({
+  text,
+  maxWidth,
+  maxHeight = Number.POSITIVE_INFINITY,
+  fontMax,
+  fontMin = 8,
+  family = 'Arial, Helvetica, sans-serif',
+  maxLineLength = 16,
+  maxLines = 3,
+  lineHeightRatio = 1.12,
+}) {
+  const lines = wrapTextForFit(text, maxLineLength, maxLines);
+  const longestUnits = Math.max(...lines.map((line) => estimatedTextUnits(line, family)), 1);
+  const widthFit = maxWidth / longestUnits;
+  const heightFit = Number.isFinite(maxHeight)
+    ? maxHeight / (1 + (lines.length - 1) * lineHeightRatio)
+    : fontMax;
+  const availableSize = Math.min(fontMax, widthFit, heightFit);
+  const fontSize = availableSize < fontMin
+    ? Math.max(1, availableSize)
+    : Math.min(fontMax, availableSize);
+  const lineHeight = fontSize * lineHeightRatio;
+  const height = fontSize + (lines.length - 1) * lineHeight;
+  const width = Math.max(...lines.map((line) => estimatedTextUnits(line, family) * fontSize), 0);
+
+  return {lines, fontSize, lineHeight, width, height};
 }
 
 function fittedTextSvg({
@@ -1593,27 +2233,40 @@ function fittedTextSvg({
   x,
   y,
   maxWidth,
+  maxHeight = Number.POSITIVE_INFINITY,
   fontMax,
   fontMin,
   family,
   weight = 400,
   fill,
   maxLineLength = 16,
+  maxLines = 3,
+  lineHeightRatio = 1.12,
+  role = 'fitted-text',
+  layout: suppliedLayout = null,
 }) {
-  const lines = wrapText(text, maxLineLength).slice(0, 3);
-  const longest = Math.max(...lines.map((line) => line.length), 1);
-  const fontSize = Math.max(
+  const layout = suppliedLayout || fitTextLayout({
+    text,
+    maxWidth,
+    maxHeight,
+    fontMax,
     fontMin,
-    Math.min(fontMax, Math.floor(maxWidth / (longest * 0.58))),
-  );
-  const lineHeight = fontSize * 1.08;
-
-  return lines
-    .map(
-      (line, index) =>
-        `<text x="${x}" y="${y + index * lineHeight}" text-anchor="middle" font-family="${family}" font-size="${fontSize}" font-weight="${weight}" fill="${fill}">${escapeXml(line)}</text>`,
-    )
+    family,
+    maxLineLength,
+    maxLines,
+    lineHeightRatio,
+  });
+  const linesMarkup = layout.lines
+    .map((line, index) => {
+      const lineWidth = Math.min(
+        maxWidth,
+        estimatedTextUnits(line, family) * layout.fontSize,
+      );
+      const fittedLength = line ? ` textLength="${lineWidth.toFixed(2)}" lengthAdjust="spacingAndGlyphs"` : '';
+      return `<text x="${x}" y="${y + layout.fontSize + index * layout.lineHeight}" text-anchor="middle" font-family="${family}" font-size="${layout.fontSize}" font-weight="${weight}" fill="${fill}"${fittedLength}>${escapeXml(line)}</text>`;
+    })
     .join('');
+  return `<g data-aop-role="${escapeXml(role)}" data-fit-width="${layout.width.toFixed(2)}" data-fit-height="${layout.height.toFixed(2)}" data-fit-max-width="${maxWidth}" data-fit-max-height="${Number.isFinite(maxHeight) ? maxHeight : ''}">${linesMarkup}</g>`;
 }
 
 function aopAbstractMark({x, y, size, palette}) {
@@ -1637,18 +2290,26 @@ function aopTribalWave({x, y, width, height, color, opacity = 1, horizontal = fa
   return `<polyline points="${points.join(' ')}" fill="none" stroke="${color}" stroke-width="${horizontal ? height * 0.24 : width * 0.2}" stroke-linecap="round" stroke-linejoin="round" opacity="${opacity}"/>`;
 }
 
-function aopSleeveGlyphStack({palette, width, height, flip = false}) {
-  const x = flip ? width * 0.25 : width * 0.75;
-  const glyphs = ['<>', 'CMD', '01', '++', 'C'];
-  return glyphs
+function aopSleeveNodeStack({palette, width, height, flip = false}) {
+  const radius = width * 0.037;
+  const nodeMarks = [
+    `<circle r="${radius * 0.25}" fill="${palette.accent}"/>`,
+    `<path d="M0 ${-radius * 0.48}L${radius * 0.48} 0L0 ${radius * 0.48}L${-radius * 0.48} 0Z" fill="none" stroke="${palette.accent}" stroke-width="${Math.max(5, width * 0.007)}"/>`,
+    `<path d="M${-radius * 0.48} 0H${radius * 0.48}M0 ${-radius * 0.48}V${radius * 0.48}" fill="none" stroke="${palette.ink}" stroke-width="${Math.max(5, width * 0.007)}"/>`,
+    `<path d="M${-radius * 0.48} ${-radius * 0.28}H${radius * 0.48}M${-radius * 0.48} ${radius * 0.28}H${radius * 0.48}" fill="none" stroke="${palette.accent}" stroke-width="${Math.max(5, width * 0.007)}"/>`,
+  ];
+  return `<g data-aop-motif="glyph-stack" data-aop-semantic-copy="none">${nodeMarks
     .map(
-      (glyph, index) => `
-        <g transform="translate(${x} ${height * (0.22 + index * 0.1)})">
-          <circle r="${width * 0.045}" fill="none" stroke="${palette.ink}" stroke-width="8" opacity="0.7"/>
-          <text y="${width * 0.017}" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="${width * 0.04}" font-weight="800" fill="${index % 2 ? palette.ink : palette.accent}">${escapeXml(glyph)}</text>
-        </g>`,
+      (mark, index) => {
+        const x = width * ((flip ? 0.28 : 0.72) + index * (flip ? 0.05 : -0.05));
+        return `
+        <g transform="translate(${x} ${height * (0.14 + index * 0.055)})">
+          <circle r="${radius}" fill="none" stroke="${palette.ink}" stroke-width="${Math.max(6, width * 0.008)}" opacity="0.7"/>
+          ${mark}
+        </g>`;
+      },
     )
-    .join('');
+    .join('')}</g>`;
 }
 
 function normalizeHex(value, fallback = '#000000') {
@@ -1698,7 +2359,46 @@ function relativeLuminance(value) {
   return 0.2126 * convert(r) + 0.7152 * convert(g) + 0.0722 * convert(b);
 }
 
-function aopCatalogMockupSvg({product, spec}) {
+const AOP_BODY_PATH =
+  'M500 338C548 395 660 424 800 424C940 424 1052 395 1100 338C1160 492 1198 684 1210 892L1233 1304C1124 1355 953 1378 800 1378C647 1378 476 1355 367 1304L390 892C402 684 440 492 500 338Z';
+const AOP_LEFT_SLEEVE_PATH =
+  'M491 345C404 381 291 507 238 718L144 1110C177 1164 237 1198 315 1208L455 775C468 618 482 468 491 345Z';
+const AOP_RIGHT_SLEEVE_PATH =
+  'M1109 345C1196 381 1309 507 1362 718L1456 1110C1423 1164 1363 1198 1285 1208L1145 775C1132 618 1118 468 1109 345Z';
+
+function aopGarmentClipDefs(prefix) {
+  return `<clipPath id="${prefix}BodyClip"><path d="${AOP_BODY_PATH}"/></clipPath>
+    <clipPath id="${prefix}LeftSleeveClip"><path d="${AOP_LEFT_SLEEVE_PATH}"/></clipPath>
+    <clipPath id="${prefix}RightSleeveClip"><path d="${AOP_RIGHT_SLEEVE_PATH}"/></clipPath>`;
+}
+
+function aopGarmentSurfaceLayers({product, spec, side = 'front', prefix}) {
+  const palette = aopPalette(spec);
+  const text = {
+    title: productProduction(product).textLayer || product.title,
+    front: spec.front?.primaryText || productProduction(product).textLayer || product.title,
+    chest: spec.front?.chestLabel || product.title,
+    mark: spec.front?.mark || 'C/DX',
+    back: spec.back?.statement || spec.front?.primaryText || product.title,
+    sleeveLeft: spec.sleeves?.leftText || spec.sleeves?.text || product.title,
+    sleeveRight: spec.sleeves?.rightText || spec.sleeves?.text || product.title,
+  };
+  const surface = (area) => `${aopBasePattern({area, spec, palette, width: 1000, height: 1300})}${aopPanelComposition({area, text, spec, palette, width: 1000, height: 1300})}`;
+
+  return `<g data-aop-surface-source="shared" data-aop-side="${side}">
+    <g clip-path="url(#${prefix}BodyClip)">
+      <svg x="345" y="315" width="910" height="1090" viewBox="0 0 1000 1300" preserveAspectRatio="none">${surface(side)}</svg>
+    </g>
+    <g clip-path="url(#${prefix}LeftSleeveClip)">
+      <svg x="70" y="285" width="520" height="990" viewBox="0 0 1000 1300" preserveAspectRatio="none">${surface('left_sleeve')}</svg>
+    </g>
+    <g clip-path="url(#${prefix}RightSleeveClip)">
+      <svg x="1010" y="285" width="520" height="990" viewBox="0 0 1000 1300" preserveAspectRatio="none">${surface('right_sleeve')}</svg>
+    </g>
+  </g>`;
+}
+
+export function aopCatalogMockupSvg({product, spec}) {
   const palette = aopPalette(spec);
   const production = productProduction(product);
   const luminance = relativeLuminance(palette.fabric);
@@ -1713,13 +2413,8 @@ function aopCatalogMockupSvg({product, spec}) {
   const subline = spec.front?.subline || 'CUT AND SEWN';
   const leftSleeveText = spec.sleeves?.leftText || product.title;
   const rightSleeveText = spec.sleeves?.rightText || product.title;
-  const bodyPath =
-    'M500 338C548 395 660 424 800 424C940 424 1052 395 1100 338C1160 492 1198 684 1210 892L1233 1304C1124 1355 953 1378 800 1378C647 1378 476 1355 367 1304L390 892C402 684 440 492 500 338Z';
-  const leftSleevePath =
-    'M491 345C404 381 291 507 238 718L144 1110C177 1164 237 1198 315 1208L455 775C468 618 482 468 491 345Z';
-  const rightSleevePath =
-    'M1109 345C1196 381 1309 507 1362 718L1456 1110C1423 1164 1363 1198 1285 1208L1145 775C1132 618 1118 468 1109 345Z';
-  const garmentPath = `${leftSleevePath}${rightSleevePath}${bodyPath}`;
+  const garmentPath = `${AOP_LEFT_SLEEVE_PATH}${AOP_RIGHT_SLEEVE_PATH}${AOP_BODY_PATH}`;
+  const recipeMode = usesRecipeAopRenderer(spec);
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg width="1600" height="1600" viewBox="0 0 1600 1600" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${escapeXml(product.title)} catalog sweatshirt mockup">
@@ -1776,6 +2471,7 @@ function aopCatalogMockupSvg({product, spec}) {
     <clipPath id="catalogGarmentClip">
       <path d="${garmentPath}"/>
     </clipPath>
+    ${aopGarmentClipDefs('catalog')}
   </defs>
   <rect width="1600" height="1600" fill="url(#studioBackdrop)"/>
   <rect width="1600" height="1600" fill="url(#studioGlow)"/>
@@ -1783,12 +2479,12 @@ function aopCatalogMockupSvg({product, spec}) {
   <ellipse cx="805" cy="1407" rx="470" ry="52" fill="#000000" opacity="0.2"/>
   <ellipse cx="805" cy="1378" rx="345" ry="26" fill="#ffffff" opacity="0.28"/>
   <g transform="translate(12 -18) rotate(-1.2 800 870)" filter="url(#catalogShadow)">
-    <path d="${leftSleevePath}" fill="url(#catalogFabric)"/>
-    <path d="${rightSleevePath}" fill="url(#catalogFabric)"/>
-    <path d="${bodyPath}" fill="url(#catalogFabric)"/>
+    <path d="${AOP_LEFT_SLEEVE_PATH}" fill="url(#catalogFabric)"/>
+    <path d="${AOP_RIGHT_SLEEVE_PATH}" fill="url(#catalogFabric)"/>
+    <path d="${AOP_BODY_PATH}" fill="url(#catalogFabric)"/>
     <g clip-path="url(#catalogGarmentClip)">
       <rect x="100" y="300" width="1400" height="1100" fill="url(#catalogChestLight)"/>
-      <rect x="100" y="300" width="1400" height="1100" fill="url(#${aopPatternId(spec)})" opacity="${patternOpacity}"/>
+      ${recipeMode ? '' : `<rect x="100" y="300" width="1400" height="1100" fill="url(#${aopPatternId(spec)})" opacity="${patternOpacity}"/>`}
       <rect x="100" y="300" width="1400" height="1100" fill="${palette.fabric}" opacity="0.22" filter="url(#fabricNoise)"/>
       <rect x="100" y="300" width="1400" height="1100" fill="url(#garmentVolume)"/>
       <path d="M587 426C558 630 548 930 565 1338" fill="none" stroke="${fold}" stroke-width="10" opacity="0.12"/>
@@ -1801,17 +2497,19 @@ function aopCatalogMockupSvg({product, spec}) {
       <path d="M1315 721C1264 778 1206 805 1145 783" fill="none" stroke="${fold}" stroke-width="8" opacity="0.13"/>
       <path d="M414 778C454 826 478 920 472 1036" fill="none" stroke="#000000" stroke-width="7" opacity="0.08"/>
       <path d="M1186 778C1146 826 1122 920 1128 1036" fill="none" stroke="#000000" stroke-width="7" opacity="0.08"/>
-      ${fittedTextSvg({text: chestText, x: 642, y: 565, maxWidth: 300, fontMax: 30, fontMin: 20, family: 'Arial, Helvetica, sans-serif', weight: 800, fill: palette.accent, maxLineLength: 14})}
-      ${fittedTextSvg({text: bodyText, x: 760, y: 668, maxWidth: 420, fontMax: 42, fontMin: 28, family: 'Georgia, serif', fill: palette.ink, maxLineLength: 17})}
-      <text x="760" y="770" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="800" letter-spacing="0" fill="${palette.accent}">${escapeXml(subline)}</text>
-      ${aopAbstractMark({x: 1010, y: 580, size: 78, palette})}
-      ${aopTribalWave({x: 875, y: 982, width: 250, height: 190, color: palette.accent, opacity: 0.62})}
-      <text x="286" y="845" text-anchor="middle" transform="rotate(-76 286 845)" font-family="Arial, Helvetica, sans-serif" font-size="62" font-weight="800" fill="${palette.accent}">${escapeXml(leftSleeveText)}</text>
-      <text x="1314" y="845" text-anchor="middle" transform="rotate(76 1314 845)" font-family="Arial, Helvetica, sans-serif" font-size="56" font-weight="800" fill="${palette.ink}">${escapeXml(rightSleeveText)}</text>
+      ${recipeMode
+        ? aopGarmentSurfaceLayers({product, spec, side: 'front', prefix: 'catalog'})
+        : `${fittedTextSvg({text: chestText, x: 642, y: 535, maxWidth: 300, maxHeight: 55, fontMax: 30, fontMin: 20, family: 'Arial, Helvetica, sans-serif', weight: 800, fill: palette.accent, maxLineLength: 14})}
+          ${fittedTextSvg({text: bodyText, x: 760, y: 626, maxWidth: 420, maxHeight: 90, fontMax: 42, fontMin: 28, family: 'Georgia, serif', fill: palette.ink, maxLineLength: 17})}
+          ${fittedTextSvg({text: subline, x: 760, y: 742, maxWidth: 500, maxHeight: 38, fontMax: 24, fontMin: 15, family: 'Arial, Helvetica, sans-serif', weight: 800, fill: palette.accent, maxLineLength: 32, maxLines: 1})}
+          ${aopAbstractMark({x: 1010, y: 580, size: 78, palette})}
+          ${aopTribalWave({x: 875, y: 982, width: 250, height: 190, color: palette.accent, opacity: 0.62})}
+          <text x="286" y="845" text-anchor="middle" transform="rotate(-76 286 845)" font-family="Arial, Helvetica, sans-serif" font-size="62" font-weight="800" fill="${palette.accent}">${escapeXml(leftSleeveText)}</text>
+          <text x="1314" y="845" text-anchor="middle" transform="rotate(76 1314 845)" font-family="Arial, Helvetica, sans-serif" font-size="56" font-weight="800" fill="${palette.ink}">${escapeXml(rightSleeveText)}</text>`}
     </g>
-    <path d="${leftSleevePath}" fill="none" stroke="${seam}" stroke-width="4" opacity="0.44"/>
-    <path d="${rightSleevePath}" fill="none" stroke="${seam}" stroke-width="4" opacity="0.44"/>
-    <path d="${bodyPath}" fill="none" stroke="${seam}" stroke-width="4" opacity="0.44"/>
+    <path d="${AOP_LEFT_SLEEVE_PATH}" fill="none" stroke="${seam}" stroke-width="4" opacity="0.44"/>
+    <path d="${AOP_RIGHT_SLEEVE_PATH}" fill="none" stroke="${seam}" stroke-width="4" opacity="0.44"/>
+    <path d="${AOP_BODY_PATH}" fill="none" stroke="${seam}" stroke-width="4" opacity="0.44"/>
     <path d="M500 338C548 395 660 424 800 424C940 424 1052 395 1100 338" fill="none" stroke="#ffffff" stroke-width="10" opacity="${luminance > 0.32 ? 0.28 : 0.1}"/>
     <path d="M594 313C638 388 962 388 1006 313C973 284 910 270 800 270C690 270 627 284 594 313Z" fill="url(#ribKnit)" stroke="${seam}" stroke-width="3"/>
     <path d="M638 319C684 356 916 356 962 319" fill="none" stroke="${palette.fabric}" stroke-width="30" stroke-linecap="round" opacity="0.92"/>
@@ -1823,13 +2521,41 @@ function aopCatalogMockupSvg({product, spec}) {
 </svg>`;
 }
 
-function aopMockupSvg({product, spec, angle}) {
+export function aopMockupSvg({product, spec, angle}) {
   const palette = aopPalette(spec);
-  const production = productProduction(product);
   if (angle === 'patterns') {
     return aopPatternSheetMockup({product, spec, palette});
   }
+  if (!usesRecipeAopRenderer(spec)) {
+    return legacyAopMockupSvg({product, spec, angle, palette});
+  }
 
+  const isBack = angle === 'back';
+  const side = isBack ? 'back' : 'front';
+  const outline = mixHex(palette.ink, palette.fabric, 0.2);
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1600" height="1200" viewBox="0 0 1600 1200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${escapeXml(product.title)} ${angle} mockup">
+  ${aopDefs(palette)}
+  <defs>${aopGarmentClipDefs('technical')}</defs>
+  <rect width="1600" height="1200" fill="#d0d0cf"/>
+  <g transform="translate(0 -130)">
+    <g transform="scale(1 0.9)">
+      <path d="${AOP_LEFT_SLEEVE_PATH}" fill="${palette.fabric}"/>
+      <path d="${AOP_RIGHT_SLEEVE_PATH}" fill="${palette.fabric}"/>
+      <path d="${AOP_BODY_PATH}" fill="${palette.fabric}"/>
+      ${aopGarmentSurfaceLayers({product, spec, side, prefix: 'technical'})}
+      <path d="${AOP_LEFT_SLEEVE_PATH}" fill="none" stroke="${outline}" stroke-width="7"/>
+      <path d="${AOP_RIGHT_SLEEVE_PATH}" fill="none" stroke="${outline}" stroke-width="7"/>
+      <path d="${AOP_BODY_PATH}" fill="none" stroke="${outline}" stroke-width="7"/>
+      <path d="M500 338C548 395 660 424 800 424C940 424 1052 395 1100 338" fill="none" stroke="${outline}" stroke-width="18" stroke-linecap="round"/>
+    </g>
+  </g>
+</svg>`;
+}
+
+function legacyAopMockupSvg({product, spec, angle, palette}) {
+  const production = productProduction(product);
   const isBack = angle === 'back';
   const bodyText = isBack
     ? spec.back?.statement || product.title
@@ -1848,8 +2574,8 @@ function aopMockupSvg({product, spec, angle}) {
     <path d="M400 452h380v520H400z" fill="url(#${aopPatternId(spec)})" opacity="0.7"/>
     <path d="M306 198l-250 600 170 64 174-410z" fill="url(#${aopPatternId(spec)})" opacity="0.7"/>
     <path d="M874 198l250 600-170 64-174-410z" fill="url(#${aopPatternId(spec)})" opacity="0.7"/>
-    ${fittedTextSvg({text: bodyText, x: 590, y: 400, maxWidth: 510, fontMax: 52, fontMin: 32, family: 'Georgia, serif', fill: palette.ink, maxLineLength: 16})}
-    <text x="590" y="520" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="800" fill="${palette.accent}">${escapeXml(bodySub)}</text>
+    ${fittedTextSvg({text: bodyText, x: 590, y: 350, maxWidth: 510, maxHeight: 130, fontMax: 52, fontMin: 28, family: 'Georgia, serif', fill: palette.ink, maxLineLength: 16})}
+    ${fittedTextSvg({text: bodySub, x: 590, y: 510, maxWidth: 510, maxHeight: 45, fontMax: 28, fontMin: 16, family: 'Arial, Helvetica, sans-serif', weight: 800, fill: palette.accent, maxLineLength: 30, maxLines: 1})}
     ${aopAbstractMark({x: 760, y: 350, size: 90, palette})}
     <text x="178" y="590" text-anchor="middle" transform="rotate(-68 178 590)" font-family="Georgia, serif" font-size="48" fill="${palette.ink}">${escapeXml(spec.sleeves?.leftText || 'RESEARCH')}</text>
     <text x="1002" y="590" text-anchor="middle" transform="rotate(68 1002 590)" font-family="Georgia, serif" font-size="48" fill="${palette.ink}">${escapeXml(spec.sleeves?.rightText || 'DEPLOYMENT')}</text>
@@ -1858,25 +2584,33 @@ function aopMockupSvg({product, spec, angle}) {
 }
 
 function aopPatternSheetMockup({product, spec, palette}) {
-  const panels = [
-    ['front', spec.front?.primaryText || product.title],
-    ['back', spec.back?.statement || product.title],
-    ['left sleeve', spec.sleeves?.leftText || 'LEFT'],
-    ['right sleeve', spec.sleeves?.rightText || 'RIGHT'],
-  ];
+  const panels = ['front', 'back', 'left_sleeve', 'right_sleeve'];
+  const text = {
+    title: productProduction(product).textLayer || product.title,
+    front: spec.front?.primaryText || productProduction(product).textLayer || product.title,
+    chest: spec.front?.chestLabel || product.title,
+    mark: spec.front?.mark || 'C/DX',
+    back: spec.back?.statement || spec.front?.primaryText || product.title,
+    sleeveLeft: spec.sleeves?.leftText || spec.sleeves?.text || product.title,
+    sleeveRight: spec.sleeves?.rightText || spec.sleeves?.text || product.title,
+  };
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg width="1600" height="1200" viewBox="0 0 1600 1200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${escapeXml(product.title)} AOP pattern sheet">
   ${aopDefs(palette)}
   <rect width="1600" height="1200" fill="#e6e6e6"/>
   ${panels
-    .map((panel, index) => {
-      const x = 120 + (index % 2) * 700;
-      const y = 110 + Math.floor(index / 2) * 500;
+    .map((area, index) => {
+      const x = 100 + (index % 2) * 800;
+      const y = 70 + Math.floor(index / 2) * 555;
+      const label = area.replace('_', ' ').toUpperCase();
       return `<g transform="translate(${x} ${y})">
-        <rect width="560" height="390" fill="${palette.fabric}" stroke="#222" stroke-width="5"/>
-        <rect width="560" height="390" fill="url(#${aopPatternId(spec)})" opacity="0.62"/>
-        <text x="280" y="188" text-anchor="middle" font-family="Georgia, serif" font-size="46" fill="${palette.ink}">${escapeXml(panel[1])}</text>
-        <text x="280" y="342" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="800" fill="${palette.accent}">${escapeXml(panel[0].toUpperCase())}</text>
+        <rect width="600" height="500" rx="8" fill="#f3f3f1" stroke="#222" stroke-width="5"/>
+        <svg x="124" y="18" width="352" height="430" viewBox="0 0 1000 1300" preserveAspectRatio="xMidYMid meet" overflow="hidden" data-aop-pattern-panel="${area}">
+          <rect width="1000" height="1300" fill="${palette.fabric}"/>
+          ${aopBasePattern({area, spec, palette, width: 1000, height: 1300})}
+          ${aopPanelComposition({area, text, spec, palette, width: 1000, height: 1300})}
+        </svg>
+        <text x="300" y="480" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="800" letter-spacing="2" fill="${palette.accent}">${escapeXml(label)}</text>
       </g>`;
     })
     .join('')}
@@ -1956,6 +2690,7 @@ async function runMockups(args) {
   const products = await readProducts();
   const bases = await readBaseProducts();
   const selected = selectProducts(products, args);
+  if (!dryRun) assertProviderMutationAllowed(selected, 'Printful mockup generation');
   const payloads = selected.map((product) => {
     const base = baseForProduct(bases, product);
     const provider = providerForProduction(productProduction(product).provider);
@@ -1999,14 +2734,30 @@ async function runMockups(args) {
     }
 
     if (task.result?.status === 'failed') {
+      recordPrintfulMockupTaskFailure(ref);
+      await writeProducts(products);
       throw new Error(
         `${item.product.slug}: Printful mockup task failed: ${task.result.error || 'unknown error'}`,
       );
     }
 
     if (task.result?.status === 'completed') {
-      await persistMockupsFromTask(item.product, task.result);
-      setWorkflowStatus(item.product, 'mockups_ready');
+      let savedMockups;
+      try {
+        savedMockups = await persistMockupsFromTask(item.product, task.result);
+      } catch (error) {
+        recordPrintfulMockupTaskFailure(ref);
+        await writeProducts(products);
+        throw error;
+      }
+      if (!savedMockups.length) {
+        recordPrintfulMockupTaskFailure(ref);
+        await writeProducts(products);
+        throw new Error(
+          `${item.product.slug}: completed Printful task returned no downloadable mockups`,
+        );
+      }
+      advanceWorkflowStatus(item.product, 'mockups_ready');
     }
   }
 
@@ -2021,6 +2772,18 @@ async function runMockups(args) {
   );
 }
 
+export function recordPrintfulMockupTaskFailure(ref) {
+  if (!ref || typeof ref !== 'object') {
+    throw new Error('Printful mockup failure requires a provider reference');
+  }
+  const failures = Number(ref.mockupTaskFailures);
+  ref.lastFailedMockupTaskKey = ref.mockupTaskKey || null;
+  ref.mockupTaskFailures =
+    (Number.isInteger(failures) && failures >= 0 ? failures : 0) + 1;
+  ref.mockupTaskKey = null;
+  return ref;
+}
+
 function buildProviderMockupTaskPayload(provider, product, baseProduct, options) {
   if (provider.name === 'printful') {
     return buildPrintfulMockupTaskPayload(product, baseProduct, options);
@@ -2032,12 +2795,13 @@ function buildProviderMockupTaskPayload(provider, product, baseProduct, options)
 async function persistMockupsFromTask(product, task) {
   const urls = [];
   for (const mockup of task.mockups || []) {
+    if (mockup.mockup_url) urls.push(mockup.mockup_url);
     for (const extra of mockup.extra || []) {
       if (extra.url) urls.push(extra.url);
     }
   }
 
-  if (!urls.length) return;
+  if (!urls.length) return [];
 
   const catalogPath = ensureCatalogMockupFirst(product);
   const saved = [];
@@ -2062,6 +2826,7 @@ async function persistMockupsFromTask(product, task) {
       .filter((mockupPath) => mockupPath !== catalogPath)
       .filter((mockupPath) => !saved.includes(mockupPath)),
   ];
+  return saved;
 }
 
 async function runPhotoshoot(args) {
@@ -2145,15 +2910,17 @@ async function runPhotoshoot(args) {
   const results = [];
   for (const job of jobs) {
     const output = localPath(job.outputPath);
-    const alreadyExists = existsSync(output);
-    if (!alreadyExists || force) {
-      const result = await generateEditedImage({
-        ...job.request,
-        images: job.sourceImages.map((sourceImage) => localPath(sourceImage)),
-      });
-      await mkdir(path.dirname(output), {recursive: true});
-      await writeFile(output, Buffer.from(firstImageBase64(result), 'base64'));
-    }
+    const {skippedExisting} = await ensurePhotoshootOutput({
+      outputPath: output,
+      force,
+      generate: async () => {
+        const result = await generateEditedImage({
+          ...job.request,
+          images: job.sourceImages.map((sourceImage) => localPath(sourceImage)),
+        });
+        return Buffer.from(firstImageBase64(result), 'base64');
+      },
+    });
 
     job.product.assets.customerPhotos = [
       job.outputPath,
@@ -2164,12 +2931,54 @@ async function runPhotoshoot(args) {
     results.push({
       slug: job.product.slug,
       customerPhoto: job.outputPath,
-      skippedExisting: alreadyExists && !force,
+      skippedExisting,
     });
   }
 
   await writeProducts(products);
   printJson(results);
+}
+
+export async function ensurePhotoshootOutput({outputPath, force = false, generate}) {
+  if (!outputPath || typeof generate !== 'function') {
+    throw new Error('Photoshoot output requires a path and image generator');
+  }
+
+  const temporaryPath = `${outputPath}.tmp`;
+  await unlink(temporaryPath).catch((error) => {
+    if (error?.code !== 'ENOENT') throw error;
+  });
+
+  if (!force && existsSync(outputPath) && (await imageDecodes(outputPath))) {
+    return {skippedExisting: true};
+  }
+
+  const image = await generate();
+  if (!Buffer.isBuffer(image) || !(await imageDecodes(image))) {
+    throw new Error('Photoshoot generator returned an invalid image');
+  }
+
+  await mkdir(path.dirname(outputPath), {recursive: true});
+  try {
+    await writeFile(temporaryPath, image, {flag: 'wx'});
+    await rename(temporaryPath, outputPath);
+  } finally {
+    await unlink(temporaryPath).catch((error) => {
+      if (error?.code !== 'ENOENT') throw error;
+    });
+  }
+
+  return {skippedExisting: false};
+}
+
+async function imageDecodes(input) {
+  try {
+    const sharp = (await import('sharp')).default;
+    await sharp(input).stats();
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 export function verifyPrintfulReadiness(product, baseProduct, options = {}) {
@@ -2182,23 +2991,18 @@ export function verifyPrintfulReadiness(product, baseProduct, options = {}) {
   const expectedVariantIds = (baseProduct?.variants || [])
     .map((variant) => variant.providerVariantId)
     .filter((variantId) => Number.isFinite(Number(variantId)));
-  const variantIds = ref.variantIds || [];
+  const variantMappings = ref.variants || [];
+  const variantIds = variantMappings.map((variant) => variant.catalogVariantId);
   const issues = [];
 
   if (production.provider !== 'printful') {
     issues.push(`${product.slug}: expected printful provider`);
   }
 
-  if (production.technique !== 'All-Over Cotton') {
-    issues.push(`${product.slug}: expected All-Over Cotton technique`);
-  }
-
-  if (production.baseProduct !== 'printful-aop-cotton-sweatshirt-white') {
-    issues.push(`${product.slug}: expected Printful AOP cotton sweatshirt base product`);
-  }
-
   if (!baseProduct) {
     issues.push(`${product.slug}: base product template is missing`);
+  } else if (!baseProduct.techniques?.includes(production.technique)) {
+    issues.push(`${product.slug}: base product does not support ${production.technique}`);
   }
 
   if (!ref.productId) {
@@ -2206,12 +3010,29 @@ export function verifyPrintfulReadiness(product, baseProduct, options = {}) {
   }
 
   for (const expectedVariantId of expectedVariantIds) {
-    if (!variantIds.includes(expectedVariantId)) {
+    const mapping = variantMappings.find(
+      (variant) => variant.catalogVariantId === expectedVariantId,
+    );
+    if (!mapping?.syncVariantId) {
       issues.push(`${product.slug}: missing Printful variant ID ${expectedVariantId}`);
     }
   }
 
-  for (const requiredPlacement of AOP_COTTON_REQUIRED_PLACEMENTS) {
+  const requiredPlacements = [
+    ...new Set(
+      (baseProduct?.placements || [])
+        .filter(
+          (placement) =>
+            typeof placement === 'string' ||
+            !placement.techniques ||
+            placement.techniques.includes(production.technique),
+        )
+        .map((placement) =>
+          typeof placement === 'string' ? placement : placement.area,
+        ),
+    ),
+  ];
+  for (const requiredPlacement of requiredPlacements) {
     if (!placementAreas.has(requiredPlacement)) {
       issues.push(`${product.slug}: missing AOP placement ${requiredPlacement}`);
       continue;
@@ -2240,8 +3061,8 @@ export function verifyPrintfulReadiness(product, baseProduct, options = {}) {
     issues.push(`${product.slug}: missing catalog mockup ${primaryMockup}`);
   }
 
-  if (!ref.mockupTaskKey && !(product.assets?.mockups || []).some(isRemoteUrl)) {
-    issues.push(`${product.slug}: missing Printful mockup task key or verified mockup URLs`);
+  if (!(product.assets?.mockups || []).some(providerMockupPattern.test.bind(providerMockupPattern))) {
+    issues.push(`${product.slug}: missing downloaded Printful provider mockup`);
   }
 
   return {
@@ -2254,6 +3075,7 @@ export function verifyPrintfulReadiness(product, baseProduct, options = {}) {
     expectedVariantIds,
     placements: [...placementAreas],
     primaryMockup: primaryMockup || null,
+    externalIds: printfulProductExternalIds(product),
   };
 }
 
@@ -2288,7 +3110,43 @@ function isPrintfulNotFound(error) {
 function printfulStoreProductId(response) {
   const result = response?.result || {};
   const product = result.sync_product || result;
-  return product.id || product.product_id || product.sync_product_id || null;
+  const id = Number(product.id || product.product_id || product.sync_product_id);
+  return Number.isInteger(id) && id > 0 ? id : null;
+}
+
+export function printfulStoreProductExternalId(response) {
+  const result = response?.result || {};
+  const product = result.sync_product || result;
+  const externalId = product?.external_id;
+  return externalId == null || externalId === '' ? null : String(externalId);
+}
+
+export function printfulStoreProductMatchesExternalId(response, expectedExternalId) {
+  const actual = printfulStoreProductExternalId(response);
+  return actual !== null && actual === String(expectedExternalId);
+}
+
+export function printfulStoreProductMatchesAnyExternalId(
+  response,
+  expectedExternalIds,
+) {
+  const actual = printfulStoreProductExternalId(response);
+  return (
+    actual !== null &&
+    (expectedExternalIds || []).some(
+      (expectedExternalId) => actual === String(expectedExternalId),
+    )
+  );
+}
+
+function printfulProductExternalIds(product) {
+  return [
+    ...new Set(
+      [product?.slug, ...(product?.aliases || [])]
+        .map((value) => String(value || '').trim())
+        .filter(Boolean),
+    ),
+  ];
 }
 
 export function printfulStoreSyncVariantIds(response) {
@@ -2302,6 +3160,22 @@ export function printfulStoreSyncVariants(response) {
   if (Array.isArray(result.sync_variants)) return result.sync_variants;
   if (Array.isArray(result.variants)) return result.variants;
   return [];
+}
+
+export function missingPrintfulCatalogVariantIds(expectedVariantIds, response) {
+  const remoteVariantIds = new Set(
+    printfulStoreSyncVariants(response)
+      .map((variant) => Number(variant.variant_id))
+      .filter((variantId) => Number.isInteger(variantId) && variantId > 0),
+  );
+  return (expectedVariantIds || [])
+    .map((variantId) => Number(variantId))
+    .filter(
+      (variantId) =>
+        Number.isInteger(variantId) &&
+        variantId > 0 &&
+        !remoteVariantIds.has(variantId),
+    );
 }
 
 export function printfulPayloadWithSyncVariantIds(payload, response) {
@@ -2337,6 +3211,7 @@ async function runPrintfulUpsert(args) {
   const products = await readProducts();
   const bases = await readBaseProducts();
   const selected = selectProducts(products, args);
+  if (!dryRun) assertProviderMutationAllowed(selected, 'Printful product synchronization');
   const jobs = selected.map((product) => {
     const base = baseForProduct(bases, product);
     const ref = product.providerRefs.printful || {};
@@ -2386,6 +3261,7 @@ async function runPrintfulUpsert(args) {
   for (const job of jobs) {
     job.product.providerRefs.printful = job.product.providerRefs.printful || {};
     const ref = job.product.providerRefs.printful;
+    const externalIds = printfulProductExternalIds(job.product);
     let remoteProductId = ref.productId;
     let response;
     let remoteProductResponse;
@@ -2393,13 +3269,30 @@ async function runPrintfulUpsert(args) {
     let staleRef = false;
     const updateRemoteProduct = async (productId, currentResponse = null) => {
       const productResponse = currentResponse || (await getPrintfulStoreProduct(productId));
+      if (!printfulStoreProductMatchesAnyExternalId(productResponse, externalIds)) {
+        throw new Error(
+          `${job.product.slug}: refusing to update Printful product ${productId} because its external_id does not match the slug or a catalog alias`,
+        );
+      }
       const payload = printfulPayloadWithSyncVariantIds(job.payload, productResponse);
       return updatePrintfulStoreProduct(productId, payload);
     };
 
     if (remoteProductId) {
       try {
-        response = await updateRemoteProduct(remoteProductId);
+        remoteProductResponse = await getPrintfulStoreProduct(remoteProductId);
+        if (
+          printfulStoreProductMatchesAnyExternalId(
+            remoteProductResponse,
+            externalIds,
+          )
+        ) {
+          response = await updateRemoteProduct(remoteProductId, remoteProductResponse);
+        } else {
+          staleRef = true;
+          remoteProductId = null;
+          remoteProductResponse = null;
+        }
       } catch (error) {
         if (!isPrintfulNotFound(error)) throw error;
         staleRef = true;
@@ -2408,12 +3301,28 @@ async function runPrintfulUpsert(args) {
     }
 
     if (!response && !remoteProductId) {
-      try {
-        remoteProductResponse = await getPrintfulStoreProductByExternalId(job.product.slug);
-        remoteProductId = printfulStoreProductId(remoteProductResponse);
-        mode = 'relinked-and-updated';
-      } catch (error) {
-        if (!isPrintfulNotFound(error)) throw error;
+      for (const externalId of externalIds) {
+        try {
+          remoteProductResponse = await getPrintfulStoreProductByExternalId(externalId);
+          if (
+            !printfulStoreProductMatchesAnyExternalId(
+              remoteProductResponse,
+              externalIds,
+            )
+          ) {
+            throw new Error(
+              `${job.product.slug}: Printful external-id lookup returned a different product`,
+            );
+          }
+          remoteProductId = printfulStoreProductId(remoteProductResponse);
+          if (!remoteProductId) {
+            throw new Error(`${job.product.slug}: Printful lookup returned no product ID`);
+          }
+          mode = 'relinked-and-updated';
+          break;
+        } catch (error) {
+          if (!isPrintfulNotFound(error)) throw error;
+        }
       }
     }
 
@@ -2427,26 +3336,40 @@ async function runPrintfulUpsert(args) {
     const productId = printfulStoreProductId(response) || remoteProductId;
     if (staleRef || String(ref.productId || '') !== String(productId || '')) {
       ref.mockupTaskKey = null;
-      delete ref.syncVariantIds;
+      ref.mockupTaskFailures = 0;
+      ref.lastFailedMockupTaskKey = null;
+      ref.variants = [];
     }
 
     ref.productId = productId;
-    ref.variantIds = job.payload.sync_variants.map((variant) => variant.variant_id);
-    let syncVariantIds = printfulStoreSyncVariantIds(response);
-    if (!syncVariantIds.length && productId) {
-      syncVariantIds = printfulStoreSyncVariantIds(
+    let remoteVariants = printfulStoreSyncVariants(response);
+    if (!remoteVariants.length && productId) {
+      remoteVariants = printfulStoreSyncVariants(
         await getPrintfulStoreProduct(productId),
       );
     }
-    if (syncVariantIds.length) ref.syncVariantIds = syncVariantIds;
+    ref.variants = job.payload.sync_variants.flatMap((variant) => {
+      const remote = remoteVariants.find(
+        (candidate) =>
+          String(candidate.external_id || '') === String(variant.external_id) ||
+          String(candidate.variant_id || '') === String(variant.variant_id),
+      );
+      const syncVariantId = Number(remote?.id || remote?.sync_variant_id);
+      if (!Number.isInteger(syncVariantId) || syncVariantId <= 0) return [];
+      return [{
+        variantId: variant.external_id,
+        catalogVariantId: variant.variant_id,
+        syncVariantId,
+        available: true,
+      }];
+    });
 
     results.push({
       slug: job.product.slug,
       mode,
       replacedStaleProductId: staleRef,
       productId,
-      variantIds: ref.variantIds,
-      syncVariantIds: ref.syncVariantIds || [],
+      variants: ref.variants,
     });
   }
 
@@ -2493,19 +3416,35 @@ async function runPrintfulVerify(args) {
 
       for (const productReport of report.products) {
         try {
-          const syncProduct = await getPrintfulStoreProductByExternalId(productReport.slug);
+          let syncProduct = null;
+          for (const externalId of productReport.externalIds) {
+            try {
+              syncProduct = await getPrintfulStoreProductByExternalId(externalId);
+              break;
+            } catch (error) {
+              if (!isPrintfulNotFound(error)) throw error;
+            }
+          }
+          if (!syncProduct) {
+            throw new Error(
+              `Printful request failed (404): no product matched ${productReport.externalIds.join(', ')}`,
+            );
+          }
           const result = syncProduct.result || {};
           const remoteProduct = result.sync_product || result;
           const remoteProductId =
             remoteProduct.id || remoteProduct.product_id || remoteProduct.sync_product_id;
-          const remoteVariants = result.sync_variants || [];
-          const remoteVariantIds = new Set(
-            remoteVariants
-              .map((variant) => variant.variant_id)
-              .filter((variantId) => Number.isFinite(Number(variantId))),
+          const missingVariantIds = missingPrintfulCatalogVariantIds(
+            productReport.expectedVariantIds,
+            syncProduct,
           );
 
           productReport.liveProductId = remoteProductId || null;
+          if (!remoteProductId) {
+            productReport.issues.push(
+              `${productReport.slug}: live Printful response is missing a product ID`,
+            );
+          }
           if (
             productReport.productId &&
             remoteProductId &&
@@ -2516,14 +3455,10 @@ async function runPrintfulVerify(args) {
             );
           }
 
-          if (remoteVariants.length) {
-            for (const expectedVariantId of productReport.expectedVariantIds) {
-              if (!remoteVariantIds.has(expectedVariantId)) {
-                productReport.issues.push(
-                  `${productReport.slug}: live Printful product missing variant ${expectedVariantId}`,
-                );
-              }
-            }
+          for (const expectedVariantId of missingVariantIds) {
+            productReport.issues.push(
+              `${productReport.slug}: live Printful product missing variant ${expectedVariantId}`,
+            );
           }
         } catch (error) {
           productReport.issues.push(printfulProductLookupIssue(productReport.slug, error));
@@ -2553,8 +3488,6 @@ async function runFulfillmentOrderDryRun(args) {
   const bases = await readBaseProducts();
   const selected = selectProducts(products, args);
   const providerName = readArg(args, '--provider', 'printful');
-  const siteUrl = readArg(args, '--site-url', process.env.PUBLIC_SITE_URL || 'https://example.com');
-
   printJson(
     selected.map((product) => {
       const provider = providerForProduction(productProduction(product).provider);
@@ -2563,10 +3496,11 @@ async function runFulfillmentOrderDryRun(args) {
       }
       const base = baseForProduct(bases, product);
       const ref = productProviderRef(product, provider.name);
+      const firstMapping = ref.variants?.[0];
       const fallbackVariant = base?.variants?.[0] || {
         color: 'Default',
         size: 'OS',
-        providerVariantId: ref.variantIds?.[0],
+        providerVariantId: firstMapping?.catalogVariantId,
       };
       const variant =
         product.commerce?.variants?.[0] ||
@@ -2589,10 +3523,11 @@ async function runFulfillmentOrderDryRun(args) {
           },
           items: [
             {
-              variant_id: variant.providerVariantId,
+              sync_variant_id:
+                ref.variants?.find((mapping) => mapping.variantId === variant.id)
+                  ?.syncVariantId || null,
               quantity: 1,
-              retail_price: product.commerce.price,
-              files: printfulOrderFiles(product, {baseProduct: base, siteUrl}),
+              retail_price: moneyFromMinorUnits(product.commerce.unitAmount),
             },
           ],
         },
@@ -2607,6 +3542,8 @@ async function runPublish(args) {
   const products = await readProducts();
   const bases = await readBaseProducts();
   const selected = selectProducts(products, args);
+  assertPilotPublicationAllowed(selected);
+  assertProviderMutationAllowed(selected, 'Catalog publication');
 
   for (const product of selected) {
     if (approve) {
@@ -2622,8 +3559,16 @@ async function runPublish(args) {
       throw new Error(`${product.slug}: publish requires approval`);
     }
 
+    if (!product.signals?.sources?.length) {
+      throw new Error(`${product.slug}: publish requires at least one research source`);
+    }
+
+    if (!product.meme?.rightsNote || product.meme.rightsNote.length < 20) {
+      throw new Error(`${product.slug}: publish requires a specific rights review note`);
+    }
+
     const production = productProduction(product);
-    if (production.provider === 'printful' && production.technique === 'All-Over Cotton') {
+    if (production.provider === 'printful') {
       const readiness = verifyPrintfulReadiness(product, baseForProduct(bases, product));
       if (!readiness.ok) {
         throw new Error(
@@ -2631,11 +3576,13 @@ async function runPublish(args) {
         );
       }
 
-      const photoshootReadiness = verifyPhotoshootReadiness(product);
-      if (!photoshootReadiness.ok) {
-        throw new Error(
-          `${product.slug}: publish requires photoshooter image: ${photoshootReadiness.issues.join('; ')}`,
-        );
+      if (production.technique === 'All-Over Cotton') {
+        const photoshootReadiness = verifyPhotoshootReadiness(product);
+        if (!photoshootReadiness.ok) {
+          throw new Error(
+            `${product.slug}: publish requires photoshooter image: ${photoshootReadiness.issues.join('; ')}`,
+          );
+        }
       }
     }
   }
