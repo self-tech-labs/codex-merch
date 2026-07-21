@@ -95,6 +95,7 @@ export function createReadinessLoader({
           merchantPilot.deliveryEstimateBusinessDays,
         paymentMode: liveReadiness.paymentMode,
         databaseReady: liveReadiness.databaseReady,
+        printfulReady: liveReadiness.printfulReady,
         stripeReady: liveReadiness.stripeReady,
         printfulAutoConfirm: false,
       },

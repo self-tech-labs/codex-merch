@@ -38,6 +38,7 @@ test('readiness route proves one deployed variant without creating checkout', as
     const liveLoader = createReadinessLoader({
       probeDependencies: async () => ({
         databaseReady: true,
+        printfulReady: true,
         stripeReady: true,
         paymentMode: 'test' as const,
       }),
@@ -66,6 +67,7 @@ test('readiness route proves one deployed variant without creating checkout', as
       deliveryEstimateBusinessDays: {minimum: 7, maximum: 15},
       paymentMode: 'test',
       databaseReady: true,
+      printfulReady: true,
       stripeReady: true,
       printfulAutoConfirm: false,
     });
@@ -105,6 +107,9 @@ test('live dependency probes require database success and matching Stripe mode',
     databaseProbe: async () => {
       events.push('database');
     },
+    printfulProbe: async () => {
+      events.push('printful');
+    },
     stripeProbe: async () => {
       events.push('stripe');
       return {livemode: false};
@@ -112,15 +117,17 @@ test('live dependency probes require database success and matching Stripe mode',
   });
   assert.deepEqual(ready, {
     databaseReady: true,
+    printfulReady: true,
     stripeReady: true,
     paymentMode: 'test',
   });
-  assert.deepEqual(events.sort(), ['database', 'stripe']);
+  assert.deepEqual(events.sort(), ['database', 'printful', 'stripe']);
 
   await assert.rejects(
     () =>
       probeCheckoutDependencies(configuredEnv, {
         databaseProbe: async () => {},
+        printfulProbe: async () => {},
         stripeProbe: async () => ({livemode: true}),
       }),
     /mode does not match/,
@@ -131,9 +138,21 @@ test('live dependency probes require database success and matching Stripe mode',
         databaseProbe: async () => {
           throw new Error('required checkout migrations missing');
         },
+        printfulProbe: async () => {},
         stripeProbe: async () => ({livemode: false}),
       }),
     /migrations missing/,
+  );
+  await assert.rejects(
+    () =>
+      probeCheckoutDependencies(configuredEnv, {
+        databaseProbe: async () => {},
+        printfulProbe: async () => {
+          throw new Error('invalid provider token');
+        },
+        stripeProbe: async () => ({livemode: false}),
+      }),
+    /invalid provider token/,
   );
 });
 
