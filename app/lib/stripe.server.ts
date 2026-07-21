@@ -20,6 +20,7 @@ import {
 import {
   MERCHANT_CONTACT_EMAIL,
   MERCHANT_POLICY_VERSION,
+  merchantIdentity,
   merchantPilot,
 } from '~/lib/merchant-policy';
 
@@ -311,6 +312,7 @@ export async function createCheckoutSession({
         client_reference_id: order.id,
         metadata,
         payment_intent_data: {metadata},
+        branding_settings: {display_name: merchantIdentity.legalName},
         phone_number_collection: {enabled: true},
         custom_text: {
           submit: {
