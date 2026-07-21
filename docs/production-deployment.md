@@ -74,7 +74,11 @@ flag `false` until these decisions are complete.
    ```zsh
    read -r -s 'MIGRATION_DATABASE_URL?Paste the target DATABASE_URL (input hidden): '
    printf '\n'
-   DATABASE_URL="$MIGRATION_DATABASE_URL" npm run db:migrate
+   (
+     export DATABASE_URL
+     printf -v DATABASE_URL '%s' "$MIGRATION_DATABASE_URL"
+     npm run db:migrate
+   )
    unset MIGRATION_DATABASE_URL
    ```
 
