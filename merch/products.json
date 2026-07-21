@@ -12,6 +12,9 @@
     },
     "assets": {
       "artwork": "assets/artwork/research-deployment-co-concept.png",
+      "customerPhotos": [
+        "assets/mockups/research-deployment-co-worn-front.jpg"
+      ],
       "mockups": [
         "assets/mockups/research-deployment-co-sweatshirt-catalog.png",
         "assets/mockups/research-deployment-co-front.png",

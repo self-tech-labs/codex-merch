@@ -275,6 +275,14 @@ test('customer catalog manifest includes AOP sweatshirts and rate reset long sle
     );
   }
 
+  const researchDeployment = manifest.find(
+    (product) => product.slug === 'research-deployment-co-sweatshirt',
+  );
+  assert.equal(
+    researchDeployment.assets.customerPhotos[0],
+    'assets/mockups/research-deployment-co-worn-front.jpg',
+  );
+
   const rateReset = manifest.find(
     (product) => product.slug === 'codex-rate-reset-long-sleeve',
   );

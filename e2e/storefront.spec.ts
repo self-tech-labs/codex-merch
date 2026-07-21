@@ -63,6 +63,27 @@ test('preview catalog is browseable but cannot be purchased', async ({page}) => 
   await expect(page.getByText(/checkout is disabled in this public build/i)).toBeVisible();
 });
 
+test('research and deployment carousel leads with the supplied worn photo', async ({
+  page,
+}) => {
+  await page.goto('/products/research-deployment-co-sweatshirt');
+
+  await expect(
+    page.getByRole('heading', {
+      name: 'Research & Deployment Co. Cotton Sweatshirt',
+    }),
+  ).toBeVisible();
+  await expect(page.locator('.mockup-frame img')).toHaveAttribute(
+    'src',
+    '/assets/mockups/research-deployment-co-worn-front.jpg',
+  );
+  await expect(page.locator('.mockup-strip img')).toHaveCount(5);
+  await expect(page.locator('.mockup-strip img').first()).toHaveAttribute(
+    'src',
+    '/assets/mockups/research-deployment-co-worn-front.jpg',
+  );
+});
+
 test('how it works leads with the truthful owner-supplied preview path', async ({page}) => {
   await page.goto('/how-it-works');
 
