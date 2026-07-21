@@ -1,18 +1,38 @@
 import {expect, test, type Page} from '@playwright/test';
+import {readFileSync} from 'node:fs';
 
 const runtimeErrors = new WeakMap<Page, string[]>();
+const previewAccessUrl = process.env.PLAYWRIGHT_PREVIEW_ACCESS_URL_FILE
+  ? readFileSync(process.env.PLAYWRIGHT_PREVIEW_ACCESS_URL_FILE, 'utf8').trim()
+  : '';
+
+function isVercelPreviewToolbarNoise(message: string) {
+  if (!previewAccessUrl) return false;
+  return (
+    message.includes("https://vercel.live/_next-live/feedback/feedback.js") ||
+    message.includes('Failed to fetch manifest patches TypeError: Failed to fetch')
+  );
+}
 
 test.beforeEach(async ({page}) => {
   const errors: string[] = [];
   runtimeErrors.set(page, errors);
   page.on('console', (message) => {
-    if (['error', 'warning'].includes(message.type())) {
-      errors.push(`console.${message.type()}: ${message.text()}`);
+    const text = message.text();
+    if (
+      ['error', 'warning'].includes(message.type()) &&
+      !isVercelPreviewToolbarNoise(text)
+    ) {
+      errors.push(`console.${message.type()}: ${text}`);
     }
   });
   page.on('pageerror', (error) => {
     errors.push(`pageerror: ${error.message}`);
   });
+  if (previewAccessUrl) {
+    const response = await page.goto(previewAccessUrl);
+    expect(response?.ok(), 'Vercel share link should authorize the browser').toBe(true);
+  }
 });
 
 test.afterEach(async ({page}) => {
@@ -24,7 +44,19 @@ test('preview catalog is browseable but cannot be purchased', async ({page}) => 
   await expect(page.getByText('Prototype preview', {exact: true}).first()).toBeVisible();
   await expect(page.getByText('Checkout disabled', {exact: true}).first()).toBeVisible();
   await expect(page.getByText('Preview', {exact: true}).first()).toBeVisible();
-  await page.locator('.product-tile a').first().click();
+  const solward = page.getByRole('link', {
+    name: /Solward Index Cotton Sweatshirt/,
+  });
+  await expect(solward).toBeVisible();
+  await solward.click();
+  await expect(
+    page.getByRole('heading', {name: 'Solward Index Cotton Sweatshirt'}),
+  ).toBeVisible();
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+    'content',
+    'noindex,nofollow',
+  );
+  await expect(page.locator('.mockup-strip img')).toHaveCount(4);
   await expect(page.getByRole('button', {name: 'Checkout disabled'})).toBeDisabled();
 
   await page.goto('/cart');

@@ -49,6 +49,11 @@ workflow. Once its branch is pushed, Vercel builds the changed manifest and
 assets into a shareable Preview deployment. The included **Solward Index
 Cotton Sweatshirt** is the reference result of that path.
 
+The current Build Week branch is deployed at the protected
+[`codex-build-week-weekly-studio` Preview alias](https://codex-merch-git-codex-build-week-weekly-studio-ritsl.vercel.app).
+Judges receive its account-free, branch-scoped Vercel Shareable Link privately;
+the access token is never stored in the repository.
+
 The skill invokes the same inspectable CLI that a judge can run directly:
 
 ```bash

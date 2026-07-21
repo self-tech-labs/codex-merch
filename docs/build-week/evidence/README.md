@@ -9,11 +9,11 @@ bodies, private run ledgers, or third-party media without redistribution rights.
 
 | Evidence | Verified value |
 | --- | --- |
-| Submission commit SHA | **TODO** |
-| CI run for that SHA | **TODO: URL** |
+| Verified owner-triggered feature commit | [`42fd968d66985bd41793b20ea7ead1ac29f4c8ec`](https://github.com/self-tech-labs/codex-merch/tree/42fd968d66985bd41793b20ea7ead1ac29f4c8ec); copy the final evidence-commit HEAD into Devpost because a commit cannot contain its own hash |
+| CI for verified feature commit | [GitHub Actions run `29818494790`](https://github.com/self-tech-labs/codex-merch/actions/runs/29818494790): install, database migration, catalog, 130 tests, typecheck, lint, build, and production audit passed; Playwright completed with 9 immediate passes and one pass on retry; only the strict owner-input/submission-document gate failed |
 | Primary Codex task/session | `019f7fb1-9352-7b30-ac89-076c94b2eeeb` |
 | `/feedback` result | **TODO: session ID** |
-| Public deployment | [https://codex-merch.vercel.app](https://codex-merch.vercel.app); immutable qualification deployment [`codex-merch-7vpziyl2s-ritsl.vercel.app`](https://codex-merch-7vpziyl2s-ritsl.vercel.app), ID `dpl_5UyLxhxkpPiiX9cxBccii9gAzz12`, bound to Git SHA `d44913b0738e8537c1986bb7734b41d7a4858243` |
+| Judge Preview deployment | Stable protected alias [`codex-merch-git-codex-build-week-weekly-studio-ritsl.vercel.app`](https://codex-merch-git-codex-build-week-weekly-studio-ritsl.vercel.app); verified immutable deployment [`codex-merch-8auim2332-ritsl.vercel.app`](https://codex-merch-8auim2332-ritsl.vercel.app), ID `dpl_EeYdVHVtecJjKQBWfGFan2M3Mca2`, bound to Git SHA `42fd968d66985bd41793b20ea7ead1ac29f4c8ec`. The scoped Shareable Link is supplied privately in Devpost. |
 | Public YouTube demo | **TODO: URL** |
 | Devpost submission | **TODO: URL** |
 
@@ -30,7 +30,7 @@ command. Prefer a CI URL over pasted terminal output.
 | `npm run typecheck` | Pass |
 | `npm run lint` | Pass |
 | `npm run build` | Pass: client and both Vercel server bundles generated |
-| `npm run test:e2e` | Pass locally: 10/10 on Chromium desktop and mobile, including the owner-supplied technical explainer and disabled-commerce contract. Record the final public Preview result only after its exact SHA is deployed. |
+| `npm run test:e2e` | Pass locally and against the protected Vercel Preview: 10/10 on Chromium desktop and mobile, including the Solward product, owner-supplied technical explainer, critical routes, and disabled-commerce contract. |
 | `npm run submission:verify` | Repository, fixture, model-contract, provenance, and embedded-secret checks pass; final exit remains blocked by unresolved external submission, rights, owner-evidence, and commerce-configuration fields |
 
 ## Direct owner-trend Preview evidence
@@ -109,9 +109,9 @@ are not presented as live Build Week proof.
 
 | External proof | Verified value |
 | --- | --- |
-| Submitted Preview commit/deployment | Pending the final non-production branch push and exact-SHA Vercel verification |
-| Public Solward catalog/product/assets | Pending the same final Preview smoke test |
-| Checkout behavior | Must remain disabled and return no Stripe redirect in Preview |
+| Submitted Preview commit/deployment | Implementation commit `42fd968d66985bd41793b20ea7ead1ac29f4c8ec`; deployment `dpl_EeYdVHVtecJjKQBWfGFan2M3Mca2`; immutable URL [`codex-merch-8auim2332-ritsl.vercel.app`](https://codex-merch-8auim2332-ritsl.vercel.app); stable branch alias above. Vercel reported `READY` and the exact Git binding. |
+| Solward catalog/product/assets | Verified through the scoped Shareable Link: listing visible; exact product route renders; four mockup images load; print-backed product metadata is present; `noindex,nofollow` remains set. |
+| Checkout behavior | Verified disabled on catalog, product, and cart surfaces; no Stripe redirect is offered in Preview. |
 | Printful product synchronization | Not run for the Build Week Preview; the candidate is hard-blocked |
 | Neon, Stripe webhook, Inngest, and Printful order draft | Not run or claimed for the Build Week Preview |
 | Qualification deployment | Earlier app commit `d44913b0738e8537c1986bb7734b41d7a4858243`; deployment `dpl_5UyLxhxkpPiiX9cxBccii9gAzz12`; immutable URL [`codex-merch-7vpziyl2s-ritsl.vercel.app`](https://codex-merch-7vpziyl2s-ritsl.vercel.app). This is historical qualification evidence, not the submitted Preview. |

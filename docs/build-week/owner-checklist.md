@@ -16,9 +16,9 @@ Submission deadline: **2026-07-22 02:00 CEST** (2026-07-21 17:00 PDT). Complete 
 
 ## Git and provenance
 
-- [ ] Create an annotated `pre-build-week-2026` tag at `6de6ea7`.
-- [ ] Put Build Week work on a dated `codex/build-week` branch without backdating commits.
-- [ ] Separate judged features from unrelated cleanup and generated-file churn.
+- [x] Create and push the annotated `pre-build-week-2026` tag at `6de6ea7`.
+- [x] Put Build Week work on `codex/build-week-weekly-studio` without backdating commits.
+- [x] Separate judged features from unrelated cleanup and generated-file churn.
 - [ ] Fill `provenance-delta.md` with real commit SHAs, CI evidence, and the submission SHA.
 - [ ] Fill `evidence/README.md` with the exact final SHA, sanitized run, deployment, checkout, and replay proof.
 - [ ] Choose and add a code license, or keep the repository private and grant judge access.
@@ -42,7 +42,7 @@ Submission deadline: **2026-07-22 02:00 CEST** (2026-07-21 17:00 PDT). Complete 
 Never paste secret values into Git, Codex chat, logs, screenshots, or this documentation.
 
 - [x] Reuse the existing local `OPENAI_API_KEY` for the initial build.
-- [ ] Confirm OpenAI API billing, GPT-5.6 access, image-model access, and sufficient rate limits.
+- [x] Confirm OpenAI API access with live GPT-5.6 art-direction and actual-render critic calls; monitor billing and rate limits during any additional demo run.
 - [ ] Confirm `X_BEARER_TOKEN` can call the list-post endpoint for list `2067819170989854863` and that use of the selected posts is authorized.
 - [ ] Rotate the invalid `PRINTFUL_TOKEN`; confirm `PRINTFUL_STORE_ID`, Manual order/API store access, billing, product availability, and shipping regions.
 - [ ] For a later production pilot, create or verify Stripe test-mode keys, a signed webhook, and approved shipping configuration. These are not required by the Build Week Preview.
@@ -97,12 +97,12 @@ to be present.
 
 ## Build Week Preview proof
 
-- [ ] Run the sanitized 30-post fixture and one authorized live-list read.
-- [ ] Show a `no_trend` run and a successful candidate run.
-- [ ] Run catalog validation, unit tests, database integration tests, typecheck, lint, build, and browser tests in CI.
-- [ ] Trigger one owner-supplied trend from ordinary Codex chat and preserve its truthful provenance, generated panels, critic result, prepress result, and visible catalog candidate.
-- [ ] Push the exact judged commit to a non-production branch, record the Vercel Preview URL and deployment SHA, then test signed out on desktop and mobile.
-- [ ] Verify the Preview exposes `/how-it-works`, keeps every product non-purchasable, and does not create a Stripe session, Printful object, order, or Inngest event.
+- [x] Run the sanitized 30-post fixture and one authorized live-list read.
+- [x] Show a `no_trend` run and a successful candidate run.
+- [x] Run catalog validation, unit and database integration tests, typecheck, lint, build, production audit, and browser tests in CI; run `29818494790` passed the functional steps, with one browser check passing on retry, while the explicit owner-input gate remains open.
+- [x] Trigger one owner-supplied trend from ordinary Codex chat and preserve its truthful provenance, generated panels, critic result, prepress result, and visible catalog candidate.
+- [x] Push the judged implementation commit to a non-production branch, record the Vercel Preview URL and deployment SHA, then test through its account-free scoped link on desktop and mobile.
+- [x] Verify the Preview exposes `/how-it-works`, keeps every product non-purchasable, and hard-blocks Stripe, Printful, order, and Inngest mutations.
 - [ ] Record the exact tested commands and final SHA in `evidence/README.md`.
 
 ## Later production-pilot proof
@@ -118,7 +118,7 @@ to be present.
 - [x] Create the standalone `Codex Merch Weekly Prepare` task using `automation-prompt.md` and the repository-owned `codex-merch-weekly` skill.
 - [x] Use the clean local project checkout and schedule preparation Monday at 09:00 `Europe/Zurich`; this preserves the ignored run ledger and candidate for release.
 - [x] Create the separate `Codex Merch Weekly Release` local task in a paused, owner-gated state.
-- [ ] After the implementation branch is committed and available to the automation checkout, trigger the task manually once with a valid X credential and save the sanitized result for the demo.
+- [x] Trigger the preparation path manually with the configured X credential and preserve the sanitized 30-post `no_trend` result for the demo.
 - [ ] Ensure the Mac is powered on, networked, and running Codex Desktop at execution time.
 - [ ] Pre-authorize only the commands and credentials needed by the task; unattended tasks cannot stop for approval.
 - [x] Start in prepare-only mode with the release task paused.

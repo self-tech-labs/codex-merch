@@ -4,21 +4,22 @@ Complete this page before submission. Do not put passwords, API keys, test custo
 
 ## Links
 
-- Public application: [https://codex-merch.vercel.app](https://codex-merch.vercel.app); replace this with the exact submitted Vercel Preview URL after the final branch deployment
+- Judge Preview base alias: [https://codex-merch-git-codex-build-week-weekly-studio-ritsl.vercel.app](https://codex-merch-git-codex-build-week-weekly-studio-ritsl.vercel.app)
+- Judge access: use the branch-scoped Vercel Shareable Link placed in Devpost. It requires no Vercel account and its `_vercel_share` token is deliberately not committed.
 - Public YouTube demo: **TODO: URL**
-- Repository and qualified app commit: [`self-tech-labs/codex-merch` at `d44913b`](https://github.com/self-tech-labs/codex-merch/tree/d44913b0738e8537c1986bb7734b41d7a4858243); final submission SHA remains to be recorded
+- Repository and verified owner-triggered Preview commit: [`self-tech-labs/codex-merch` at `42fd968`](https://github.com/self-tech-labs/codex-merch/tree/42fd968d66985bd41793b20ea7ead1ac29f4c8ec). Copy the final branch HEAD into Devpost after the evidence-only commit.
 - Sanitized example weekly runs: [`evidence/weekly-run-2026-W37-fixture-live-gpt56-prepared.json`](evidence/weekly-run-2026-W37-fixture-live-gpt56-prepared.json) and [`evidence/weekly-run-2026-W30-live-no-trend.json`](evidence/weekly-run-2026-W30-live-no-trend.json)
 - Submission evidence index: [`evidence/README.md`](evidence/README.md)
-- Qualification CI result: [GitHub Actions run `29779894993`](https://github.com/self-tech-labs/codex-merch/actions/runs/29779894993) — every functional gate passed; the final strict submission verifier remains blocked on owner-supplied evidence
+- Owner-triggered Preview CI: [GitHub Actions run `29818494790`](https://github.com/self-tech-labs/codex-merch/actions/runs/29818494790) — install, migration, catalog validation, 130 tests, typecheck, lint, build, and production audit passed; Playwright completed with 9 immediate passes and one pass on retry; only the strict owner-input/submission-document gate failed
 - Support contact for judges: **TODO: email**
 
 ## Access model
 
-- Application login required: **No**
+- Application login required: **No when opened through the scoped Shareable Link**
 - Payment mode: **Disabled in the submitted Preview; no payment form or real charge**
 - External fulfillment: **Disabled in the submitted Preview; no Printful product or order is created by the judge path**
 - X input: **sanitized 30-post fixture by default; authorized live list read demonstrated separately**
-- Expected browser/device support: **Chromium desktop and mobile profiles; local suite verified, submitted Vercel Preview verification pending the final push**
+- Expected browser/device support: **Chromium desktop and Pixel 7 mobile profiles; 10/10 checks passed locally and against the protected Vercel Preview on 2026-07-21**
 
 If the repository remains private, grant read access to both:
 
@@ -42,10 +43,10 @@ If the repository remains private, grant read access to both:
 
 ## Pre-submission access check
 
-- [ ] Test every link in a signed-out browser window.
-- [ ] Confirm the submitted commit contains setup instructions and sample data.
-- [ ] Confirm no secret, customer data, private post content, or inaccessible local path appears in the judge path.
-- [ ] Confirm product actions and checkout remain disabled in the submitted Preview.
-- [ ] Confirm `/how-it-works` accurately distinguishes demonstrated Preview behavior from production-only integrations.
+- [x] Test the scoped Preview link and critical routes in fresh desktop and mobile browser contexts.
+- [x] Confirm the submitted branch contains setup instructions and sanitized sample data.
+- [x] Confirm the embedded-secret scan is clean and no customer data, raw private post content, or inaccessible local path appears in the judge path.
+- [x] Confirm product actions and checkout remain disabled in the submitted Preview.
+- [x] Confirm `/how-it-works` accurately distinguishes demonstrated Preview behavior from production-only integrations.
 - [ ] Verify the video is public, has audio, and is under three minutes.
 - [ ] Verify private-repository invitations from both judge accounts were accepted or are pending with correct access.
