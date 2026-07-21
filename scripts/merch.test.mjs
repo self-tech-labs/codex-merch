@@ -9,6 +9,7 @@ import {
   advanceWorkflowStatus,
   allowedTechniques,
   assertPilotPublicationAllowed,
+  assertReleaseAuthority,
   artDirectionPrompt,
   artDirectorReview,
   catalogMockupPath,
@@ -32,6 +33,7 @@ import {
   printfulStoreProductMatchesExternalId,
   printfulStoreSyncVariantIds,
   printfulTechniquePrompt,
+  productionCopyFromOwnerPreview,
   recordPrintfulMockupTaskFailure,
   setWorkflowStatus,
   validateProducts,
@@ -831,6 +833,42 @@ test('publication is constrained to the pilot until operational sign-off', () =>
       {MERCH_EXPANSION_APPROVED: 'true'},
     ),
   );
+});
+
+test('live merch mutations require literal release authority and safe fulfillment', () => {
+  const safeEnv = {
+    MERCH_WEEKLY_RELEASE_ENABLED: 'true',
+    PRINTFUL_AUTO_CONFIRM: 'false',
+  };
+  assert.doesNotThrow(() => assertReleaseAuthority(['--release'], safeEnv));
+  assert.throws(() => assertReleaseAuthority([], safeEnv), /literal --release/);
+  assert.throws(
+    () => assertReleaseAuthority(['--release'], {...safeEnv, MERCH_WEEKLY_RELEASE_ENABLED: 'false'}),
+    /MERCH_WEEKLY_RELEASE_ENABLED=true/,
+  );
+  assert.throws(
+    () => assertReleaseAuthority(['--release'], {...safeEnv, PRINTFUL_AUTO_CONFIRM: 'true'}),
+    /PRINTFUL_AUTO_CONFIRM=false/,
+  );
+});
+
+test('owner previews are copied into separate CHF production identities', () => {
+  const preview = structuredClone(baseProduct);
+  preview.slug = 'owner-preview';
+  preview.automation = {previewOnly: true, releaseEligible: false};
+  preview.commerce.currency = 'USD';
+  preview.commerce.variants[0].availableForSale = false;
+  preview.providerRefs.printful = {productId: null, mockupTaskKey: null, variants: []};
+
+  const release = productionCopyFromOwnerPreview(preview, 'owner-production', 12);
+  assert.equal(preview.slug, 'owner-preview');
+  assert.equal(preview.commerce.variants[0].availableForSale, false);
+  assert.equal(release.slug, 'owner-production');
+  assert.equal(release.commerce.currency, 'CHF');
+  assert.equal(release.commerce.variants[0].availableForSale, true);
+  assert.equal(release.providerRefs.printful.productId, null);
+  assert.equal(release.automation, undefined);
+  assert.equal(release.signals.sources.length, 0);
 });
 
 test('explicit upstream changes invalidate approval and Printful synchronization', () => {

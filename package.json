@@ -20,6 +20,7 @@
     "codegen": "react-router typegen",
     "merch:new": "node scripts/merch.mjs new --aop",
     "merch:new:standard": "node scripts/merch.mjs new --standard",
+    "merch:release:qualify-owner-previews": "node scripts/merch.mjs release:qualify-owner-previews",
     "merch:validate": "node scripts/merch.mjs validate",
     "merch:signals": "node scripts/merch.mjs signals",
     "merch:signals:x": "node scripts/merch.mjs signals:x",
