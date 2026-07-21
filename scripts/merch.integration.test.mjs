@@ -63,7 +63,7 @@ test('mocked happy path calls X, OpenAI, and Printful adapters', async () => {
       assert.equal(init.headers['X-PF-Store-Id'], 'store');
       assert.equal(init.method, 'POST');
       const body = JSON.parse(init.body);
-      assert.equal(body.confirm, false);
+      assert.equal('confirm' in body, false);
       return jsonResponse({result: {id: 55}});
     }
 

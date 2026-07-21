@@ -4,6 +4,7 @@ import {requireEnv} from '~/lib/env.server';
 import {assertProductionStorefrontMode} from '~/lib/stripe.server';
 
 const PRINTFUL_API_BASE = 'https://api.printful.com';
+const MAX_IN_REQUEST_RETRY_DELAY_MS = 5_000;
 
 type PrintfulOrderResponse = {
   result?: {id?: string | number; status?: string};
@@ -17,6 +18,11 @@ export function assertFulfillmentConfiguration(env: AppEnv) {
   } catch (error) {
     throw new PermanentFulfillmentError(
       error instanceof Error ? error.message : 'Fulfillment configuration is incomplete',
+    );
+  }
+  if (env.PRINTFUL_AUTO_CONFIRM !== 'false') {
+    throw new PermanentFulfillmentError(
+      'Pilot fulfillment requires PRINTFUL_AUTO_CONFIRM=false',
     );
   }
 }
@@ -34,32 +40,69 @@ export async function createOrFindPrintfulOrder({
 }) {
   assertFulfillmentConfiguration(env);
   if (order.providerOrderId) {
-    return {id: order.providerOrderId, confirmed: order.fulfillmentStatus === 'confirmed'};
+    const state = await getPrintfulOrderState(order.providerOrderId, env);
+    return {id: order.providerOrderId, confirmed: state.committed};
   }
-  const existing = await findPrintfulOrder(session.id, env);
+  const externalId = printfulExternalId(order);
+  const existing = await findPrintfulOrder(externalId, env);
   const created = existing || (await printfulRequest('/orders', {
     env,
     method: 'POST',
-    body: buildPrintfulOrderPayload({items, session}),
+    body: buildPrintfulOrderPayload({externalId, items, session}),
   }));
   const id = created.result?.id;
   if (!id) throw new Error('Printful order ID missing after order creation');
-  return {id: String(id), confirmed: created.result?.status === 'confirmed'};
+  return {
+    id: String(id),
+    confirmed: isCommittedPrintfulStatus(created.result?.status),
+  };
 }
 
-export async function confirmPrintfulOrder(providerOrderId: string, env: AppEnv) {
+export async function cancelPrintfulOrder(providerOrderId: string, env: AppEnv) {
   assertFulfillmentConfiguration(env);
   const path = `/orders/${encodeURIComponent(providerOrderId)}`;
-  const current = await printfulRequest(path, {env});
-  if (current.result?.status === 'confirmed') return true;
-  const confirmed = await printfulRequest(`${path}/confirm`, {
-    env,
-    method: 'POST',
-  });
-  if (confirmed.result?.status && confirmed.result.status !== 'confirmed') {
-    throw new Error(`Printful confirmation returned ${confirmed.result.status}`);
+  const {status} = await getPrintfulOrderState(providerOrderId, env);
+  if (status === 'canceled') return true;
+  if (!['draft', 'pending'].includes(status || '')) {
+    throw new PermanentFulfillmentError(
+      `Printful order cannot be safely cancelled from status ${status || 'unknown'}`,
+    );
+  }
+  const cancelled = await printfulRequest(path, {env, method: 'DELETE'});
+  if (cancelled.result?.status && cancelled.result.status !== 'canceled') {
+    throw new Error(`Printful cancellation returned ${cancelled.result.status}`);
   }
   return true;
+}
+
+export async function getPrintfulOrderState(
+  providerOrderId: string,
+  env: AppEnv,
+) {
+  assertFulfillmentConfiguration(env);
+  const current = await printfulRequest(
+    `/orders/${encodeURIComponent(providerOrderId)}`,
+    {env},
+  );
+  const status = current.result?.status;
+  if (!status) throw new Error('Printful order status is missing');
+  return {status, committed: isCommittedPrintfulStatus(status)};
+}
+
+function isCommittedPrintfulStatus(status: string | undefined) {
+  return Boolean(status && !['canceled', 'draft', 'failed'].includes(status));
+}
+
+export function printfulExternalId(
+  order: Pick<Order, 'publicReference'>,
+) {
+  const externalId = order.publicReference?.trim();
+  if (!externalId || externalId.length > 32) {
+    throw new PermanentFulfillmentError(
+      'Printful external order ID must be a non-empty public reference of at most 32 characters',
+    );
+  }
+  return externalId;
 }
 
 export function isRetriableFulfillmentError(error: unknown) {
@@ -69,15 +112,21 @@ export function isRetriableFulfillmentError(error: unknown) {
 }
 
 export function buildPrintfulOrderPayload({
+  externalId,
   items,
   session,
 }: {
+  externalId: string;
   items: Array<Pick<OrderItem, 'syncVariantId' | 'quantity' | 'unitAmount'>>;
   session: Stripe.Checkout.Session;
 }) {
+  if (!externalId.trim() || externalId.length > 32) {
+    throw new PermanentFulfillmentError(
+      'Printful external order ID must be between 1 and 32 characters',
+    );
+  }
   return {
-    external_id: session.id,
-    confirm: false,
+    external_id: externalId,
     recipient: printfulRecipient(session),
     items: items.map((item) => ({
       sync_variant_id: item.syncVariantId,
@@ -118,7 +167,7 @@ async function printfulRequest(
   }: {
     body?: unknown;
     env: AppEnv;
-    method?: 'GET' | 'POST';
+    method?: 'DELETE' | 'GET' | 'POST';
   },
 ): Promise<PrintfulOrderResponse> {
   try {
@@ -154,10 +203,10 @@ async function printfulRequest(
           retriable,
         );
       }
-      await delay(
+      const retryDelay =
         retryAfterMilliseconds(response.headers.get('retry-after')) ??
-          baseDelay * 2 ** attempt,
-      );
+        baseDelay * 2 ** attempt;
+      await waitForPrintfulRetry(retryDelay, response.status);
     } catch (error) {
       if (error instanceof PrintfulRequestError) throw error;
       if (attempt === maxRetries) {
@@ -167,7 +216,7 @@ async function printfulRequest(
           true,
         );
       }
-      await delay(baseDelay * 2 ** attempt);
+      await waitForPrintfulRetry(baseDelay * 2 ** attempt, 0);
     }
   }
   throw new Error('Printful request exhausted retries');
@@ -204,6 +253,17 @@ function printfulRecipient(session: Stripe.Checkout.Session) {
 
 function delay(milliseconds: number) {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
+}
+
+function waitForPrintfulRetry(milliseconds: number, status: number) {
+  if (milliseconds > MAX_IN_REQUEST_RETRY_DELAY_MS) {
+    throw new PrintfulRequestError(
+      'Printful requested a deferred retry outside the safe in-request window',
+      status,
+      true,
+    );
+  }
+  return delay(milliseconds);
 }
 
 function retryAfterMilliseconds(value: string | null) {

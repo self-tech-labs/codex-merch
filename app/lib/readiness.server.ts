@@ -47,7 +47,28 @@ async function probeDatabase(env: AppEnv) {
       1 as ready,
       to_regclass('public.orders')::text as orders_table,
       to_regclass('public.order_items')::text as order_items_table,
-      to_regclass('public.stripe_events')::text as stripe_events_table
+      to_regclass('public.stripe_events')::text as stripe_events_table,
+      exists (
+        select 1
+        from information_schema.columns
+        where table_schema = 'public'
+          and table_name = 'orders'
+          and column_name = 'refunded_amount'
+      ) as refund_tracking_ready,
+      exists (
+        select 1
+        from information_schema.columns
+        where table_schema = 'public'
+          and table_name = 'orders'
+          and column_name = 'policy_version'
+      ) as policy_version_ready,
+      exists (
+        select 1
+        from information_schema.columns
+        where table_schema = 'public'
+          and table_name = 'stripe_events'
+          and column_name = 'processing_token'
+      ) as webhook_lease_ready
   `);
   const row = result.rows[0] as
     | {
@@ -55,13 +76,19 @@ async function probeDatabase(env: AppEnv) {
         orders_table?: string | null;
         order_items_table?: string | null;
         stripe_events_table?: string | null;
+        refund_tracking_ready?: boolean;
+        policy_version_ready?: boolean;
+        webhook_lease_ready?: boolean;
       }
     | undefined;
   if (
     Number(row?.ready) !== 1 ||
     !row?.orders_table ||
     !row.order_items_table ||
-    !row.stripe_events_table
+    !row.stripe_events_table ||
+    !row.refund_tracking_ready ||
+    !row.policy_version_ready ||
+    !row.webhook_lease_ready
   ) {
     throw new Error('Database is missing required checkout migrations');
   }

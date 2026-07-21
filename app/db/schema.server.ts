@@ -23,6 +23,7 @@ export const paymentStatus = pgEnum('payment_status', [
   'pending',
   'paid',
   'failed',
+  'partially_refunded',
   'refunded',
   'disputed',
 ]);
@@ -37,6 +38,7 @@ export const fulfillmentStatus = pgEnum('fulfillment_status', [
 ]);
 export const stripeEventStatus = pgEnum('stripe_event_status', [
   'received',
+  'processing',
   'processed',
   'ignored',
   'failed',
@@ -48,6 +50,7 @@ export const orders = pgTable(
     id: uuid('id').primaryKey(),
     publicReference: varchar('public_reference', {length: 24}).notNull(),
     catalogRevision: varchar('catalog_revision', {length: 64}).notNull(),
+    policyVersion: varchar('policy_version', {length: 32}).notNull(),
     stripeSessionId: text('stripe_session_id'),
     stripePaymentIntentId: text('stripe_payment_intent_id'),
     checkoutStatus: checkoutStatus('checkout_status').notNull().default('creating'),
@@ -59,6 +62,7 @@ export const orders = pgTable(
     subtotalAmount: integer('subtotal_amount').notNull(),
     shippingAmount: integer('shipping_amount').notNull().default(0),
     taxAmount: integer('tax_amount').notNull().default(0),
+    refundedAmount: integer('refunded_amount').notNull().default(0),
     totalAmount: integer('total_amount').notNull(),
     provider: varchar('provider', {length: 32}).notNull(),
     providerOrderId: text('provider_order_id'),
@@ -81,6 +85,11 @@ export const orders = pgTable(
     check('orders_subtotal_nonnegative', sql`${table.subtotalAmount} >= 0`),
     check('orders_shipping_nonnegative', sql`${table.shippingAmount} >= 0`),
     check('orders_tax_nonnegative', sql`${table.taxAmount} >= 0`),
+    check('orders_refunded_nonnegative', sql`${table.refundedAmount} >= 0`),
+    check(
+      'orders_refunded_not_above_total',
+      sql`${table.refundedAmount} <= ${table.totalAmount}`,
+    ),
     check('orders_total_nonnegative', sql`${table.totalAmount} >= 0`),
   ],
 );
@@ -124,6 +133,8 @@ export const stripeEvents = pgTable(
     type: text('type').notNull(),
     orderId: uuid('order_id').references(() => orders.id, {onDelete: 'set null'}),
     status: stripeEventStatus('status').notNull().default('received'),
+    processingToken: text('processing_token'),
+    processingStartedAt: timestamp('processing_started_at', {withTimezone: true}),
     lastError: text('last_error'),
     receivedAt: timestamp('received_at', {withTimezone: true}).notNull().defaultNow(),
     processedAt: timestamp('processed_at', {withTimezone: true}),

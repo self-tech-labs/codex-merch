@@ -4,8 +4,10 @@ import type Stripe from 'stripe';
 import type {Order} from '~/db/schema.server';
 import {
   buildPrintfulOrderPayload,
-  confirmPrintfulOrder,
+  cancelPrintfulOrder,
   createOrFindPrintfulOrder,
+  getPrintfulOrderState,
+  printfulExternalId,
 } from './fulfillment.server';
 import {
   isPubliclyVisibleProduct,
@@ -14,8 +16,11 @@ import {
   type MerchProduct,
 } from './merch';
 import {
+  allowedShippingCountries,
   assertCheckoutConfiguration,
+  assertMerchantPilotLines,
   normalizeCheckoutLines,
+  shippingOptions,
 } from './stripe.server';
 
 test('preview products are visible but not purchasable', () => {
@@ -136,21 +141,58 @@ test('checkout enforces aggregate quantities, availability, currencies, and uniq
   }
 });
 
+test('merchant pilot pins product, price, and whole-cart quantity', () => {
+  const product = merchProducts.find(
+    (candidate) => candidate.slug === 'codex-rate-reset-long-sleeve',
+  )!;
+  const originalStatus = product.workflow.status;
+  product.workflow.status = 'published';
+  try {
+    const variants = product.commerce.variants!;
+    assert.throws(
+      () =>
+        normalizeCheckoutLines([
+          {productSlug: product.slug, variantId: variants[0].id, quantity: 6},
+          {productSlug: product.slug, variantId: variants[1].id, quantity: 5},
+        ]),
+      /at most 10 items/,
+    );
+    const lines = normalizeCheckoutLines([
+      {productSlug: product.slug, variantId: variants[0].id, quantity: 1},
+    ]);
+    assert.doesNotThrow(() => assertMerchantPilotLines(lines));
+    product.commerce.unitAmount = 5900;
+    assert.throws(() => assertMerchantPilotLines(lines), /approved merchant pilot/);
+    product.commerce.unitAmount = 5800;
+    product.providerRefs.printful!.variants[0].syncVariantId += 1;
+    assert.throws(
+      () => assertMerchantPilotLines(lines),
+      /product revision does not match/,
+    );
+  } finally {
+    product.commerce.unitAmount = 5800;
+    product.providerRefs.printful!.variants[0].syncVariantId = 5338615120;
+    product.workflow.status = originalStatus;
+  }
+});
+
 test('production checkout configuration fails closed', () => {
   const configured: AppEnv = {
     NODE_ENV: 'production',
     STOREFRONT_MODE: 'production',
     CHECKOUT_ENABLED: 'true',
+    MERCH_PILOT_APPROVED: 'true',
     STRIPE_SECRET_KEY: 'sk_test',
     STRIPE_WEBHOOK_SECRET: 'whsec_test',
-    STRIPE_ALLOWED_SHIPPING_COUNTRIES: 'CH,DE,FR',
+    STRIPE_ALLOWED_SHIPPING_COUNTRIES: 'CH',
     STRIPE_AUTOMATIC_TAX: 'false',
     DATABASE_URL: 'postgres://test',
     INNGEST_EVENT_KEY: 'event',
     INNGEST_SIGNING_KEY: 'signing',
     PRINTFUL_TOKEN: 'printful',
     PRINTFUL_STORE_ID: 'store',
-    STRIPE_FLAT_SHIPPING_AMOUNT: '500',
+    PRINTFUL_AUTO_CONFIRM: 'false',
+    STRIPE_FLAT_SHIPPING_AMOUNT: '910',
     STOREFRONT_LEGAL_APPROVED: 'true',
     STOREFRONT_TAX_SHIPPING_APPROVED: 'true',
   };
@@ -158,13 +200,27 @@ test('production checkout configuration fails closed', () => {
   configured.PUBLIC_SITE_URL = 'https://shop.example';
   assert.throws(() => assertCheckoutConfiguration(configured), /contact email/);
   configured.STOREFRONT_CONTACT_EMAIL = 'support@example.com';
-  assert.throws(() => assertCheckoutConfiguration(configured), /policy copy/);
-  configured.STOREFRONT_SHIPPING_POLICY = 'Reviewed shipping policy';
-  configured.STOREFRONT_RETURNS_POLICY = 'Reviewed returns policy';
-  configured.STOREFRONT_PRIVACY_POLICY = 'Reviewed privacy policy';
-  configured.STOREFRONT_TERMS_POLICY = 'Reviewed terms policy';
-  configured.STOREFRONT_CONTACT_POLICY = 'Reviewed contact policy';
+  assert.throws(() => assertCheckoutConfiguration(configured), /contact email/);
+  configured.STOREFRONT_CONTACT_EMAIL = 'elliot@ritsl.com';
+  assert.throws(() => assertCheckoutConfiguration(configured), /policy version/);
+  configured.STOREFRONT_POLICY_VERSION = '2026-07-21';
   assert.doesNotThrow(() => assertCheckoutConfiguration(configured));
+  assert.throws(
+    () => assertCheckoutConfiguration({...configured, MERCH_PILOT_APPROVED: 'false'}),
+    /pilot approval/,
+  );
+  assert.throws(
+    () => assertCheckoutConfiguration({...configured, PRINTFUL_AUTO_CONFIRM: 'true'}),
+    /manual Printful confirmation/,
+  );
+  assert.throws(
+    () =>
+      assertCheckoutConfiguration({
+        ...configured,
+        STRIPE_ALLOWED_SHIPPING_COUNTRIES: 'CH,DE',
+      }),
+    /CH only/,
+  );
   assert.throws(
     () =>
       assertCheckoutConfiguration({
@@ -200,6 +256,8 @@ test('checkout requires explicit production storefront mode', () => {
     INNGEST_SIGNING_KEY: 'signing',
     PRINTFUL_TOKEN: 'printful',
     PRINTFUL_STORE_ID: 'store',
+    PRINTFUL_AUTO_CONFIRM: 'false',
+    MERCH_PILOT_APPROVED: 'true',
   };
 
   assert.doesNotThrow(() => assertCheckoutConfiguration(configured));
@@ -217,9 +275,117 @@ test('checkout requires explicit production storefront mode', () => {
   );
 });
 
+test('pilot shipping countries and delivery configuration fail closed', async () => {
+  assert.deepEqual(allowedShippingCountries({}), ['CH']);
+  assert.deepEqual(
+    allowedShippingCountries({STRIPE_ALLOWED_SHIPPING_COUNTRIES: ' ch '}),
+    ['CH'],
+  );
+  assert.throws(
+    () => allowedShippingCountries({STRIPE_ALLOWED_SHIPPING_COUNTRIES: 'CH,FR'}),
+    /CH only/,
+  );
+
+  assert.deepEqual(
+    await shippingOptions({STRIPE_FLAT_SHIPPING_AMOUNT: '910'}, 'CHF'),
+    [
+      {
+        shipping_rate_data: {
+          type: 'fixed_amount',
+          fixed_amount: {amount: 910, currency: 'chf'},
+          display_name: 'Standard shipping',
+          tax_behavior: 'inclusive',
+          tax_code: 'txcd_92010001',
+          delivery_estimate: {
+            minimum: {unit: 'business_day', value: 7},
+            maximum: {unit: 'business_day', value: 15},
+          },
+        },
+      },
+    ],
+  );
+  await assert.rejects(
+    shippingOptions({STRIPE_FLAT_SHIPPING_AMOUNT: '-1'}, 'CHF'),
+    /non-negative integer/,
+  );
+
+  const rateClient = (rate: Partial<Stripe.ShippingRate>) =>
+    ({
+      shippingRates: {
+        retrieve: async () => ({
+          active: true,
+          fixed_amount: {amount: 910, currency: 'chf'},
+          tax_behavior: 'inclusive',
+          tax_code: 'txcd_92010001',
+          delivery_estimate: {
+            minimum: {unit: 'business_day', value: 7},
+            maximum: {unit: 'business_day', value: 15},
+          },
+          ...rate,
+        }),
+      },
+    }) as unknown as Pick<Stripe, 'shippingRates'>;
+  assert.deepEqual(
+    await shippingOptions(
+      {STRIPE_SHIPPING_RATE_ID: 'shr_test'},
+      'CHF',
+      rateClient({}),
+    ),
+    [{shipping_rate: 'shr_test'}],
+  );
+  await assert.rejects(
+    shippingOptions(
+      {STRIPE_SHIPPING_RATE_ID: 'shr_test'},
+      'CHF',
+      rateClient({active: false}),
+    ),
+    /inactive/,
+  );
+  await assert.rejects(
+    shippingOptions(
+      {STRIPE_SHIPPING_RATE_ID: 'shr_test'},
+      'CHF',
+      rateClient({fixed_amount: {amount: 910, currency: 'usd'}}),
+    ),
+    /currency/,
+  );
+  await assert.rejects(
+    shippingOptions(
+      {STRIPE_SHIPPING_RATE_ID: 'shr_test'},
+      'CHF',
+      rateClient({fixed_amount: {amount: 900, currency: 'chf'}}),
+    ),
+    /amount does not match/,
+  );
+  await assert.rejects(
+    shippingOptions(
+      {STRIPE_SHIPPING_RATE_ID: 'shr_test'},
+      'CHF',
+      rateClient({tax_behavior: 'exclusive'}),
+    ),
+    /tax treatment/,
+  );
+  await assert.rejects(
+    shippingOptions(
+      {STRIPE_SHIPPING_RATE_ID: 'shr_test'},
+      'CHF',
+      rateClient({tax_code: 'txcd_99999999'}),
+    ),
+    /tax treatment/,
+  );
+  await assert.rejects(
+    shippingOptions(
+      {STRIPE_SHIPPING_RATE_ID: 'shr_test'},
+      'CHF',
+      rateClient({delivery_estimate: null}),
+    ),
+    /delivery estimate/,
+  );
+});
+
 test('Printful payload uses immutable sync variants and no print files', () => {
   const session = {
-    id: 'cs_test_123',
+    id: `cs_test_${'x'.repeat(60)}`,
     collected_information: {
       shipping_details: {
         name: 'Test Customer',
@@ -234,17 +400,28 @@ test('Printful payload uses immutable sync variants and no print files', () => {
     customer_details: {email: 'test@example.com'},
   } as unknown as Stripe.Checkout.Session;
   const payload = buildPrintfulOrderPayload({
+    externalId: 'CM-1234567890',
     session,
     items: [{syncVariantId: 55, quantity: 2, unitAmount: 5800}],
   });
-  assert.equal(payload.external_id, 'cs_test_123');
+  assert.equal(payload.external_id, 'CM-1234567890');
+  assert.ok(payload.external_id.length <= 32);
   assert.deepEqual(payload.items, [
     {sync_variant_id: 55, quantity: 2, retail_price: '58.00'},
   ]);
   assert.equal('files' in payload.items[0], false);
+  assert.equal('confirm' in payload, false);
+  assert.equal(
+    printfulExternalId({publicReference: 'CM-1234567890'}),
+    'CM-1234567890',
+  );
+  assert.throws(
+    () => printfulExternalId({publicReference: 'x'.repeat(33)}),
+    /at most 32 characters/,
+  );
 });
 
-test('Printful draft creation and confirmation are idempotent', async () => {
+test('Printful draft creation is idempotent and never calls confirmation', async () => {
   const originalFetch = globalThis.fetch;
   const requests: Array<{method: string; url: string}> = [];
   const session = {
@@ -272,30 +449,25 @@ test('Printful draft creation and confirmation are idempotent', async () => {
     INNGEST_SIGNING_KEY: 'signing',
     PRINTFUL_TOKEN: 'token',
     PRINTFUL_STORE_ID: 'store',
+    PRINTFUL_AUTO_CONFIRM: 'false',
   };
   const baseOrder = {
+    publicReference: 'CM-IDEMPOTENT',
     providerOrderId: null,
     fulfillmentStatus: 'processing',
   } as unknown as Order;
-  let confirmationChecks = 0;
   globalThis.fetch = async (input, init) => {
     const url = String(input);
     const method = init?.method || 'GET';
     requests.push({method, url});
-    if (url.endsWith('/orders/@cs_test_idempotent')) {
+    if (url.endsWith('/orders/@CM-IDEMPOTENT')) {
       return new Response('', {status: 404});
     }
     if (url.endsWith('/orders') && method === 'POST') {
       return Response.json({result: {id: 99, status: 'draft'}});
     }
     if (url.endsWith('/orders/99') && method === 'GET') {
-      confirmationChecks += 1;
-      return Response.json({
-        result: {id: 99, status: confirmationChecks === 1 ? 'draft' : 'confirmed'},
-      });
-    }
-    if (url.endsWith('/orders/99/confirm')) {
-      return Response.json({result: {id: 99, status: 'confirmed'}});
+      return Response.json({result: {id: 99, status: 'draft'}});
     }
     throw new Error(`Unexpected request: ${method} ${url}`);
   };
@@ -319,16 +491,89 @@ test('Printful draft creation and confirmation are idempotent', async () => {
       session,
     });
     assert.deepEqual(foundLocally, {id: '99', confirmed: false});
-    await confirmPrintfulOrder('99', env);
-    await confirmPrintfulOrder('99', env);
     assert.equal(
       requests.filter((request) => request.url.endsWith('/orders') && request.method === 'POST').length,
       1,
     );
-    assert.equal(
-      requests.filter((request) => request.url.endsWith('/confirm')).length,
-      1,
+    assert.equal(requests.some((request) => request.url.endsWith('/confirm')), false);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test('Printful cancellation only acts on cancellable unconfirmed orders', async () => {
+  const originalFetch = globalThis.fetch;
+  const methods: string[] = [];
+  const env: AppEnv = {
+    STOREFRONT_MODE: 'production',
+    PRINTFUL_TOKEN: 'token',
+    PRINTFUL_STORE_ID: 'store',
+    PRINTFUL_AUTO_CONFIRM: 'false',
+  };
+  globalThis.fetch = async (_input, init) => {
+    const method = init?.method || 'GET';
+    methods.push(method);
+    return Response.json({
+      result: {id: 99, status: method === 'DELETE' ? 'canceled' : 'draft'},
+    });
+  };
+  try {
+    assert.equal(await cancelPrintfulOrder('99', env), true);
+    assert.deepEqual(methods, ['GET', 'DELETE']);
+
+    methods.length = 0;
+    globalThis.fetch = async (_input, init) => {
+      methods.push(init?.method || 'GET');
+      return Response.json({result: {id: 100, status: 'confirmed'}});
+    };
+    await assert.rejects(cancelPrintfulOrder('100', env), /cannot be safely cancelled/);
+    assert.deepEqual(methods, ['GET']);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test('Printful provider state recognizes dashboard-confirmed orders', async () => {
+  const originalFetch = globalThis.fetch;
+  const env: AppEnv = {
+    STOREFRONT_MODE: 'production',
+    PRINTFUL_TOKEN: 'token',
+    PRINTFUL_STORE_ID: 'store',
+    PRINTFUL_AUTO_CONFIRM: 'false',
+  };
+  globalThis.fetch = async () =>
+    Response.json({result: {id: 101, status: 'pending'}});
+  try {
+    assert.deepEqual(await getPrintfulOrderState('101', env), {
+      status: 'pending',
+      committed: true,
+    });
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test('Printful defers long Retry-After windows to the caller', async () => {
+  const originalFetch = globalThis.fetch;
+  const env: AppEnv = {
+    STOREFRONT_MODE: 'production',
+    PRINTFUL_TOKEN: 'token',
+    PRINTFUL_STORE_ID: 'store',
+    PRINTFUL_AUTO_CONFIRM: 'false',
+    PRINTFUL_MAX_RETRIES: '1',
+  };
+  globalThis.fetch = async () =>
+    new Response('rate limited', {
+      status: 429,
+      headers: {'Retry-After': '600'},
+    });
+  try {
+    const startedAt = Date.now();
+    await assert.rejects(
+      getPrintfulOrderState('101', env),
+      /outside the safe in-request window/,
     );
+    assert.ok(Date.now() - startedAt < 1_000);
   } finally {
     globalThis.fetch = originalFetch;
   }
@@ -353,14 +598,6 @@ test('preview mode blocks Printful fulfillment before any provider request', asy
         items: [] as any,
         order: {providerOrderId: null} as Order,
         session: {id: 'cs_preview_blocked'} as Stripe.Checkout.Session,
-      }),
-      /explicit production storefront mode/,
-    );
-    await assert.rejects(
-      confirmPrintfulOrder('99', {
-        STOREFRONT_MODE: 'preview',
-        PRINTFUL_TOKEN: 'token',
-        PRINTFUL_STORE_ID: 'store',
       }),
       /explicit production storefront mode/,
     );

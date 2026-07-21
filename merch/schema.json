@@ -39,6 +39,45 @@
       },
       "category": {"type": "string"},
       "description": {"type": "string"},
+      "productDetails": {
+        "type": "object",
+        "required": ["materials", "care", "origin", "productionTime", "mockupNotice"],
+        "properties": {
+          "materials": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+          "fabricWeight": {"type": "string", "minLength": 1},
+          "fit": {"type": "string", "minLength": 1},
+          "construction": {"type": "array", "items": {"type": "string", "minLength": 1}},
+          "care": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+          "origin": {"type": "string", "minLength": 1},
+          "productionTime": {"type": "string", "minLength": 1},
+          "mockupNotice": {"type": "string", "minLength": 1},
+          "sizeGuide": {
+            "type": "object",
+            "required": ["unit", "tolerance", "rows"],
+            "properties": {
+              "unit": {"type": "string", "minLength": 1},
+              "tolerance": {"type": "string", "minLength": 1},
+              "rows": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "required": ["size", "length", "width", "sleeve"],
+                  "properties": {
+                    "size": {"type": "string", "minLength": 1},
+                    "length": {"type": "string", "minLength": 1},
+                    "width": {"type": "string", "minLength": 1},
+                    "sleeve": {"type": "string", "minLength": 1}
+                  },
+                  "additionalProperties": false
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
       "meme": {
         "type": "object",
         "required": ["source", "brief", "rightsNote"],

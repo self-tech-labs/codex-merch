@@ -544,6 +544,97 @@ summary:focus-visible {
   opacity: 0.26;
 }
 
+.product-information {
+  display: grid;
+  gap: 14px;
+  width: min(510px, 100%);
+  margin: 24px auto 0;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.product-information h2,
+.product-information h3 {
+  margin: 0;
+  font-family: var(--mono);
+  text-transform: uppercase;
+}
+
+.product-information h2 {
+  font-size: 14px;
+}
+
+.product-information h3 {
+  font-size: 11px;
+}
+
+.product-information dl {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+
+.product-information dl div {
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr);
+  gap: 12px;
+}
+
+.product-information dt {
+  color: var(--muted);
+  font-family: var(--mono);
+  text-transform: uppercase;
+}
+
+.product-information dd,
+.product-information p {
+  margin: 0;
+}
+
+.size-guide {
+  display: grid;
+  gap: 8px;
+}
+
+.size-guide-scroll {
+  overflow-x: auto;
+}
+
+.size-guide table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: right;
+}
+
+.size-guide th,
+.size-guide td {
+  padding: 6px 8px;
+  border: 1px solid var(--line);
+  white-space: nowrap;
+}
+
+.size-guide th:first-child {
+  text-align: left;
+}
+
+.product-information summary {
+  width: fit-content;
+  font-family: var(--mono);
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.product-information ul {
+  margin: 8px 0 0;
+  padding-left: 18px;
+}
+
+.product-information .mockup-notice {
+  color: var(--muted);
+}
+
 .rights-panel {
   width: min(510px, 100%);
   margin: 20px auto 0;
@@ -637,9 +728,10 @@ summary:focus-visible {
 }
 
 .site-footer {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 16px;
+  display: grid;
+  grid-template-columns: minmax(240px, 1fr) minmax(0, 2fr);
+  gap: 16px 32px;
+  align-items: start;
   padding: 18px 24px;
   color: var(--muted);
   font-family: var(--mono);
@@ -653,9 +745,19 @@ summary:focus-visible {
   gap: 8px 16px;
 }
 
+.site-footer-identity,
+.site-footer-links {
+  display: grid;
+  gap: 8px;
+}
+
+.site-footer-links {
+  justify-items: end;
+}
+
 .policy-page {
   display: grid;
-  gap: 18px;
+  gap: 28px;
   width: min(720px, calc(100vw - 32px));
   min-height: calc(100vh - 140px);
   margin: 0 auto;
@@ -674,6 +776,85 @@ summary:focus-visible {
   max-width: 64ch;
   margin: 0;
   line-height: 1.6;
+}
+
+.policy-header,
+.policy-sections,
+.policy-sections section,
+.merchant-card {
+  display: grid;
+  gap: 12px;
+}
+
+.policy-kicker,
+.policy-version {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.policy-summary {
+  font-size: 18px;
+}
+
+.policy-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 0;
+  border-block: 1px solid var(--line);
+}
+
+.policy-nav a,
+.policy-back {
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.policy-nav a[aria-current='page'] {
+  color: #fff;
+  background: var(--ink);
+  text-decoration: none;
+}
+
+.policy-nav a {
+  padding: 6px 8px;
+}
+
+.policy-sections {
+  gap: 30px;
+}
+
+.policy-sections h2,
+.merchant-card h2 {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 16px;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.merchant-card {
+  padding: 18px;
+  border: 1px solid var(--ink);
+  background: #fff;
+}
+
+.merchant-card address {
+  display: grid;
+  gap: 5px;
+  font-style: normal;
+  line-height: 1.45;
+}
+
+.merchant-card a,
+.checkout-consent a,
+.checkout-policy-links a {
+  color: var(--ink);
+  text-underline-offset: 2px;
 }
 
 .cart-page {
@@ -839,6 +1020,29 @@ summary:focus-visible {
 
 .checkout-panel button {
   width: 100%;
+}
+
+.checkout-consent {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 9px;
+  align-items: start;
+  margin: 0 0 14px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.checkout-consent input {
+  width: 16px;
+  height: 16px;
+  margin: 1px 0 0;
+  accent-color: var(--ink);
+}
+
+.checkout-consent a,
+.checkout-policy-links a {
+  font-weight: 700;
 }
 
 .checkout-panel p,
@@ -1570,6 +1774,14 @@ summary:focus-visible {
     justify-content: flex-end;
     gap: 8px 12px;
     line-height: 1.25;
+  }
+
+  .site-footer {
+    grid-template-columns: 1fr;
+  }
+
+  .site-footer-links {
+    justify-items: start;
   }
 
   .site-mode {

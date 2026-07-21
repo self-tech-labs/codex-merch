@@ -35,7 +35,7 @@ Submission deadline: **2026-07-22 02:00 CEST** (2026-07-21 17:00 PDT). Complete 
 - [ ] Add merchant identity/contact, shipping, returns, privacy, terms, and contact policies.
 - [ ] Approve countries, shipping rates, tax treatment, currency, pricing, and refund/fulfillment operations before enabling real checkout.
 - [ ] Keep real sales disabled until legal and tax/shipping approval is recorded.
-- [ ] Complete the existing pilot-product requirement before deliberately setting `MERCH_PILOT_APPROVED=true`; without it, the weekly release will stop at the publish command.
+- [ ] Use `MERCH_PILOT_APPROVED=true` only for the signed first-product launch. Complete and review that live pilot before separately setting `MERCH_EXPANSION_APPROVED=true`; without the expansion flag, a weekly release stops before publishing another product.
 
 ## Accounts and local secrets
 
@@ -44,13 +44,13 @@ Never paste secret values into Git, Codex chat, logs, screenshots, or this docum
 - [x] Reuse the existing local `OPENAI_API_KEY` for the initial build.
 - [x] Confirm OpenAI API access with live GPT-5.6 art-direction and actual-render critic calls; monitor billing and rate limits during any additional demo run.
 - [ ] Confirm `X_BEARER_TOKEN` can call the list-post endpoint for list `2067819170989854863` and that use of the selected posts is authorized.
-- [ ] Rotate the invalid `PRINTFUL_TOKEN`; confirm `PRINTFUL_STORE_ID`, Manual order/API store access, billing, product availability, and shipping regions.
+- [x] Confirm the current `PRINTFUL_TOKEN` and `PRINTFUL_STORE_ID` have read access to the Manual order/API store and exact pilot mapping; billing, merchant settings, product safety, and the physical sample remain production owner actions.
 - [ ] For a later production pilot, create or verify Stripe test-mode keys, a signed webhook, and approved shipping configuration. These are not required by the Build Week Preview.
 - [ ] For a later production pilot, provision separate Neon staging/production databases and run migrations.
 - [ ] For a later production pilot, create Inngest staging/production environments and configure event/signing keys and the served function URL.
 - [ ] Verify `codex-merch` is linked to this Git repository under Vercel scope `ritsl`; install a least-privilege `VERCEL_TOKEN`; configure `MERCH_DEPLOY_PROVIDER=vercel`, `MERCH_VERCEL_SCOPE`, `MERCH_VERCEL_PROJECT_ID`, production environment variables, canonical `PUBLIC_SITE_URL`, and the checkout WAF rule.
 - [x] `.gitignore` excludes `.env.*` variants while retaining `.env.example`; verify no secret-bearing env file is tracked before submission.
-- [ ] Supply merchant contact and reviewed shipping, returns, privacy, terms, and contact policy text in the deployment environment.
+- [x] Keep reviewed merchant policy copy version-controlled in `app/lib/merchant-policy.ts`; set the matching `STOREFRONT_CONTACT_EMAIL` and `STOREFRONT_POLICY_VERSION` in each deployment environment.
 - [x] Keep `CHECKOUT_ENABLED=false` for the submitted Preview. Enable it only in a later production environment after Stripe, Neon, Inngest, Printful, policy, legal, tax, and shipping staging proof passes.
 
 Expected secret/configuration names include:
@@ -74,15 +74,12 @@ MERCH_VERCEL_PROJECT_ID
 VERCEL_TOKEN
 MERCH_WEEKLY_RELEASE_ENABLED
 MERCH_PILOT_APPROVED
+MERCH_EXPANSION_APPROVED
 CHECKOUT_ENABLED
 STOREFRONT_LEGAL_APPROVED
 STOREFRONT_TAX_SHIPPING_APPROVED
 STOREFRONT_CONTACT_EMAIL
-STOREFRONT_SHIPPING_POLICY
-STOREFRONT_RETURNS_POLICY
-STOREFRONT_PRIVACY_POLICY
-STOREFRONT_TERMS_POLICY
-STOREFRONT_CONTACT_POLICY
+STOREFRONT_POLICY_VERSION
 STRIPE_SHIPPING_RATE_ID or STRIPE_FLAT_SHIPPING_AMOUNT
 STRIPE_ALLOWED_SHIPPING_COUNTRIES
 STRIPE_AUTOMATIC_TAX

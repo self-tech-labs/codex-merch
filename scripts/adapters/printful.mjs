@@ -164,7 +164,9 @@ export async function getPrintfulMockupTask(taskKey, env = process.env) {
 }
 
 export async function createPrintfulOrder(payload, env = process.env) {
-  return printfulRequest('/orders', {method: 'POST', body: payload}, env);
+  const {confirm, ...body} = payload;
+  const suffix = confirm === true ? '?confirm=1' : '';
+  return printfulRequest(`/orders${suffix}`, {method: 'POST', body}, env);
 }
 
 export async function confirmPrintfulOrder(orderId, env = process.env) {

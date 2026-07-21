@@ -1,7 +1,7 @@
 import {NonRetriableError} from 'inngest';
 import {
   assertFulfillmentConfiguration,
-  confirmPrintfulOrder,
+  cancelPrintfulOrder,
   createOrFindPrintfulOrder,
   isRetriableFulfillmentError,
 } from '~/lib/fulfillment.server';
@@ -75,7 +75,7 @@ export const fulfillOrder = inngest.createFunction(
         throw error;
       }
     });
-    await step.run('record-printful-draft', () =>
+    const recorded = await step.run('record-printful-draft', () =>
       markPrintfulCreated(
         orderId,
         printful.id,
@@ -83,32 +83,13 @@ export const fulfillOrder = inngest.createFunction(
         process.env,
       ),
     );
-    if (printful.confirmed || process.env.PRINTFUL_AUTO_CONFIRM !== 'true') {
-      return {status: printful.confirmed ? 'confirmed' : 'draft_created'};
+    if (!recorded) {
+      await step.run('cancel-ineligible-printful-draft', () =>
+        cancelPrintfulOrder(printful.id, process.env),
+      );
+      return {status: 'cancelled_after_payment_change'};
     }
-
-    await step.run('confirm-printful-order', async () => {
-      const order = await getOrderById(orderId, process.env);
-      if (!order || order.providerOrderId !== printful.id) {
-        throw new NonRetriableError(
-          'Local order does not match the Printful draft before confirmation',
-        );
-      }
-      try {
-        return await confirmPrintfulOrder(printful.id, process.env);
-      } catch (error) {
-        if (!isRetriableFulfillmentError(error)) {
-          throw new NonRetriableError(
-            error instanceof Error ? error.message : 'Permanent confirmation error',
-          );
-        }
-        throw error;
-      }
-    });
-    await step.run('record-printful-confirmation', () =>
-      markPrintfulCreated(orderId, printful.id, true, process.env),
-    );
-    return {status: 'confirmed'};
+    return {status: printful.confirmed ? 'confirmed' : 'draft_created'};
   },
 );
 

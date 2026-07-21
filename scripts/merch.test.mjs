@@ -18,11 +18,13 @@ import {
   ensureCatalogMockupFirst,
   generationDirectionPrompt,
   generationPreflight,
+  mismatchedPrintfulSyncVariantMappings,
   missingPrintfulCatalogVariantIds,
   parseNewProductArgs,
   photoshootPrompt,
   photoshootSourceCandidates,
   printfulMockupTaskPayload,
+  printfulDryRunExternalId,
   printfulPayloadWithSyncVariantIds,
   printfulPayload,
   printfulStoreProductExternalId,
@@ -448,6 +450,26 @@ test('treats empty or incomplete live Printful variants as missing', () => {
   );
 });
 
+test('detects stale local Printful sync variant IDs', () => {
+  assert.deepEqual(
+    mismatchedPrintfulSyncVariantMappings(
+      [
+        {catalogVariantId: 4017, syncVariantId: 123},
+        {catalogVariantId: 4018, syncVariantId: 124},
+      ],
+      {
+        result: {
+          sync_variants: [
+            {id: 999, variant_id: 4017},
+            {id: 124, variant_id: 4018},
+          ],
+        },
+      },
+    ),
+    [{catalogVariantId: 4017, expectedSyncVariantId: 123, actualSyncVariantId: 999}],
+  );
+});
+
 test('records terminal mockup failures and clears the task for a bounded retry', () => {
   const ref = {
     mockupTaskKey: 'task-completed-without-assets',
@@ -773,6 +795,14 @@ test('known Printful techniques and workflow states include commerce defaults', 
   assert.equal(workflowStatuses.includes('legacy_draft'), false);
 });
 
+test('Printful dry-run references stay within the provider limit', () => {
+  const externalId = printfulDryRunExternalId(
+    'codex-rate-reset-long-sleeve',
+  );
+  assert.equal(externalId, 'CM-DRY-codex-rate-reset-long-sle');
+  assert.ok(externalId.length <= 32);
+});
+
 test('workflow advancement does not regress later states', () => {
   const product = structuredClone(baseProduct);
   product.workflow = {status: 'mockups_ready'};
@@ -798,7 +828,7 @@ test('publication is constrained to the pilot until operational sign-off', () =>
   assert.doesNotThrow(() =>
     assertPilotPublicationAllowed(
       [{slug: 'another-product'}],
-      {MERCH_PILOT_APPROVED: 'true'},
+      {MERCH_EXPANSION_APPROVED: 'true'},
     ),
   );
 });

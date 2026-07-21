@@ -1352,6 +1352,36 @@
     },
     "category": "Codex",
     "description": "A black long sleeve tee for the 429-to-200 recovery ritual: compact front reset mark, sleeve telemetry, and a quiet back-office stamp.",
+    "productDetails": {
+      "materials": [
+        "Black: 100% Airlume combed ring-spun cotton"
+      ],
+      "fabricWeight": "142.4 g/m² (4.2 oz/yd²)",
+      "fit": "Regular unisex fit",
+      "construction": [
+        "Side-seamed crew neck",
+        "Cover-stitched collar",
+        "5 cm ribbed cuffs"
+      ],
+      "care": [
+        "Machine-wash cold, inside-out, on a gentle cycle with similar colors and mild detergent",
+        "Avoid fabric softener; use non-chlorine bleach only when necessary",
+        "Hang-dry or tumble-dry on low",
+        "Cool iron inside-out without ironing the print; do not dry-clean"
+      ],
+      "origin": "The blank garment is sourced from Nicaragua, Honduras, or the United States. Printing and fulfillment are performed on demand by Printful; the production location may vary.",
+      "productionTime": "Production usually takes 2–5 business days before shipping. Switzerland delivery is estimated at 7–15 business days in total and is not guaranteed.",
+      "mockupNotice": "Product images are digital mockups. Placement, scale, and color can vary slightly on the finished DTG-printed garment.",
+      "sizeGuide": {
+        "unit": "cm",
+        "tolerance": "Supplier measurements may vary by up to 5 cm. Measure a similar garment laid flat.",
+        "rows": [
+          {"size": "M", "length": "73.7", "width": "50.8", "sleeve": "66.5"},
+          {"size": "L", "length": "76.2", "width": "55.9", "sleeve": "68.3"},
+          {"size": "XL", "length": "78.7", "width": "61.0", "sleeve": "69.9"}
+        ]
+      }
+    },
     "meme": {
       "source": "Signal provider: x",
       "brief": "Long sleeve tee inspired by Codex rate-limit lore, reset windows, retry-after headers, queue pressure, and the relief of a clean 200 after a 429. Treat the idea as original systems merch: no copied posts, screenshots, usernames, official marks, or real service branding.",
@@ -1512,7 +1542,7 @@
     "commerce": {
       "handle": "codex-rate-reset-long-sleeve",
       "unitAmount": 5800,
-      "currency": "USD",
+      "currency": "CHF",
       "tags": [
         "codex",
         "long-sleeve",

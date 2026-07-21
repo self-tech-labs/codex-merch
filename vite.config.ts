@@ -1,8 +1,10 @@
-import {copyFile, mkdir} from 'node:fs/promises';
+import {createHash} from 'node:crypto';
+import {copyFile, mkdir, readFile} from 'node:fs/promises';
 import path from 'node:path';
 import {defineConfig, type Plugin} from 'vite';
 import {reactRouter} from '@react-router/dev/vite';
 import products from './merch/products.json';
+import {merchantPilot} from './app/lib/merchant-policy';
 import {validateCatalog} from './scripts/validate-catalog.mjs';
 
 function copyMerchAssets(): Plugin {
@@ -11,6 +13,46 @@ function copyMerchAssets(): Plugin {
     async buildStart() {
       const {errors} = await validateCatalog();
       if (errors.length) this.error(errors.join('\n'));
+
+      const pilot = products.find(
+        (product) => product.slug === merchantPilot.productSlug,
+      );
+      if (!pilot) this.error('Approved merchant pilot product is missing');
+      const pilotRevision = createHash('sha256')
+        .update(JSON.stringify(pilot))
+        .digest('hex');
+      if (pilotRevision !== merchantPilot.approvedProductRevision) {
+        this.error('Merchant pilot product changed after sign-off');
+      }
+      const referencedPilotAssets = new Set([
+        pilot.assets.artwork,
+        ...pilot.assets.printFiles.map((file) => file.path),
+        ...pilot.assets.mockups,
+        ...(pilot.assets.customerPhotos || []),
+      ]);
+      const approvedPilotAssets = new Set(
+        Object.keys(merchantPilot.approvedAssetSha256),
+      );
+      if (
+        referencedPilotAssets.size !== approvedPilotAssets.size ||
+        [...referencedPilotAssets].some(
+          (asset) => !approvedPilotAssets.has(asset),
+        )
+      ) {
+        this.error('Merchant pilot asset set changed after sign-off');
+      }
+      for (const asset of referencedPilotAssets) {
+        const digest = createHash('sha256')
+          .update(await readFile(path.resolve(asset)))
+          .digest('hex');
+        const expected =
+          merchantPilot.approvedAssetSha256[
+            asset as keyof typeof merchantPilot.approvedAssetSha256
+          ];
+        if (digest !== expected) {
+          this.error(`Merchant pilot asset changed after sign-off: ${asset}`);
+        }
+      }
     },
     async writeBundle() {
       const referenced = new Set<string>();
