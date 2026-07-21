@@ -24,7 +24,7 @@ import {
 } from './stripe.server';
 
 test('preview products are visible but not purchasable', () => {
-  const preview = merchProducts[0];
+  const preview = merchProducts.find((product) => product.automation?.previewOnly)!;
   assert.equal(isPubliclyVisibleProduct(preview), true);
   assert.equal(isPurchasableProduct(preview), false);
 });
@@ -41,7 +41,7 @@ test('published products require an available sync mapping', () => {
 });
 
 test('checkout rejects preview products and non-integer quantities', () => {
-  const product = merchProducts[0];
+  const product = merchProducts.find((candidate) => candidate.automation?.previewOnly)!;
   const variant = product.commerce.variants![0];
   assert.throws(
     () =>

@@ -21,6 +21,7 @@
     "merch:new": "node scripts/merch.mjs new --aop",
     "merch:new:standard": "node scripts/merch.mjs new --standard",
     "merch:release:qualify-owner-previews": "node scripts/merch.mjs release:qualify-owner-previews",
+    "merch:release:sign-jury-catalog": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/sign-jury-catalog.mjs",
     "merch:validate": "node scripts/merch.mjs validate",
     "merch:signals": "node scripts/merch.mjs signals",
     "merch:signals:x": "node scripts/merch.mjs signals:x",

@@ -39,7 +39,11 @@ test('jury display amounts convert centimes once and preserve the signed total',
   assert.equal(merchantPilot.stripeTaxBehavior, 'inclusive');
   assert.equal(merchantPilot.printfulProductId, 436601984);
   assert.equal(merchantPilot.printfulVariants.length, 3);
-  assert.equal(merchantJuryCatalog.products.length, 1);
+  assert.equal(merchantJuryCatalog.products.length, 11);
+  assert.equal(
+    new Set(merchantJuryCatalog.products.map((product) => product.productSlug)).size,
+    11,
+  );
 });
 
 test('every public merchant policy has structured, substantive copy', () => {

@@ -1,0 +1,1027 @@
+[
+  {
+    "productSlug": "codex-rate-reset-long-sleeve",
+    "productTitle": "Codex Rate Reset Long Sleeve Tee",
+    "unitAmount": 5800,
+    "printfulProductId": 436601984,
+    "printfulVariants": [
+      {
+        "variantId": "codex-rate-reset-long-sleeve:10095",
+        "size": "M",
+        "catalogVariantId": 10095,
+        "syncVariantId": 5338615120
+      },
+      {
+        "variantId": "codex-rate-reset-long-sleeve:10096",
+        "size": "L",
+        "catalogVariantId": 10096,
+        "syncVariantId": 5338615121
+      },
+      {
+        "variantId": "codex-rate-reset-long-sleeve:10097",
+        "size": "XL",
+        "catalogVariantId": 10097,
+        "syncVariantId": 5338615122
+      }
+    ],
+    "approvedProductRevision": "867adc36037e608ed5c60871eee29e0c9347a017ff24ec7304d4986882941246",
+    "approvedAssetSha256": {
+      "assets/artwork/codex-rate-reset-concept.png": "9dbdc4f71f972a5060a7586c1b6379d8fd83f6bc46c8a4c515c0abfb1b45ec3e",
+      "assets/print/codex-rate-reset-front.png": "05eb2fe7ddc264f9d06b59bea8919af08e78048348c38ba3c2ee92045768feeb",
+      "assets/print/codex-rate-reset-back.png": "325e55502d386c173982732e75bea30f54f29022fe1eed286ac6b71feb8f600c",
+      "assets/print/codex-rate-reset-left_sleeve.png": "3c8f2f5d4619791f107fdfa550ac829a41ae042d26db19f07b27f74690242cf5",
+      "assets/print/codex-rate-reset-right_sleeve.png": "2ef209071cdaf2b56c74366cc2ec4b546c804a49d5d00fe6b9848cc848664b3b",
+      "assets/mockups/codex-rate-reset-catalog.png": "e6b0bb428a82adf6e1b710d8ed585b6068a2088328108f2cd61b66a445c5c584",
+      "assets/mockups/codex-rate-reset-printful-1.jpg": "727284e61e7f6529bb59fb28b9bd867d88d17cbc15878bc45d1629529712683c",
+      "assets/mockups/codex-rate-reset-printful-2.jpg": "8c983ceb565befc30790561890929d58364702b7ec74329063b3b6bd78209d6d",
+      "assets/mockups/codex-rate-reset-front.png": "e6b0bb428a82adf6e1b710d8ed585b6068a2088328108f2cd61b66a445c5c584",
+      "assets/mockups/codex-rate-reset-back.png": "57285702b2ba4644fd02aa1f4ed5c0290609fdabd33e1697b0090e8b38a58a59",
+      "assets/mockups/codex-rate-reset-detail.png": "88618a29147e68ada73049a24ce65f4aaad22b258031b571a849aced206be3ff",
+      "assets/mockups/codex-rate-reset-photoshoot-front.png": "61c86cfd45c970ebf4896fc87affba784a746fc4a42d7ebc3782d7979bf697b7"
+    }
+  },
+  {
+    "productSlug": "research-deployment-co-sweatshirt",
+    "productTitle": "Research & Deployment Co. Cotton Sweatshirt",
+    "unitAmount": 8800,
+    "printfulProductId": 436532136,
+    "printfulVariants": [
+      {
+        "variantId": "research-deployment-co-sweatshirt:33963",
+        "size": "2XS",
+        "catalogVariantId": 33963,
+        "syncVariantId": 5337903363
+      },
+      {
+        "variantId": "research-deployment-co-sweatshirt:33964",
+        "size": "XS",
+        "catalogVariantId": 33964,
+        "syncVariantId": 5337903365
+      },
+      {
+        "variantId": "research-deployment-co-sweatshirt:33965",
+        "size": "S",
+        "catalogVariantId": 33965,
+        "syncVariantId": 5337903366
+      },
+      {
+        "variantId": "research-deployment-co-sweatshirt:33966",
+        "size": "M",
+        "catalogVariantId": 33966,
+        "syncVariantId": 5337903367
+      },
+      {
+        "variantId": "research-deployment-co-sweatshirt:33967",
+        "size": "L",
+        "catalogVariantId": 33967,
+        "syncVariantId": 5337903369
+      },
+      {
+        "variantId": "research-deployment-co-sweatshirt:33968",
+        "size": "XL",
+        "catalogVariantId": 33968,
+        "syncVariantId": 5337903370
+      },
+      {
+        "variantId": "research-deployment-co-sweatshirt:33969",
+        "size": "2XL",
+        "catalogVariantId": 33969,
+        "syncVariantId": 5337903371
+      },
+      {
+        "variantId": "research-deployment-co-sweatshirt:33970",
+        "size": "3XL",
+        "catalogVariantId": 33970,
+        "syncVariantId": 5337903373
+      },
+      {
+        "variantId": "research-deployment-co-sweatshirt:33971",
+        "size": "4XL",
+        "catalogVariantId": 33971,
+        "syncVariantId": 5337903374
+      },
+      {
+        "variantId": "research-deployment-co-sweatshirt:33972",
+        "size": "5XL",
+        "catalogVariantId": 33972,
+        "syncVariantId": 5337903375
+      },
+      {
+        "variantId": "research-deployment-co-sweatshirt:33973",
+        "size": "6XL",
+        "catalogVariantId": 33973,
+        "syncVariantId": 5337903377
+      }
+    ],
+    "approvedProductRevision": "db587b70feb56dc034fb10a00337021c317fce634bbb08ff0f856fc0e9dd475c",
+    "approvedAssetSha256": {
+      "assets/artwork/research-deployment-co-concept.png": "bed8125162df8c37e1ad461538875fdf2befd2651868f6abbbf9e3ad0551ee8e",
+      "assets/print/research-deployment-co-front_dtfabric.png": "d7928b809bd1f5228104e278e67c004c4e591f5ec0b3b0b09264923d86ae8599",
+      "assets/print/research-deployment-co-back_dtfabric.png": "05fdff52669e69986f2f9ca5117c385db93ba806e69cbe03ca1c24bc1c328829",
+      "assets/print/research-deployment-co-left_sleeve_dtfabric.png": "34364842ff1eed39870b82ac894da7c2a3312d237bbe71b9c0b35182e8d926a1",
+      "assets/print/research-deployment-co-right_sleeve_dtfabric.png": "7b00ce3a13d116209ff40e9a1a20c6d2eb5d935413dde3eaf0aeb0358f57a79d",
+      "assets/print/research-deployment-co-label_panel_dtfabric.png": "e52397c712fb6532c0c9f13ae628e56595b6a56135be6c0ba58264c3fb45841e",
+      "assets/print/research-deployment-co-label_inside_dtfabric.png": "5a50a30b9a0824fa21784b4da6d9de0ee423c575323ed6adbee66b6dc60a4a2a",
+      "assets/mockups/research-deployment-co-sweatshirt-catalog.png": "056164863cdb174a583731a4ec3e49a00a7a82a073b12e3c975087e13bec8e32",
+      "assets/mockups/research-deployment-co-sweatshirt-printful-1.png": "f112b430c0f4bc09f617f184696f2b0bd1dc2cd660c3123fc46a3d6ab14cd770",
+      "assets/mockups/research-deployment-co-front.png": "333a31afdd8fa0e6aa858f8dded33283d790d3cc215ef1934d2f52e99dbca5bb",
+      "assets/mockups/research-deployment-co-back.png": "81023ef11a942326204732de12b22eaa09b0375753685d810528ecc60da2fdf6",
+      "assets/mockups/research-deployment-co-patterns.png": "542bdf14eef67e69619634255b1614cff307f0249e9f2ab2db9db10b3fc37d1d",
+      "assets/mockups/research-deployment-co-worn-front.jpg": "22c4799ad1c4d4fee10588d3959a128cf18a4eb978af8c0a99db673224959177"
+    }
+  },
+  {
+    "productSlug": "terminal-ritual-sweatshirt",
+    "productTitle": "Terminal Ritual Cotton Sweatshirt",
+    "unitAmount": 8800,
+    "printfulProductId": 436532516,
+    "printfulVariants": [
+      {
+        "variantId": "terminal-ritual-sweatshirt:33963",
+        "size": "2XS",
+        "catalogVariantId": 33963,
+        "syncVariantId": 5337907450
+      },
+      {
+        "variantId": "terminal-ritual-sweatshirt:33964",
+        "size": "XS",
+        "catalogVariantId": 33964,
+        "syncVariantId": 5337907455
+      },
+      {
+        "variantId": "terminal-ritual-sweatshirt:33965",
+        "size": "S",
+        "catalogVariantId": 33965,
+        "syncVariantId": 5337907456
+      },
+      {
+        "variantId": "terminal-ritual-sweatshirt:33966",
+        "size": "M",
+        "catalogVariantId": 33966,
+        "syncVariantId": 5337907465
+      },
+      {
+        "variantId": "terminal-ritual-sweatshirt:33967",
+        "size": "L",
+        "catalogVariantId": 33967,
+        "syncVariantId": 5337907468
+      },
+      {
+        "variantId": "terminal-ritual-sweatshirt:33968",
+        "size": "XL",
+        "catalogVariantId": 33968,
+        "syncVariantId": 5337907469
+      },
+      {
+        "variantId": "terminal-ritual-sweatshirt:33969",
+        "size": "2XL",
+        "catalogVariantId": 33969,
+        "syncVariantId": 5337907470
+      },
+      {
+        "variantId": "terminal-ritual-sweatshirt:33970",
+        "size": "3XL",
+        "catalogVariantId": 33970,
+        "syncVariantId": 5337907471
+      },
+      {
+        "variantId": "terminal-ritual-sweatshirt:33971",
+        "size": "4XL",
+        "catalogVariantId": 33971,
+        "syncVariantId": 5337907473
+      },
+      {
+        "variantId": "terminal-ritual-sweatshirt:33972",
+        "size": "5XL",
+        "catalogVariantId": 33972,
+        "syncVariantId": 5337907474
+      },
+      {
+        "variantId": "terminal-ritual-sweatshirt:33973",
+        "size": "6XL",
+        "catalogVariantId": 33973,
+        "syncVariantId": 5337907475
+      }
+    ],
+    "approvedProductRevision": "e1e0be3c25bed21f28fb2060a2a4db5dc7f544ce230be9200cf3ada1448f354d",
+    "approvedAssetSha256": {
+      "assets/artwork/terminal-ritual-concept.png": "7521c806efff91d4ea305feac353f6b9d628d34a527683bdeb0158b66fb6741b",
+      "assets/print/terminal-ritual-front_dtfabric.png": "d404b46684eb548a407acf1ed4bc452b725f84808bbe848bebe6282e05753308",
+      "assets/print/terminal-ritual-back_dtfabric.png": "5c09dcc5b4ce435f3a12f96e1d23a13332fdd552df1f58ae1fbdef59cfa6fac1",
+      "assets/print/terminal-ritual-left_sleeve_dtfabric.png": "e8a452403e3a19e1eadf7155d0fd91c61f2bd0e495416ee7bc2abc5e17474444",
+      "assets/print/terminal-ritual-right_sleeve_dtfabric.png": "85f61d976d5eb5f3cd57eeb79994a8520c33db613bfb62b201b0efc5cdb77a15",
+      "assets/print/terminal-ritual-label_panel_dtfabric.png": "e278df55d6c72e4c4bdb2932c9525e8cc8cd7702662023210f2403ebfe91611f",
+      "assets/print/terminal-ritual-label_inside_dtfabric.png": "b9401a02e43a080772151d73d5c33e02345938d61881fee5dfa39ac71112a886",
+      "assets/mockups/terminal-ritual-sweatshirt-catalog.png": "a0253aa439a9c58a989dba290c194b49eb3de769cf640c9149ec4c0ddceebdf5",
+      "assets/mockups/terminal-ritual-sweatshirt-printful-1.png": "39a5e523ea781b9343d5b734dd1248f7ec452774ea139ae568e8661ea2724f37",
+      "assets/mockups/terminal-ritual-front.png": "6882c15e61ec9ea89fdaf05c8c10abe765f9e3e0a329d9dd3bd024fd88c99941",
+      "assets/mockups/terminal-ritual-back.png": "baaa7bb88e78b76114cc1d572624ffef2b44068600266b1bfb1c621ead644b0e",
+      "assets/mockups/terminal-ritual-patterns.png": "09b20e4eda446d4dfb6e1778fe5aa28f8cead33d73ad1924ecaf252a4e9f9b70",
+      "assets/mockups/terminal-ritual-sweatshirt-photoshoot-front.png": "9f023708ede72be9fd3b4deec5940c65245bd110c2d9a193bab09f334370a680"
+    }
+  },
+  {
+    "productSlug": "queue-weather-cotton-sweatshirt",
+    "productTitle": "Queue Weather Cotton Sweatshirt",
+    "unitAmount": 8800,
+    "printfulProductId": 436532524,
+    "printfulVariants": [
+      {
+        "variantId": "queue-weather-cotton-sweatshirt:33963",
+        "size": "2XS",
+        "catalogVariantId": 33963,
+        "syncVariantId": 5337907501
+      },
+      {
+        "variantId": "queue-weather-cotton-sweatshirt:33964",
+        "size": "XS",
+        "catalogVariantId": 33964,
+        "syncVariantId": 5337907605
+      },
+      {
+        "variantId": "queue-weather-cotton-sweatshirt:33965",
+        "size": "S",
+        "catalogVariantId": 33965,
+        "syncVariantId": 5337907606
+      },
+      {
+        "variantId": "queue-weather-cotton-sweatshirt:33966",
+        "size": "M",
+        "catalogVariantId": 33966,
+        "syncVariantId": 5337907608
+      },
+      {
+        "variantId": "queue-weather-cotton-sweatshirt:33967",
+        "size": "L",
+        "catalogVariantId": 33967,
+        "syncVariantId": 5337907609
+      },
+      {
+        "variantId": "queue-weather-cotton-sweatshirt:33968",
+        "size": "XL",
+        "catalogVariantId": 33968,
+        "syncVariantId": 5337907610
+      },
+      {
+        "variantId": "queue-weather-cotton-sweatshirt:33969",
+        "size": "2XL",
+        "catalogVariantId": 33969,
+        "syncVariantId": 5337907611
+      },
+      {
+        "variantId": "queue-weather-cotton-sweatshirt:33970",
+        "size": "3XL",
+        "catalogVariantId": 33970,
+        "syncVariantId": 5337907614
+      },
+      {
+        "variantId": "queue-weather-cotton-sweatshirt:33971",
+        "size": "4XL",
+        "catalogVariantId": 33971,
+        "syncVariantId": 5337907616
+      },
+      {
+        "variantId": "queue-weather-cotton-sweatshirt:33972",
+        "size": "5XL",
+        "catalogVariantId": 33972,
+        "syncVariantId": 5337907617
+      },
+      {
+        "variantId": "queue-weather-cotton-sweatshirt:33973",
+        "size": "6XL",
+        "catalogVariantId": 33973,
+        "syncVariantId": 5337907619
+      }
+    ],
+    "approvedProductRevision": "ca4e89cd7de2631b255ccd112b6dc5589c212484154d9b1ce96e582a058a85fc",
+    "approvedAssetSha256": {
+      "assets/artwork/queue-weather-cotton-sweatshirt-concept.png": "004c33273a52f2199b6c95a7e77a37586116ba7a783e77384950dfffd65bb699",
+      "assets/print/queue-weather-cotton-sweatshirt-front_dtfabric.png": "8e0aefa78641ebbca89bfc3ed9d1aa8bb591b858da3966aaeb41b780b1b010ce",
+      "assets/print/queue-weather-cotton-sweatshirt-back_dtfabric.png": "0a5123bbe4ff31b791d33b54263f86bbeae39344e12ccfbdb7d62c8c5c972f2a",
+      "assets/print/queue-weather-cotton-sweatshirt-left_sleeve_dtfabric.png": "05e0b6b9f10baa32620c502eb7731704917bc1b04749ffd956912f8365f8382e",
+      "assets/print/queue-weather-cotton-sweatshirt-right_sleeve_dtfabric.png": "7785299630f6987ab9cc6e2f2e5c57c1ea8641be3a0b2fe6a7659d2475d9e049",
+      "assets/print/queue-weather-cotton-sweatshirt-label_panel_dtfabric.png": "617b7cabd7c3c397f60fb59ea69ba76888e5b3293eddf7ed71267de97ceff655",
+      "assets/print/queue-weather-cotton-sweatshirt-label_inside_dtfabric.png": "f7a6b1a316be189f188819db00353d1c9b13b3989a684584fa08d9d9e5d9739e",
+      "assets/mockups/queue-weather-cotton-sweatshirt-catalog.png": "063062c904beccc75ce72e16310a60de33e545528fbf8aa2b9efc427d08abea8",
+      "assets/mockups/queue-weather-cotton-sweatshirt-printful-1.png": "0546eefcefa43ba63631b36bd46052b0d83957d7fd21edc893a7565ebaf182bd",
+      "assets/mockups/queue-weather-cotton-sweatshirt-front.png": "442e3bfdc039cbf91e91c27c01a3a4b8187f881831f578b1f7750d46d5334ff5",
+      "assets/mockups/queue-weather-cotton-sweatshirt-back.png": "932aa7d7e33878078a0f94de92fc71dd5529f3763a3aed07156ea9182f2154e2",
+      "assets/mockups/queue-weather-cotton-sweatshirt-patterns.png": "3b73a79471c50a32a502548a978323accf3829d9326d3fb5651fac90716eafdd",
+      "assets/mockups/queue-weather-cotton-sweatshirt-photoshoot-front.png": "df1638ad8d28de6f1eb6ab6754fbfec5ca300b355b1ade7ef2425d2e5eaf2db2"
+    }
+  },
+  {
+    "productSlug": "solward-index-cotton-sweatshirt",
+    "productTitle": "Solward Index Cotton Sweatshirt",
+    "unitAmount": 8800,
+    "printfulProductId": 449298173,
+    "printfulVariants": [
+      {
+        "variantId": "solward-index-cotton-sweatshirt:33963",
+        "size": "2XS",
+        "catalogVariantId": 33963,
+        "syncVariantId": 5405809580
+      },
+      {
+        "variantId": "solward-index-cotton-sweatshirt:33964",
+        "size": "XS",
+        "catalogVariantId": 33964,
+        "syncVariantId": 5405809601
+      },
+      {
+        "variantId": "solward-index-cotton-sweatshirt:33965",
+        "size": "S",
+        "catalogVariantId": 33965,
+        "syncVariantId": 5405809620
+      },
+      {
+        "variantId": "solward-index-cotton-sweatshirt:33966",
+        "size": "M",
+        "catalogVariantId": 33966,
+        "syncVariantId": 5405809635
+      },
+      {
+        "variantId": "solward-index-cotton-sweatshirt:33967",
+        "size": "L",
+        "catalogVariantId": 33967,
+        "syncVariantId": 5405809639
+      },
+      {
+        "variantId": "solward-index-cotton-sweatshirt:33968",
+        "size": "XL",
+        "catalogVariantId": 33968,
+        "syncVariantId": 5405809660
+      },
+      {
+        "variantId": "solward-index-cotton-sweatshirt:33969",
+        "size": "2XL",
+        "catalogVariantId": 33969,
+        "syncVariantId": 5405809663
+      },
+      {
+        "variantId": "solward-index-cotton-sweatshirt:33970",
+        "size": "3XL",
+        "catalogVariantId": 33970,
+        "syncVariantId": 5405809682
+      },
+      {
+        "variantId": "solward-index-cotton-sweatshirt:33971",
+        "size": "4XL",
+        "catalogVariantId": 33971,
+        "syncVariantId": 5405809683
+      },
+      {
+        "variantId": "solward-index-cotton-sweatshirt:33972",
+        "size": "5XL",
+        "catalogVariantId": 33972,
+        "syncVariantId": 5405809685
+      },
+      {
+        "variantId": "solward-index-cotton-sweatshirt:33973",
+        "size": "6XL",
+        "catalogVariantId": 33973,
+        "syncVariantId": 5405809704
+      }
+    ],
+    "approvedProductRevision": "09dd1fe2f7c83b228b6a254bf567d1b34edcbe50764ac73c782a7048ef8b8672",
+    "approvedAssetSha256": {
+      "assets/artwork/the-sol-shines-cotton-sweatshirt-concept.png": "adc3c4bff1a467a1e744265acc7fee3fa86c6d944b1be9b35756276ebb7f7163",
+      "assets/print/the-sol-shines-cotton-sweatshirt-front_dtfabric.png": "ca46389a9dd440699f36f7f36d176eb388d3181c695d48b010ccef82ad5bf91e",
+      "assets/print/the-sol-shines-cotton-sweatshirt-back_dtfabric.png": "135e2db85c19d0692a69b025bac87727678a5790e6a6e11b05f6823d2823b378",
+      "assets/print/the-sol-shines-cotton-sweatshirt-left_sleeve_dtfabric.png": "aba98f2b65855f8e393d0776852a002a0399daadf6a4ee5543cb4c7a2aa90b92",
+      "assets/print/the-sol-shines-cotton-sweatshirt-right_sleeve_dtfabric.png": "5053c029bde53ce72fd74ef6cb2f53e79f977522441ca30e402cfe7844ce8774",
+      "assets/print/the-sol-shines-cotton-sweatshirt-label_panel_dtfabric.png": "7163c4c6121a11130965e43dc40ddfcf62a52efa4790b4c8c089251f79317c56",
+      "assets/print/the-sol-shines-cotton-sweatshirt-label_inside_dtfabric.png": "d216f1c29139ff221eee237ee85ce97c2a568948774e0c00499068d8e7858c88",
+      "assets/mockups/solward-index-cotton-sweatshirt-catalog.png": "5b2665f89d5e7ffc6d4b27302261e444d62f21891706e0ce8dd3a79369f45f29",
+      "assets/mockups/solward-index-cotton-sweatshirt-printful-1.jpg": "043038fd3ea1036930d2641456c376e3d66091f63a25c1893f1c2fb783bb6616",
+      "assets/mockups/solward-index-cotton-sweatshirt-printful-2.jpg": "28cdf06ed3916c7ad4b132885c51dd5bd40a55923ca3678d3391b11a6870d78d",
+      "assets/mockups/solward-index-cotton-sweatshirt-printful-3.jpg": "043038fd3ea1036930d2641456c376e3d66091f63a25c1893f1c2fb783bb6616",
+      "assets/mockups/solward-index-cotton-sweatshirt-printful-4.jpg": "28cdf06ed3916c7ad4b132885c51dd5bd40a55923ca3678d3391b11a6870d78d",
+      "assets/mockups/solward-index-cotton-sweatshirt-printful-5.jpg": "043038fd3ea1036930d2641456c376e3d66091f63a25c1893f1c2fb783bb6616",
+      "assets/mockups/solward-index-cotton-sweatshirt-printful-6.jpg": "28cdf06ed3916c7ad4b132885c51dd5bd40a55923ca3678d3391b11a6870d78d",
+      "assets/mockups/solward-index-cotton-sweatshirt-printful-7.jpg": "043038fd3ea1036930d2641456c376e3d66091f63a25c1893f1c2fb783bb6616",
+      "assets/mockups/solward-index-cotton-sweatshirt-printful-8.jpg": "28cdf06ed3916c7ad4b132885c51dd5bd40a55923ca3678d3391b11a6870d78d",
+      "assets/mockups/solward-index-cotton-sweatshirt-printful-9.jpg": "043038fd3ea1036930d2641456c376e3d66091f63a25c1893f1c2fb783bb6616",
+      "assets/mockups/solward-index-cotton-sweatshirt-printful-10.jpg": "28cdf06ed3916c7ad4b132885c51dd5bd40a55923ca3678d3391b11a6870d78d",
+      "assets/mockups/solward-index-cotton-sweatshirt-printful-11.jpg": "043038fd3ea1036930d2641456c376e3d66091f63a25c1893f1c2fb783bb6616",
+      "assets/mockups/solward-index-cotton-sweatshirt-printful-12.jpg": "28cdf06ed3916c7ad4b132885c51dd5bd40a55923ca3678d3391b11a6870d78d",
+      "assets/mockups/the-sol-shines-cotton-sweatshirt-catalog.png": "f1a56680594566b9c7395b15654ad520b6dcb02784a219222002b52b9039f188",
+      "assets/mockups/the-sol-shines-cotton-sweatshirt-front.png": "48a8a840095ef27537f06ec52ac4775a1c1b55c4608340509b95fd8da47cca17",
+      "assets/mockups/the-sol-shines-cotton-sweatshirt-back.png": "6bc947767b1fdfc8c9c72d9a82665dfb2feedaac0009b74e02738083f7075e43",
+      "assets/mockups/the-sol-shines-cotton-sweatshirt-patterns.png": "92257f413361fc3c4d6d897b4bace2155a89f16bc3b25979fe1021f0bded2634",
+      "assets/mockups/solward-index-cotton-sweatshirt-photoshoot-front.png": "8eac1d4692c3b33b0b37f3373b83cc527f7f8ef03840d6d1fc33b1c2a078243e"
+    }
+  },
+  {
+    "productSlug": "field-clearing-cotton-sweatshirt",
+    "productTitle": "Field Clearing Cotton Sweatshirt",
+    "unitAmount": 8800,
+    "printfulProductId": 449298228,
+    "printfulVariants": [
+      {
+        "variantId": "field-clearing-cotton-sweatshirt:33963",
+        "size": "2XS",
+        "catalogVariantId": 33963,
+        "syncVariantId": 5405809863
+      },
+      {
+        "variantId": "field-clearing-cotton-sweatshirt:33964",
+        "size": "XS",
+        "catalogVariantId": 33964,
+        "syncVariantId": 5405809864
+      },
+      {
+        "variantId": "field-clearing-cotton-sweatshirt:33965",
+        "size": "S",
+        "catalogVariantId": 33965,
+        "syncVariantId": 5405809886
+      },
+      {
+        "variantId": "field-clearing-cotton-sweatshirt:33966",
+        "size": "M",
+        "catalogVariantId": 33966,
+        "syncVariantId": 5405809887
+      },
+      {
+        "variantId": "field-clearing-cotton-sweatshirt:33967",
+        "size": "L",
+        "catalogVariantId": 33967,
+        "syncVariantId": 5405809888
+      },
+      {
+        "variantId": "field-clearing-cotton-sweatshirt:33968",
+        "size": "XL",
+        "catalogVariantId": 33968,
+        "syncVariantId": 5405809904
+      },
+      {
+        "variantId": "field-clearing-cotton-sweatshirt:33969",
+        "size": "2XL",
+        "catalogVariantId": 33969,
+        "syncVariantId": 5405809911
+      },
+      {
+        "variantId": "field-clearing-cotton-sweatshirt:33970",
+        "size": "3XL",
+        "catalogVariantId": 33970,
+        "syncVariantId": 5405809913
+      },
+      {
+        "variantId": "field-clearing-cotton-sweatshirt:33971",
+        "size": "4XL",
+        "catalogVariantId": 33971,
+        "syncVariantId": 5405809924
+      },
+      {
+        "variantId": "field-clearing-cotton-sweatshirt:33972",
+        "size": "5XL",
+        "catalogVariantId": 33972,
+        "syncVariantId": 5405809934
+      },
+      {
+        "variantId": "field-clearing-cotton-sweatshirt:33973",
+        "size": "6XL",
+        "catalogVariantId": 33973,
+        "syncVariantId": 5405809936
+      }
+    ],
+    "approvedProductRevision": "1316b3d27e3c6813ad8a66c54d5a3d14bd1da9b44aa8252974cd53c5d2981835",
+    "approvedAssetSha256": {
+      "assets/artwork/field-clearing-cotton-sweatshirt-preview-concept.png": "e959ceb21e4066c6a65f90620bb1ae0abc6061f396e6ea4ce7d87002da509e40",
+      "assets/print/field-clearing-cotton-sweatshirt-preview-front_dtfabric.png": "aa68e3fde326983f1fb2435a49f892d2868954edb662432c9dd382e2af1a2b28",
+      "assets/print/field-clearing-cotton-sweatshirt-preview-back_dtfabric.png": "97f518b08a6be9cdaf64600eb351598902fb5759ac6e87154bc5ff30002cbaf8",
+      "assets/print/field-clearing-cotton-sweatshirt-preview-left_sleeve_dtfabric.png": "5982e022949c7c55a45a3167d474673ba5fd9b97b9b40f2d83a876c35af0bb0c",
+      "assets/print/field-clearing-cotton-sweatshirt-preview-right_sleeve_dtfabric.png": "e7e4a90ce24f758599677ad230e29f4a4b6e106844fd75ed1a7debd18ab68438",
+      "assets/print/field-clearing-cotton-sweatshirt-preview-label_panel_dtfabric.png": "0089ba381fa4a9282fb47301449aaded856a9a8b82dc941572f74602c39c1305",
+      "assets/print/field-clearing-cotton-sweatshirt-preview-label_inside_dtfabric.png": "b0c824526fa403d3150fb295baddec7ec795b3a1d049c50aadd412bba084daf8",
+      "assets/mockups/field-clearing-cotton-sweatshirt-catalog.png": "b09550996b3d5fff93e380d132b5ee6e046ba56016294c4577955291862068c0",
+      "assets/mockups/field-clearing-cotton-sweatshirt-printful-1.jpg": "c18a03583ed8ccecc40c65490e32ef2151836294933412dac4347fb5bda661f6",
+      "assets/mockups/field-clearing-cotton-sweatshirt-printful-2.jpg": "da334fbf7ed52ce81f73674e679e168cde1ee70c1f1b914b2df615b116a34ad1",
+      "assets/mockups/field-clearing-cotton-sweatshirt-printful-3.jpg": "c18a03583ed8ccecc40c65490e32ef2151836294933412dac4347fb5bda661f6",
+      "assets/mockups/field-clearing-cotton-sweatshirt-printful-4.jpg": "da334fbf7ed52ce81f73674e679e168cde1ee70c1f1b914b2df615b116a34ad1",
+      "assets/mockups/field-clearing-cotton-sweatshirt-printful-5.jpg": "c18a03583ed8ccecc40c65490e32ef2151836294933412dac4347fb5bda661f6",
+      "assets/mockups/field-clearing-cotton-sweatshirt-printful-6.jpg": "da334fbf7ed52ce81f73674e679e168cde1ee70c1f1b914b2df615b116a34ad1",
+      "assets/mockups/field-clearing-cotton-sweatshirt-printful-7.jpg": "c18a03583ed8ccecc40c65490e32ef2151836294933412dac4347fb5bda661f6",
+      "assets/mockups/field-clearing-cotton-sweatshirt-printful-8.jpg": "da334fbf7ed52ce81f73674e679e168cde1ee70c1f1b914b2df615b116a34ad1",
+      "assets/mockups/field-clearing-cotton-sweatshirt-printful-9.jpg": "c18a03583ed8ccecc40c65490e32ef2151836294933412dac4347fb5bda661f6",
+      "assets/mockups/field-clearing-cotton-sweatshirt-printful-10.jpg": "da334fbf7ed52ce81f73674e679e168cde1ee70c1f1b914b2df615b116a34ad1",
+      "assets/mockups/field-clearing-cotton-sweatshirt-printful-11.jpg": "c18a03583ed8ccecc40c65490e32ef2151836294933412dac4347fb5bda661f6",
+      "assets/mockups/field-clearing-cotton-sweatshirt-printful-12.jpg": "da334fbf7ed52ce81f73674e679e168cde1ee70c1f1b914b2df615b116a34ad1",
+      "assets/mockups/field-clearing-cotton-sweatshirt-preview-catalog.png": "b09550996b3d5fff93e380d132b5ee6e046ba56016294c4577955291862068c0",
+      "assets/mockups/field-clearing-cotton-sweatshirt-preview-front.png": "396d28fae7666c56d43dc1f4111e0a13e0f2f8d2452b537e78161c29396f3561",
+      "assets/mockups/field-clearing-cotton-sweatshirt-preview-back.png": "563c2551f675924648374be673e8c51f0dff2f64df079652a375f7f7509b0522",
+      "assets/mockups/field-clearing-cotton-sweatshirt-preview-patterns.png": "59776f8c9390864e41a2f924bd7cb4de31988ff94ab5fcadcc0a815f8ff13086",
+      "assets/mockups/field-clearing-cotton-sweatshirt-photoshoot-front.png": "5d7163a1727d97c99df51402ef4d80c5ac8a3e7fcf811e9bd928bd8a7707b286"
+    }
+  },
+  {
+    "productSlug": "clean-slate-club-cotton-sweatshirt",
+    "productTitle": "Clean Slate Club Cotton Sweatshirt",
+    "unitAmount": 8800,
+    "printfulProductId": 449298262,
+    "printfulVariants": [
+      {
+        "variantId": "clean-slate-club-cotton-sweatshirt:33963",
+        "size": "2XS",
+        "catalogVariantId": 33963,
+        "syncVariantId": 5405810062
+      },
+      {
+        "variantId": "clean-slate-club-cotton-sweatshirt:33964",
+        "size": "XS",
+        "catalogVariantId": 33964,
+        "syncVariantId": 5405810084
+      },
+      {
+        "variantId": "clean-slate-club-cotton-sweatshirt:33965",
+        "size": "S",
+        "catalogVariantId": 33965,
+        "syncVariantId": 5405810085
+      },
+      {
+        "variantId": "clean-slate-club-cotton-sweatshirt:33966",
+        "size": "M",
+        "catalogVariantId": 33966,
+        "syncVariantId": 5405810086
+      },
+      {
+        "variantId": "clean-slate-club-cotton-sweatshirt:33967",
+        "size": "L",
+        "catalogVariantId": 33967,
+        "syncVariantId": 5405810105
+      },
+      {
+        "variantId": "clean-slate-club-cotton-sweatshirt:33968",
+        "size": "XL",
+        "catalogVariantId": 33968,
+        "syncVariantId": 5405810106
+      },
+      {
+        "variantId": "clean-slate-club-cotton-sweatshirt:33969",
+        "size": "2XL",
+        "catalogVariantId": 33969,
+        "syncVariantId": 5405810108
+      },
+      {
+        "variantId": "clean-slate-club-cotton-sweatshirt:33970",
+        "size": "3XL",
+        "catalogVariantId": 33970,
+        "syncVariantId": 5405810127
+      },
+      {
+        "variantId": "clean-slate-club-cotton-sweatshirt:33971",
+        "size": "4XL",
+        "catalogVariantId": 33971,
+        "syncVariantId": 5405810130
+      },
+      {
+        "variantId": "clean-slate-club-cotton-sweatshirt:33972",
+        "size": "5XL",
+        "catalogVariantId": 33972,
+        "syncVariantId": 5405810152
+      },
+      {
+        "variantId": "clean-slate-club-cotton-sweatshirt:33973",
+        "size": "6XL",
+        "catalogVariantId": 33973,
+        "syncVariantId": 5405810154
+      }
+    ],
+    "approvedProductRevision": "15ddf6b3c11b0602f5fd4c7bbc038f4ca753b3f25921561e6d650c1e3b80780a",
+    "approvedAssetSha256": {
+      "assets/artwork/clean-slate-club-cotton-sweatshirt-preview-concept.png": "bb6c80aca2247393ccc34e0bb61ed8f6e2508360d93b986b27e1bd4e31d2e9db",
+      "assets/print/clean-slate-club-cotton-sweatshirt-preview-front_dtfabric.png": "4e88bd6b165a75cc196451a46cf99b942875c588eee7bf6f8202972a55d399fb",
+      "assets/print/clean-slate-club-cotton-sweatshirt-preview-back_dtfabric.png": "566a5c9f2a46730d28daa67ec3da3df8f183de5994ec83ba56259796d21262ff",
+      "assets/print/clean-slate-club-cotton-sweatshirt-preview-left_sleeve_dtfabric.png": "f2faf2ea38a844970de5ac8d0c6b9182586ae22576fe57d5dfd084740542ee57",
+      "assets/print/clean-slate-club-cotton-sweatshirt-preview-right_sleeve_dtfabric.png": "3eb230a25ff49cd11ad7c0da1c3bd7d0cc28b3492a4c87518707583fc822fb1c",
+      "assets/print/clean-slate-club-cotton-sweatshirt-preview-label_panel_dtfabric.png": "213a7483053c89cf0540fc0b4de39549caa41623319d1e5b88f6fe3713a0b3e2",
+      "assets/print/clean-slate-club-cotton-sweatshirt-preview-label_inside_dtfabric.png": "d0f2c88ad6ea129e1d297c31ba430e9803a35b86510c15910703cb48173d97bf",
+      "assets/mockups/clean-slate-club-cotton-sweatshirt-catalog.png": "2690f82b12782bec103822602aa6f479db1616f7fc5357cbf1db825126843f2a",
+      "assets/mockups/clean-slate-club-cotton-sweatshirt-printful-1.jpg": "34c8d4aae225647fbe2a3cd44bf711ed23935333293a5256c2a6672d6d60cac6",
+      "assets/mockups/clean-slate-club-cotton-sweatshirt-printful-2.jpg": "6f2e05d5c70dd334e5946ce13dc0299e45290db8300cfb9574ccde1273f07170",
+      "assets/mockups/clean-slate-club-cotton-sweatshirt-printful-3.jpg": "34c8d4aae225647fbe2a3cd44bf711ed23935333293a5256c2a6672d6d60cac6",
+      "assets/mockups/clean-slate-club-cotton-sweatshirt-printful-4.jpg": "6f2e05d5c70dd334e5946ce13dc0299e45290db8300cfb9574ccde1273f07170",
+      "assets/mockups/clean-slate-club-cotton-sweatshirt-printful-5.jpg": "34c8d4aae225647fbe2a3cd44bf711ed23935333293a5256c2a6672d6d60cac6",
+      "assets/mockups/clean-slate-club-cotton-sweatshirt-printful-6.jpg": "6f2e05d5c70dd334e5946ce13dc0299e45290db8300cfb9574ccde1273f07170",
+      "assets/mockups/clean-slate-club-cotton-sweatshirt-printful-7.jpg": "34c8d4aae225647fbe2a3cd44bf711ed23935333293a5256c2a6672d6d60cac6",
+      "assets/mockups/clean-slate-club-cotton-sweatshirt-printful-8.jpg": "6f2e05d5c70dd334e5946ce13dc0299e45290db8300cfb9574ccde1273f07170",
+      "assets/mockups/clean-slate-club-cotton-sweatshirt-printful-9.jpg": "34c8d4aae225647fbe2a3cd44bf711ed23935333293a5256c2a6672d6d60cac6",
+      "assets/mockups/clean-slate-club-cotton-sweatshirt-printful-10.jpg": "6f2e05d5c70dd334e5946ce13dc0299e45290db8300cfb9574ccde1273f07170",
+      "assets/mockups/clean-slate-club-cotton-sweatshirt-printful-11.jpg": "34c8d4aae225647fbe2a3cd44bf711ed23935333293a5256c2a6672d6d60cac6",
+      "assets/mockups/clean-slate-club-cotton-sweatshirt-printful-12.jpg": "6f2e05d5c70dd334e5946ce13dc0299e45290db8300cfb9574ccde1273f07170",
+      "assets/mockups/clean-slate-club-cotton-sweatshirt-preview-catalog.png": "2690f82b12782bec103822602aa6f479db1616f7fc5357cbf1db825126843f2a",
+      "assets/mockups/clean-slate-club-cotton-sweatshirt-preview-front.png": "0e3e9cdcf097f899596631f846d96696c2ba71b2df7fa576d99483320d276bdd",
+      "assets/mockups/clean-slate-club-cotton-sweatshirt-preview-back.png": "1327dbbbf5d2c4978bdf9067c1308d77fb1102e90372134e6897878f18d01fbb",
+      "assets/mockups/clean-slate-club-cotton-sweatshirt-preview-patterns.png": "d59dd3047c2854719e6ca738087a2e1253a276171ddc890166301e7eb71fe7c5",
+      "assets/mockups/clean-slate-club-cotton-sweatshirt-photoshoot-front.png": "963739d9b9877580d8cdf543661d82892ff56ac809606229b1a0cf66b1d5e1b0"
+    }
+  },
+  {
+    "productSlug": "parallel-noise-poster-cotton-sweatshirt",
+    "productTitle": "Parallel Noise Poster Cotton Sweatshirt",
+    "unitAmount": 8800,
+    "printfulProductId": 449298302,
+    "printfulVariants": [
+      {
+        "variantId": "parallel-noise-poster-cotton-sweatshirt:33963",
+        "size": "2XS",
+        "catalogVariantId": 33963,
+        "syncVariantId": 5405810272
+      },
+      {
+        "variantId": "parallel-noise-poster-cotton-sweatshirt:33964",
+        "size": "XS",
+        "catalogVariantId": 33964,
+        "syncVariantId": 5405810330
+      },
+      {
+        "variantId": "parallel-noise-poster-cotton-sweatshirt:33965",
+        "size": "S",
+        "catalogVariantId": 33965,
+        "syncVariantId": 5405810339
+      },
+      {
+        "variantId": "parallel-noise-poster-cotton-sweatshirt:33966",
+        "size": "M",
+        "catalogVariantId": 33966,
+        "syncVariantId": 5405810342
+      },
+      {
+        "variantId": "parallel-noise-poster-cotton-sweatshirt:33967",
+        "size": "L",
+        "catalogVariantId": 33967,
+        "syncVariantId": 5405810363
+      },
+      {
+        "variantId": "parallel-noise-poster-cotton-sweatshirt:33968",
+        "size": "XL",
+        "catalogVariantId": 33968,
+        "syncVariantId": 5405810366
+      },
+      {
+        "variantId": "parallel-noise-poster-cotton-sweatshirt:33969",
+        "size": "2XL",
+        "catalogVariantId": 33969,
+        "syncVariantId": 5405810369
+      },
+      {
+        "variantId": "parallel-noise-poster-cotton-sweatshirt:33970",
+        "size": "3XL",
+        "catalogVariantId": 33970,
+        "syncVariantId": 5405810390
+      },
+      {
+        "variantId": "parallel-noise-poster-cotton-sweatshirt:33971",
+        "size": "4XL",
+        "catalogVariantId": 33971,
+        "syncVariantId": 5405810392
+      },
+      {
+        "variantId": "parallel-noise-poster-cotton-sweatshirt:33972",
+        "size": "5XL",
+        "catalogVariantId": 33972,
+        "syncVariantId": 5405810395
+      },
+      {
+        "variantId": "parallel-noise-poster-cotton-sweatshirt:33973",
+        "size": "6XL",
+        "catalogVariantId": 33973,
+        "syncVariantId": 5405810417
+      }
+    ],
+    "approvedProductRevision": "163c6f13cd4cbb386f681ebae9a7cdfd8783d7b5ba9e8c2c76be34f3a93c86bf",
+    "approvedAssetSha256": {
+      "assets/artwork/parallel-noise-poster-cotton-sweatshirt-preview-concept.png": "6648842deee515694dacee663e66df71f8f5266eb63164628bd4076adf9d4889",
+      "assets/print/parallel-noise-poster-cotton-sweatshirt-preview-front_dtfabric.png": "8500d72596ad55d526e955037d7a8867fb8c12ea40d37be53a93331e085cfc77",
+      "assets/print/parallel-noise-poster-cotton-sweatshirt-preview-back_dtfabric.png": "56d9bd63fcad4a69483e503936470e42438f8d2b36f3153902b985b189553bb7",
+      "assets/print/parallel-noise-poster-cotton-sweatshirt-preview-left_sleeve_dtfabric.png": "85ae8d4b50068f8b6910f55e94b69e365f7c6fb6d8d897710123a1a848ddc2c3",
+      "assets/print/parallel-noise-poster-cotton-sweatshirt-preview-right_sleeve_dtfabric.png": "b93e8838125fe7306950d7a98b9ca5e019693ea17a98f79518c336ef1cee50de",
+      "assets/print/parallel-noise-poster-cotton-sweatshirt-preview-label_panel_dtfabric.png": "d2b8e62a97ef67d85d28ff707d6269abd1b63c195e8f30ce6d4d037711005706",
+      "assets/print/parallel-noise-poster-cotton-sweatshirt-preview-label_inside_dtfabric.png": "151ad8527a2bff7b37742db1c082d60f2e3dffe236bee7e0569b9fea103999a2",
+      "assets/mockups/parallel-noise-poster-cotton-sweatshirt-catalog.png": "ab2092e485625451aa485d7cc4f773b79bb373d583201fef7e82c2152d867f65",
+      "assets/mockups/parallel-noise-poster-cotton-sweatshirt-printful-1.jpg": "c0b67ab027a66014f83e33e77d31232cbf733c30d575c4cc656d1b38ac2fd3bd",
+      "assets/mockups/parallel-noise-poster-cotton-sweatshirt-printful-2.jpg": "5cca14d9c3c36777b542edd7336aafcb9b3447ba7206e2fdbb13c71c0fce3aa6",
+      "assets/mockups/parallel-noise-poster-cotton-sweatshirt-printful-3.jpg": "c0b67ab027a66014f83e33e77d31232cbf733c30d575c4cc656d1b38ac2fd3bd",
+      "assets/mockups/parallel-noise-poster-cotton-sweatshirt-printful-4.jpg": "5cca14d9c3c36777b542edd7336aafcb9b3447ba7206e2fdbb13c71c0fce3aa6",
+      "assets/mockups/parallel-noise-poster-cotton-sweatshirt-printful-5.jpg": "c0b67ab027a66014f83e33e77d31232cbf733c30d575c4cc656d1b38ac2fd3bd",
+      "assets/mockups/parallel-noise-poster-cotton-sweatshirt-printful-6.jpg": "5cca14d9c3c36777b542edd7336aafcb9b3447ba7206e2fdbb13c71c0fce3aa6",
+      "assets/mockups/parallel-noise-poster-cotton-sweatshirt-printful-7.jpg": "c0b67ab027a66014f83e33e77d31232cbf733c30d575c4cc656d1b38ac2fd3bd",
+      "assets/mockups/parallel-noise-poster-cotton-sweatshirt-printful-8.jpg": "5cca14d9c3c36777b542edd7336aafcb9b3447ba7206e2fdbb13c71c0fce3aa6",
+      "assets/mockups/parallel-noise-poster-cotton-sweatshirt-printful-9.jpg": "c0b67ab027a66014f83e33e77d31232cbf733c30d575c4cc656d1b38ac2fd3bd",
+      "assets/mockups/parallel-noise-poster-cotton-sweatshirt-printful-10.jpg": "5cca14d9c3c36777b542edd7336aafcb9b3447ba7206e2fdbb13c71c0fce3aa6",
+      "assets/mockups/parallel-noise-poster-cotton-sweatshirt-printful-11.jpg": "c0b67ab027a66014f83e33e77d31232cbf733c30d575c4cc656d1b38ac2fd3bd",
+      "assets/mockups/parallel-noise-poster-cotton-sweatshirt-printful-12.jpg": "5cca14d9c3c36777b542edd7336aafcb9b3447ba7206e2fdbb13c71c0fce3aa6",
+      "assets/mockups/parallel-noise-poster-cotton-sweatshirt-preview-catalog.png": "ab2092e485625451aa485d7cc4f773b79bb373d583201fef7e82c2152d867f65",
+      "assets/mockups/parallel-noise-poster-cotton-sweatshirt-preview-front.png": "ab37532fa3748d8ce484c8b0e6c09a9ca846d25cc2e7b887e9149e271d422882",
+      "assets/mockups/parallel-noise-poster-cotton-sweatshirt-preview-back.png": "23478e4b4e62f6381b8a43164153218d5cf7305e1b19b1c8bb9bef222ee32cd9",
+      "assets/mockups/parallel-noise-poster-cotton-sweatshirt-preview-patterns.png": "2c6d416b9f684114aee2de2d350e94053c596ffada156ae12d9b5e8954cc0461",
+      "assets/mockups/parallel-noise-poster-cotton-sweatshirt-photoshoot-front.png": "0c99d21362c80913886c8ba1a22e4df808d93af62694e6e6ec8b99e5b4120e6c"
+    }
+  },
+  {
+    "productSlug": "sun-break-victory-cotton-sweatshirt",
+    "productTitle": "Sun Break Victory Cotton Sweatshirt",
+    "unitAmount": 8800,
+    "printfulProductId": 449298346,
+    "printfulVariants": [
+      {
+        "variantId": "sun-break-victory-cotton-sweatshirt:33963",
+        "size": "2XS",
+        "catalogVariantId": 33963,
+        "syncVariantId": 5405810565
+      },
+      {
+        "variantId": "sun-break-victory-cotton-sweatshirt:33964",
+        "size": "XS",
+        "catalogVariantId": 33964,
+        "syncVariantId": 5405810569
+      },
+      {
+        "variantId": "sun-break-victory-cotton-sweatshirt:33965",
+        "size": "S",
+        "catalogVariantId": 33965,
+        "syncVariantId": 5405810591
+      },
+      {
+        "variantId": "sun-break-victory-cotton-sweatshirt:33966",
+        "size": "M",
+        "catalogVariantId": 33966,
+        "syncVariantId": 5405810595
+      },
+      {
+        "variantId": "sun-break-victory-cotton-sweatshirt:33967",
+        "size": "L",
+        "catalogVariantId": 33967,
+        "syncVariantId": 5405810598
+      },
+      {
+        "variantId": "sun-break-victory-cotton-sweatshirt:33968",
+        "size": "XL",
+        "catalogVariantId": 33968,
+        "syncVariantId": 5405810624
+      },
+      {
+        "variantId": "sun-break-victory-cotton-sweatshirt:33969",
+        "size": "2XL",
+        "catalogVariantId": 33969,
+        "syncVariantId": 5405810633
+      },
+      {
+        "variantId": "sun-break-victory-cotton-sweatshirt:33970",
+        "size": "3XL",
+        "catalogVariantId": 33970,
+        "syncVariantId": 5405810659
+      },
+      {
+        "variantId": "sun-break-victory-cotton-sweatshirt:33971",
+        "size": "4XL",
+        "catalogVariantId": 33971,
+        "syncVariantId": 5405810667
+      },
+      {
+        "variantId": "sun-break-victory-cotton-sweatshirt:33972",
+        "size": "5XL",
+        "catalogVariantId": 33972,
+        "syncVariantId": 5405810677
+      },
+      {
+        "variantId": "sun-break-victory-cotton-sweatshirt:33973",
+        "size": "6XL",
+        "catalogVariantId": 33973,
+        "syncVariantId": 5405810703
+      }
+    ],
+    "approvedProductRevision": "8b74fa8773b98ef44b5e4d747481c9f5e0817c45ae9ad2bd54956be83d2b037e",
+    "approvedAssetSha256": {
+      "assets/artwork/sun-break-victory-cotton-sweatshirt-preview-concept.png": "b88d67016d1905082d4edc62e237c27c4560dd61b7453bbe10719e3793618e00",
+      "assets/print/sun-break-victory-cotton-sweatshirt-preview-front_dtfabric.png": "4ee39f5b8cc492647aeedf637d61b311b384ed5cb787add663cd2419d5f5a132",
+      "assets/print/sun-break-victory-cotton-sweatshirt-preview-back_dtfabric.png": "8b08ddbfdad0890a569c02a1362b07e8977a88dce8f251685965cc455cde4c80",
+      "assets/print/sun-break-victory-cotton-sweatshirt-preview-left_sleeve_dtfabric.png": "5b3d8073c69e05c16fd219c39a14eebad910560d99298766a6df7c1c59c0ca11",
+      "assets/print/sun-break-victory-cotton-sweatshirt-preview-right_sleeve_dtfabric.png": "bea14849efe77fba3412db081d3aabbb3f271b9d2a954bf90abcfc1ea215414e",
+      "assets/print/sun-break-victory-cotton-sweatshirt-preview-label_panel_dtfabric.png": "be12f46fe2739282b02d80f802ea6a6786c9ecab66e9de20c22cc06c046fbd18",
+      "assets/print/sun-break-victory-cotton-sweatshirt-preview-label_inside_dtfabric.png": "c0a74962d0f9f523bd19887fa07b1de69266e29eb63875d2d87513780fc22e2e",
+      "assets/mockups/sun-break-victory-cotton-sweatshirt-catalog.png": "67d581adcdc6be73f685469e5e2e23586d141506230f5f131d5ab0c6f08712f7",
+      "assets/mockups/sun-break-victory-cotton-sweatshirt-printful-1.jpg": "c21a43cec16645cef9359f665a150c6cb1b84c4e20cc330d36088777bdbc0868",
+      "assets/mockups/sun-break-victory-cotton-sweatshirt-printful-2.jpg": "ae268bf1223a81d6d7d23054f53b1ebc568521a473a79f779197abfb1a1c81b6",
+      "assets/mockups/sun-break-victory-cotton-sweatshirt-printful-3.jpg": "c21a43cec16645cef9359f665a150c6cb1b84c4e20cc330d36088777bdbc0868",
+      "assets/mockups/sun-break-victory-cotton-sweatshirt-printful-4.jpg": "ae268bf1223a81d6d7d23054f53b1ebc568521a473a79f779197abfb1a1c81b6",
+      "assets/mockups/sun-break-victory-cotton-sweatshirt-printful-5.jpg": "c21a43cec16645cef9359f665a150c6cb1b84c4e20cc330d36088777bdbc0868",
+      "assets/mockups/sun-break-victory-cotton-sweatshirt-printful-6.jpg": "ae268bf1223a81d6d7d23054f53b1ebc568521a473a79f779197abfb1a1c81b6",
+      "assets/mockups/sun-break-victory-cotton-sweatshirt-printful-7.jpg": "c21a43cec16645cef9359f665a150c6cb1b84c4e20cc330d36088777bdbc0868",
+      "assets/mockups/sun-break-victory-cotton-sweatshirt-printful-8.jpg": "ae268bf1223a81d6d7d23054f53b1ebc568521a473a79f779197abfb1a1c81b6",
+      "assets/mockups/sun-break-victory-cotton-sweatshirt-printful-9.jpg": "c21a43cec16645cef9359f665a150c6cb1b84c4e20cc330d36088777bdbc0868",
+      "assets/mockups/sun-break-victory-cotton-sweatshirt-printful-10.jpg": "ae268bf1223a81d6d7d23054f53b1ebc568521a473a79f779197abfb1a1c81b6",
+      "assets/mockups/sun-break-victory-cotton-sweatshirt-printful-11.jpg": "c21a43cec16645cef9359f665a150c6cb1b84c4e20cc330d36088777bdbc0868",
+      "assets/mockups/sun-break-victory-cotton-sweatshirt-printful-12.jpg": "ae268bf1223a81d6d7d23054f53b1ebc568521a473a79f779197abfb1a1c81b6",
+      "assets/mockups/sun-break-victory-cotton-sweatshirt-preview-catalog.png": "67d581adcdc6be73f685469e5e2e23586d141506230f5f131d5ab0c6f08712f7",
+      "assets/mockups/sun-break-victory-cotton-sweatshirt-preview-front.png": "0995784fe7896397183b55c1e03b9bd46e392cc25c48eff055e1f8751caa773b",
+      "assets/mockups/sun-break-victory-cotton-sweatshirt-preview-back.png": "b7433c3e1e046769dd93b51ba83077100d708e2e5174fd3b761c3a7246c417c5",
+      "assets/mockups/sun-break-victory-cotton-sweatshirt-preview-patterns.png": "95c99b430c558a7dc24c9ada5455da0cb461c0241b283dbdcee4f7cb40936dc4",
+      "assets/mockups/sun-break-victory-cotton-sweatshirt-photoshoot-front.png": "dddd8f506697b9a863f7b55fdf3563703135a97160a120405732279659d78fa5"
+    }
+  },
+  {
+    "productSlug": "tastemaxxing-cutline-cotton-sweatshirt",
+    "productTitle": "Tastemaxxing Cutline Cotton Sweatshirt",
+    "unitAmount": 8800,
+    "printfulProductId": 449298393,
+    "printfulVariants": [
+      {
+        "variantId": "tastemaxxing-cutline-cotton-sweatshirt:33963",
+        "size": "2XS",
+        "catalogVariantId": 33963,
+        "syncVariantId": 5405810893
+      },
+      {
+        "variantId": "tastemaxxing-cutline-cotton-sweatshirt:33964",
+        "size": "XS",
+        "catalogVariantId": 33964,
+        "syncVariantId": 5405810902
+      },
+      {
+        "variantId": "tastemaxxing-cutline-cotton-sweatshirt:33965",
+        "size": "S",
+        "catalogVariantId": 33965,
+        "syncVariantId": 5405810926
+      },
+      {
+        "variantId": "tastemaxxing-cutline-cotton-sweatshirt:33966",
+        "size": "M",
+        "catalogVariantId": 33966,
+        "syncVariantId": 5405810932
+      },
+      {
+        "variantId": "tastemaxxing-cutline-cotton-sweatshirt:33967",
+        "size": "L",
+        "catalogVariantId": 33967,
+        "syncVariantId": 5405810955
+      },
+      {
+        "variantId": "tastemaxxing-cutline-cotton-sweatshirt:33968",
+        "size": "XL",
+        "catalogVariantId": 33968,
+        "syncVariantId": 5405810964
+      },
+      {
+        "variantId": "tastemaxxing-cutline-cotton-sweatshirt:33969",
+        "size": "2XL",
+        "catalogVariantId": 33969,
+        "syncVariantId": 5405810973
+      },
+      {
+        "variantId": "tastemaxxing-cutline-cotton-sweatshirt:33970",
+        "size": "3XL",
+        "catalogVariantId": 33970,
+        "syncVariantId": 5405810999
+      },
+      {
+        "variantId": "tastemaxxing-cutline-cotton-sweatshirt:33971",
+        "size": "4XL",
+        "catalogVariantId": 33971,
+        "syncVariantId": 5405811009
+      },
+      {
+        "variantId": "tastemaxxing-cutline-cotton-sweatshirt:33972",
+        "size": "5XL",
+        "catalogVariantId": 33972,
+        "syncVariantId": 5405811022
+      },
+      {
+        "variantId": "tastemaxxing-cutline-cotton-sweatshirt:33973",
+        "size": "6XL",
+        "catalogVariantId": 33973,
+        "syncVariantId": 5405811033
+      }
+    ],
+    "approvedProductRevision": "045a3e391f62b22fe8af10bfe0a33b1bfd970b564d86f39056ef93e2fbea3622",
+    "approvedAssetSha256": {
+      "assets/artwork/tastemaxxing-cutline-cotton-sweatshirt-preview-concept.png": "b61ca521d5106fbc5773d1aeda184d6d9f035d402a80692b6f83847d0347bb5a",
+      "assets/print/tastemaxxing-cutline-cotton-sweatshirt-preview-front_dtfabric.png": "b90b46cb77fc8a6cec7798ee9cc0687022b6ce0db411a5a9b34f071e27d359c3",
+      "assets/print/tastemaxxing-cutline-cotton-sweatshirt-preview-back_dtfabric.png": "f36dffe314d95025f1d91d5083e196d95c73d9c7cce9db274bcd6d3d983fae29",
+      "assets/print/tastemaxxing-cutline-cotton-sweatshirt-preview-left_sleeve_dtfabric.png": "6e88bf0767742e50712c2e6eac83a1f828915d63641006546ec8ab54dd67e9c8",
+      "assets/print/tastemaxxing-cutline-cotton-sweatshirt-preview-right_sleeve_dtfabric.png": "3a5bdebf318bd58ff345c26ec76d281bc7c24439ed137167611efbc10a7061d4",
+      "assets/print/tastemaxxing-cutline-cotton-sweatshirt-preview-label_panel_dtfabric.png": "365fe1c01b317cdf0ac90cffc072290ea691e424a19c4786c180a03067f8332a",
+      "assets/print/tastemaxxing-cutline-cotton-sweatshirt-preview-label_inside_dtfabric.png": "18f8cab5137b3e640cb32234a72bde82845449920e405ff868c3b9a44938fd65",
+      "assets/mockups/tastemaxxing-cutline-cotton-sweatshirt-catalog.png": "5d4a3715318703ef9cb4fb0b9c51e54ac2fe981951871f6acfa0e323cba9be30",
+      "assets/mockups/tastemaxxing-cutline-cotton-sweatshirt-printful-1.jpg": "5094dc5be416676627ee5a21c79a06fa175803ad8a5eb0479a01a1127ed3cad7",
+      "assets/mockups/tastemaxxing-cutline-cotton-sweatshirt-printful-2.jpg": "a2fdf710fedac4b76677a62f61c4bcf9328db8e7f50099469e4233b8662e27f3",
+      "assets/mockups/tastemaxxing-cutline-cotton-sweatshirt-printful-3.jpg": "5094dc5be416676627ee5a21c79a06fa175803ad8a5eb0479a01a1127ed3cad7",
+      "assets/mockups/tastemaxxing-cutline-cotton-sweatshirt-printful-4.jpg": "a2fdf710fedac4b76677a62f61c4bcf9328db8e7f50099469e4233b8662e27f3",
+      "assets/mockups/tastemaxxing-cutline-cotton-sweatshirt-printful-5.jpg": "5094dc5be416676627ee5a21c79a06fa175803ad8a5eb0479a01a1127ed3cad7",
+      "assets/mockups/tastemaxxing-cutline-cotton-sweatshirt-printful-6.jpg": "a2fdf710fedac4b76677a62f61c4bcf9328db8e7f50099469e4233b8662e27f3",
+      "assets/mockups/tastemaxxing-cutline-cotton-sweatshirt-printful-7.jpg": "5094dc5be416676627ee5a21c79a06fa175803ad8a5eb0479a01a1127ed3cad7",
+      "assets/mockups/tastemaxxing-cutline-cotton-sweatshirt-printful-8.jpg": "a2fdf710fedac4b76677a62f61c4bcf9328db8e7f50099469e4233b8662e27f3",
+      "assets/mockups/tastemaxxing-cutline-cotton-sweatshirt-printful-9.jpg": "5094dc5be416676627ee5a21c79a06fa175803ad8a5eb0479a01a1127ed3cad7",
+      "assets/mockups/tastemaxxing-cutline-cotton-sweatshirt-printful-10.jpg": "a2fdf710fedac4b76677a62f61c4bcf9328db8e7f50099469e4233b8662e27f3",
+      "assets/mockups/tastemaxxing-cutline-cotton-sweatshirt-printful-11.jpg": "5094dc5be416676627ee5a21c79a06fa175803ad8a5eb0479a01a1127ed3cad7",
+      "assets/mockups/tastemaxxing-cutline-cotton-sweatshirt-printful-12.jpg": "a2fdf710fedac4b76677a62f61c4bcf9328db8e7f50099469e4233b8662e27f3",
+      "assets/mockups/tastemaxxing-cutline-cotton-sweatshirt-preview-catalog.png": "5d4a3715318703ef9cb4fb0b9c51e54ac2fe981951871f6acfa0e323cba9be30",
+      "assets/mockups/tastemaxxing-cutline-cotton-sweatshirt-preview-front.png": "c6043051954266426b075867703bda289a809b4a3cb9bb11b2e4fcb636d0df83",
+      "assets/mockups/tastemaxxing-cutline-cotton-sweatshirt-preview-back.png": "1701a73bde74cc7fbabd9d81c4af8de555381f8184fbcbc4ba85e6a4724fb126",
+      "assets/mockups/tastemaxxing-cutline-cotton-sweatshirt-preview-patterns.png": "cf32385ab83d8fcf58bb8d7dba4c35aefbfcd08e68402e7c36825459683f1f90",
+      "assets/mockups/tastemaxxing-cutline-cotton-sweatshirt-photoshoot-front.png": "a80fd8465d98c79089ae1dd97f0ad58789eafca7c3428ef44d57f883f148b8e8"
+    }
+  },
+  {
+    "productSlug": "archive-monument-cotton-sweatshirt",
+    "productTitle": "Archive Monument Cotton Sweatshirt",
+    "unitAmount": 8800,
+    "printfulProductId": 449298434,
+    "printfulVariants": [
+      {
+        "variantId": "archive-monument-cotton-sweatshirt:33963",
+        "size": "2XS",
+        "catalogVariantId": 33963,
+        "syncVariantId": 5405811204
+      },
+      {
+        "variantId": "archive-monument-cotton-sweatshirt:33964",
+        "size": "XS",
+        "catalogVariantId": 33964,
+        "syncVariantId": 5405811219
+      },
+      {
+        "variantId": "archive-monument-cotton-sweatshirt:33965",
+        "size": "S",
+        "catalogVariantId": 33965,
+        "syncVariantId": 5405811225
+      },
+      {
+        "variantId": "archive-monument-cotton-sweatshirt:33966",
+        "size": "M",
+        "catalogVariantId": 33966,
+        "syncVariantId": 5405811247
+      },
+      {
+        "variantId": "archive-monument-cotton-sweatshirt:33967",
+        "size": "L",
+        "catalogVariantId": 33967,
+        "syncVariantId": 5405811249
+      },
+      {
+        "variantId": "archive-monument-cotton-sweatshirt:33968",
+        "size": "XL",
+        "catalogVariantId": 33968,
+        "syncVariantId": 5405811253
+      },
+      {
+        "variantId": "archive-monument-cotton-sweatshirt:33969",
+        "size": "2XL",
+        "catalogVariantId": 33969,
+        "syncVariantId": 5405811255
+      },
+      {
+        "variantId": "archive-monument-cotton-sweatshirt:33970",
+        "size": "3XL",
+        "catalogVariantId": 33970,
+        "syncVariantId": 5405811276
+      },
+      {
+        "variantId": "archive-monument-cotton-sweatshirt:33971",
+        "size": "4XL",
+        "catalogVariantId": 33971,
+        "syncVariantId": 5405811280
+      },
+      {
+        "variantId": "archive-monument-cotton-sweatshirt:33972",
+        "size": "5XL",
+        "catalogVariantId": 33972,
+        "syncVariantId": 5405811282
+      },
+      {
+        "variantId": "archive-monument-cotton-sweatshirt:33973",
+        "size": "6XL",
+        "catalogVariantId": 33973,
+        "syncVariantId": 5405811306
+      }
+    ],
+    "approvedProductRevision": "a060eafa2575ead0a367d3deaf8ef1a42dc6ba924155e1facf078c86ee20c75f",
+    "approvedAssetSha256": {
+      "assets/artwork/archive-monument-cotton-sweatshirt-preview-concept.png": "8a04ee57277ca8ccb2b6b7a1806f40d3e3bd6a47b617eca109d6207a0ede2957",
+      "assets/print/archive-monument-cotton-sweatshirt-preview-front_dtfabric.png": "eb0158d0892f0017a84626c880413b352540ae801c7331e475a657aa744bb1e9",
+      "assets/print/archive-monument-cotton-sweatshirt-preview-back_dtfabric.png": "a675361ade6ec5f6d713e78e76febcbe96ae19832abac039e52de2a8bf8ea0d8",
+      "assets/print/archive-monument-cotton-sweatshirt-preview-left_sleeve_dtfabric.png": "daf80f20ec3985efd2d7c8051a6b109d8c8b0cd38d13dace8579d07467d058d0",
+      "assets/print/archive-monument-cotton-sweatshirt-preview-right_sleeve_dtfabric.png": "53923ce455172589128a49f4856fffe9901d10df05dc92208db82e76c17b884e",
+      "assets/print/archive-monument-cotton-sweatshirt-preview-label_panel_dtfabric.png": "11cb9bda329d9b5094be7779392ae2ecab3db5a5065d46f74ba25470a52c9fb7",
+      "assets/print/archive-monument-cotton-sweatshirt-preview-label_inside_dtfabric.png": "da1ce74dc7a995deed1b53e79629f93c44f3677e11757996177073e33ea33306",
+      "assets/mockups/archive-monument-cotton-sweatshirt-catalog.png": "1c2d3d47ca54f7facbb2485a62f67078a04e2d655920dd73dd557b7c9d1bf25b",
+      "assets/mockups/archive-monument-cotton-sweatshirt-printful-1.jpg": "a2872ea5408fe877e21e7ea4b96375f8a3f5b50af8c928b88b35315984af1221",
+      "assets/mockups/archive-monument-cotton-sweatshirt-printful-2.jpg": "9541f72106f91f8e8b9f34c7bf8a013cac689881851eed00edc8052d98f89833",
+      "assets/mockups/archive-monument-cotton-sweatshirt-printful-3.jpg": "a2872ea5408fe877e21e7ea4b96375f8a3f5b50af8c928b88b35315984af1221",
+      "assets/mockups/archive-monument-cotton-sweatshirt-printful-4.jpg": "9541f72106f91f8e8b9f34c7bf8a013cac689881851eed00edc8052d98f89833",
+      "assets/mockups/archive-monument-cotton-sweatshirt-printful-5.jpg": "a2872ea5408fe877e21e7ea4b96375f8a3f5b50af8c928b88b35315984af1221",
+      "assets/mockups/archive-monument-cotton-sweatshirt-printful-6.jpg": "9541f72106f91f8e8b9f34c7bf8a013cac689881851eed00edc8052d98f89833",
+      "assets/mockups/archive-monument-cotton-sweatshirt-printful-7.jpg": "a2872ea5408fe877e21e7ea4b96375f8a3f5b50af8c928b88b35315984af1221",
+      "assets/mockups/archive-monument-cotton-sweatshirt-printful-8.jpg": "9541f72106f91f8e8b9f34c7bf8a013cac689881851eed00edc8052d98f89833",
+      "assets/mockups/archive-monument-cotton-sweatshirt-printful-9.jpg": "a2872ea5408fe877e21e7ea4b96375f8a3f5b50af8c928b88b35315984af1221",
+      "assets/mockups/archive-monument-cotton-sweatshirt-printful-10.jpg": "9541f72106f91f8e8b9f34c7bf8a013cac689881851eed00edc8052d98f89833",
+      "assets/mockups/archive-monument-cotton-sweatshirt-printful-11.jpg": "a2872ea5408fe877e21e7ea4b96375f8a3f5b50af8c928b88b35315984af1221",
+      "assets/mockups/archive-monument-cotton-sweatshirt-printful-12.jpg": "9541f72106f91f8e8b9f34c7bf8a013cac689881851eed00edc8052d98f89833",
+      "assets/mockups/archive-monument-cotton-sweatshirt-preview-catalog.png": "1c2d3d47ca54f7facbb2485a62f67078a04e2d655920dd73dd557b7c9d1bf25b",
+      "assets/mockups/archive-monument-cotton-sweatshirt-preview-front.png": "a67f355b721ba37f9e6827e81e1629f3f17ecb1bdc226e9270c8f4d47f54dc32",
+      "assets/mockups/archive-monument-cotton-sweatshirt-preview-back.png": "ad504cd810fc3e34b56d0e21f2388f8318abfe17999d7c82661d4289d9a13c3f",
+      "assets/mockups/archive-monument-cotton-sweatshirt-preview-patterns.png": "b10d27320568777b6586846cdfbc13d10150dde4adba0e3b8264630685ed00ab",
+      "assets/mockups/archive-monument-cotton-sweatshirt-photoshoot-front.png": "81015c7507ccf3783d92cadff4171de04b7f7226d4329d952c0b8287b3f4c93e"
+    }
+  }
+]

@@ -53,8 +53,8 @@
       "Cream all-over cotton sweatshirt concept with thin black pinstripes, small blue research label on left chest, compact abstract Codex-native knot on right chest, centered Research & Deployment Co. typography, tribal waveform sleeve systems, quiet upper-back statement, premium negative space."
     ],
     "workflow": {
-      "status": "mockups_ready",
-      "updatedAt": "2026-06-03T14:38:30.020Z"
+      "status": "published",
+      "updatedAt": "2026-07-21T21:15:11.435Z"
     },
     "artDirector": {
       "mode": "supervised-aop-cotton",
@@ -106,7 +106,7 @@
       }
     },
     "approval": {
-      "approvedAt": "2026-05-27T20:11:02.377Z",
+      "approvedAt": "2026-07-21T21:15:11.434Z",
       "approvedBy": "elliot",
       "notes": ""
     },
@@ -842,8 +842,8 @@
       "Dark all-over cotton sweatshirt concept with tone-on-tone utility grid, small terminal chest identity, subtle green research signal, vertical sleeve glyph stack, tribal wave movement on both sleeves, quiet back statement, premium negative space."
     ],
     "workflow": {
-      "status": "mockups_ready",
-      "updatedAt": "2026-06-03T14:38:30.021Z"
+      "status": "published",
+      "updatedAt": "2026-07-21T21:15:11.435Z"
     },
     "artDirector": {
       "mode": "supervised-aop-cotton",
@@ -895,8 +895,8 @@
       }
     },
     "approval": {
-      "approvedAt": null,
-      "approvedBy": null,
+      "approvedAt": "2026-07-21T21:15:11.434Z",
+      "approvedBy": "elliot",
       "notes": ""
     },
     "commerce": {
@@ -1568,8 +1568,8 @@
     "slug": "queue-weather-cotton-sweatshirt",
     "title": "Queue Weather Cotton Sweatshirt",
     "workflow": {
-      "status": "mockups_ready",
-      "updatedAt": "2026-06-03T14:38:30.021Z"
+      "status": "published",
+      "updatedAt": "2026-07-21T21:15:11.435Z"
     },
     "category": "Operations",
     "description": "A fog-gray all-over cotton sweatshirt for Codex queue-watchers: status-map fabric, sleeve telemetry, and one sharp incident-orange signal.",
@@ -1674,8 +1674,8 @@
       }
     },
     "approval": {
-      "approvedAt": null,
-      "approvedBy": null,
+      "approvedAt": "2026-07-21T21:15:11.435Z",
+      "approvedBy": "elliot",
       "notes": ""
     },
     "commerce": {
@@ -6160,8 +6160,8 @@
     "slug": "solward-index-cotton-sweatshirt",
     "title": "Solward Index Cotton Sweatshirt",
     "workflow": {
-      "status": "generated",
-      "updatedAt": "2026-07-21T20:59:31.925Z"
+      "status": "published",
+      "updatedAt": "2026-07-21T21:15:11.435Z"
     },
     "category": "Codex",
     "description": "A warm all-over cotton sweatshirt that turns the Sol inside joke into a quiet brightness index: angular contour fields, amber signal paths, and concentric sleeve systems.",
@@ -6788,9 +6788,78 @@
     },
     "providerRefs": {
       "printful": {
-        "productId": null,
-        "mockupTaskKey": null,
-        "variants": []
+        "productId": 449298173,
+        "mockupTaskKey": "gt-949439360",
+        "variants": [
+          {
+            "variantId": "solward-index-cotton-sweatshirt:33963",
+            "catalogVariantId": 33963,
+            "syncVariantId": 5405809580,
+            "available": true
+          },
+          {
+            "variantId": "solward-index-cotton-sweatshirt:33964",
+            "catalogVariantId": 33964,
+            "syncVariantId": 5405809601,
+            "available": true
+          },
+          {
+            "variantId": "solward-index-cotton-sweatshirt:33965",
+            "catalogVariantId": 33965,
+            "syncVariantId": 5405809620,
+            "available": true
+          },
+          {
+            "variantId": "solward-index-cotton-sweatshirt:33966",
+            "catalogVariantId": 33966,
+            "syncVariantId": 5405809635,
+            "available": true
+          },
+          {
+            "variantId": "solward-index-cotton-sweatshirt:33967",
+            "catalogVariantId": 33967,
+            "syncVariantId": 5405809639,
+            "available": true
+          },
+          {
+            "variantId": "solward-index-cotton-sweatshirt:33968",
+            "catalogVariantId": 33968,
+            "syncVariantId": 5405809660,
+            "available": true
+          },
+          {
+            "variantId": "solward-index-cotton-sweatshirt:33969",
+            "catalogVariantId": 33969,
+            "syncVariantId": 5405809663,
+            "available": true
+          },
+          {
+            "variantId": "solward-index-cotton-sweatshirt:33970",
+            "catalogVariantId": 33970,
+            "syncVariantId": 5405809682,
+            "available": true
+          },
+          {
+            "variantId": "solward-index-cotton-sweatshirt:33971",
+            "catalogVariantId": 33971,
+            "syncVariantId": 5405809683,
+            "available": true
+          },
+          {
+            "variantId": "solward-index-cotton-sweatshirt:33972",
+            "catalogVariantId": 33972,
+            "syncVariantId": 5405809685,
+            "available": true
+          },
+          {
+            "variantId": "solward-index-cotton-sweatshirt:33973",
+            "catalogVariantId": 33973,
+            "syncVariantId": 5405809704,
+            "available": true
+          }
+        ],
+        "mockupTaskFailures": 0,
+        "lastFailedMockupTaskKey": null
       }
     },
     "assets": {
@@ -6822,12 +6891,27 @@
         }
       ],
       "mockups": [
+        "assets/mockups/solward-index-cotton-sweatshirt-catalog.png",
+        "assets/mockups/solward-index-cotton-sweatshirt-printful-1.jpg",
+        "assets/mockups/solward-index-cotton-sweatshirt-printful-2.jpg",
+        "assets/mockups/solward-index-cotton-sweatshirt-printful-3.jpg",
+        "assets/mockups/solward-index-cotton-sweatshirt-printful-4.jpg",
+        "assets/mockups/solward-index-cotton-sweatshirt-printful-5.jpg",
+        "assets/mockups/solward-index-cotton-sweatshirt-printful-6.jpg",
+        "assets/mockups/solward-index-cotton-sweatshirt-printful-7.jpg",
+        "assets/mockups/solward-index-cotton-sweatshirt-printful-8.jpg",
+        "assets/mockups/solward-index-cotton-sweatshirt-printful-9.jpg",
+        "assets/mockups/solward-index-cotton-sweatshirt-printful-10.jpg",
+        "assets/mockups/solward-index-cotton-sweatshirt-printful-11.jpg",
+        "assets/mockups/solward-index-cotton-sweatshirt-printful-12.jpg",
         "assets/mockups/the-sol-shines-cotton-sweatshirt-catalog.png",
         "assets/mockups/the-sol-shines-cotton-sweatshirt-front.png",
         "assets/mockups/the-sol-shines-cotton-sweatshirt-back.png",
         "assets/mockups/the-sol-shines-cotton-sweatshirt-patterns.png"
       ],
-      "customerPhotos": []
+      "customerPhotos": [
+        "assets/mockups/solward-index-cotton-sweatshirt-photoshoot-front.png"
+      ]
     },
     "prompts": [
       "Flat six-placement all-over cotton sweatshirt system on a warm ivory field. Use three sparse nested angular contour outlines and one short amber accent path. Center-monument front with centered primary typography and geometry on one central axis; repeat the contour family more quietly on the back. Both sleeves use three concentric rings, a crosshair, and a mirrored accent notch. Keep the label panel and inside label restrained with supplied local text. Exact text is rendered locally."
@@ -6923,8 +7007,8 @@
       }
     },
     "approval": {
-      "approvedAt": null,
-      "approvedBy": null,
+      "approvedAt": "2026-07-21T21:15:11.435Z",
+      "approvedBy": "elliot",
       "notes": "Production release copy of owner preview the-sol-shines-cotton-sweatshirt; the original preview record remains non-sellable and unchanged."
     }
   },
@@ -6933,8 +7017,8 @@
     "slug": "field-clearing-cotton-sweatshirt",
     "title": "Field Clearing Cotton Sweatshirt",
     "workflow": {
-      "status": "generated",
-      "updatedAt": "2026-07-21T20:59:31.926Z"
+      "status": "published",
+      "updatedAt": "2026-07-21T21:15:11.435Z"
     },
     "category": "Build Week Preview",
     "description": "A preview-only all-over cotton garment generated from a trend supplied directly by the project owner.",
@@ -7561,9 +7645,78 @@
     },
     "providerRefs": {
       "printful": {
-        "productId": null,
-        "mockupTaskKey": null,
-        "variants": []
+        "productId": 449298228,
+        "mockupTaskKey": "gt-949439364",
+        "variants": [
+          {
+            "variantId": "field-clearing-cotton-sweatshirt:33963",
+            "catalogVariantId": 33963,
+            "syncVariantId": 5405809863,
+            "available": true
+          },
+          {
+            "variantId": "field-clearing-cotton-sweatshirt:33964",
+            "catalogVariantId": 33964,
+            "syncVariantId": 5405809864,
+            "available": true
+          },
+          {
+            "variantId": "field-clearing-cotton-sweatshirt:33965",
+            "catalogVariantId": 33965,
+            "syncVariantId": 5405809886,
+            "available": true
+          },
+          {
+            "variantId": "field-clearing-cotton-sweatshirt:33966",
+            "catalogVariantId": 33966,
+            "syncVariantId": 5405809887,
+            "available": true
+          },
+          {
+            "variantId": "field-clearing-cotton-sweatshirt:33967",
+            "catalogVariantId": 33967,
+            "syncVariantId": 5405809888,
+            "available": true
+          },
+          {
+            "variantId": "field-clearing-cotton-sweatshirt:33968",
+            "catalogVariantId": 33968,
+            "syncVariantId": 5405809904,
+            "available": true
+          },
+          {
+            "variantId": "field-clearing-cotton-sweatshirt:33969",
+            "catalogVariantId": 33969,
+            "syncVariantId": 5405809911,
+            "available": true
+          },
+          {
+            "variantId": "field-clearing-cotton-sweatshirt:33970",
+            "catalogVariantId": 33970,
+            "syncVariantId": 5405809913,
+            "available": true
+          },
+          {
+            "variantId": "field-clearing-cotton-sweatshirt:33971",
+            "catalogVariantId": 33971,
+            "syncVariantId": 5405809924,
+            "available": true
+          },
+          {
+            "variantId": "field-clearing-cotton-sweatshirt:33972",
+            "catalogVariantId": 33972,
+            "syncVariantId": 5405809934,
+            "available": true
+          },
+          {
+            "variantId": "field-clearing-cotton-sweatshirt:33973",
+            "catalogVariantId": 33973,
+            "syncVariantId": 5405809936,
+            "available": true
+          }
+        ],
+        "mockupTaskFailures": 0,
+        "lastFailedMockupTaskKey": null
       }
     },
     "assets": {
@@ -7594,8 +7747,23 @@
           "path": "assets/print/field-clearing-cotton-sweatshirt-preview-label_inside_dtfabric.png"
         }
       ],
-      "customerPhotos": [],
+      "customerPhotos": [
+        "assets/mockups/field-clearing-cotton-sweatshirt-photoshoot-front.png"
+      ],
       "mockups": [
+        "assets/mockups/field-clearing-cotton-sweatshirt-catalog.png",
+        "assets/mockups/field-clearing-cotton-sweatshirt-printful-1.jpg",
+        "assets/mockups/field-clearing-cotton-sweatshirt-printful-2.jpg",
+        "assets/mockups/field-clearing-cotton-sweatshirt-printful-3.jpg",
+        "assets/mockups/field-clearing-cotton-sweatshirt-printful-4.jpg",
+        "assets/mockups/field-clearing-cotton-sweatshirt-printful-5.jpg",
+        "assets/mockups/field-clearing-cotton-sweatshirt-printful-6.jpg",
+        "assets/mockups/field-clearing-cotton-sweatshirt-printful-7.jpg",
+        "assets/mockups/field-clearing-cotton-sweatshirt-printful-8.jpg",
+        "assets/mockups/field-clearing-cotton-sweatshirt-printful-9.jpg",
+        "assets/mockups/field-clearing-cotton-sweatshirt-printful-10.jpg",
+        "assets/mockups/field-clearing-cotton-sweatshirt-printful-11.jpg",
+        "assets/mockups/field-clearing-cotton-sweatshirt-printful-12.jpg",
         "assets/mockups/field-clearing-cotton-sweatshirt-preview-catalog.png",
         "assets/mockups/field-clearing-cotton-sweatshirt-preview-front.png",
         "assets/mockups/field-clearing-cotton-sweatshirt-preview-back.png",
@@ -7753,8 +7921,8 @@
       }
     },
     "approval": {
-      "approvedAt": null,
-      "approvedBy": null,
+      "approvedAt": "2026-07-21T21:15:11.435Z",
+      "approvedBy": "elliot",
       "notes": "Production release copy of owner preview field-clearing-cotton-sweatshirt-preview; the original preview record remains non-sellable and unchanged."
     }
   },
@@ -7763,8 +7931,8 @@
     "slug": "clean-slate-club-cotton-sweatshirt",
     "title": "Clean Slate Club Cotton Sweatshirt",
     "workflow": {
-      "status": "generated",
-      "updatedAt": "2026-07-21T20:59:31.926Z"
+      "status": "published",
+      "updatedAt": "2026-07-21T21:15:11.435Z"
     },
     "category": "Build Week Preview",
     "description": "A preview-only all-over cotton garment generated from a trend supplied directly by the project owner.",
@@ -8391,9 +8559,78 @@
     },
     "providerRefs": {
       "printful": {
-        "productId": null,
-        "mockupTaskKey": null,
-        "variants": []
+        "productId": 449298262,
+        "mockupTaskKey": "gt-949439732",
+        "variants": [
+          {
+            "variantId": "clean-slate-club-cotton-sweatshirt:33963",
+            "catalogVariantId": 33963,
+            "syncVariantId": 5405810062,
+            "available": true
+          },
+          {
+            "variantId": "clean-slate-club-cotton-sweatshirt:33964",
+            "catalogVariantId": 33964,
+            "syncVariantId": 5405810084,
+            "available": true
+          },
+          {
+            "variantId": "clean-slate-club-cotton-sweatshirt:33965",
+            "catalogVariantId": 33965,
+            "syncVariantId": 5405810085,
+            "available": true
+          },
+          {
+            "variantId": "clean-slate-club-cotton-sweatshirt:33966",
+            "catalogVariantId": 33966,
+            "syncVariantId": 5405810086,
+            "available": true
+          },
+          {
+            "variantId": "clean-slate-club-cotton-sweatshirt:33967",
+            "catalogVariantId": 33967,
+            "syncVariantId": 5405810105,
+            "available": true
+          },
+          {
+            "variantId": "clean-slate-club-cotton-sweatshirt:33968",
+            "catalogVariantId": 33968,
+            "syncVariantId": 5405810106,
+            "available": true
+          },
+          {
+            "variantId": "clean-slate-club-cotton-sweatshirt:33969",
+            "catalogVariantId": 33969,
+            "syncVariantId": 5405810108,
+            "available": true
+          },
+          {
+            "variantId": "clean-slate-club-cotton-sweatshirt:33970",
+            "catalogVariantId": 33970,
+            "syncVariantId": 5405810127,
+            "available": true
+          },
+          {
+            "variantId": "clean-slate-club-cotton-sweatshirt:33971",
+            "catalogVariantId": 33971,
+            "syncVariantId": 5405810130,
+            "available": true
+          },
+          {
+            "variantId": "clean-slate-club-cotton-sweatshirt:33972",
+            "catalogVariantId": 33972,
+            "syncVariantId": 5405810152,
+            "available": true
+          },
+          {
+            "variantId": "clean-slate-club-cotton-sweatshirt:33973",
+            "catalogVariantId": 33973,
+            "syncVariantId": 5405810154,
+            "available": true
+          }
+        ],
+        "mockupTaskFailures": 0,
+        "lastFailedMockupTaskKey": null
       }
     },
     "assets": {
@@ -8424,8 +8661,23 @@
           "path": "assets/print/clean-slate-club-cotton-sweatshirt-preview-label_inside_dtfabric.png"
         }
       ],
-      "customerPhotos": [],
+      "customerPhotos": [
+        "assets/mockups/clean-slate-club-cotton-sweatshirt-photoshoot-front.png"
+      ],
       "mockups": [
+        "assets/mockups/clean-slate-club-cotton-sweatshirt-catalog.png",
+        "assets/mockups/clean-slate-club-cotton-sweatshirt-printful-1.jpg",
+        "assets/mockups/clean-slate-club-cotton-sweatshirt-printful-2.jpg",
+        "assets/mockups/clean-slate-club-cotton-sweatshirt-printful-3.jpg",
+        "assets/mockups/clean-slate-club-cotton-sweatshirt-printful-4.jpg",
+        "assets/mockups/clean-slate-club-cotton-sweatshirt-printful-5.jpg",
+        "assets/mockups/clean-slate-club-cotton-sweatshirt-printful-6.jpg",
+        "assets/mockups/clean-slate-club-cotton-sweatshirt-printful-7.jpg",
+        "assets/mockups/clean-slate-club-cotton-sweatshirt-printful-8.jpg",
+        "assets/mockups/clean-slate-club-cotton-sweatshirt-printful-9.jpg",
+        "assets/mockups/clean-slate-club-cotton-sweatshirt-printful-10.jpg",
+        "assets/mockups/clean-slate-club-cotton-sweatshirt-printful-11.jpg",
+        "assets/mockups/clean-slate-club-cotton-sweatshirt-printful-12.jpg",
         "assets/mockups/clean-slate-club-cotton-sweatshirt-preview-catalog.png",
         "assets/mockups/clean-slate-club-cotton-sweatshirt-preview-front.png",
         "assets/mockups/clean-slate-club-cotton-sweatshirt-preview-back.png",
@@ -8584,8 +8836,8 @@
       }
     },
     "approval": {
-      "approvedAt": null,
-      "approvedBy": null,
+      "approvedAt": "2026-07-21T21:15:11.435Z",
+      "approvedBy": "elliot",
       "notes": "Production release copy of owner preview clean-slate-club-cotton-sweatshirt-preview; the original preview record remains non-sellable and unchanged."
     }
   },
@@ -8594,8 +8846,8 @@
     "slug": "parallel-noise-poster-cotton-sweatshirt",
     "title": "Parallel Noise Poster Cotton Sweatshirt",
     "workflow": {
-      "status": "generated",
-      "updatedAt": "2026-07-21T20:59:31.926Z"
+      "status": "published",
+      "updatedAt": "2026-07-21T21:15:11.435Z"
     },
     "category": "Build Week Preview",
     "description": "A preview-only all-over cotton garment generated from a trend supplied directly by the project owner.",
@@ -9222,9 +9474,78 @@
     },
     "providerRefs": {
       "printful": {
-        "productId": null,
-        "mockupTaskKey": null,
-        "variants": []
+        "productId": 449298302,
+        "mockupTaskKey": "gt-949439733",
+        "variants": [
+          {
+            "variantId": "parallel-noise-poster-cotton-sweatshirt:33963",
+            "catalogVariantId": 33963,
+            "syncVariantId": 5405810272,
+            "available": true
+          },
+          {
+            "variantId": "parallel-noise-poster-cotton-sweatshirt:33964",
+            "catalogVariantId": 33964,
+            "syncVariantId": 5405810330,
+            "available": true
+          },
+          {
+            "variantId": "parallel-noise-poster-cotton-sweatshirt:33965",
+            "catalogVariantId": 33965,
+            "syncVariantId": 5405810339,
+            "available": true
+          },
+          {
+            "variantId": "parallel-noise-poster-cotton-sweatshirt:33966",
+            "catalogVariantId": 33966,
+            "syncVariantId": 5405810342,
+            "available": true
+          },
+          {
+            "variantId": "parallel-noise-poster-cotton-sweatshirt:33967",
+            "catalogVariantId": 33967,
+            "syncVariantId": 5405810363,
+            "available": true
+          },
+          {
+            "variantId": "parallel-noise-poster-cotton-sweatshirt:33968",
+            "catalogVariantId": 33968,
+            "syncVariantId": 5405810366,
+            "available": true
+          },
+          {
+            "variantId": "parallel-noise-poster-cotton-sweatshirt:33969",
+            "catalogVariantId": 33969,
+            "syncVariantId": 5405810369,
+            "available": true
+          },
+          {
+            "variantId": "parallel-noise-poster-cotton-sweatshirt:33970",
+            "catalogVariantId": 33970,
+            "syncVariantId": 5405810390,
+            "available": true
+          },
+          {
+            "variantId": "parallel-noise-poster-cotton-sweatshirt:33971",
+            "catalogVariantId": 33971,
+            "syncVariantId": 5405810392,
+            "available": true
+          },
+          {
+            "variantId": "parallel-noise-poster-cotton-sweatshirt:33972",
+            "catalogVariantId": 33972,
+            "syncVariantId": 5405810395,
+            "available": true
+          },
+          {
+            "variantId": "parallel-noise-poster-cotton-sweatshirt:33973",
+            "catalogVariantId": 33973,
+            "syncVariantId": 5405810417,
+            "available": true
+          }
+        ],
+        "mockupTaskFailures": 0,
+        "lastFailedMockupTaskKey": null
       }
     },
     "assets": {
@@ -9255,8 +9576,23 @@
           "path": "assets/print/parallel-noise-poster-cotton-sweatshirt-preview-label_inside_dtfabric.png"
         }
       ],
-      "customerPhotos": [],
+      "customerPhotos": [
+        "assets/mockups/parallel-noise-poster-cotton-sweatshirt-photoshoot-front.png"
+      ],
       "mockups": [
+        "assets/mockups/parallel-noise-poster-cotton-sweatshirt-catalog.png",
+        "assets/mockups/parallel-noise-poster-cotton-sweatshirt-printful-1.jpg",
+        "assets/mockups/parallel-noise-poster-cotton-sweatshirt-printful-2.jpg",
+        "assets/mockups/parallel-noise-poster-cotton-sweatshirt-printful-3.jpg",
+        "assets/mockups/parallel-noise-poster-cotton-sweatshirt-printful-4.jpg",
+        "assets/mockups/parallel-noise-poster-cotton-sweatshirt-printful-5.jpg",
+        "assets/mockups/parallel-noise-poster-cotton-sweatshirt-printful-6.jpg",
+        "assets/mockups/parallel-noise-poster-cotton-sweatshirt-printful-7.jpg",
+        "assets/mockups/parallel-noise-poster-cotton-sweatshirt-printful-8.jpg",
+        "assets/mockups/parallel-noise-poster-cotton-sweatshirt-printful-9.jpg",
+        "assets/mockups/parallel-noise-poster-cotton-sweatshirt-printful-10.jpg",
+        "assets/mockups/parallel-noise-poster-cotton-sweatshirt-printful-11.jpg",
+        "assets/mockups/parallel-noise-poster-cotton-sweatshirt-printful-12.jpg",
         "assets/mockups/parallel-noise-poster-cotton-sweatshirt-preview-catalog.png",
         "assets/mockups/parallel-noise-poster-cotton-sweatshirt-preview-front.png",
         "assets/mockups/parallel-noise-poster-cotton-sweatshirt-preview-back.png",
@@ -9416,8 +9752,8 @@
       }
     },
     "approval": {
-      "approvedAt": null,
-      "approvedBy": null,
+      "approvedAt": "2026-07-21T21:15:11.435Z",
+      "approvedBy": "elliot",
       "notes": "Production release copy of owner preview parallel-noise-poster-cotton-sweatshirt-preview; the original preview record remains non-sellable and unchanged."
     }
   },
@@ -9426,8 +9762,8 @@
     "slug": "sun-break-victory-cotton-sweatshirt",
     "title": "Sun Break Victory Cotton Sweatshirt",
     "workflow": {
-      "status": "generated",
-      "updatedAt": "2026-07-21T20:59:31.926Z"
+      "status": "published",
+      "updatedAt": "2026-07-21T21:15:11.435Z"
     },
     "category": "Build Week Preview",
     "description": "A preview-only all-over cotton garment generated from a trend supplied directly by the project owner.",
@@ -10054,9 +10390,78 @@
     },
     "providerRefs": {
       "printful": {
-        "productId": null,
-        "mockupTaskKey": null,
-        "variants": []
+        "productId": 449298346,
+        "mockupTaskKey": "gt-949440031",
+        "variants": [
+          {
+            "variantId": "sun-break-victory-cotton-sweatshirt:33963",
+            "catalogVariantId": 33963,
+            "syncVariantId": 5405810565,
+            "available": true
+          },
+          {
+            "variantId": "sun-break-victory-cotton-sweatshirt:33964",
+            "catalogVariantId": 33964,
+            "syncVariantId": 5405810569,
+            "available": true
+          },
+          {
+            "variantId": "sun-break-victory-cotton-sweatshirt:33965",
+            "catalogVariantId": 33965,
+            "syncVariantId": 5405810591,
+            "available": true
+          },
+          {
+            "variantId": "sun-break-victory-cotton-sweatshirt:33966",
+            "catalogVariantId": 33966,
+            "syncVariantId": 5405810595,
+            "available": true
+          },
+          {
+            "variantId": "sun-break-victory-cotton-sweatshirt:33967",
+            "catalogVariantId": 33967,
+            "syncVariantId": 5405810598,
+            "available": true
+          },
+          {
+            "variantId": "sun-break-victory-cotton-sweatshirt:33968",
+            "catalogVariantId": 33968,
+            "syncVariantId": 5405810624,
+            "available": true
+          },
+          {
+            "variantId": "sun-break-victory-cotton-sweatshirt:33969",
+            "catalogVariantId": 33969,
+            "syncVariantId": 5405810633,
+            "available": true
+          },
+          {
+            "variantId": "sun-break-victory-cotton-sweatshirt:33970",
+            "catalogVariantId": 33970,
+            "syncVariantId": 5405810659,
+            "available": true
+          },
+          {
+            "variantId": "sun-break-victory-cotton-sweatshirt:33971",
+            "catalogVariantId": 33971,
+            "syncVariantId": 5405810667,
+            "available": true
+          },
+          {
+            "variantId": "sun-break-victory-cotton-sweatshirt:33972",
+            "catalogVariantId": 33972,
+            "syncVariantId": 5405810677,
+            "available": true
+          },
+          {
+            "variantId": "sun-break-victory-cotton-sweatshirt:33973",
+            "catalogVariantId": 33973,
+            "syncVariantId": 5405810703,
+            "available": true
+          }
+        ],
+        "mockupTaskFailures": 0,
+        "lastFailedMockupTaskKey": null
       }
     },
     "assets": {
@@ -10087,8 +10492,23 @@
           "path": "assets/print/sun-break-victory-cotton-sweatshirt-preview-label_inside_dtfabric.png"
         }
       ],
-      "customerPhotos": [],
+      "customerPhotos": [
+        "assets/mockups/sun-break-victory-cotton-sweatshirt-photoshoot-front.png"
+      ],
       "mockups": [
+        "assets/mockups/sun-break-victory-cotton-sweatshirt-catalog.png",
+        "assets/mockups/sun-break-victory-cotton-sweatshirt-printful-1.jpg",
+        "assets/mockups/sun-break-victory-cotton-sweatshirt-printful-2.jpg",
+        "assets/mockups/sun-break-victory-cotton-sweatshirt-printful-3.jpg",
+        "assets/mockups/sun-break-victory-cotton-sweatshirt-printful-4.jpg",
+        "assets/mockups/sun-break-victory-cotton-sweatshirt-printful-5.jpg",
+        "assets/mockups/sun-break-victory-cotton-sweatshirt-printful-6.jpg",
+        "assets/mockups/sun-break-victory-cotton-sweatshirt-printful-7.jpg",
+        "assets/mockups/sun-break-victory-cotton-sweatshirt-printful-8.jpg",
+        "assets/mockups/sun-break-victory-cotton-sweatshirt-printful-9.jpg",
+        "assets/mockups/sun-break-victory-cotton-sweatshirt-printful-10.jpg",
+        "assets/mockups/sun-break-victory-cotton-sweatshirt-printful-11.jpg",
+        "assets/mockups/sun-break-victory-cotton-sweatshirt-printful-12.jpg",
         "assets/mockups/sun-break-victory-cotton-sweatshirt-preview-catalog.png",
         "assets/mockups/sun-break-victory-cotton-sweatshirt-preview-front.png",
         "assets/mockups/sun-break-victory-cotton-sweatshirt-preview-back.png",
@@ -10247,8 +10667,8 @@
       }
     },
     "approval": {
-      "approvedAt": null,
-      "approvedBy": null,
+      "approvedAt": "2026-07-21T21:15:11.435Z",
+      "approvedBy": "elliot",
       "notes": "Production release copy of owner preview sun-break-victory-cotton-sweatshirt-preview; the original preview record remains non-sellable and unchanged."
     }
   },
@@ -10257,8 +10677,8 @@
     "slug": "tastemaxxing-cutline-cotton-sweatshirt",
     "title": "Tastemaxxing Cutline Cotton Sweatshirt",
     "workflow": {
-      "status": "generated",
-      "updatedAt": "2026-07-21T20:59:31.926Z"
+      "status": "published",
+      "updatedAt": "2026-07-21T21:15:11.435Z"
     },
     "category": "Build Week Preview",
     "description": "A preview-only all-over cotton garment generated from a trend supplied directly by the project owner.",
@@ -10885,9 +11305,78 @@
     },
     "providerRefs": {
       "printful": {
-        "productId": null,
-        "mockupTaskKey": null,
-        "variants": []
+        "productId": 449298393,
+        "mockupTaskKey": "gt-949440034",
+        "variants": [
+          {
+            "variantId": "tastemaxxing-cutline-cotton-sweatshirt:33963",
+            "catalogVariantId": 33963,
+            "syncVariantId": 5405810893,
+            "available": true
+          },
+          {
+            "variantId": "tastemaxxing-cutline-cotton-sweatshirt:33964",
+            "catalogVariantId": 33964,
+            "syncVariantId": 5405810902,
+            "available": true
+          },
+          {
+            "variantId": "tastemaxxing-cutline-cotton-sweatshirt:33965",
+            "catalogVariantId": 33965,
+            "syncVariantId": 5405810926,
+            "available": true
+          },
+          {
+            "variantId": "tastemaxxing-cutline-cotton-sweatshirt:33966",
+            "catalogVariantId": 33966,
+            "syncVariantId": 5405810932,
+            "available": true
+          },
+          {
+            "variantId": "tastemaxxing-cutline-cotton-sweatshirt:33967",
+            "catalogVariantId": 33967,
+            "syncVariantId": 5405810955,
+            "available": true
+          },
+          {
+            "variantId": "tastemaxxing-cutline-cotton-sweatshirt:33968",
+            "catalogVariantId": 33968,
+            "syncVariantId": 5405810964,
+            "available": true
+          },
+          {
+            "variantId": "tastemaxxing-cutline-cotton-sweatshirt:33969",
+            "catalogVariantId": 33969,
+            "syncVariantId": 5405810973,
+            "available": true
+          },
+          {
+            "variantId": "tastemaxxing-cutline-cotton-sweatshirt:33970",
+            "catalogVariantId": 33970,
+            "syncVariantId": 5405810999,
+            "available": true
+          },
+          {
+            "variantId": "tastemaxxing-cutline-cotton-sweatshirt:33971",
+            "catalogVariantId": 33971,
+            "syncVariantId": 5405811009,
+            "available": true
+          },
+          {
+            "variantId": "tastemaxxing-cutline-cotton-sweatshirt:33972",
+            "catalogVariantId": 33972,
+            "syncVariantId": 5405811022,
+            "available": true
+          },
+          {
+            "variantId": "tastemaxxing-cutline-cotton-sweatshirt:33973",
+            "catalogVariantId": 33973,
+            "syncVariantId": 5405811033,
+            "available": true
+          }
+        ],
+        "mockupTaskFailures": 0,
+        "lastFailedMockupTaskKey": null
       }
     },
     "assets": {
@@ -10918,8 +11407,23 @@
           "path": "assets/print/tastemaxxing-cutline-cotton-sweatshirt-preview-label_inside_dtfabric.png"
         }
       ],
-      "customerPhotos": [],
+      "customerPhotos": [
+        "assets/mockups/tastemaxxing-cutline-cotton-sweatshirt-photoshoot-front.png"
+      ],
       "mockups": [
+        "assets/mockups/tastemaxxing-cutline-cotton-sweatshirt-catalog.png",
+        "assets/mockups/tastemaxxing-cutline-cotton-sweatshirt-printful-1.jpg",
+        "assets/mockups/tastemaxxing-cutline-cotton-sweatshirt-printful-2.jpg",
+        "assets/mockups/tastemaxxing-cutline-cotton-sweatshirt-printful-3.jpg",
+        "assets/mockups/tastemaxxing-cutline-cotton-sweatshirt-printful-4.jpg",
+        "assets/mockups/tastemaxxing-cutline-cotton-sweatshirt-printful-5.jpg",
+        "assets/mockups/tastemaxxing-cutline-cotton-sweatshirt-printful-6.jpg",
+        "assets/mockups/tastemaxxing-cutline-cotton-sweatshirt-printful-7.jpg",
+        "assets/mockups/tastemaxxing-cutline-cotton-sweatshirt-printful-8.jpg",
+        "assets/mockups/tastemaxxing-cutline-cotton-sweatshirt-printful-9.jpg",
+        "assets/mockups/tastemaxxing-cutline-cotton-sweatshirt-printful-10.jpg",
+        "assets/mockups/tastemaxxing-cutline-cotton-sweatshirt-printful-11.jpg",
+        "assets/mockups/tastemaxxing-cutline-cotton-sweatshirt-printful-12.jpg",
         "assets/mockups/tastemaxxing-cutline-cotton-sweatshirt-preview-catalog.png",
         "assets/mockups/tastemaxxing-cutline-cotton-sweatshirt-preview-front.png",
         "assets/mockups/tastemaxxing-cutline-cotton-sweatshirt-preview-back.png",
@@ -11079,8 +11583,8 @@
       }
     },
     "approval": {
-      "approvedAt": null,
-      "approvedBy": null,
+      "approvedAt": "2026-07-21T21:15:11.435Z",
+      "approvedBy": "elliot",
       "notes": "Production release copy of owner preview tastemaxxing-cutline-cotton-sweatshirt-preview; the original preview record remains non-sellable and unchanged."
     }
   },
@@ -11089,8 +11593,8 @@
     "slug": "archive-monument-cotton-sweatshirt",
     "title": "Archive Monument Cotton Sweatshirt",
     "workflow": {
-      "status": "generated",
-      "updatedAt": "2026-07-21T20:59:31.926Z"
+      "status": "published",
+      "updatedAt": "2026-07-21T21:15:11.435Z"
     },
     "category": "Build Week Preview",
     "description": "A preview-only all-over cotton garment generated from a trend supplied directly by the project owner.",
@@ -11717,9 +12221,78 @@
     },
     "providerRefs": {
       "printful": {
-        "productId": null,
-        "mockupTaskKey": null,
-        "variants": []
+        "productId": 449298434,
+        "mockupTaskKey": "gt-949440334",
+        "variants": [
+          {
+            "variantId": "archive-monument-cotton-sweatshirt:33963",
+            "catalogVariantId": 33963,
+            "syncVariantId": 5405811204,
+            "available": true
+          },
+          {
+            "variantId": "archive-monument-cotton-sweatshirt:33964",
+            "catalogVariantId": 33964,
+            "syncVariantId": 5405811219,
+            "available": true
+          },
+          {
+            "variantId": "archive-monument-cotton-sweatshirt:33965",
+            "catalogVariantId": 33965,
+            "syncVariantId": 5405811225,
+            "available": true
+          },
+          {
+            "variantId": "archive-monument-cotton-sweatshirt:33966",
+            "catalogVariantId": 33966,
+            "syncVariantId": 5405811247,
+            "available": true
+          },
+          {
+            "variantId": "archive-monument-cotton-sweatshirt:33967",
+            "catalogVariantId": 33967,
+            "syncVariantId": 5405811249,
+            "available": true
+          },
+          {
+            "variantId": "archive-monument-cotton-sweatshirt:33968",
+            "catalogVariantId": 33968,
+            "syncVariantId": 5405811253,
+            "available": true
+          },
+          {
+            "variantId": "archive-monument-cotton-sweatshirt:33969",
+            "catalogVariantId": 33969,
+            "syncVariantId": 5405811255,
+            "available": true
+          },
+          {
+            "variantId": "archive-monument-cotton-sweatshirt:33970",
+            "catalogVariantId": 33970,
+            "syncVariantId": 5405811276,
+            "available": true
+          },
+          {
+            "variantId": "archive-monument-cotton-sweatshirt:33971",
+            "catalogVariantId": 33971,
+            "syncVariantId": 5405811280,
+            "available": true
+          },
+          {
+            "variantId": "archive-monument-cotton-sweatshirt:33972",
+            "catalogVariantId": 33972,
+            "syncVariantId": 5405811282,
+            "available": true
+          },
+          {
+            "variantId": "archive-monument-cotton-sweatshirt:33973",
+            "catalogVariantId": 33973,
+            "syncVariantId": 5405811306,
+            "available": true
+          }
+        ],
+        "mockupTaskFailures": 0,
+        "lastFailedMockupTaskKey": null
       }
     },
     "assets": {
@@ -11750,8 +12323,23 @@
           "path": "assets/print/archive-monument-cotton-sweatshirt-preview-label_inside_dtfabric.png"
         }
       ],
-      "customerPhotos": [],
+      "customerPhotos": [
+        "assets/mockups/archive-monument-cotton-sweatshirt-photoshoot-front.png"
+      ],
       "mockups": [
+        "assets/mockups/archive-monument-cotton-sweatshirt-catalog.png",
+        "assets/mockups/archive-monument-cotton-sweatshirt-printful-1.jpg",
+        "assets/mockups/archive-monument-cotton-sweatshirt-printful-2.jpg",
+        "assets/mockups/archive-monument-cotton-sweatshirt-printful-3.jpg",
+        "assets/mockups/archive-monument-cotton-sweatshirt-printful-4.jpg",
+        "assets/mockups/archive-monument-cotton-sweatshirt-printful-5.jpg",
+        "assets/mockups/archive-monument-cotton-sweatshirt-printful-6.jpg",
+        "assets/mockups/archive-monument-cotton-sweatshirt-printful-7.jpg",
+        "assets/mockups/archive-monument-cotton-sweatshirt-printful-8.jpg",
+        "assets/mockups/archive-monument-cotton-sweatshirt-printful-9.jpg",
+        "assets/mockups/archive-monument-cotton-sweatshirt-printful-10.jpg",
+        "assets/mockups/archive-monument-cotton-sweatshirt-printful-11.jpg",
+        "assets/mockups/archive-monument-cotton-sweatshirt-printful-12.jpg",
         "assets/mockups/archive-monument-cotton-sweatshirt-preview-catalog.png",
         "assets/mockups/archive-monument-cotton-sweatshirt-preview-front.png",
         "assets/mockups/archive-monument-cotton-sweatshirt-preview-back.png",
@@ -11910,8 +12498,8 @@
       }
     },
     "approval": {
-      "approvedAt": null,
-      "approvedBy": null,
+      "approvedAt": "2026-07-21T21:15:11.435Z",
+      "approvedBy": "elliot",
       "notes": "Production release copy of owner preview archive-monument-cotton-sweatshirt-preview; the original preview record remains non-sellable and unchanged."
     }
   }

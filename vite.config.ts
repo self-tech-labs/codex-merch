@@ -37,7 +37,7 @@ function copyMerchAssets(): Plugin {
           ...product.assets.mockups,
           ...(product.assets.customerPhotos || []),
         ]);
-        const approvedAssetSha256 = approvedProduct.approvedAssetSha256 as
+        const approvedAssetSha256 = approvedProduct.approvedAssetSha256 as unknown as
           Record<string, string>;
         const approvedAssets = new Set(Object.keys(approvedAssetSha256));
         if (
