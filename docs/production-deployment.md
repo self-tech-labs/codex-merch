@@ -67,13 +67,23 @@ flag `false` until these decisions are complete.
    `sslmode=require`, and never reuse the staging database in production.
 3. Add the staging URL only to the staging Vercel environment and the
    production URL only to Production as `DATABASE_URL`.
-4. Run the migration once in each environment:
+4. From the repository root, run the migration against staging first. Paste
+   the exact staging Neon pooled URL when prompted; the input is hidden and is
+   not written to a file or shell history:
 
-   ```bash
-   vercel env run -e production -- npm run db:migrate
+   ```zsh
+   read -r -s 'MIGRATION_DATABASE_URL?Paste the target DATABASE_URL (input hidden): '
+   printf '\n'
+   DATABASE_URL="$MIGRATION_DATABASE_URL" npm run db:migrate
+   unset MIGRATION_DATABASE_URL
    ```
 
-   Run the equivalent command against the staging/custom environment first.
+   Repeat the same command with the production Neon pooled URL only after the
+   staging migration succeeds. Use the same URLs stored in the corresponding
+   Vercel environments. Do not rely on a previously exported `DATABASE_URL`.
+   Vercel CLI 47 does not have `vercel env run`, and Sensitive Vercel values
+   cannot be read back for a local migration; retain the original URLs in Neon
+   or an approved password manager.
 5. Confirm that `orders`, `order_items`, `stripe_events`, and
    `schema_migrations` exist. The application never stores a shipping address;
    it stores order totals, statuses, product snapshots, and provider IDs.
@@ -188,7 +198,8 @@ flag `false` until these decisions are complete.
 Open **Vercel → ritsl → codex-merch → Settings → Environment Variables**.
 Add secrets as Sensitive where supported, select **Production only**, and use
 the table below. Configure staging separately with sandbox/provider staging
-values.
+values. Keep the source value of every Sensitive variable in its provider or
+an approved password manager: after creation, Vercel does not reveal it again.
 
 | Variable | Production value or rule |
 | --- | --- |
