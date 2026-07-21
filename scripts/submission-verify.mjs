@@ -25,6 +25,8 @@ export const BUILD_WEEK_PREVIEW_FILES = [
   'app/inngest/fulfill-order.server.ts',
   'app/lib/commerce.test.ts',
   'app/lib/fulfillment.server.ts',
+  'app/lib/jury-access.server.ts',
+  'app/lib/jury-access.test.ts',
   'app/lib/stripe.server.ts',
   'app/lib/storefront-mode.test.ts',
   'app/lib/storefront-mode.tsx',
@@ -208,7 +210,7 @@ const RAW_SECRET_PATTERNS = [
   },
 ];
 const SECRET_ASSIGNMENT_PATTERN = new RegExp(
-  String.raw`\b(OPENAI_API_KEY|X_BEARER_TOKEN|STRIPE_SECRET_KEY|STRIPE_WEBHOOK_SECRET|DATABASE_URL|INNGEST_EVENT_KEY|INNGEST_SIGNING_KEY|PRINTFUL_TOKEN|VERCEL_TOKEN|GITHUB_TOKEN|AWS_SECRET_ACCESS_KEY)\b\s*(?::|=)\s*["']?([^"'\x60,;\s#}]+)`,
+  String.raw`\b(OPENAI_API_KEY|X_BEARER_TOKEN|STRIPE_SECRET_KEY|STRIPE_WEBHOOK_SECRET|DATABASE_URL|INNGEST_EVENT_KEY|INNGEST_SIGNING_KEY|PRINTFUL_TOKEN|VERCEL_TOKEN|GITHUB_TOKEN|JURY_ACCESS_CODE|AWS_SECRET_ACCESS_KEY)\b\s*(?::|=)\s*["']?([^"'\x60,;\s#}]+)`,
   'i',
 );
 
@@ -510,7 +512,7 @@ export function configurationPresence(env = {}) {
     env.STOREFRONT_POLICY_VERSION?.trim() === '2026-07-21';
   const shipping =
     present('STRIPE_SHIPPING_RATE_ID') !== present('STRIPE_FLAT_SHIPPING_AMOUNT') &&
-    env.STRIPE_ALLOWED_SHIPPING_COUNTRIES?.trim() === 'CH' &&
+    env.STRIPE_ALLOWED_SHIPPING_COUNTRIES?.trim() === 'CH,US' &&
     (enabled('STRIPE_AUTOMATIC_TAX') || disabled('STRIPE_AUTOMATIC_TAX'));
   const deploymentProvider = String(env.MERCH_DEPLOY_PROVIDER || '')
     .trim()
@@ -537,6 +539,9 @@ export function configurationPresence(env = {}) {
     releaseEnabled: enabled('MERCH_WEEKLY_RELEASE_ENABLED'),
     commerceApprovals:
       enabled('CHECKOUT_ENABLED') &&
+      enabled('JURY_SALES_ENABLED') &&
+      present('JURY_ACCESS_CODE') &&
+      present('JURY_SALES_END_AT') &&
       enabled('MERCH_PILOT_APPROVED') &&
       enabled('MERCH_EXPANSION_APPROVED') &&
       enabled('STOREFRONT_LEGAL_APPROVED') &&

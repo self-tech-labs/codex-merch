@@ -5,8 +5,10 @@ import {promisify} from "node:util";
 
 const execFileAsync = promisify(execFile);
 const workspace = process.cwd();
-const manifestPath = path.join(workspace, "video/narration.json");
-const audioDirectory = path.join(workspace, "video/public/audio");
+const argumentValue = (name, fallback) =>
+  process.argv.find((argument) => argument.startsWith(`${name}=`))?.slice(name.length + 1) ?? fallback;
+const manifestPath = path.join(workspace, argumentValue("--manifest", "video/narration.json"));
+const audioDirectory = path.join(workspace, argumentValue("--audio-dir", "video/public/audio"));
 const segmentDirectory = path.join(audioDirectory, "segments");
 const metadataPath = path.join(audioDirectory, "narration-metadata.json");
 const narrationPath = path.join(audioDirectory, "narration.wav");
@@ -79,6 +81,27 @@ const probeDuration = async (filePath) => {
   return duration;
 };
 
+const probeMaxVolume = async (filePath) => {
+  let diagnostics = "";
+  try {
+    const result = await execFileAsync("ffmpeg", [
+      "-hide_banner",
+      "-i",
+      filePath,
+      "-af",
+      "volumedetect",
+      "-f",
+      "null",
+      "-",
+    ]);
+    diagnostics = result.stderr;
+  } catch (error) {
+    diagnostics = error.stderr ?? "";
+  }
+  const match = diagnostics.match(/max_volume:\s*(-?[\d.]+) dB/);
+  return match ? Number(match[1]) : Number.NEGATIVE_INFINITY;
+};
+
 const createAudio = async (segment) => {
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
@@ -127,6 +150,9 @@ for (let index = 0; index < manifest.segments.length; index += 1) {
   const segment = manifest.segments[index];
   const outputPath = path.join(segmentDirectory, `${String(index + 1).padStart(2, "0")}-${segment.id}.wav`);
   let accepted = null;
+  let rejectionReason = "unknown validation failure";
+  const nextStart = manifest.segments[index + 1]?.startSeconds ?? manifest.compositionDurationSeconds;
+  const availableSeconds = nextStart - segment.startSeconds - 0.35;
 
   if (assembleOnly) {
     const existing = previousMetadata.find((item) => item.id === segment.id) ?? {};
@@ -158,18 +184,28 @@ for (let index = 0; index < manifest.segments.length; index += 1) {
     const generated = await createAudio(segment);
     const similarity = transcriptSimilarity(segment.text, generated.transcript);
     await writeFile(outputPath, generated.bytes);
-    if (similarity >= 0.98) {
+    const generatedDuration = await probeDuration(outputPath);
+    const maxVolumeDb = await probeMaxVolume(outputPath);
+    const durationFits = generatedDuration <= availableSeconds * 1.25;
+    const hasAudibleSignal = maxVolumeDb > -45;
+    if (similarity >= 0.98 && durationFits && hasAudibleSignal) {
       accepted = {...generated, similarity, attempt};
-    } else if (attempt === 3) {
-      throw new Error(
-        `Narration transcript diverged for ${segment.id} after three takes (similarity ${similarity.toFixed(3)}).`,
-      );
+    } else {
+      rejectionReason = [
+        similarity < 0.98 ? `transcript similarity ${similarity.toFixed(3)}` : null,
+        !durationFits ? `duration ${generatedDuration.toFixed(2)}s exceeds the pacing window` : null,
+        !hasAudibleSignal ? `silent or inaudible audio (${maxVolumeDb} dB max)` : null,
+      ]
+        .filter(Boolean)
+        .join(", ");
     }
   }
 
+  if (!accepted) {
+    throw new Error(`Narration validation failed for ${segment.id} after three takes: ${rejectionReason}.`);
+  }
+
   let durationSeconds = await probeDuration(outputPath);
-  const nextStart = manifest.segments[index + 1]?.startSeconds ?? manifest.compositionDurationSeconds;
-  const availableSeconds = nextStart - segment.startSeconds - 0.35;
   let tempo = 1;
 
   if (durationSeconds > availableSeconds) {

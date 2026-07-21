@@ -181,10 +181,13 @@ test('production checkout configuration fails closed', () => {
     NODE_ENV: 'production',
     STOREFRONT_MODE: 'production',
     CHECKOUT_ENABLED: 'true',
+    JURY_SALES_ENABLED: 'true',
+    JURY_ACCESS_CODE: ['unit', 'test', 'jury', 'access'].join('-'),
+    JURY_SALES_END_AT: '2099-08-06T00:00:00Z',
     MERCH_PILOT_APPROVED: 'true',
     STRIPE_SECRET_KEY: 'sk_test',
     STRIPE_WEBHOOK_SECRET: 'whsec_test',
-    STRIPE_ALLOWED_SHIPPING_COUNTRIES: 'CH',
+    STRIPE_ALLOWED_SHIPPING_COUNTRIES: 'CH,US',
     STRIPE_AUTOMATIC_TAX: 'false',
     DATABASE_URL: 'postgres://test',
     INNGEST_EVENT_KEY: 'event',
@@ -206,6 +209,15 @@ test('production checkout configuration fails closed', () => {
   configured.STOREFRONT_POLICY_VERSION = '2026-07-21';
   assert.doesNotThrow(() => assertCheckoutConfiguration(configured));
   assert.throws(
+    () =>
+      assertCheckoutConfiguration({...configured, JURY_SALES_ENABLED: 'false'}),
+    /Jury sales are disabled/,
+  );
+  assert.throws(
+    () => assertCheckoutConfiguration({...configured, JURY_ACCESS_CODE: ''}),
+    /Jury access is not configured/,
+  );
+  assert.throws(
     () => assertCheckoutConfiguration({...configured, MERCH_PILOT_APPROVED: 'false'}),
     /pilot approval/,
   );
@@ -219,7 +231,7 @@ test('production checkout configuration fails closed', () => {
         ...configured,
         STRIPE_ALLOWED_SHIPPING_COUNTRIES: 'CH,DE',
       }),
-    /CH only/,
+    /CH and US only/,
   );
   assert.throws(
     () =>
@@ -249,6 +261,9 @@ test('production checkout configuration fails closed', () => {
 test('checkout requires explicit production storefront mode', () => {
   const configured: AppEnv = {
     STOREFRONT_MODE: 'production',
+    JURY_SALES_ENABLED: 'true',
+    JURY_ACCESS_CODE: ['unit', 'test', 'jury', 'access'].join('-'),
+    JURY_SALES_END_AT: '2099-08-06T00:00:00Z',
     STRIPE_SECRET_KEY: 'sk_test',
     STRIPE_WEBHOOK_SECRET: 'whsec_test',
     DATABASE_URL: 'postgres://test',
@@ -276,14 +291,14 @@ test('checkout requires explicit production storefront mode', () => {
 });
 
 test('pilot shipping countries and delivery configuration fail closed', async () => {
-  assert.deepEqual(allowedShippingCountries({}), ['CH']);
+  assert.deepEqual(allowedShippingCountries({}), ['CH', 'US']);
   assert.deepEqual(
-    allowedShippingCountries({STRIPE_ALLOWED_SHIPPING_COUNTRIES: ' ch '}),
-    ['CH'],
+    allowedShippingCountries({STRIPE_ALLOWED_SHIPPING_COUNTRIES: ' ch, us '}),
+    ['CH', 'US'],
   );
   assert.throws(
     () => allowedShippingCountries({STRIPE_ALLOWED_SHIPPING_COUNTRIES: 'CH,FR'}),
-    /CH only/,
+    /CH and US only/,
   );
 
   assert.deepEqual(

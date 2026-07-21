@@ -1,0 +1,155 @@
+1
+00:00:00,600 --> 00:00:07,031
+Codex Merch is an open-source, hackable trend-signal-to-real-merch pipeline, built with Codex
+
+2
+00:00:07,031 --> 00:00:08,200
+and GPT-5.6.
+
+3
+00:00:09,400 --> 00:00:13,968
+The idea is simple: fashion has many signal tools and many
+
+4
+00:00:13,968 --> 00:00:18,121
+production tools, but the loop between them is still opaque.
+
+5
+00:00:18,121 --> 00:00:22,689
+This project turns that loop into a visible, replaceable system—from trusted
+
+6
+00:00:22,689 --> 00:00:24,350
+premise to testable garment.
+
+7
+00:00:26,500 --> 00:00:31,496
+Start with the output. Solward Index is not a moodboard or
+
+8
+00:00:31,496 --> 00:00:36,492
+a single generated image. It is a catalog entry, four customer-facing
+
+9
+00:00:36,492 --> 00:00:41,488
+views, six provider-sized print panels, hashes, and a public rights record.
+
+10
+00:00:41,488 --> 00:00:46,483
+The Preview is deliberately non-sellable: sizes and checkout stay disabled, while
+
+11
+00:00:46,483 --> 00:00:48,300
+the artifact remains inspectable.
+
+12
+00:00:53,500 --> 00:00:57,843
+The new walkthrough reduces the system to five moves.
+
+13
+00:00:57,843 --> 00:01:02,186
+Signal: an owner brief, or exactly thirty authorized posts.
+
+14
+00:01:02,186 --> 00:01:05,564
+Direct: GPT-5.6 proposes three panel-aware visual worlds.
+
+15
+00:01:05,564 --> 00:01:10,873
+Build: deterministic code composes front, back, both sleeves, panel label, and
+
+16
+00:01:10,873 --> 00:01:16,181
+inside label. Prove: AI critiques the rendered garment while code enforces
+
+17
+00:01:16,181 --> 00:01:19,559
+provenance, rights, dimensions, PNG integrity, and prepress.
+
+18
+00:01:19,559 --> 00:01:24,867
+Release: stop safely at Preview, or require explicit human authority to
+
+19
+00:01:24,867 --> 00:01:25,350
+ship.
+
+20
+00:01:30,500 --> 00:01:33,369
+This is what makes the project hackable.
+
+21
+00:01:33,369 --> 00:01:37,876
+Swap X for a community feed or an internal trend desk.
+
+22
+00:01:37,876 --> 00:01:41,565
+Change the prompt and schema without hiding the contract.
+
+23
+00:01:41,565 --> 00:01:44,024
+Add another garment or composition grammar.
+
+24
+00:01:44,024 --> 00:01:47,712
+Route validated outputs into another provider or commerce stack.
+
+25
+00:01:47,712 --> 00:01:51,400
+The seams live in the repository, alongside the tests.
+
+26
+00:01:54,500 --> 00:01:58,139
+The commercial thesis is larger than this storefront.
+
+27
+00:01:58,139 --> 00:02:02,688
+Zara and Shein illustrate the value of shorter signal-to-sample loops.
+
+28
+00:02:02,688 --> 00:02:07,692
+Richemont and LVMH illustrate a different R-and-D need: test sources, models,
+
+29
+00:02:07,692 --> 00:02:11,331
+product formats, and approval policies as replaceable components.
+
+30
+00:02:11,331 --> 00:02:16,335
+These are market examples only; no affiliation, endorsement, customer relationship, or
+
+31
+00:02:16,335 --> 00:02:18,155
+proprietary data is claimed.
+
+32
+00:02:18,500 --> 00:02:23,413
+The repository is the evidence: eleven products, 147 passing tests, twelve
+
+33
+00:02:23,413 --> 00:02:28,325
+browser checks, visible prompts, strict schemas, reproducible assets, and fail-closed adapters.
+
+34
+00:02:28,325 --> 00:02:31,451
+GPT provides taste. Code proves the contract.
+
+35
+00:02:31,451 --> 00:02:34,131
+A human holds the release keys.
+
+36
+00:02:34,131 --> 00:02:38,150
+No payment, provider sync, publication, or fulfillment is shown.
+
+37
+00:02:38,500 --> 00:02:43,713
+Signal in. Merch out. A small open-source proof for a large
+
+38
+00:02:43,713 --> 00:02:48,926
+fashion problem. Fork the pipeline, inspect the garments, and judge the
+
+39
+00:02:48,926 --> 00:02:49,400
+system.

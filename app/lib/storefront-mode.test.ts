@@ -19,6 +19,7 @@ test('storefront mode accepts only the explicit production value', () => {
 
 test('preview mode cannot initiate checkout for a catalog-eligible product', () => {
   assert.equal(canInitiateStorefrontCheckout('preview', true), false);
-  assert.equal(canInitiateStorefrontCheckout('production', false), false);
-  assert.equal(canInitiateStorefrontCheckout('production', true), true);
+  assert.equal(canInitiateStorefrontCheckout('production', false, true), false);
+  assert.equal(canInitiateStorefrontCheckout('production', true), false);
+  assert.equal(canInitiateStorefrontCheckout('production', true, true), true);
 });

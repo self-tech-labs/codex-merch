@@ -2,39 +2,39 @@
 
 Complete [`production-deployment.md`](production-deployment.md) and every hard
 blocker in [`merchant-signoff.md`](merchant-signoff.md) before operating real
-checkout. The launch pilot is RITSL Elliot Vaucher, Switzerland only, CHF 58.00
+checkout. The launch pilot is RITSL Elliot Vaucher, OpenAI Build Week judges
+only, Switzerland/United States delivery, CHF 58.00
 per garment plus CHF 9.10 shipping (CHF 67.10 final one-item total, including
 any applicable tax), customer-policy version `2026-07-21`, and manual Printful
-draft confirmation.
+draft confirmation. It is fan-made content, not official OpenAI merchandise,
+and closes automatically at `2026-08-06T00:00:00Z`.
 
 ## Non-negotiable production state
 
-- Until prelaunch controlled-test authorization: `STOREFRONT_MODE=preview`,
+- Until prelaunch jury-pilot authorization: `STOREFRONT_MODE=preview`,
   `CHECKOUT_ENABLED=false`, `MERCH_PILOT_APPROVED=false`,
   `MERCH_EXPANSION_APPROVED=false`,
   `STOREFRONT_LEGAL_APPROVED=false`, and
   `STOREFRONT_TAX_SHIPPING_APPROVED=false`.
-- The only pre-final-sign-off exception is the owner-IP-restricted live-test
-  window described below. It permits the three pilot approval flags and
-  checkout to be enabled only for the single controlled order; it does not
-  authorize public access. If the test fails or is aborted, reset checkout and
-  all three approval flags to `false`; retain production mode only long enough
-  to reconcile an already-paid order, then return it to `preview`.
-- Throughout the pilot: `STRIPE_ALLOWED_SHIPPING_COUNTRIES=CH`, exactly one CHF
+- Checkout additionally requires `JURY_SALES_ENABLED=true`, a Sensitive
+  `JURY_ACCESS_CODE` with at least 16 unpredictable characters, and
+  `JURY_SALES_END_AT=2026-08-06T00:00:00Z`. Missing, wrong, or expired access
+  fails closed. Share the code only in Devpost private testing instructions.
+- Throughout the pilot: `STRIPE_ALLOWED_SHIPPING_COUNTRIES=CH,US`, exactly one CHF
   shipping setting, `STOREFRONT_POLICY_VERSION=2026-07-21`, and
   `PRINTFUL_AUTO_CONFIRM=false`.
 - `MERCH_EXPANSION_APPROVED=false` remains separate from first-pilot launch
   authority and blocks publication of additional sellable products.
-- Written OpenAI permission for the exact paid tangible merchandise or a
-  completed neutral rebrand is a hard gate. A disclaimer is not permission.
-- The owner/accountant must record the VAT conclusion across all RITSL
-  activities. The absence of a VAT number in a public register is not, by
-  itself, tax sign-off.
+- The owner explicitly accepted the fan-brand, VAT, and pre-sample risks for
+  this narrow competition pilot on 2026-07-21. Persistent fan-made/not-official
+  disclosure is mandatory. The exception does not authorize general public
+  sales.
 
 ## Staging gate
 
 1. Use Stripe test mode, a dedicated Neon branch, a dedicated Inngest
-   environment, CH/CHF settings, and `PRINTFUL_AUTO_CONFIRM=false`.
+   environment, CH/US and CHF settings, a disposable jury code/expiry, and
+   `PRINTFUL_AUTO_CONFIRM=false`.
 2. Confirm `npm run merch:printful:verify -- --slug
    codex-rate-reset-long-sleeve` returns `ok: true` for Printful product
    `436601984` and all three sync variants. Run the fulfillment dry-run and
@@ -43,11 +43,11 @@ draft confirmation.
 3. Confirm the published pilot remains CHF 58.00, approved for the exact
    immutable assets/variant mappings, and policy version `2026-07-21` is
    visible on deployed shipping, returns, privacy, terms, and contact pages.
-4. Complete one Swiss-address Stripe test payment for CHF 58.00 plus CHF 9.10.
+4. Complete one CH- or US-address Stripe test payment for CHF 58.00 plus CHF 9.10.
    Verify the policy disclosure, `receipt_email`, the receipt preview, and a
    Dashboard test receipt to a verified test-account email. Automatic test
    receipts are not generally delivered; prove automatic delivery with the
-   controlled live order.
+   first live jury order.
 5. Verify exactly one local order, one processed webhook event, one successful
    Inngest run, one unconfirmed Printful draft, a verified `CM-…` success page,
    and removal of only purchased cart lines.
@@ -59,34 +59,29 @@ draft confirmation.
    transient Printful failure, retry, and reconciliation. Cancel the test
    draft and save only sanitized evidence.
 
-## Prelaunch controlled-test check
+## Prelaunch jury-pilot check
 
 Before setting any approval flag to `true`, the operator verifies and records:
 
-1. OpenAI's written authorization covering the final product/name/artwork and
-   paid Swiss sale, or evidence of the completed neutral rebrand.
-2. Owner/accountant all-RITSL VAT conclusion and the matching Stripe Tax choice.
-3. Stripe RITSL KYC, live charges, live payouts, payout account, public details,
+1. Owner's 2026-07-21 jury-only fan-brand/VAT/sample-risk decision; persistent
+   non-affiliation disclosure; no general-public authorization.
+2. Stripe RITSL KYC, live charges, live payouts, payout account, public details,
    supported payment methods, receipt email, live key, and live webhook health.
-4. Printful billing/Wallet, return address, packing slip, product availability,
-   safety/label information, claim workflow, merchant-paid Swiss import and
-   clearance treatment, physical sample, and current quotes for M/L/XL.
-5. Production database migration, Inngest sync, firewall rule, canonical HTTPS
+3. Printful billing/Wallet, return address, packing slip, CH/US availability,
+   safety/label information, claim workflow, and current quotes for M/L/XL.
+4. Production database migration, Inngest sync, firewall rule, canonical HTTPS
    origin, RITSL policy/contact pages, and the successful staging evidence.
-6. `STRIPE_ALLOWED_SHIPPING_COUNTRIES=CH`, CHF 9.10 live shipping, and
+5. `STRIPE_ALLOWED_SHIPPING_COUNTRIES=CH,US`, CHF 9.10 live shipping, and
    `PRINTFUL_AUTO_CONFIRM=false` in the effective deployment.
-7. The processor/DPA, subprocessor, processing-country, transfer-safeguard,
-   retention, and access-control review for every provider named in the privacy
-   notice.
+6. Sensitive jury code, fixed judging-end timestamp, and the code copied only
+   to Devpost private testing instructions.
 
-The owner then completes the prelaunch controlled-test authorization in
-`merchant-signoff.md`. Temporarily restrict `POST /api/checkout` to the owner's
-test IP, change the three approval flags to `true`, set
-`STOREFRONT_MODE=production`, and set `CHECKOUT_ENABLED=true` last. Redeploy and
-require the readiness probe to show live payment mode before placing the one
-authorized live purchase. The owner signs the separate final public-launch
-approval only after that purchase passes; only then may the checkout IP
-restriction be removed.
+The owner then completes the prelaunch jury-pilot authorization in
+`merchant-signoff.md`, changes the three approval flags and jury gate to `true`,
+sets `STOREFRONT_MODE=production`, and sets `CHECKOUT_ENABLED=true` last.
+Redeploy and require the readiness probe to show live payment mode, judge-only
+audience, required code, CH/US territory, and the exact expiry. Verify missing
+and wrong codes fail before sharing the correct code with judges.
 
 ## Secure production operator shell
 
@@ -140,7 +135,7 @@ For each new paid order:
 2. Confirm the local order/reference and successful signed webhook event.
 3. Confirm one successful Inngest run and exactly one Printful **draft** with
    `external_id` equal to the order's `CM-…` public reference.
-4. Compare recipient country (`CH`), deliverable address, variant, quantity,
+4. Compare recipient country (`CH` or `US`), deliverable address, variant, quantity,
    CHF retail amount, print files, current Printful cost, and contribution.
    Contact the customer before confirmation if an address or selection is
    ambiguous.

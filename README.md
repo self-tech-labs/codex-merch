@@ -1,247 +1,240 @@
 # Codex Merch
 
-Codex-operated creative studio and React Router storefront. The catalog is
-owned by `merch/products.json`; GPT-5.6 supplies bounded cultural and visual
-judgment; deterministic code renders and validates production files. Optional
-production adapters connect Stripe, Neon, Inngest, and Printful after an owner
-enables every commerce gate.
+> An open-source, hackable trend-signal → real-merch pipeline.
 
-Legacy non-draft products may be shown as no-index previews. Products created
-by the weekly automation remain absent from catalog listings and product routes
-until `workflow.status` is `published`. A product is purchasable only when it is
-published and every available commerce variant has an available Printful
-sync-variant mapping; the server enforces this again at checkout.
+Codex Merch turns a trusted cultural signal into an original, production-ready
+garment—not just an image. GPT-5.6 supplies bounded trend and visual judgment;
+deterministic software owns provenance, rights gates, six-panel rendering,
+prepress, artifact hashes, and release safety. A human keeps the keys to every
+external or commercial action.
 
-## Local verification
+[Open the Build Week Preview](https://codex-merch-git-codex-build-week-weekly-studio-ritsl.vercel.app)
+· [Watch the local jury master](video/out/codex-merch-signal-to-product-1080p.mp4)
+· [Read the submission guide](docs/build-week/README.md)
+· [Inspect the architecture](docs/build-week/architecture.md)
 
-Use Node.js 22 or 24. Install the locked dependency graph from a fresh checkout:
+![Codex Merch product Preview](docs/build-week/media/devpost-product-preview.png)
+
+## Why this is different
+
+Most generative-fashion demos stop at a picture. Codex Merch preserves the
+whole path from signal to physical product as an inspectable, replaceable
+system:
+
+```mermaid
+flowchart LR
+    A["Owner brief"] --> C["Trusted trend contract"]
+    B["30 authorized X posts"] --> D{"GPT-5.6 trend or no_trend"}
+    D --> C
+    C --> E["3 ranked garment systems"]
+    E --> F["Deterministic 6-panel render"]
+    F --> G["Actual-render critique + prepress"]
+    G --> H["Safe Preview"]
+    G -. "explicit release authority" .-> I["Provider + storefront"]
+```
+
+- Open: prompts, strict schemas, state transitions, renderer, tests, and
+  adapters live in the repository.
+- Hackable: swap the signal source, decision contract, physical product, or
+  provider without replacing the entire pipeline.
+- Truthful: owner-supplied ideas, synthetic fixtures, and live signals retain
+  different provenance and permissions.
+- Production-intent: the output is a complete provider-sized garment system
+  with repeatable files and hashes.
+- Fail-closed: `no_trend` is a valid outcome, Preview cannot charge or fulfill,
+  and production requires explicit human authority.
+
+## Judge path — five minutes
+
+1. Open the [public Preview](https://codex-merch-git-codex-build-week-weekly-studio-ritsl.vercel.app); no account or API key is required.
+2. Select **Solward Index Cotton Sweatshirt** and inspect its front, back,
+   pattern system, production technique, and rights note. Checkout remains
+   disabled.
+3. Open **How it works** and follow the five-stage signal → direction → render
+   → proof → release loop.
+4. Inspect the [sanitized evidence bundle](docs/build-week/evidence/README.md)
+   for model IDs, prompt/schema hashes, decisions, critic results, prepress
+   checks, and artifact hashes—without raw private post text.
+5. Run the credential-free decision path locally:
+
+   ```bash
+   npm ci
+   npm run merch:weekly:demo -- --dry-run --week 2026-W30
+   ```
+
+The judged deployment is deliberately a non-commerce Preview. It demonstrates
+the complete creative pipeline but cannot create a Stripe payment, Printful
+product, Inngest fulfillment event, or production order.
+
+An optional, separate [jury sales pilot](https://codex-merch.vercel.app) makes
+the physical proof real without putting commerce in the required judge path.
+Only the signed **Codex Rate Reset Long Sleeve Tee** can be purchased, delivery
+is limited to Switzerland and the United States, checkout requires a private
+OpenAI Build Week jury code, and the access window expires when judging ends.
+Browsing, installation, testing, and evaluation remain free and never require a
+purchase. This is a fan-made project and its products are not official OpenAI
+merchandise; it is not affiliated with, sponsored by, or endorsed by OpenAI.
+
+## Run locally
+
+Prerequisites: Git and Node.js 22 or 24. Node 22 is recorded in `.nvmrc`.
 
 ```bash
+git clone https://github.com/self-tech-labs/codex-merch.git
+cd codex-merch
+nvm use
 npm ci
-npm run merch:validate
-npm test
-npm run typecheck
-npm run lint
-npm run build
+cp .env.example .env.local
+npm run dev
+```
+
+The default configuration is safe: `STOREFRONT_MODE=preview`, checkout is off,
+and provider credentials are empty. Visit `http://localhost:5173`.
+
+Run the full repository gate before opening a pull request:
+
+```bash
+npm run submission:verify
 npm run test:e2e
 ```
 
-Database integration coverage is enabled when `TEST_DATABASE_URL` is set.
+`submission:verify` validates the catalog, runs unit tests, typecheck, lint,
+and a production build, then checks submission files, fixtures, secrets, and
+Git provenance. Database integration coverage is additionally enabled when
+`TEST_DATABASE_URL` is set.
 
-## Build Week Preview mode
+## Try the two inputs
 
-The submitted application deliberately runs as a non-commerce Preview. Every
-visible drop is inspectable, but generated candidates cannot be added to the
-cart and `/api/checkout` still fails closed. This keeps the judged path focused
-on the creative system and prevents a prototype from implying that payments,
-tax, policy, or fulfillment operations have been approved.
+### 1. Direct owner premise
 
-From Codex Desktop, the owner can start the complete creative path with a plain
-request such as:
-
-> Create a preview merch for the trend “The Sol Shines.”
-
-The repository-owned `codex-merch-weekly` skill recognizes this as a trusted,
-owner-supplied trend. It records that provenance instead of fabricating X
-evidence, then converges on the same art-direction, deterministic composition,
-visual-critic, prepress, catalog, and verification stages used by the weekly
-workflow. Once its branch is pushed, Vercel builds the changed manifest and
-assets into a shareable Preview deployment. The included **Solward Index
-Cotton Sweatshirt** is the reference result of that path.
-
-The current Build Week branch is deployed at the protected
-[`codex-build-week-weekly-studio` Preview alias](https://codex-merch-git-codex-build-week-weekly-studio-ritsl.vercel.app).
-Judges receive its account-free, branch-scoped Vercel Shareable Link privately;
-the access token is never stored in the repository.
-
-The skill invokes the same inspectable CLI that a judge can run directly:
+This is the shortest Build Week path. It uses no X data and claims no discovery
+provenance.
 
 ```bash
-# Plan three GPT-5.6 directions without changing the catalog
+# Requires OPENAI_API_KEY; plans three GPT-5.6 directions without writing files
 npm run merch:trend-preview -- --trend "Compiler Summer" \
   --context "A team joke about fast builds arriving with warm weather" --dry-run
 
-# Render, critique, prepress-check, and persist a Preview candidate
+# Renders, critiques, prepress-checks, and stores a non-sellable Preview candidate
 npm run merch:trend-preview -- --trend "The Sol Shines"
 ```
 
-The normalized owner input is hashed, so an identical retry resolves to the
-same candidate instead of creating a duplicate. The command never calls X,
-Printful, Stripe, Neon, Inngest, Git, or Vercel; Codex handles a requested
-non-production branch push only after the local result and repository checks
-pass. `--context` can add a short owner-supplied clarification when the premise
-is otherwise ambiguous; it intentionally becomes part of the idempotency key.
+### 2. Weekly signal discovery
 
-Production adds a second intake: a weekly Codex Desktop automation requests the
-latest 30 posts from the configured X list and lets GPT-5.6 select one recurring
-trend or `no_trend`. It then joins the same garment pipeline. Enabling real
-sales requires no storefront rewrite, but it is intentionally more than a
-single mode toggle: valid provider credentials, a published product with mapped
-variants, database migrations, signed webhooks, reviewed merchant policies,
-shipping/tax approval, and all fail-closed environment flags must be present.
-The public `/how-it-works` page documents both modes and the exact boundary.
-
-## Build Week: weekly signal studio
-
-**Category:** Work & Productivity
-
-**Pitch:** a Codex-operated weekly culture-to-commerce studio that turns a
-recurring team signal into an original, production-ready garment and a testable
-storefront drop.
-
-Developer-relations, internal-culture, and creative-operations teams often move
-from social listening to a creative brief, production files, provider setup,
-and storefront publication by hand. This extension turns that repeated work
-into one inspectable weekly run while preserving hard rights, quality, and
-release gates. The useful outcome is not “AI makes a picture”; it is a
-reproducible path from 30 authorized observations to a garment that can either
-be safely skipped, prepared for review, or released without duplicate provider
-products.
-
-The extension requests exactly the latest 30 posts from one authorized X list,
-asks GPT-5.6 for a structured trend decision, applies deterministic recurrence,
-originality, novelty, and rights gates, asks GPT-5.6 for exactly three
-panel-aware garment recipes, renders a bounded set of candidates locally, and
-has GPT-5.6 inspect the actual output. A weak or unsafe signal ends successfully
-as `no_trend`.
-
-### Built with Codex
-
-Codex was the working environment for the Build Week extension: it audited the
-existing storefront, traced the X-to-art path, designed and implemented the
-weekly state machine, extracted repository-owned prompts and schemas, improved
-the deterministic garment renderer, added adversarial tests and fixtures,
-reviewed release and commerce safety, and packaged the workflow as the
-`codex-merch-weekly` skill plus a Codex Desktop scheduled task prompt.
-
-This collaboration with Codex accelerated the move from an artistic-direction
-audit to a tested end-to-end system, especially in cross-cutting state,
-provenance, rendering, and commerce work. Key decisions remained owner-held:
-Codex proposed and implemented mechanisms, while Elliot chose the audience,
-creative medium, safety posture, target signal, and release authority.
-
-Elliot retains the consequential product decisions: the target X list, weekly
-cadence, garment medium, category, acceptable artistic direction, whether a
-trend is authorized for commercial use, final brand and asset clearance,
-provider credentials, merchant policies, and the explicit release kill switch.
-The initial implementation reuses Elliot's existing local OpenAI API credential;
-no credential value is stored in Git or in the automation prompt.
-
-### GPT-5.6 and deterministic roles
-
-| Stage | GPT-5.6 judgment | Deterministic authority |
-| --- | --- | --- |
-| [Trend analysis](scripts/prompts/weekly-trend.md) | Return one recurring trend or `no_trend` with evidence IDs, original phrases, scores, and rights risk under a [strict schema](merch/weekly/schemas/trend.schema.json). | Require exactly 30 normalized posts, evidence across authors, safe original language, novelty against published drops, low rights risk, and the minimum aggregate score. |
-| [Creative authority](scripts/prompts/weekly-art-director.md) | Put the exact approved trend phrase on the garment and propose exactly three strongest-first recipes across distinct aesthetic worlds, type systems, layouts, patterns, and sleeve stories under a [strict schema](merch/weekly/schemas/art-direction.schema.json). | Preserve model order as the taste decision; reject only protected/source-overlapping language beyond the approved phrase, incomplete panels, duplicate creative systems, or unsupported renderer claims. |
-| [Actual-render review](scripts/prompts/weekly-visual-critic.md) | Inspect resized images of the real panels and mockups and return a six-part advisory rubric under a [strict schema](merch/weekly/schemas/visual-critic.schema.json). | Block critical rights or production defects while keeping numeric taste scores advisory; prepress, immutable hashes, and repository checks remain deterministic. |
-
-This repository existed before Build Week. The storefront, manual merch tools,
-and early commerce/provider paths are prior work; the judged post-July-13 delta
-is the reliable weekly Codex/GPT-5.6 loop, its state and safety model, renderer
-quality work, fixtures/tests, scheduled-task workflow, and submission evidence.
-See [provenance and judged delta](docs/build-week/provenance-delta.md) for the
-baseline and dated commit record.
-
-### Reproduce the weekly path
-
-From a clean checkout with Node.js 22 or 24:
+The credential-free fixture is synthetic and explicitly marked as such. It is
+useful for understanding the state machine, not for claiming a live trend.
 
 ```bash
-npm ci
-
-# Check submission files, fixture presence, secrets, and Git provenance
-npm run submission:verify
-
-# Credential-free synthetic decision path; no catalog or asset mutation
+# Synthetic decision-only replay; no catalog or asset mutation
 npm run merch:weekly:demo -- --dry-run --week 2026-W30
 
-# Full synthetic local preparation; still never releasable
-npm run merch:weekly:demo -- --week 2026-W30
-
-# Live X and GPT-5.6 decision path; requires local credentials
+# Live X + GPT-5.6 decision path; requires local credentials
 npm run merch:weekly -- --list-id 2067819170989854863 --count 30 --dry-run
 
-# Inspect a run and print its release plan without external mutation
+# Inspect an existing run and its release plan without external mutation
 npm run merch:weekly:status -- --week 2026-W30
 npm run merch:weekly:release -- --week 2026-W30
 ```
 
-The synthetic fixture is deliberately non-releasable. Its non-dry command
-intentionally changes the local manifest and generates assets, so run that
-rehearsal in a disposable clean checkout; run `submission:verify` against the
-untouched submission checkout. Production preparation requires a clean
-dedicated checkout and live X plus live model provenance, but still never
-commits, pushes, deploys, mutates Printful, publishes a product, enables
-checkout, or creates an order. Release additionally requires the literal
-`--release` flag, a kill switch, unchanged approved hashes, a non-default
-branch, pilot/legal/commerce configuration, and
-`PRINTFUL_AUTO_CONFIRM=false`. It also requires an explicit deployment provider;
-the Vercel path binds a token, scope, and project ID to each exact candidate or
-final commit before the existing public URL probes run.
+The sample input lives at
+[`fixtures/x/codex-team-meme-30.synthetic.json`](fixtures/x/codex-team-meme-30.synthetic.json).
+A non-dry synthetic prepare writes local assets and is intentionally
+non-releasable; use a disposable checkout for that rehearsal. Never add
+`--release` while following the judge path.
 
-The exact role prompts and strict schemas are public in
-[`scripts/prompts`](scripts/prompts) and
-[`merch/weekly/schemas`](merch/weekly/schemas). Start with the
-[`Build Week submission index`](docs/build-week/README.md) for architecture,
-automation, demo, provenance, judge access, rights, evidence, and the owner
-checklist. The credential-free sample data is documented in
-[`fixtures/x/README.md`](fixtures/x/README.md).
+## Where to hack
 
-## Commerce infrastructure
+| Seam | Start here | Example extension |
+| --- | --- | --- |
+| Signal source | [`scripts/adapters`](scripts/adapters), [`signals.mjs`](scripts/services/signals.mjs) | Community feed, search data, retail sell-through, internal trend desk |
+| Trend contract | [`weekly-trend.md`](scripts/prompts/weekly-trend.md), [`trend.schema.json`](merch/weekly/schemas/trend.schema.json) | Different recurrence, evidence, novelty, or rights policy |
+| Creative system | [`weekly-art-director.md`](scripts/prompts/weekly-art-director.md), [`weekly-product.mjs`](scripts/services/weekly-product.mjs) | New aesthetic grammar, placement system, or garment |
+| Physical templates | [`base-products.json`](merch/base-products.json), [`customization-techniques.json`](merch/customization-techniques.json) | Bags, knitwear, accessories, alternate print methods |
+| Release target | [`production-providers.mjs`](scripts/services/production-providers.mjs), [`app`](app) | Another provider, internal PLM, wholesale review, existing commerce stack |
 
-1. Keep `STOREFRONT_MODE=preview` and `CHECKOUT_ENABLED=false` in the submitted Build Week Preview.
-2. Provision separate Neon databases or branches for staging and production.
-3. Set the environment-specific `DATABASE_URL`, then migrate staging first and
-   production second with the hidden-input, target-specific procedure in
-   [`docs/production-deployment.md`](docs/production-deployment.md#2-provision-and-migrate-postgres).
-4. Install the Inngest Vercel integration and set its event/signing keys.
-5. Configure Stripe Checkout and a signed webhook at `/api/stripe/webhook`.
-6. Configure a valid Printful Manual order/API store token.
-7. Keep `PRINTFUL_AUTO_CONFIRM=false` through the pilot.
-8. Configure a Vercel WAF fixed-window rule for `POST /api/checkout`: 10
-   requests per IP per 60 seconds. Do not apply this rule to Stripe or Inngest
-   webhook routes.
-9. Set reviewed policy/contact, tax, country, and shipping values, then set
-   `STOREFRONT_MODE=production`,
-   `STOREFRONT_LEGAL_APPROVED=true`,
-   `STOREFRONT_TAX_SHIPPING_APPROVED=true`, and finally
-   `CHECKOUT_ENABLED=true`.
+## Commercial thesis
 
-Required variables and fail-closed defaults are documented in `.env.example`.
-No shipping address is stored in the application database; the fulfillment
-worker retrieves it from the paid Stripe session and sends it to Printful.
+The prototype is small; the underlying industry question is not. Fashion
+groups invest heavily in shortening signal-to-sample cycles and creating more
+specific products without losing brand, rights, or production control. This
+repository is an open R&D surface for that problem.
 
-## Order operations
+- High-velocity retailers such as Zara and Shein are relevant examples for
+  speed: qualify a signal, generate a coherent product system, and test it in
+  one traceable run.
+- Luxury portfolios such as Richemont and LVMH are relevant examples for
+  controlled experimentation: compare models, sources, formats, and approval
+  rules as separate components rather than one opaque generator.
+- Brands of any size could turn community, regional, or customer-segment
+  signals into smaller capsules and hyper-personalized product concepts.
 
-```bash
-npm run orders:inspect -- <order-id-or-CM-reference>
-npm run orders:retry -- <order-id-or-CM-reference>
-npm run orders:reconcile -- <order-id-or-CM-reference>
+These companies are market examples only. No affiliation, endorsement,
+customer relationship, or use of proprietary data is claimed.
+
+## Model, software, and human roles
+
+| Stage | GPT-5.6 judgment | Deterministic authority |
+| --- | --- | --- |
+| Trend | Return one recurring trend or `no_trend` under a strict schema | Require exactly 30 normalized posts, evidence spread, novelty, safe original language, and low rights risk |
+| Direction | Return exactly three strongest-first, panel-aware garment systems | Enforce supported primitives, panel completeness, copy rules, and production constraints without re-ranking taste |
+| Review | Inspect the actual rendered panels and mockups | Block concrete rights/production defects; verify prepress, immutable hashes, and repository checks |
+
+The OpenAI Responses API is called with strict Structured Outputs and
+`store: false`. Raw X content is treated as untrusted research input and never
+enters public product copy, artwork, screenshots, or logs.
+
+## Codex collaboration and Build Week delta
+
+This repository existed before Build Week. During the event, Codex collaborated
+on the end-to-end weekly extension: repository audit, state machine, prompts and
+schemas, deterministic rendering, adversarial tests, safe retry/release design,
+documentation, and the repository-owned `codex-merch-weekly` skill. Codex
+accelerated the cross-cutting engineering work; GPT-5.6 performs bounded runtime
+judgments.
+
+The key decisions remained human-held: audience, signal source, garment medium,
+safety posture, artistic acceptance, rights clearance, provider credentials,
+and release authority. The exact pre-event baseline and judged delta are in
+[`docs/build-week/provenance-delta.md`](docs/build-week/provenance-delta.md).
+
+## Repository map
+
+```text
+app/                    React Router storefront and Preview explainer
+merch/                  Catalog, product contracts, and garment configuration
+scripts/                CLI orchestration, adapters, prompts, and tests
+fixtures/               Explicitly synthetic credential-free replay data
+assets/                 Artwork, production panels, and storefront mockups
+docs/build-week/        Jury guide, architecture, evidence, and submission record
+.codex/skills/          Repository-owned Codex operating workflow
 ```
 
-See `docs/production-runbook.md` for the staging smoke test, monitoring, and
-rollback sequence. The exact account setup, Vercel variable matrix, Stripe
-events, Printful pilot procedure, and launch order are in
-`docs/production-deployment.md`.
+## Safety and production boundary
 
-## Merch pipeline
+Preview products are non-purchasable. Automated candidates remain hidden until
+their manifest status is `published`, and checkout verifies product and variant
+readiness again on the server. A production release requires the literal
+`--release` flag, `MERCH_WEEKLY_RELEASE_ENABLED=true`, unchanged approved hashes,
+valid provider and commerce configuration, and `PRINTFUL_AUTO_CONFIRM=false`.
+The weekly release never creates a customer order.
 
-```bash
-npm run merch:new -- "Product title"
-npm run merch:research:x -- --slug <slug> --dry-run
-npm run merch:art-director:review -- --slug <slug>
-npm run merch:generate-artwork -- --slug <slug>
-npm run merch:compose-print-files -- --slug <slug>
-npm run merch:catalog:mockups -- --slug <slug>
-npm run merch:printful:upsert -- --slug <slug> --site-url https://your-public-domain.example
-npm run merch:mockups -- --slug <slug> --site-url https://your-public-domain.example
-npm run merch:photoshoot -- --slug <slug>
-npm run merch:printful:verify -- --slug <slug>
-npm run merch:fulfillment:order:dry-run -- --slug <slug>
-npm run merch:publish -- --slug <slug> --approve --by <name>
-```
+Real Build Week purchases add another independent boundary:
+`JURY_SALES_ENABLED=true`, an unexpired `JURY_SALES_END_AT`, and a private
+`JURY_ACCESS_CODE` of at least 16 characters. The server verifies that code
+before creating an order record or Stripe Checkout Session. Readiness reports
+the jury-only audience and expiry without exposing the code.
 
-Publication requires research sources, a rights note, approval, provider
-readiness, complete sync-variant mappings, and—on AOP cotton garments—the
-prescribed customer photoshoot. Upstream artifact changes invalidate approval
-and provider synchronization rather than silently leaving stale approvals.
+Operational details live in the [production deployment guide](docs/production-deployment.md)
+and [runbook](docs/production-runbook.md). Build Week architecture, evidence,
+judge access, rights, and the owner checklist are indexed in
+[`docs/build-week/README.md`](docs/build-week/README.md).
+
+## Contributing, security, and license
+
+Contributions are welcome; start with [`CONTRIBUTING.md`](CONTRIBUTING.md).
+Please report vulnerabilities privately using [`SECURITY.md`](SECURITY.md).
+
+The pipeline source code is MIT-licensed. Merch artwork, mockups, trademarks,
+third-party reference screenshots, and provider templates are excluded from
+that grant; see [`ASSET-LICENSE.md`](ASSET-LICENSE.md) before redistributing a
+fork.

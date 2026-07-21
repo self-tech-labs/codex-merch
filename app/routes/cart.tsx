@@ -12,11 +12,11 @@ import {
   merchantPilot,
   merchantPilotDisplayAmounts,
 } from '~/lib/merchant-policy';
-import {useStorefrontMode} from '~/lib/storefront-mode';
+import {useJurySales, useStorefrontMode} from '~/lib/storefront-mode';
 
 export const meta: Route.MetaFunction = () => {
   return [
-    {title: 'Codex Meme Merch | Cart'},
+    {title: 'Codex Merch | Cart'},
     {name: 'robots', content: 'noindex,nofollow'},
   ];
 };
@@ -24,7 +24,9 @@ export const meta: Route.MetaFunction = () => {
 export default function Cart() {
   const {displayLines, lines, removeLine, subtotal, updateQuantity} = useCart();
   const storefrontMode = useStorefrontMode();
+  const jurySales = useJurySales();
   const preview = storefrontMode === 'preview';
+  const checkoutAvailable = !preview && jurySales.enabled;
   const currency = displayLines[0]?.product.commerce.currency || 'USD';
   const pilotShippingApplies =
     displayLines.length > 0 &&
@@ -114,7 +116,7 @@ export default function Cart() {
               {pilotShippingApplies ? (
                 <>
                   <div>
-                    <dt>CH shipping</dt>
+                    <dt>Shipping</dt>
                     <dd>
                       {money(
                         pilotAmounts.shipping,
@@ -129,17 +131,27 @@ export default function Cart() {
                 </>
               ) : null}
             </dl>
-            {preview ? (
-              <button disabled type="button">
-                Checkout disabled in preview
-              </button>
-            ) : (
+            {checkoutAvailable ? (
               <Form action="/api/checkout" method="post">
                 <input
                   type="hidden"
                   name="cart"
                   value={checkoutCartValue(lines)}
                 />
+                <label className="jury-access-field">
+                  <span>OpenAI Build Week jury access code</span>
+                  <input
+                    required
+                    autoComplete="one-time-code"
+                    maxLength={128}
+                    name="juryAccessCode"
+                    type="password"
+                  />
+                  <small>
+                    Real purchases are reserved exclusively for judges. The
+                    free project demo does not require this code or a purchase.
+                  </small>
+                </label>
                 <label className="checkout-consent">
                   <input
                     required
@@ -158,19 +170,27 @@ export default function Cart() {
                 <button disabled={checkingOut} type="submit">
                   {checkingOut
                     ? 'Opening secure checkout…'
-                    : 'Checkout with Stripe'}
+                    : 'Open jury checkout with Stripe'}
                 </button>
               </Form>
+            ) : (
+              <button disabled type="button">
+                {preview
+                  ? 'Checkout disabled in preview'
+                  : 'Jury checkout closed'}
+              </button>
             )}
             <p>
               {preview
                 ? 'This deployment cannot create a payment or production order. Terms acceptance will be required when checkout opens.'
-                : 'Switzerland shipping is fixed at CHF 9.10 per order. Review the same final CHF total in Stripe before paying.'}
+                : checkoutAvailable
+                  ? 'Fan-made, unofficial merchandise. Access is limited to OpenAI Build Week judges; shipping is CHF 9.10 per order. Review the final CHF total in Stripe before paying.'
+                  : 'Real checkout is unavailable because the jury-only sales window is closed or not configured.'}
             </p>
             {pilotShippingApplies ? (
               <p>
                 RITSL bears normal import, customs, and carrier-clearance charges
-                for the approved Swiss delivery route.
+                for the approved Switzerland and United States delivery routes.
               </p>
             ) : null}
             {preview ? (
@@ -189,7 +209,9 @@ export default function Cart() {
           <p>
             {preview
               ? 'Prototype preview — checkout is disabled in this public build.'
-              : 'Checkout availability is determined by server-side product and commerce gates.'}
+              : jurySales.enabled
+                ? 'Real purchases require the private OpenAI Build Week jury access code.'
+                : 'Jury checkout is currently closed.'}
           </p>
           <Link to="/">Browse drops</Link>
         </section>

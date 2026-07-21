@@ -1,0 +1,8 @@
+{
+  "targetIntegratedLufs": -16,
+  "targetTruePeakDbtp": -1.5,
+  "measuredIntegratedLufs": -15.97,
+  "measuredTruePeakDbtp": -1.5,
+  "measuredLoudnessRangeLu": 4.7,
+  "normalizationOffsetLu": 0.03
+}

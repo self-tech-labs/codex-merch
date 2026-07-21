@@ -42,11 +42,22 @@ Fill this table from Git after each cohesive commit. Do not backdate, amend away
 | 2026-07-21 | `42fd968` | Added the owner-triggered GPT-5.6 Preview workflow, technical public explainer, hard Preview/commerce boundary, and adversarial coverage | 130 tests discovered; typecheck, lint, build, 10/10 local E2E, and 10/10 protected-Preview E2E pass |
 | 2026-07-21 | `b4ac160` | Refactored creative authority so GPT-5.6 remains strongest-first while deterministic gates enforce renderer, rights, and production constraints | Unit, type, lint, and build verification passed in branch CI |
 | 2026-07-21 | `4050aec` | Added six distinct owner-trend Preview garments and the current judged branch head | 11 products validate; 133/133 tests, typecheck, lint, build, production audit, and 12/12 local E2E pass in CI run `29825394859` |
+| 2026-07-21 | `0cdfd08` | Added signed pilot-product locks, merchant policies, Stripe/Printful/database/Inngest readiness gates, and operator documentation | Fail-closed production checks, unit tests, typecheck, lint, build, and E2E passed |
+| 2026-07-21 | `288339d` | Corrected the production database migration procedure | Documentation and command review passed |
+| 2026-07-21 | `eac2331` | Removed a secret-scanner false positive from the migration guide without weakening the scanner | Repository secret scan passed |
+| 2026-07-21 | `4fd4cb8` | Hardened production commerce launch gates, signed artifacts, order limits, and readiness evidence | Unit tests, typecheck, lint, build, and E2E passed |
+| 2026-07-21 | `3b9cf6f` | Recorded exact live Printful product and sync-variant verification | Credentialed read-only check passed without provider mutation |
+| 2026-07-21 | `99f24a5` | Added the reproducible public Build Week demo-video package | 2:51 H.264/AAC master, captions, audio QA, contact sheet, and privacy review passed |
+| 2026-07-21 | `a65bbdc` | Fixed persistence of the test-checkout state | Commerce regression coverage passed |
+| 2026-07-21 | `9391d35` | Applied the independent RITSL merchant identity to Stripe Checkout | Checkout-session unit coverage passed |
+| 2026-07-21 | `8a1a33d` | Documented the Printful bigint database migration | Migration contract review passed |
+| 2026-07-21 | `7ae1ecf` | Fixed cart clearing after checkout hydration | Cart and checkout regression coverage passed |
+| 2026-07-21 | `86daa00` | Added a non-mutating Printful cost probe to commerce readiness | Read-only Swiss pilot estimates passed; no order was created |
 
 ## Evidence to preserve
 
 - Primary Codex task/session ID: `019f7fb1-9352-7b30-ac89-076c94b2eeeb`
-- `/feedback` session ID: **TODO**
+- `/feedback` session ID: **Owner action — run `/feedback` in the primary Codex task and paste the returned ID into Devpost.**
 - Verified owner-triggered feature commit: `42fd968d66985bd41793b20ea7ead1ac29f4c8ec`; copy the final evidence-commit HEAD into Devpost
 - Sanitized example run directory: `docs/build-week/evidence/weekly-run-2026-W37-fixture-live-gpt56-prepared.json` and `docs/build-week/evidence/weekly-run-2026-W30-live-no-trend.json`
 - Duplicate-free replay result: W30 terminal replay returned `idempotentReplay: true`

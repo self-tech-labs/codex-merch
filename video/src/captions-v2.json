@@ -1,0 +1,197 @@
+[
+  {
+    "startMs": 600,
+    "endMs": 7031,
+    "text": "Codex Merch is an open-source, hackable trend-signal-to-real-merch pipeline, built with Codex"
+  },
+  {
+    "startMs": 7031,
+    "endMs": 8200,
+    "text": "and GPT-5.6."
+  },
+  {
+    "startMs": 9400,
+    "endMs": 13968,
+    "text": "The idea is simple: fashion has many signal tools and many"
+  },
+  {
+    "startMs": 13968,
+    "endMs": 18121,
+    "text": "production tools, but the loop between them is still opaque."
+  },
+  {
+    "startMs": 18121,
+    "endMs": 22689,
+    "text": "This project turns that loop into a visible, replaceable system—from trusted"
+  },
+  {
+    "startMs": 22689,
+    "endMs": 24350,
+    "text": "premise to testable garment."
+  },
+  {
+    "startMs": 26500,
+    "endMs": 31496,
+    "text": "Start with the output. Solward Index is not a moodboard or"
+  },
+  {
+    "startMs": 31496,
+    "endMs": 36492,
+    "text": "a single generated image. It is a catalog entry, four customer-facing"
+  },
+  {
+    "startMs": 36492,
+    "endMs": 41488,
+    "text": "views, six provider-sized print panels, hashes, and a public rights record."
+  },
+  {
+    "startMs": 41488,
+    "endMs": 46483,
+    "text": "The Preview is deliberately non-sellable: sizes and checkout stay disabled, while"
+  },
+  {
+    "startMs": 46483,
+    "endMs": 48300,
+    "text": "the artifact remains inspectable."
+  },
+  {
+    "startMs": 53500,
+    "endMs": 57843,
+    "text": "The new walkthrough reduces the system to five moves."
+  },
+  {
+    "startMs": 57843,
+    "endMs": 62186,
+    "text": "Signal: an owner brief, or exactly thirty authorized posts."
+  },
+  {
+    "startMs": 62186,
+    "endMs": 65564,
+    "text": "Direct: GPT-5.6 proposes three panel-aware visual worlds."
+  },
+  {
+    "startMs": 65564,
+    "endMs": 70873,
+    "text": "Build: deterministic code composes front, back, both sleeves, panel label, and"
+  },
+  {
+    "startMs": 70873,
+    "endMs": 76181,
+    "text": "inside label. Prove: AI critiques the rendered garment while code enforces"
+  },
+  {
+    "startMs": 76181,
+    "endMs": 79559,
+    "text": "provenance, rights, dimensions, PNG integrity, and prepress."
+  },
+  {
+    "startMs": 79559,
+    "endMs": 84867,
+    "text": "Release: stop safely at Preview, or require explicit human authority to"
+  },
+  {
+    "startMs": 84867,
+    "endMs": 85350,
+    "text": "ship."
+  },
+  {
+    "startMs": 90500,
+    "endMs": 93369,
+    "text": "This is what makes the project hackable."
+  },
+  {
+    "startMs": 93369,
+    "endMs": 97876,
+    "text": "Swap X for a community feed or an internal trend desk."
+  },
+  {
+    "startMs": 97876,
+    "endMs": 101565,
+    "text": "Change the prompt and schema without hiding the contract."
+  },
+  {
+    "startMs": 101565,
+    "endMs": 104024,
+    "text": "Add another garment or composition grammar."
+  },
+  {
+    "startMs": 104024,
+    "endMs": 107712,
+    "text": "Route validated outputs into another provider or commerce stack."
+  },
+  {
+    "startMs": 107712,
+    "endMs": 111400,
+    "text": "The seams live in the repository, alongside the tests."
+  },
+  {
+    "startMs": 114500,
+    "endMs": 118139,
+    "text": "The commercial thesis is larger than this storefront."
+  },
+  {
+    "startMs": 118139,
+    "endMs": 122688,
+    "text": "Zara and Shein illustrate the value of shorter signal-to-sample loops."
+  },
+  {
+    "startMs": 122688,
+    "endMs": 127692,
+    "text": "Richemont and LVMH illustrate a different R-and-D need: test sources, models,"
+  },
+  {
+    "startMs": 127692,
+    "endMs": 131331,
+    "text": "product formats, and approval policies as replaceable components."
+  },
+  {
+    "startMs": 131331,
+    "endMs": 136335,
+    "text": "These are market examples only; no affiliation, endorsement, customer relationship, or"
+  },
+  {
+    "startMs": 136335,
+    "endMs": 138155,
+    "text": "proprietary data is claimed."
+  },
+  {
+    "startMs": 138500,
+    "endMs": 143413,
+    "text": "The repository is the evidence: eleven products, 147 passing tests, twelve"
+  },
+  {
+    "startMs": 143413,
+    "endMs": 148325,
+    "text": "browser checks, visible prompts, strict schemas, reproducible assets, and fail-closed adapters."
+  },
+  {
+    "startMs": 148325,
+    "endMs": 151451,
+    "text": "GPT provides taste. Code proves the contract."
+  },
+  {
+    "startMs": 151451,
+    "endMs": 154131,
+    "text": "A human holds the release keys."
+  },
+  {
+    "startMs": 154131,
+    "endMs": 158150,
+    "text": "No payment, provider sync, publication, or fulfillment is shown."
+  },
+  {
+    "startMs": 158500,
+    "endMs": 163713,
+    "text": "Signal in. Merch out. A small open-source proof for a large"
+  },
+  {
+    "startMs": 163713,
+    "endMs": 168926,
+    "text": "fashion problem. Fork the pipeline, inspect the garments, and judge the"
+  },
+  {
+    "startMs": 168926,
+    "endMs": 169400,
+    "text": "system."
+  }
+]

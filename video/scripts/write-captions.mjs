@@ -2,9 +2,24 @@ import {mkdir, readFile, writeFile} from "node:fs/promises";
 import path from "node:path";
 
 const workspace = process.cwd();
-const manifest = JSON.parse(await readFile(path.join(workspace, "video/narration.json"), "utf8"));
+const argumentValue = (name, fallback) =>
+  process.argv.find((argument) => argument.startsWith(`${name}=`))?.slice(name.length + 1) ?? fallback;
+const manifest = JSON.parse(
+  await readFile(path.join(workspace, argumentValue("--manifest", "video/narration.json")), "utf8"),
+);
 const metadata = JSON.parse(
-  await readFile(path.join(workspace, "video/public/audio/narration-metadata.json"), "utf8"),
+  await readFile(
+    path.join(workspace, argumentValue("--metadata", "video/public/audio/narration-metadata.json")),
+    "utf8",
+  ),
+);
+const captionsOutput = path.join(
+  workspace,
+  argumentValue("--captions", "video/src/captions.json"),
+);
+const srtOutput = path.join(
+  workspace,
+  argumentValue("--srt", "video/out/codex-merch-build-week.en.srt"),
 );
 
 const chunkWords = (text, maximumWords = 11) => {
@@ -62,6 +77,8 @@ const srt = cues
   .join("\n");
 
 await mkdir(path.join(workspace, "video/out"), {recursive: true});
-await writeFile(path.join(workspace, "video/src/captions.json"), `${JSON.stringify(cues, null, 2)}\n`);
-await writeFile(path.join(workspace, "video/out/codex-merch-build-week.en.srt"), srt);
+await mkdir(path.dirname(captionsOutput), {recursive: true});
+await mkdir(path.dirname(srtOutput), {recursive: true});
+await writeFile(captionsOutput, `${JSON.stringify(cues, null, 2)}\n`);
+await writeFile(srtOutput, srt);
 process.stdout.write(`Wrote ${cues.length} caption cues.\n`);

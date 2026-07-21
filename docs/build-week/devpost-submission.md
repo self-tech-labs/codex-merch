@@ -7,16 +7,17 @@ Devpost before the deadline: **2026-07-22 02:00 CEST** (2026-07-21 17:00 PDT).
 ## Project overview
 
 - **Project name:** Codex Merch
-- **Tagline (117/140 characters):** Tell Codex a team trend. Get an original, production-ready garment—with GPT-5.6 taste and deterministic safety gates.
+- **Tagline:** An open-source, hackable pipeline from trend signal to production-ready merch—with GPT-5.6 taste and deterministic gates.
 - **Category:** Work & Productivity
 - **Submitter type:** Individual
 - **Entrant:** Elliot Vaucher
 - **Country:** Switzerland
 - **Thumbnail:** [`media/devpost-thumbnail.png`](media/devpost-thumbnail.png) (3:2 PNG, below Devpost's 5 MB limit)
 - **Try it out:** [https://codex-merch-git-codex-build-week-weekly-studio-ritsl.vercel.app](https://codex-merch-git-codex-build-week-weekly-studio-ritsl.vercel.app)
+- **Optional jury purchase pilot:** [https://codex-merch.vercel.app](https://codex-merch.vercel.app) — a separate, time-limited real checkout for OpenAI Build Week judges only. The access code belongs only in Devpost's private testing instructions. No purchase is required to judge or use the project.
 - **Code repository:** [https://github.com/self-tech-labs/codex-merch](https://github.com/self-tech-labs/codex-merch) (private; push the final submission commit and grant judge access as described below). The deployed judged Preview is independently bound to `4050aec0c0bf925f6f2dded7ea7a9fc28f8ddca2`.
-- **Demo video:** [`../../video/out/codex-merch-build-week-1080p.mp4`](../../video/out/codex-merch-build-week-1080p.mp4) is the verified 2:50 upload master. **Owner action — upload it publicly to YouTube and paste the URL.**
-- **YouTube package:** [`../../video/out/youtube-description.md`](../../video/out/youtube-description.md), [`../../video/out/codex-merch-build-week-thumbnail.png`](../../video/out/codex-merch-build-week-thumbnail.png), and [`../../video/out/codex-merch-build-week.en.srt`](../../video/out/codex-merch-build-week.en.srt)
+- **Demo video:** [`../../video/out/codex-merch-signal-to-product-1080p.mp4`](../../video/out/codex-merch-signal-to-product-1080p.mp4) is the verified 2:51 “Signal In. Merch Out.” upload master. **Owner action — upload it publicly to YouTube and paste the URL.**
+- **YouTube package:** [`../../video/out/youtube-description-v2.md`](../../video/out/youtube-description-v2.md), [`../../video/out/codex-merch-signal-to-product-thumbnail.png`](../../video/out/codex-merch-signal-to-product-thumbnail.png), and [`../../video/out/codex-merch-signal-to-product.en.srt`](../../video/out/codex-merch-signal-to-product.en.srt)
 - **Primary Codex task/session:** `019f7fb1-9352-7b30-ac89-076c94b2eeeb`
 - **Codex `/feedback` session ID:** **Owner action — run `/feedback` in the primary build task and paste the returned ID.**
 - **Judge support:** `elliot@ritsl.com`
@@ -25,17 +26,22 @@ Devpost before the deadline: **2026-07-22 02:00 CEST** (2026-07-21 17:00 PDT).
 
 ### Inspiration
 
-Developer-relations, internal-culture, and creative-operations teams often turn
-a fast-moving team conversation into a brief, artwork, production files,
-provider configuration, and a storefront launch by hand. That chain is slow,
-fragmented, and easy to make legally or operationally unsafe. We wanted to see
-whether Codex could operate the whole creative system—not just generate an
-image—while keeping human release authority and deterministic safety gates.
+Fashion teams invest heavily in shortening the path from a cultural signal to a
+physical product, but that chain still crosses social listening, creative
+briefs, artwork, production files, provider configuration, and storefront
+launches. It is fragmented, slow, and easy to make legally or operationally
+unsafe. We wanted to see whether Codex could operate that complete system—not
+just generate an image—while keeping every seam inspectable and human release
+authority intact.
 
 ### What it does
 
-Codex Merch turns one approved team trend into an original, production-ready
-garment and an inspectable storefront Preview.
+Codex Merch is an open-source, hackable trend-signal-to-real-merch pipeline. It
+turns one approved premise into an original, production-ready garment and an
+inspectable storefront Preview. The prompts, strict schemas, renderer, state
+machine, tests, and adapters live in the repository, so teams can replace the
+signal source, model contract, physical format, or commerce destination instead
+of adopting one opaque generator.
 
 The direct Build Week path starts with an ordinary Codex request such as
 “Create a preview merch for the trend ‘The Sol Shines’.” The repository-owned
@@ -51,6 +57,14 @@ The same downstream pipeline also supports a weekly mode that reads exactly 30
 posts from one authorized X list. GPT-5.6 either identifies a recurring,
 rights-safe trend with evidence across multiple authors or returns `no_trend`.
 A weak week is a successful skip, not a reason to force merchandise.
+
+The prototype uses team culture as a legible proof, but the commercial thesis is
+broader: high-velocity retailers such as Zara and Shein are relevant to shorter
+signal-to-sample loops; luxury portfolios such as Richemont and LVMH are
+relevant to controlled model and product R&D; and any brand could adapt the
+pipeline to localized, community-specific, or hyper-personalized capsules.
+These are market examples only—no affiliation, endorsement, customer
+relationship, or use of proprietary data is claimed.
 
 ### How we built it
 
@@ -70,9 +84,12 @@ catalog and technical explainer. Vercel hosts the Preview, and Playwright tests
 desktop and mobile behavior.
 
 The production adapters for Printful, Stripe, Neon, and Inngest are implemented
-behind fail-closed gates, but they are deliberately disabled in the judged
-Preview. The demo does not claim a payment, provider product, or fulfillment
-order.
+behind fail-closed gates. The judged Preview remains free and cannot initiate a
+payment. Separately, the canonical site may expose one time-limited,
+code-protected pilot product to Build Week judges after live readiness passes.
+That optional pilot is fan-made, not official OpenAI merchandise, and expires
+when judging ends. No payment or fulfillment order is claimed until it has
+actually been observed.
 
 ### Challenges we ran into
 
@@ -97,15 +114,18 @@ products or publishing stale assets.
 ### Accomplishments that we're proud of
 
 - One sentence in Codex becomes a complete six-panel garment system, not a flat image.
+- The complete signal, judgment, render, proof, and release path is open to inspect and replace at repository level.
 - GPT-5.6 sees and critiques the real renders while deterministic software keeps final production authority.
 - The workflow can safely return `no_trend`, quarantine a defective render, or replay a completed run without duplication.
-- The public Preview is a coherent product experience with a clear technical explainer and checkout disabled on both the client and server.
+- The public Preview is a coherent, accountless product experience; an independent jury-only pilot can prove the same stack with a real Stripe Checkout without making purchase part of judging.
 - Sanitized evidence preserves model identifiers, response IDs, prompt/schema hashes, decisions, critic results, prepress checks, and artifact hashes without exposing raw social content or credentials.
 
 ### What we learned
 
-Agentic creative systems are more reliable when model judgment and software
-guarantees are explicit contracts rather than a single opaque prompt. We also
+Agentic creative systems are more useful when model judgment and software
+guarantees are explicit contracts rather than a single opaque prompt. That
+separation makes the system both safer and more hackable: a new signal source,
+decision policy, garment, or provider does not require a new black box. We also
 learned that provenance is part of product quality: “owner supplied,” “synthetic
 fixture,” and “verified live signal” need different permissions and claims even
 when they eventually feed the same art-direction pipeline.
@@ -117,12 +137,12 @@ creative acceptance, rights clearance, and release authority.
 
 ### What's next
 
-After the Build Week judging period, the next milestone is a controlled staging
-pilot: finalize asset and trademark clearance, run one provider sync with
-`PRINTFUL_AUTO_CONFIRM=false`, complete a Stripe test payment, verify one Neon
-order and one idempotent Inngest fulfillment run, replay every event to prove no
-duplicates, and only then consider enabling production commerce. The judged
-Preview will remain free and non-purchasable.
+After the Build Week judging period, the jury access window closes
+automatically. The next milestone is one external design-partner fork: replace
+the X adapter with a second authorized signal source, add one new physical
+product contract, and apply the same model, renderer, provenance, idempotency,
+and human-release contracts. The public judged Preview remains free and
+accountless regardless of the optional pilot.
 
 ## Built with
 
@@ -167,16 +187,24 @@ evidence pack.
 4. Review the sanitized run files under `docs/build-week/evidence/`.
 5. From a clean checkout with Node.js 22 or 24, run `npm ci`,
    `npm run submission:verify`, and `npm run test:e2e`.
+6. Optional: open the canonical jury pilot and enter the private code supplied
+   in Devpost. A real checkout is limited to judges, CH/US delivery, the signed
+   pilot garment, and the judging window. Do not purchase unless you want the
+   physical fan-made garment; purchase is never required.
 
-No account, payment, API key, or rebuild is needed for the web Preview. The
-credential-free synthetic replay is documented in the root README.
+No account, payment, API key, purchase, or rebuild is needed for the web
+Preview. The credential-free synthetic replay is documented in the root
+README. The optional pilot uses a private access code and is clearly marked as
+fan-made content that is not official, sponsored, endorsed, or affiliated with
+OpenAI.
 
 ### Repository access
 
 The repository is private. Before submitting, grant read access to both
 `testing@devpost.com` and `build-week-event@openai.com`, then verify both
-invitations are pending or accepted. Do not put credentials in Devpost; only
-include the repository URL and the public Preview URL.
+invitations are pending or accepted. Put the jury access code only in Devpost's
+private testing instructions; never put provider credentials in Devpost, Git,
+the video, or public screenshots.
 
 ## Media upload order
 
@@ -188,7 +216,7 @@ include the repository URL and the public Preview URL.
 
 Recommended captions:
 
-- “One owner-supplied team trend becomes an original six-panel garment; the judged Preview cannot create a payment or provider order.”
+- “One owner-supplied team trend becomes an original six-panel garment; the judged Preview is free, while a separate optional jury-only pilot is code-protected and time-limited.”
 - “The public explainer separates GPT-5.6 judgment from deterministic rights, rendering, prepress, idempotency, and release gates.”
 - “Exact provider-sized panels and typography are composed deterministically, then reviewed from the actual rendered output.”
 
@@ -196,8 +224,11 @@ Recommended captions:
 
 - Create or open the Devpost draft and paste this page into the matching fields.
 - Upload the thumbnail and gallery images in the order above.
-- Upload the verified 2:50 master with its supplied thumbnail, captions, description, chapters, and AI disclosure; then paste the public YouTube URL.
+- Upload the verified 2:51 master with its supplied thumbnail, captions, description, chapters, AI disclosure, and market-example disclaimer; then paste the public YouTube URL.
 - Run `/feedback` in the primary Codex task and paste the returned session ID.
 - Confirm eligibility, employer/conflict status, ownership, and brand/asset clearance.
 - Grant both judge email addresses read access to the private repository.
+- If live readiness passes, paste the canonical jury-pilot URL and access code
+  into Devpost's private testing instructions. State that it is optional,
+  CH/US-only, fan-made and unofficial, and that no purchase is required.
 - Freeze and record the final judged commit, verify all links in a signed-out browser, accept the terms, and submit before the deadline.

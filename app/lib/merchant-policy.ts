@@ -7,7 +7,7 @@ export const merchantPilot = {
   currency: 'CHF',
   unitAmount: 5800,
   shippingAmount: 910,
-  shippingCountries: ['CH'],
+  shippingCountries: ['CH', 'US'],
   deliveryEstimateBusinessDays: {minimum: 7, maximum: 15},
   maximumItemsPerOrder: 10,
   stripeTaxBehavior: 'inclusive',
@@ -110,7 +110,7 @@ export const merchantPolicyPages = {
   shipping: {
     title: 'Shipping policy',
     summary:
-      'We currently accept orders only for delivery in Switzerland. Storefront prices and checkout charges are in Swiss francs (CHF).',
+      'This OpenAI Build Week jury pilot accepts delivery addresses in Switzerland and the United States. Storefront prices and checkout charges are in Swiss francs (CHF).',
     sections: [
       {
         heading: 'Made-to-order production',
@@ -122,9 +122,9 @@ export const merchantPolicyPages = {
       {
         heading: 'Delivery estimate and charges',
         paragraphs: [
-          'Typical transit within Switzerland is 5–9 business days after production. Allow an estimated 7–15 business days from order confirmation to delivery. These timings are estimates, not guarantees, and can be affected by production demand, public holidays, carrier disruption, or the destination.',
+          'Allow an estimated 7–15 business days from order confirmation to delivery in Switzerland or the United States. These timings are estimates, not guarantees, and can be affected by production demand, public holidays, carrier disruption, customs, or the destination.',
           'The shipping charge and any other non-optional charge are shown in checkout before payment. Tracking is provided when the fulfillment partner and carrier make it available.',
-          'RITSL is responsible for normal import, customs, and carrier-clearance charges required to deliver the parcel under the approved Switzerland route. If a carrier asks you to pay an unexpected import or clearance charge, contact us before paying so we can investigate and arrange payment or reimbursement where appropriate.',
+          'RITSL is responsible for normal import, customs, and carrier-clearance charges required to deliver the parcel under the approved Switzerland or United States route. If a carrier asks you to pay an unexpected import or clearance charge, contact us before paying so we can investigate and arrange payment or reimbursement where appropriate.',
         ],
       },
       {
@@ -137,7 +137,7 @@ export const merchantPolicyPages = {
       {
         heading: 'Where we deliver',
         paragraphs: [
-          'This pilot storefront serves delivery addresses in Switzerland only. An order with an unsupported destination may be cancelled and refunded rather than fulfilled.',
+          'This time-limited pilot storefront serves OpenAI Build Week judges using delivery addresses in Switzerland or the United States only. An order with an unsupported destination may be cancelled and refunded rather than fulfilled.',
         ],
       },
     ],
@@ -236,13 +236,13 @@ export const merchantPolicyPages = {
   terms: {
     title: 'Terms of sale',
     summary:
-      'These terms govern consumer orders placed with RITSL Elliot Vaucher through this independently operated, Switzerland-only storefront.',
+      'These terms govern orders placed by OpenAI Build Week judges with RITSL Elliot Vaucher through this independently operated CH/US jury pilot.',
     sections: [
       {
         heading: 'Merchant and scope',
         paragraphs: [
           'The seller is RITSL Elliot Vaucher, a Swiss sole proprietorship operated by Elliot Richard Vaucher. The registered identity and contact details appear below.',
-          'The shop currently accepts orders only for delivery in Switzerland and contracts only in Swiss francs (CHF). You must be able to enter into the purchase contract and provide accurate checkout information.',
+          'The shop currently accepts orders only from OpenAI Build Week judges for delivery in Switzerland or the United States and contracts only in Swiss francs (CHF). You must be able to enter into the purchase contract, hold the private jury access code, and provide accurate checkout information.',
         ],
       },
       {
@@ -275,7 +275,7 @@ export const merchantPolicyPages = {
       {
         heading: 'Intellectual property and independence',
         paragraphs: [
-          'This shop is independently operated by RITSL Elliot Vaucher. It is not affiliated with, sponsored by, or endorsed by OpenAI or any other third-party mark owner.',
+          'This fan-made shop is independently operated by RITSL Elliot Vaucher. Its merchandise is not official OpenAI merchandise, and the shop is not affiliated with, sponsored by, or endorsed by OpenAI or any other third-party mark owner.',
           'OpenAI, Codex, and other names, logos, product identifiers, and marks belong to their respective owners. Their appearance does not transfer any ownership or license to a purchaser. Storefront text, original artwork, photographs, and site materials remain protected by their respective owners and may not be commercially reproduced without permission.',
         ],
       },
@@ -308,7 +308,7 @@ export const merchantPolicyPages = {
       {
         heading: 'Independent operation',
         paragraphs: [
-          'This shop is independently operated by RITSL Elliot Vaucher and is not affiliated with, sponsored by, or endorsed by OpenAI. OpenAI, Codex, and other third-party marks remain the property of their respective owners.',
+          'This is a fan-made shop independently operated by RITSL Elliot Vaucher. Its merchandise is not official OpenAI merchandise, and the shop is not affiliated with, sponsored by, or endorsed by OpenAI. OpenAI, Codex, and other third-party marks remain the property of their respective owners.',
         ],
       },
     ],

@@ -3,7 +3,7 @@ import type {Route} from './+types/checkout.cancel';
 
 export const meta: Route.MetaFunction = () => {
   return [
-    {title: 'Codex Meme Merch | Checkout canceled'},
+    {title: 'Codex Merch | Checkout canceled'},
     {name: 'robots', content: 'noindex,nofollow'},
   ];
 };

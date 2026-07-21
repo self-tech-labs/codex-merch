@@ -7,7 +7,7 @@ import {getOrderBySession, getOrderItems} from '~/lib/orders.server';
 import {retrieveCheckoutSession} from '~/lib/stripe.server';
 
 export const meta: Route.MetaFunction = () => [
-  {title: 'Codex Meme Merch | Checkout status'},
+  {title: 'Codex Merch | Checkout status'},
   {name: 'robots', content: 'noindex,nofollow'},
 ];
 

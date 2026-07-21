@@ -5,11 +5,14 @@ export function Footer() {
   return (
     <footer className="site-footer">
       <div className="site-footer-identity">
-        <Link to="/">Codex Meme Merch</Link>
+        <Link to="/">Codex Merch · Signal → Product</Link>
         <span>
           Operated by {merchantIdentity.legalName} · UID {merchantIdentity.uid}
         </span>
-        <span>Independent shop · Not affiliated with or endorsed by OpenAI</span>
+        <span>
+          Fan-made project · Not official OpenAI merchandise · Not affiliated
+          with, sponsored by, or endorsed by OpenAI
+        </span>
       </div>
       <div className="site-footer-links">
         <nav aria-label="Project and store information">

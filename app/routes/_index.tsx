@@ -14,15 +14,15 @@ import {
   isPurchasableProduct,
   type MerchProduct,
 } from '~/lib/merch';
-import {useStorefrontMode} from '~/lib/storefront-mode';
+import {useJurySales, useStorefrontMode} from '~/lib/storefront-mode';
 
 export const meta: Route.MetaFunction = () => {
   return [
-    {title: 'Codex Meme Merch'},
+    {title: 'Codex Merch | Signal to product'},
     {
       name: 'description',
       content:
-        'A Codex-first meme merch storefront prototype backed by repo manifests.',
+        'An open-source, hackable pipeline that turns trend signals into production-ready garments.',
     },
   ];
 };
@@ -67,13 +67,14 @@ function StoreRail({
   selectedCategory: string | null;
 }) {
   const storefrontMode = useStorefrontMode();
+  const jurySales = useJurySales();
   const preview = storefrontMode === 'preview';
 
   return (
     <aside className="store-rail" aria-label="Filters">
-      <Link className="store-mark" to="/" aria-label="Codex Meme Merch home">
+      <Link className="store-mark" to="/" aria-label="Codex Merch home">
         <span>Codex</span>
-        <span>Meme Merch</span>
+        <span>Signal → Merch</span>
       </Link>
       <Link className="rail-action" to="/how-it-works">
         How it works
@@ -93,13 +94,27 @@ function StoreRail({
         ))}
       </nav>
       <div className="rail-status">
-        <span>{preview ? 'Prototype preview' : 'Production storefront'}</span>
-        <span>{preview ? 'Checkout disabled' : 'Commerce server-gated'}</span>
+        <span>
+          {preview
+            ? 'Prototype preview'
+            : jurySales.enabled
+              ? 'OpenAI jury pilot'
+              : 'Production storefront'}
+        </span>
+        <span>
+          {preview
+            ? 'Checkout disabled'
+            : jurySales.enabled
+              ? 'Jury code required'
+              : 'Checkout closed'}
+        </span>
       </div>
       <p className="rail-note">
         {preview
-          ? 'Browse production-intent mockups. This build cannot create a payment or production order.'
-          : 'Product and checkout eligibility are verified individually by server-side commerce gates.'}
+          ? 'Open signal-to-product proof. Browse real garment outputs; payment and production orders are disabled.'
+          : jurySales.enabled
+            ? 'Fan-made, unofficial merch. Real purchases are temporarily reserved for OpenAI Build Week judges.'
+            : 'Product and checkout eligibility are verified individually by server-side commerce gates.'}
       </p>
     </aside>
   );
@@ -110,7 +125,7 @@ function ProductTile({product}: {product: MerchProduct}) {
   const signedPilot = product.slug === merchantPilot.productSlug;
   const pilotShipping = merchantPilotDisplayAmounts(0).shipping;
   const shippingDisclosure = signedPilot
-    ? ` + ${money(pilotShipping, merchantPilot.currency)} CH shipping`
+    ? ` + ${money(pilotShipping, merchantPilot.currency)} shipping`
     : '';
 
   return (
@@ -129,7 +144,7 @@ function ProductTile({product}: {product: MerchProduct}) {
           <span>{formatPrice(product)}</span>
           {signedPilot ? (
             <span>
-              + {money(pilotShipping, merchantPilot.currency)} CH shipping
+              + {money(pilotShipping, merchantPilot.currency)} shipping
             </span>
           ) : null}
         </span>

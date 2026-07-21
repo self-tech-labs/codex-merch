@@ -15,20 +15,28 @@ import resetStyles from '~/styles/reset.css?url';
 import appStyles from '~/styles/app.css?url';
 import {PageLayout} from './components/PageLayout';
 import {getEnv} from '~/lib/env.server';
+import {
+  isJurySalesWindowOpen,
+  jurySalesEndAt,
+} from '~/lib/jury-access.server';
 import {resolveStorefrontMode} from '~/lib/storefront-mode';
 
 export const meta: Route.MetaFunction = () => [
-  {title: 'Codex Meme Merch'},
+  {title: 'Codex Merch'},
   {
     name: 'description',
-    content: 'Codex-native merch drops fulfilled through production providers.',
+    content:
+      'An open-source, hackable pipeline from trend signal to production-ready merch.',
   },
 ];
 
 export function loader({context, request}: Route.LoaderArgs) {
+  const env = getEnv(context);
   return {
     requestId: request.headers.get('x-request-id'),
-    storefrontMode: resolveStorefrontMode(getEnv(context).STOREFRONT_MODE),
+    storefrontMode: resolveStorefrontMode(env.STOREFRONT_MODE),
+    jurySalesEnabled: isJurySalesWindowOpen(env),
+    jurySalesEndAt: jurySalesEndAt(env)?.value || null,
   };
 }
 
@@ -57,10 +65,15 @@ export function Layout({children}: {children?: React.ReactNode}) {
 }
 
 export default function App() {
-  const {storefrontMode} = useLoaderData<typeof loader>();
+  const {jurySalesEnabled, jurySalesEndAt, storefrontMode} =
+    useLoaderData<typeof loader>();
 
   return (
-    <PageLayout storefrontMode={storefrontMode}>
+    <PageLayout
+      jurySalesEnabled={jurySalesEnabled}
+      jurySalesEndAt={jurySalesEndAt}
+      storefrontMode={storefrontMode}
+    >
       <Outlet />
     </PageLayout>
   );

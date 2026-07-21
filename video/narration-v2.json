@@ -1,0 +1,47 @@
+{
+  "model": "gpt-audio-1.5",
+  "voice": "alloy",
+  "compositionDurationSeconds": 171,
+  "segments": [
+    {
+      "id": "intro",
+      "startSeconds": 0.6,
+      "text": "Codex Merch is an open-source, hackable trend-signal-to-real-merch pipeline, built with Codex and GPT-5.6."
+    },
+    {
+      "id": "positioning",
+      "startSeconds": 9.4,
+      "text": "The idea is simple: fashion has many signal tools and many production tools, but the loop between them is still opaque. This project turns that loop into a visible, replaceable system—from trusted premise to testable garment."
+    },
+    {
+      "id": "product",
+      "startSeconds": 26.5,
+      "text": "Start with the output. Solward Index is not a moodboard or a single generated image. It is a catalog entry, four customer-facing views, six provider-sized print panels, hashes, and a public rights record. The Preview is deliberately non-sellable: sizes and checkout stay disabled, while the artifact remains inspectable."
+    },
+    {
+      "id": "pipeline",
+      "startSeconds": 53.5,
+      "text": "The new walkthrough reduces the system to five moves. Signal: an owner brief, or exactly thirty authorized posts. Direct: GPT-5.6 proposes three panel-aware visual worlds. Build: deterministic code composes front, back, both sleeves, panel label, and inside label. Prove: AI critiques the rendered garment while code enforces provenance, rights, dimensions, PNG integrity, and prepress. Release: stop safely at Preview, or require explicit human authority to ship."
+    },
+    {
+      "id": "open",
+      "startSeconds": 90.5,
+      "text": "This is what makes the project hackable. Swap X for a community feed or an internal trend desk. Change the prompt and schema without hiding the contract. Add another garment or composition grammar. Route validated outputs into another provider or commerce stack. The seams live in the repository, alongside the tests."
+    },
+    {
+      "id": "commercial",
+      "startSeconds": 114.5,
+      "text": "The commercial thesis is larger than this storefront. Zara and Shein illustrate the value of shorter signal-to-sample loops. Richemont and LVMH illustrate a different R-and-D need: test sources, models, product formats, and approval policies as replaceable components. These are market examples only; no affiliation, endorsement, customer relationship, or proprietary data is claimed."
+    },
+    {
+      "id": "proof",
+      "startSeconds": 138.5,
+      "text": "The repository is the evidence: eleven products, 147 passing tests, twelve browser checks, visible prompts, strict schemas, reproducible assets, and fail-closed adapters. GPT provides taste. Code proves the contract. A human holds the release keys. No payment, provider sync, publication, or fulfillment is shown."
+    },
+    {
+      "id": "outro",
+      "startSeconds": 158.5,
+      "text": "Signal in. Merch out. A small open-source proof for a large fashion problem. Fork the pipeline, inspect the garments, and judge the system."
+    }
+  ]
+}

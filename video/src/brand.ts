@@ -4,6 +4,7 @@ export const COLORS = {
   muted: "#5f6368",
   rule: "#d5dce2",
   blue: "#0a0f98",
+  signal: "#d8ff3e",
   white: "#ffffff",
   amber: "#df7d25",
 } as const;

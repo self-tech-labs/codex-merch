@@ -23,6 +23,11 @@ import {
   merchantIdentity,
   merchantPilot,
 } from '~/lib/merchant-policy';
+import {
+  assertJuryAccessCode,
+  assertJurySalesConfiguration,
+  JURY_SALES_AUDIENCE,
+} from '~/lib/jury-access.server';
 
 export type CheckoutLineInput = {
   productSlug: string;
@@ -64,6 +69,7 @@ export function stripeClient(env: AppEnv) {
 
 export function assertCheckoutConfiguration(env: AppEnv) {
   assertProductionStorefrontMode(env);
+  assertJurySalesConfiguration(env);
   requireEnv(env, [
     'STRIPE_SECRET_KEY',
     'STRIPE_WEBHOOK_SECRET',
@@ -256,14 +262,17 @@ export function assertMerchantPilotLines(lines: StripeCheckoutLine[]) {
 
 export async function createCheckoutSession({
   env,
+  juryAccessCode,
   lines,
   request,
 }: {
   env: AppEnv;
+  juryAccessCode: string | null | undefined;
   lines: StripeCheckoutLine[];
   request: Request;
 }) {
   assertCheckoutConfiguration(env);
+  assertJuryAccessCode(env, juryAccessCode);
   const baseUrl = siteUrl(env, request);
   const catalogRevision = createHash('sha256')
     .update(JSON.stringify(merchProducts))
@@ -300,6 +309,7 @@ export async function createCheckoutSession({
   try {
     const metadata = {
       source: 'codex-merch',
+      sales_audience: 'openai-build-week-jury',
       order_id: order.id,
       catalog_revision: catalogRevision,
       policy_version: MERCHANT_POLICY_VERSION,
@@ -316,7 +326,7 @@ export async function createCheckoutSession({
         phone_number_collection: {enabled: true},
         custom_text: {
           submit: {
-            message: `By paying, you agree to the RITSL Elliot Vaucher Terms and Privacy Policy (version ${MERCHANT_POLICY_VERSION}).`,
+            message: `Fan-made, unofficial merch reserved for ${JURY_SALES_AUDIENCE}. By paying, you agree to the RITSL Elliot Vaucher Terms and Privacy Policy (version ${MERCHANT_POLICY_VERSION}).`,
           },
         },
         automatic_tax: {enabled: env.STRIPE_AUTOMATIC_TAX === 'true'},
@@ -398,7 +408,7 @@ export function allowedShippingCountries(env: AppEnv) {
       (country, index) => country !== merchantPilot.shippingCountries[index],
     )
   ) {
-    throw new Error('The production pilot supports shipping to CH only');
+    throw new Error('The jury pilot supports shipping to CH and US only');
   }
   return countries as Stripe.Checkout.SessionCreateParams.ShippingAddressCollection.AllowedCountry[];
 }

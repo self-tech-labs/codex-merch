@@ -1,6 +1,10 @@
 import {redirect} from 'react-router';
 import type {Route} from './+types/api.checkout';
 import {getEnv} from '~/lib/env.server';
+import {
+  assertJuryAccessCode,
+  JuryAccessError,
+} from '~/lib/jury-access.server';
 import {MERCHANT_POLICY_VERSION} from '~/lib/merchant-policy';
 import {createCheckoutSession, normalizeCheckoutLines} from '~/lib/stripe.server';
 
@@ -29,6 +33,17 @@ export async function action({context, request}: Route.ActionArgs) {
       status: 400,
     });
   }
+  const juryAccessCode = fields.get('juryAccessCode');
+  try {
+    assertJuryAccessCode(env, juryAccessCode);
+  } catch (error) {
+    if (error instanceof JuryAccessError) {
+      throw new Response('Jury purchase access could not be verified', {
+        status: 403,
+      });
+    }
+    throw error;
+  }
   const rawCart = fields.get('cart');
   if (!rawCart) {
     throw new Response('Missing cart payload', {status: 400});
@@ -44,7 +59,12 @@ export async function action({context, request}: Route.ActionArgs) {
   }
   let session;
   try {
-    ({session} = await createCheckoutSession({env, lines, request}));
+    ({session} = await createCheckoutSession({
+      env,
+      juryAccessCode,
+      lines,
+      request,
+    }));
   } catch (error) {
     console.error(JSON.stringify({
       event: 'checkout_creation_failed',

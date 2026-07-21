@@ -14,6 +14,10 @@ import {
 } from '~/lib/stripe.server';
 import {probeCheckoutDependencies} from '~/lib/readiness.server';
 import {merchantPilot} from '~/lib/merchant-policy';
+import {
+  JURY_SALES_AUDIENCE,
+  jurySalesEndAt,
+} from '~/lib/jury-access.server';
 
 const responseHeaders = {'Cache-Control': 'no-store'};
 
@@ -94,6 +98,9 @@ export function createReadinessLoader({
         deliveryEstimateBusinessDays:
           merchantPilot.deliveryEstimateBusinessDays,
         paymentMode: liveReadiness.paymentMode,
+        salesAudience: JURY_SALES_AUDIENCE,
+        accessCodeRequired: true,
+        salesEndAt: jurySalesEndAt(env)?.value,
         databaseReady: liveReadiness.databaseReady,
         printfulReady: liveReadiness.printfulReady,
         stripeReady: liveReadiness.stripeReady,

@@ -12,10 +12,10 @@ bodies, private run ledgers, or third-party media without redistribution rights.
 | Current judged Preview branch head | [`4050aec0c0bf925f6f2dded7ea7a9fc28f8ddca2`](https://github.com/self-tech-labs/codex-merch/tree/4050aec0c0bf925f6f2dded7ea7a9fc28f8ddca2); the verified owner-triggered reference feature begins at `42fd968` |
 | CI for current Preview branch | [GitHub Actions run `29825394859`](https://github.com/self-tech-labs/codex-merch/actions/runs/29825394859): install, database migration, 11-product catalog, 133/133 tests, typecheck, lint, build, production audit, and 12/12 Playwright checks passed; only the strict owner-input/submission-document gate failed |
 | Primary Codex task/session | `019f7fb1-9352-7b30-ac89-076c94b2eeeb` |
-| `/feedback` result | **TODO: session ID** |
+| `/feedback` result | **Owner action:** run `/feedback` in the primary Codex task and paste the returned session ID into Devpost before submission. |
 | Judge Preview deployment | Stable protected alias [`codex-merch-git-codex-build-week-weekly-studio-ritsl.vercel.app`](https://codex-merch-git-codex-build-week-weekly-studio-ritsl.vercel.app); verified immutable deployment [`codex-merch-8auim2332-ritsl.vercel.app`](https://codex-merch-8auim2332-ritsl.vercel.app), ID `dpl_EeYdVHVtecJjKQBWfGFan2M3Mca2`, bound to Git SHA `42fd968d66985bd41793b20ea7ead1ac29f4c8ec`. The scoped Shareable Link is supplied privately in Devpost. |
-| Public YouTube demo | **TODO: URL** |
-| Devpost submission | **TODO: URL** |
+| Public YouTube demo | **Owner action:** upload the verified master and record the public YouTube URL in Devpost. |
+| Devpost submission | **Owner action:** record the final Devpost URL after the submission is created. |
 
 ## Repository and local verification
 
@@ -26,23 +26,23 @@ command. Prefer a CI URL over pasted terminal output.
 | --- | --- |
 | `npm ci` | Pass: 825 packages installed from the submission lockfile after adding the pinned Remotion toolchain |
 | `npm run merch:validate` | Pass at the Preview branch: 11 catalog products validated, including the owner-supplied Solward Preview candidate |
-| `npm test` | Pass in Preview branch CI: 133 discovered and 133 passed. The final submission worktree discovered 148 tests: 147 passed and one database integration test skipped because `TEST_DATABASE_URL` was not configured. |
+| `npm test` | Pass in Preview branch CI: 133 discovered and 133 passed. The final submission worktree discovered 150 tests: 149 passed and one database integration test skipped because `TEST_DATABASE_URL` was not configured. |
 | `npm run typecheck` | Pass |
 | `npm run lint` | Pass |
 | `npm run build` | Pass: client and both Vercel server bundles generated |
 | `npm run test:e2e` | Pass locally and against the public Vercel Preview: 12/12 on Chromium desktop and mobile, including the Solward product, owner-supplied technical explainer, critical routes, disabled-commerce contract, carousel, success-page, and cart-migration checks. |
-| `npm run submission:verify` | Repository, fixture, model-contract, provenance, and embedded-secret checks pass; final exit remains blocked by unresolved external submission, rights, owner-evidence, and commerce-configuration fields |
+| `npm run submission:verify` | Run against the clean, pushed final commit. Provider configuration is reported separately and never printed; external Devpost, YouTube, `/feedback`, and private-repository invitations remain owner actions. |
 
 ## Demo video evidence
 
 | Evidence | Verified value |
 | --- | --- |
-| Final upload master | [`video/out/codex-merch-build-week-1080p.mp4`](../../../video/out/codex-merch-build-week-1080p.mp4): 170.0 seconds, 1920×1080, 30 fps, H.264/AAC at 48 kHz |
-| Audio QA | −15.85 LUFS integrated, −1.15 dBTP true peak; complete FFmpeg decode passed |
-| Accessibility | 31 English SRT cues plus burned-in synchronized captions |
-| AI disclosure | Persistent AI-generated-voice label, full disclosure slide, narration metadata, and upload-description disclosure |
-| Privacy review | Final and source contact sheets inspected; public Preview only, with no credentials, desktop setup, private task UI, raw X text, or customer data visible |
-| Reproducibility | [`video/README.md`](../../../video/README.md), Remotion source, locked narration segments, capture record, QA scripts, thumbnail, captions, and upload metadata are included |
+| Final upload master | [`video/out/codex-merch-signal-to-product-1080p.mp4`](../../../video/out/codex-merch-signal-to-product-1080p.mp4): 171.0 seconds, 1920×1080, 30 fps, H.264/AAC at 48 kHz |
+| Audio QA | −15.97 LUFS integrated, −1.5 dBTP true peak; complete FFmpeg decode and QuickTime playback passed |
+| Accessibility | 39 English SRT cues plus burned-in synchronized captions |
+| AI and market disclosure | Persistent AI-generated-voice label, upload-description disclosure, and on-screen no-affiliation statement for named fashion-market examples |
+| Privacy review | Final contact sheet and 13 local-app source frames inspected; no browser chrome, credentials, private task UI, raw X text, customer data, or provider UI is visible |
+| Reproducibility | [`video/README.md`](../../../video/README.md), Remotion v2 source, transcript-verified narration, clean capture frames, QA scripts, thumbnail, captions, and upload metadata are included |
 
 ## Direct owner-trend Preview evidence
 
@@ -112,19 +112,25 @@ digest. `fixture`, `verified-live-x`, and incomplete evidence are labeled
 separately, and model calls are independently labeled as fixture or verified
 GPT-5.6 responses.
 
-## Preview deployment and deferred production proof
+## Preview deployment and optional jury-pilot proof
 
-The submitted Build Week surface is a Vercel Preview with commerce disabled.
-The weekly production release and customer purchase stack are implemented but
-are not presented as live Build Week proof.
+The submitted Build Week surface is a free Vercel Preview with commerce
+disabled. The same repository also contains a separate, time-limited jury-only
+pilot at the canonical domain. The pilot can be claimed as live only after its
+readiness endpoint returns HTTP 200 and the exact signed product, live Stripe,
+database, Inngest, and manual Printful-draft path have been verified. Purchase
+is optional and is never required for judging.
 
 | External proof | Verified value |
 | --- | --- |
 | Submitted Preview commit/deployment | Current public branch alias at Preview head `4050aec0c0bf925f6f2dded7ea7a9fc28f8ddca2`; original Solward implementation deployment `dpl_EeYdVHVtecJjKQBWfGFan2M3Mca2`; immutable URL [`codex-merch-8auim2332-ritsl.vercel.app`](https://codex-merch-8auim2332-ritsl.vercel.app) bound to `42fd968d66985bd41793b20ea7ead1ac29f4c8ec`. |
 | Solward catalog/product/assets | Verified through the public branch alias: listing visible; exact product route renders; four mockup images load; print-backed product metadata is present; `noindex,nofollow` remains set. |
 | Checkout behavior | Verified disabled on catalog, product, and cart surfaces; no Stripe redirect is offered in Preview. |
-| Printful product synchronization | Not run for the Build Week Preview; the candidate is hard-blocked |
-| Neon, Stripe webhook, Inngest, and Printful order draft | Not run or claimed for the Build Week Preview |
+| Canonical jury-pilot readiness | The current source requires a private access code, closes automatically at `2026-08-06T00:00:00Z`, limits delivery to CH/US, and exposes no checkout unless every live dependency and approval gate passes. Record the final HTTP 200 check here only after deployment. |
+| Printful product synchronization | Live read-only verification matched product `436601984` and exact sync variants `5338615120`–`5338615122`; no provider mutation or order was made. |
+| U.S. Printful estimate | Live read-only estimate for signed M sync variant `5338615120` to the published OpenAI San Francisco address: CHF 29.80 item/print, CHF 4.49 shipping, CHF 5.00 supplier tax, CHF 39.29 total. No order was created. |
+| Local production-mode browser QA | Desktop and 390×844 mobile layouts showed the persistent unofficial/fan disclaimer, judge-only ribbon, signed pilot product, CH/US delivery, CHF totals, password field, and required policy consent. A wrong code returned generic HTTP 403 before provider configuration or side effects. A separate clean Chromium pass over `/`, product, cart, and terms produced zero console warnings, console errors, or page errors. |
+| Neon, Stripe webhook, Inngest, and Printful order draft | Not claimed until a real optional jury purchase occurs; the pilot always leaves Printful auto-confirmation disabled. |
 | Qualification deployment | Earlier app commit `d44913b0738e8537c1986bb7734b41d7a4858243`; deployment `dpl_5UyLxhxkpPiiX9cxBccii9gAzz12`; immutable URL [`codex-merch-7vpziyl2s-ritsl.vercel.app`](https://codex-merch-7vpziyl2s-ritsl.vercel.app). This is historical qualification evidence, not the submitted Preview. |
 
 ## Recording rules

@@ -22,7 +22,7 @@ export async function loader({context, params}: Route.LoaderArgs) {
 }
 
 export const meta: Route.MetaFunction = ({data}) => [
-  {title: `Codex Meme Merch | ${data?.policy.title || 'Policy'}`},
+  {title: `Codex Merch | ${data?.policy.title || 'Policy'}`},
   ...(!data?.reviewed ? [{name: 'robots', content: 'noindex,nofollow'}] : []),
 ];
 

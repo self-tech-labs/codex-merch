@@ -21,20 +21,20 @@ Submission deadline: **2026-07-22 02:00 CEST** (2026-07-21 17:00 PDT). Complete 
 - [x] Separate judged features from unrelated cleanup and generated-file churn.
 - [ ] Fill `provenance-delta.md` with real commit SHAs, CI evidence, and the submission SHA.
 - [ ] Fill `evidence/README.md` with the exact final SHA, sanitized run, deployment, checkout, and replay proof.
-- [ ] Choose and add a code license, or keep the repository private and grant judge access.
+- [x] Add an MIT code license plus an explicit asset-license boundary; repository visibility/judge invitations remain an owner account action.
 - [ ] If private, invite `testing@devpost.com` and `build-week-event@openai.com` with sufficient read access.
 - [ ] Confirm the submitted repository URL resolves to the exact judged commit.
 
 ## Branding, content, and commerce approval
 
-- [ ] Approve a non-infringing project/store name and remove unlicensed “Codex Supply,” official OpenAI marks, and confusing affiliation claims from the repository, public demo, and sellable assets before submission.
+- [x] Record the owner's Build Week decision to retain the fan-made Codex premise for a time-limited jury pilot and add a prominent global “fan-made / not official OpenAI merchandise / no affiliation” disclosure. This decision is competition-specific and is not represented as an OpenAI trademark licence.
 - [ ] Confirm redistribution terms for Printful templates and third-party reference screenshots; remove or separately fetch anything that cannot be licensed in the submission repository.
 - [ ] Complete `asset-and-rights.md`, including the historical-asset inventory and code/content license or private-repository decision.
 - [ ] Confirm the submission is owned by the entrant/team and that every team contribution, dependency, API, data source, provider asset, and integration is used under applicable terms.
 - [ ] Review generated text and images for copied X language, usernames, screenshots, likenesses, team marks, and protected brand references.
 - [ ] Add merchant identity/contact, shipping, returns, privacy, terms, and contact policies.
-- [ ] Approve countries, shipping rates, tax treatment, currency, pricing, and refund/fulfillment operations before enabling real checkout.
-- [ ] Keep real sales disabled until legal and tax/shipping approval is recorded.
+- [x] Owner approved the jury pilot contract requested in this task: CH/US delivery, CHF 58.00 product, CHF 9.10 flat shipping, inclusive pricing with automatic tax off, manual Printful draft confirmation, and no separate VAT gate for this competition pilot.
+- [ ] Keep real sales disabled until live Stripe, production database, Inngest, webhook, jury-code, expiry, and deployed-readiness checks pass.
 - [ ] Use `MERCH_PILOT_APPROVED=true` only for the signed first-product launch. Complete and review that live pilot before separately setting `MERCH_EXPANSION_APPROVED=true`; without the expansion flag, a weekly release stops before publishing another product.
 
 ## Accounts and local secrets
@@ -45,13 +45,13 @@ Never paste secret values into Git, Codex chat, logs, screenshots, or this docum
 - [x] Confirm OpenAI API access with live GPT-5.6 art-direction and actual-render critic calls; monitor billing and rate limits during any additional demo run.
 - [ ] Confirm `X_BEARER_TOKEN` can call the list-post endpoint for list `2067819170989854863` and that use of the selected posts is authorized.
 - [x] Confirm the current `PRINTFUL_TOKEN` and `PRINTFUL_STORE_ID` have read access to the Manual order/API store and exact pilot mapping; billing, merchant settings, product safety, and the physical sample remain production owner actions.
-- [ ] For a later production pilot, create or verify Stripe test-mode keys, a signed webhook, and approved shipping configuration. These are not required by the Build Week Preview.
-- [ ] For a later production pilot, provision separate Neon staging/production databases and run migrations.
-- [ ] For a later production pilot, create Inngest staging/production environments and configure event/signing keys and the served function URL.
+- [ ] Add a live Stripe secret and live webhook secret as Vercel Sensitive Production variables; verify RITSL live charges/payouts and the endpoint before opening the optional jury pilot.
+- [ ] Confirm the Production Neon database exists and contains every migration.
+- [ ] Confirm Production Inngest event/signing keys and served function URL.
 - [ ] Verify `codex-merch` is linked to this Git repository under Vercel scope `ritsl`; install a least-privilege `VERCEL_TOKEN`; configure `MERCH_DEPLOY_PROVIDER=vercel`, `MERCH_VERCEL_SCOPE`, `MERCH_VERCEL_PROJECT_ID`, production environment variables, canonical `PUBLIC_SITE_URL`, and the checkout WAF rule.
 - [x] `.gitignore` excludes `.env.*` variants while retaining `.env.example`; verify no secret-bearing env file is tracked before submission.
 - [x] Keep reviewed merchant policy copy version-controlled in `app/lib/merchant-policy.ts`; set the matching `STOREFRONT_CONTACT_EMAIL` and `STOREFRONT_POLICY_VERSION` in each deployment environment.
-- [x] Keep `CHECKOUT_ENABLED=false` for the submitted Preview. Enable it only in a later production environment after Stripe, Neon, Inngest, Printful, policy, legal, tax, and shipping staging proof passes.
+- [x] Keep `CHECKOUT_ENABLED=false` for the submitted Preview. The separate canonical pilot additionally requires a private jury code and unexpired sales window before checkout can render or execute.
 
 Expected secret/configuration names include:
 
@@ -76,6 +76,9 @@ MERCH_WEEKLY_RELEASE_ENABLED
 MERCH_PILOT_APPROVED
 MERCH_EXPANSION_APPROVED
 CHECKOUT_ENABLED
+JURY_SALES_ENABLED
+JURY_ACCESS_CODE
+JURY_SALES_END_AT
 STOREFRONT_LEGAL_APPROVED
 STOREFRONT_TAX_SHIPPING_APPROVED
 STOREFRONT_CONTACT_EMAIL
@@ -96,17 +99,20 @@ to be present.
 
 - [x] Run the sanitized 30-post fixture and one authorized live-list read.
 - [x] Show a `no_trend` run and a successful candidate run.
-- [x] Run catalog validation, unit and database integration tests, typecheck, lint, build, production audit, and browser tests in CI; run `29818494790` passed the functional steps, with one browser check passing on retry, while the explicit owner-input gate remains open.
+- [x] Run catalog validation, tests, typecheck, lint, build, production audit, and browser tests in CI; Preview branch run `29825394859` passed an 11-product catalog, 133/133 tests, and 12/12 browser checks while the explicit owner-input gate remains open.
 - [x] Trigger one owner-supplied trend from ordinary Codex chat and preserve its truthful provenance, generated panels, critic result, prepress result, and visible catalog candidate.
 - [x] Push the judged implementation commit to a non-production branch, record the Vercel Preview URL and deployment SHA, then test through its account-free scoped link on desktop and mobile.
 - [x] Verify the Preview exposes `/how-it-works`, keeps every product non-purchasable, and hard-blocks Stripe, Printful, order, and Inngest mutations.
 - [ ] Record the exact tested commands and final SHA in `evidence/README.md`.
 
-## Later production-pilot proof
+## Optional Build Week jury-pilot proof
 
 - [ ] Run the release command once in staging with its explicit `--release` flag, weekly release kill switch, pilot approval, non-default branch, clean expected worktree, public HTTPS URL, and `PRINTFUL_AUTO_CONFIRM=false`.
 - [ ] Verify both deployments, all public asset URLs, one Printful product, complete variant mappings, provider mockups, and one published catalog entry.
 - [ ] Complete a Stripe test payment and verify exactly one Neon order, one processed webhook event, one Inngest run, and one Printful draft.
+- [x] Obtain a read-only U.S. Printful estimate for the exact signed M sync variant; on 2026-07-21 it returned CHF 39.29 estimated provider cost and no order was created.
+- [x] Require the private jury code on the server before any local order or Stripe session; set expiry to `2026-08-06T00:00:00Z`; unit tests and rendered local QA verify wrong/missing codes return a generic HTTP 403.
+- [ ] Probe the canonical deployment and require HTTP 200, `ready: true`, `paymentMode: live`, `salesAudience: OpenAI Build Week judges`, `accessCodeRequired: true`, and CH/US shipping before sharing the pilot.
 - [ ] Replay the same webhook, fulfillment event, and weekly run ID and confirm no duplicate product, publication, or order.
 - [ ] Verify a repeated scheduled task treats a current-week `published` run as a no-op and never re-enters prepare; verify retries after provider sync and after the final push use stage-appropriate hashes before enabling unattended release.
 
