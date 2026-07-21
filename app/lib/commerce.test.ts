@@ -18,7 +18,7 @@ import {
 import {
   allowedShippingCountries,
   assertCheckoutConfiguration,
-  assertMerchantPilotLines,
+  assertMerchantJuryLines,
   normalizeCheckoutLines,
   shippingOptions,
 } from './stripe.server';
@@ -141,7 +141,7 @@ test('checkout enforces aggregate quantities, availability, currencies, and uniq
   }
 });
 
-test('merchant pilot pins product, price, and whole-cart quantity', () => {
+test('jury catalog pins approved products, prices, and whole-cart quantity', () => {
   const product = merchProducts.find(
     (candidate) => candidate.slug === 'codex-rate-reset-long-sleeve',
   )!;
@@ -160,13 +160,13 @@ test('merchant pilot pins product, price, and whole-cart quantity', () => {
     const lines = normalizeCheckoutLines([
       {productSlug: product.slug, variantId: variants[0].id, quantity: 1},
     ]);
-    assert.doesNotThrow(() => assertMerchantPilotLines(lines));
+    assert.doesNotThrow(() => assertMerchantJuryLines(lines));
     product.commerce.unitAmount = 5900;
-    assert.throws(() => assertMerchantPilotLines(lines), /approved merchant pilot/);
+    assert.throws(() => assertMerchantJuryLines(lines), /approved jury catalog/);
     product.commerce.unitAmount = 5800;
     product.providerRefs.printful!.variants[0].syncVariantId += 1;
     assert.throws(
-      () => assertMerchantPilotLines(lines),
+      () => assertMerchantJuryLines(lines),
       /product revision does not match/,
     );
   } finally {

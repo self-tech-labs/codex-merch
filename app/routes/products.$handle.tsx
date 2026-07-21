@@ -3,8 +3,9 @@ import {Link, useLoaderData} from 'react-router';
 import type {Route} from './+types/products.$handle';
 import {money, useCart} from '~/lib/cart';
 import {
-  merchantPilot,
-  merchantPilotDisplayAmounts,
+  getApprovedJuryProduct,
+  merchantJuryCatalog,
+  merchantJuryDisplayAmounts,
 } from '~/lib/merchant-policy';
 import {
   canInitiateStorefrontCheckout,
@@ -71,8 +72,8 @@ export default function Product() {
     isPurchasableProduct(product),
     jurySales.enabled,
   );
-  const signedPilot = product.slug === merchantPilot.productSlug;
-  const pilotAmounts = merchantPilotDisplayAmounts(
+  const approvedForJury = Boolean(getApprovedJuryProduct(product.slug));
+  const pilotAmounts = merchantJuryDisplayAmounts(
     product.commerce.unitAmount / 100,
   );
 
@@ -156,14 +157,14 @@ export default function Product() {
                 <dt>Price</dt>
                 <dd>{formatPrice(product)}</dd>
               </div>
-              {signedPilot ? (
+              {approvedForJury ? (
                 <>
                   <div>
                     <dt>Shipping</dt>
                     <dd>
                       {money(
                         pilotAmounts.shipping,
-                        merchantPilot.currency,
+                        merchantJuryCatalog.currency,
                       )}{' '}
                       per order
                     </dd>
@@ -173,14 +174,14 @@ export default function Product() {
                     <dd>
                       {money(
                         pilotAmounts.total,
-                        merchantPilot.currency,
+                        merchantJuryCatalog.currency,
                       )}
                     </dd>
                   </div>
                 </>
               ) : null}
             </dl>
-            {signedPilot ? (
+            {approvedForJury ? (
               <p>
                 Switzerland and United States delivery only. RITSL bears normal
                 import, customs, and carrier-clearance charges for the approved
@@ -244,7 +245,7 @@ export default function Product() {
                 <div>
                   <dt>Made to order</dt>
                   <dd>
-                    {signedPilot
+                    {approvedForJury
                       ? 'Production usually takes 2–5 business days. Delivery to Switzerland or the United States is estimated at 7–15 business days in total and is not guaranteed.'
                       : product.productDetails.productionTime}
                   </dd>

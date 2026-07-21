@@ -6,7 +6,7 @@
     "category": "Codex",
     "description": "A cut-and-sew cotton sweatshirt built as a quiet research-lab uniform: cream pinstripes, small chest systems, sleeve waves, and restrained deployment typography.",
     "meme": {
-      "source": "Original Codex apparel concept",
+      "source": "Signal provider: x",
       "brief": "All-over cotton sweatshirt inspired by research-lab uniforms, quiet streetwear, skater restraint, and panel-aware sleeve waves. Make it feel like a real garment, not a poster.",
       "rightsNote": "Original apparel system. Do not copy Supply Co products, official OpenAI marks, protected streetwear logos, real team marks, screenshots, usernames, or public-figure likenesses."
     },
@@ -17,6 +17,7 @@
       ],
       "mockups": [
         "assets/mockups/research-deployment-co-sweatshirt-catalog.png",
+        "assets/mockups/research-deployment-co-sweatshirt-printful-1.png",
         "assets/mockups/research-deployment-co-front.png",
         "assets/mockups/research-deployment-co-back.png",
         "assets/mockups/research-deployment-co-patterns.png"
@@ -112,7 +113,7 @@
     "commerce": {
       "handle": "research-deployment-co-sweatshirt",
       "unitAmount": 8800,
-      "currency": "USD",
+      "currency": "CHF",
       "tags": [
         "codex",
         "sweatshirt",
@@ -440,8 +441,351 @@
     },
     "signals": {
       "profile": "codex-trend-research",
-      "queries": [],
-      "sources": []
+      "queries": [
+        {
+          "provider": "x",
+          "query": "(Codex OR coding OR \"research lab\") (merch OR sweatshirt OR streetwear) lang:en -is:retweet",
+          "maxResults": 25
+        }
+      ],
+      "sources": [
+        {
+          "provider": "x",
+          "id": "2079367463930941675",
+          "url": "https://x.com/i/web/status/2079367463930941675",
+          "createdAt": "2026-07-21T00:46:50.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 1,
+            "reposts": 0,
+            "likes": 1,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR coding OR \"research lab\") (merch OR sweatshirt OR streetwear) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079347877306941463",
+          "url": "https://x.com/i/web/status/2079347877306941463",
+          "createdAt": "2026-07-20T23:29:01.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 2,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR coding OR \"research lab\") (merch OR sweatshirt OR streetwear) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079301824817811667",
+          "url": "https://x.com/i/web/status/2079301824817811667",
+          "createdAt": "2026-07-20T20:26:01.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR coding OR \"research lab\") (merch OR sweatshirt OR streetwear) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079271367711629314",
+          "url": "https://x.com/i/web/status/2079271367711629314",
+          "createdAt": "2026-07-20T18:24:59.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 3,
+            "reposts": 1,
+            "likes": 18,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR coding OR \"research lab\") (merch OR sweatshirt OR streetwear) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2078945363604496591",
+          "url": "https://x.com/i/web/status/2078945363604496591",
+          "createdAt": "2026-07-19T20:49:34.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR coding OR \"research lab\") (merch OR sweatshirt OR streetwear) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2078894361996382442",
+          "url": "https://x.com/i/web/status/2078894361996382442",
+          "createdAt": "2026-07-19T17:26:54.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 8,
+            "reposts": 6,
+            "likes": 58,
+            "quotes": 1
+          },
+          "matchedQuery": "(Codex OR coding OR \"research lab\") (merch OR sweatshirt OR streetwear) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2078736603904717012",
+          "url": "https://x.com/i/web/status/2078736603904717012",
+          "createdAt": "2026-07-19T07:00:02.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 3,
+            "likes": 67,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR coding OR \"research lab\") (merch OR sweatshirt OR streetwear) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2078483628926083416",
+          "url": "https://x.com/i/web/status/2078483628926083416",
+          "createdAt": "2026-07-18T14:14:48.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR coding OR \"research lab\") (merch OR sweatshirt OR streetwear) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2078435013717356558",
+          "url": "https://x.com/i/web/status/2078435013717356558",
+          "createdAt": "2026-07-18T11:01:37.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 1,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR coding OR \"research lab\") (merch OR sweatshirt OR streetwear) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2078245891174002780",
+          "url": "https://x.com/i/web/status/2078245891174002780",
+          "createdAt": "2026-07-17T22:30:07.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR coding OR \"research lab\") (merch OR sweatshirt OR streetwear) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2078198968618492035",
+          "url": "https://x.com/i/web/status/2078198968618492035",
+          "createdAt": "2026-07-17T19:23:39.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 15,
+            "reposts": 1,
+            "likes": 28,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR coding OR \"research lab\") (merch OR sweatshirt OR streetwear) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2078126679721988201",
+          "url": "https://x.com/i/web/status/2078126679721988201",
+          "createdAt": "2026-07-17T14:36:24.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 2,
+            "reposts": 0,
+            "likes": 5,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR coding OR \"research lab\") (merch OR sweatshirt OR streetwear) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2078079266114163082",
+          "url": "https://x.com/i/web/status/2078079266114163082",
+          "createdAt": "2026-07-17T11:28:00.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 1,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR coding OR \"research lab\") (merch OR sweatshirt OR streetwear) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2078028366511477064",
+          "url": "https://x.com/i/web/status/2078028366511477064",
+          "createdAt": "2026-07-17T08:05:45.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR coding OR \"research lab\") (merch OR sweatshirt OR streetwear) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2078011621847216597",
+          "url": "https://x.com/i/web/status/2078011621847216597",
+          "createdAt": "2026-07-17T06:59:12.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR coding OR \"research lab\") (merch OR sweatshirt OR streetwear) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2077952064743764182",
+          "url": "https://x.com/i/web/status/2077952064743764182",
+          "createdAt": "2026-07-17T03:02:33.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR coding OR \"research lab\") (merch OR sweatshirt OR streetwear) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2077868040411091311",
+          "url": "https://x.com/i/web/status/2077868040411091311",
+          "createdAt": "2026-07-16T21:28:40.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 1,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR coding OR \"research lab\") (merch OR sweatshirt OR streetwear) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2077850121245749526",
+          "url": "https://x.com/i/web/status/2077850121245749526",
+          "createdAt": "2026-07-16T20:17:28.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 1,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR coding OR \"research lab\") (merch OR sweatshirt OR streetwear) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2077849941087805790",
+          "url": "https://x.com/i/web/status/2077849941087805790",
+          "createdAt": "2026-07-16T20:16:45.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR coding OR \"research lab\") (merch OR sweatshirt OR streetwear) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2077849704994578559",
+          "url": "https://x.com/i/web/status/2077849704994578559",
+          "createdAt": "2026-07-16T20:15:48.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR coding OR \"research lab\") (merch OR sweatshirt OR streetwear) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2077829116901171428",
+          "url": "https://x.com/i/web/status/2077829116901171428",
+          "createdAt": "2026-07-16T18:54:00.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 1,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR coding OR \"research lab\") (merch OR sweatshirt OR streetwear) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2077806508163616794",
+          "url": "https://x.com/i/web/status/2077806508163616794",
+          "createdAt": "2026-07-16T17:24:09.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR coding OR \"research lab\") (merch OR sweatshirt OR streetwear) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2077789059481518506",
+          "url": "https://x.com/i/web/status/2077789059481518506",
+          "createdAt": "2026-07-16T16:14:49.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR coding OR \"research lab\") (merch OR sweatshirt OR streetwear) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2077754456620552634",
+          "url": "https://x.com/i/web/status/2077754456620552634",
+          "createdAt": "2026-07-16T13:57:19.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 1,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR coding OR \"research lab\") (merch OR sweatshirt OR streetwear) lang:en -is:retweet"
+        }
+      ]
     }
   },
   {
@@ -451,14 +795,18 @@
     "category": "Runtime",
     "description": "A dark all-over cotton sweatshirt with tone-on-tone grid fabric, sleeve glyph rituals, small chest marks, and a quiet back statement for late-night builders.",
     "meme": {
-      "source": "Original Codex runtime culture concept",
+      "source": "Signal provider: x",
       "brief": "All-over cotton sweatshirt for build rituals and terminal crews: dark cotton field, restrained glyph sleeves, small chest identity, subtle back signal. Avoid poster logic.",
       "rightsNote": "Original runtime/apparel concept. Avoid official marks, copied product layouts, X screenshots, protected brand language, public figures, and real team insignia."
     },
     "assets": {
       "artwork": "assets/artwork/terminal-ritual-concept.png",
+      "customerPhotos": [
+        "assets/mockups/terminal-ritual-sweatshirt-photoshoot-front.png"
+      ],
       "mockups": [
         "assets/mockups/terminal-ritual-sweatshirt-catalog.png",
+        "assets/mockups/terminal-ritual-sweatshirt-printful-1.png",
         "assets/mockups/terminal-ritual-front.png",
         "assets/mockups/terminal-ritual-back.png",
         "assets/mockups/terminal-ritual-patterns.png"
@@ -554,7 +902,7 @@
     "commerce": {
       "handle": "terminal-ritual-sweatshirt",
       "unitAmount": 8800,
-      "currency": "USD",
+      "currency": "CHF",
       "tags": [
         "codex",
         "sweatshirt",
@@ -882,8 +1230,337 @@
     },
     "signals": {
       "profile": "codex-trend-research",
-      "queries": [],
-      "sources": []
+      "queries": [
+        {
+          "provider": "x",
+          "query": "(Codex OR terminal OR \"build ritual\") (developers OR coding OR sweatshirt) lang:en -is:retweet",
+          "maxResults": 25
+        }
+      ],
+      "sources": [
+        {
+          "provider": "x",
+          "id": "2079666446582653090",
+          "url": "https://x.com/i/web/status/2079666446582653090",
+          "createdAt": "2026-07-21T20:34:53.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR terminal OR \"build ritual\") (developers OR coding OR sweatshirt) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079666225714471209",
+          "url": "https://x.com/i/web/status/2079666225714471209",
+          "createdAt": "2026-07-21T20:34:01.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR terminal OR \"build ritual\") (developers OR coding OR sweatshirt) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079665806275703191",
+          "url": "https://x.com/i/web/status/2079665806275703191",
+          "createdAt": "2026-07-21T20:32:21.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR terminal OR \"build ritual\") (developers OR coding OR sweatshirt) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079664729627176981",
+          "url": "https://x.com/i/web/status/2079664729627176981",
+          "createdAt": "2026-07-21T20:28:04.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR terminal OR \"build ritual\") (developers OR coding OR sweatshirt) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079664311018885500",
+          "url": "https://x.com/i/web/status/2079664311018885500",
+          "createdAt": "2026-07-21T20:26:24.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 4,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR terminal OR \"build ritual\") (developers OR coding OR sweatshirt) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079662967763718470",
+          "url": "https://x.com/i/web/status/2079662967763718470",
+          "createdAt": "2026-07-21T20:21:04.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR terminal OR \"build ritual\") (developers OR coding OR sweatshirt) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079662876571381904",
+          "url": "https://x.com/i/web/status/2079662876571381904",
+          "createdAt": "2026-07-21T20:20:42.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 1,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR terminal OR \"build ritual\") (developers OR coding OR sweatshirt) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079661382643986512",
+          "url": "https://x.com/i/web/status/2079661382643986512",
+          "createdAt": "2026-07-21T20:14:46.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 1,
+            "reposts": 0,
+            "likes": 1,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR terminal OR \"build ritual\") (developers OR coding OR sweatshirt) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079661080301674826",
+          "url": "https://x.com/i/web/status/2079661080301674826",
+          "createdAt": "2026-07-21T20:13:34.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR terminal OR \"build ritual\") (developers OR coding OR sweatshirt) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079661048634728635",
+          "url": "https://x.com/i/web/status/2079661048634728635",
+          "createdAt": "2026-07-21T20:13:26.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR terminal OR \"build ritual\") (developers OR coding OR sweatshirt) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079660697848570092",
+          "url": "https://x.com/i/web/status/2079660697848570092",
+          "createdAt": "2026-07-21T20:12:03.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR terminal OR \"build ritual\") (developers OR coding OR sweatshirt) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079660305164959774",
+          "url": "https://x.com/i/web/status/2079660305164959774",
+          "createdAt": "2026-07-21T20:10:29.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR terminal OR \"build ritual\") (developers OR coding OR sweatshirt) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079658201314955668",
+          "url": "https://x.com/i/web/status/2079658201314955668",
+          "createdAt": "2026-07-21T20:02:08.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 1,
+            "reposts": 0,
+            "likes": 7,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR terminal OR \"build ritual\") (developers OR coding OR sweatshirt) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079657804185395411",
+          "url": "https://x.com/i/web/status/2079657804185395411",
+          "createdAt": "2026-07-21T20:00:33.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR terminal OR \"build ritual\") (developers OR coding OR sweatshirt) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079656530451075441",
+          "url": "https://x.com/i/web/status/2079656530451075441",
+          "createdAt": "2026-07-21T19:55:29.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 1,
+            "reposts": 1,
+            "likes": 7,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR terminal OR \"build ritual\") (developers OR coding OR sweatshirt) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079656507616956593",
+          "url": "https://x.com/i/web/status/2079656507616956593",
+          "createdAt": "2026-07-21T19:55:24.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR terminal OR \"build ritual\") (developers OR coding OR sweatshirt) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079656440457814169",
+          "url": "https://x.com/i/web/status/2079656440457814169",
+          "createdAt": "2026-07-21T19:55:08.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 1,
+            "reposts": 0,
+            "likes": 1,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR terminal OR \"build ritual\") (developers OR coding OR sweatshirt) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079656320475554010",
+          "url": "https://x.com/i/web/status/2079656320475554010",
+          "createdAt": "2026-07-21T19:54:39.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR terminal OR \"build ritual\") (developers OR coding OR sweatshirt) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079653914576585108",
+          "url": "https://x.com/i/web/status/2079653914576585108",
+          "createdAt": "2026-07-21T19:45:05.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 2,
+            "reposts": 0,
+            "likes": 1,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR terminal OR \"build ritual\") (developers OR coding OR sweatshirt) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079653166984114662",
+          "url": "https://x.com/i/web/status/2079653166984114662",
+          "createdAt": "2026-07-21T19:42:07.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 3,
+            "likes": 5,
+            "quotes": 1
+          },
+          "matchedQuery": "(Codex OR terminal OR \"build ritual\") (developers OR coding OR sweatshirt) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079652912368611811",
+          "url": "https://x.com/i/web/status/2079652912368611811",
+          "createdAt": "2026-07-21T19:41:07.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR terminal OR \"build ritual\") (developers OR coding OR sweatshirt) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079652234221248589",
+          "url": "https://x.com/i/web/status/2079652234221248589",
+          "createdAt": "2026-07-21T19:38:25.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR terminal OR \"build ritual\") (developers OR coding OR sweatshirt) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079651764119486779",
+          "url": "https://x.com/i/web/status/2079651764119486779",
+          "createdAt": "2026-07-21T19:36:33.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 1,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR terminal OR \"build ritual\") (developers OR coding OR sweatshirt) lang:en -is:retweet"
+        }
+      ]
     }
   },
   {
@@ -897,7 +1574,7 @@
     "category": "Operations",
     "description": "A fog-gray all-over cotton sweatshirt for Codex queue-watchers: status-map fabric, sleeve telemetry, and one sharp incident-orange signal.",
     "meme": {
-      "source": "Dry-run X trend query plus current public summaries around @thsottiaux/OpenAI Codex demand, uptime, service load, and agent workflows",
+      "source": "Signal provider: x",
       "brief": "All-over cotton garment inspired by Codex queue weather: high-demand status maps, uptime lore, rate-limit/reset energy, and supervised agent runs. Use the signals as inspiration only; no copied post text or screenshots.",
       "rightsNote": "Original operations-weather parody concept. X posts and public summaries are trend signals only; do not copy text, screenshots, usernames, likenesses, official marks, or protected brand references."
     },
@@ -929,8 +1606,12 @@
           "path": "assets/print/queue-weather-cotton-sweatshirt-label_inside_dtfabric.png"
         }
       ],
+      "customerPhotos": [
+        "assets/mockups/queue-weather-cotton-sweatshirt-photoshoot-front.png"
+      ],
       "mockups": [
         "assets/mockups/queue-weather-cotton-sweatshirt-catalog.png",
+        "assets/mockups/queue-weather-cotton-sweatshirt-printful-1.png",
         "assets/mockups/queue-weather-cotton-sweatshirt-front.png",
         "assets/mockups/queue-weather-cotton-sweatshirt-back.png",
         "assets/mockups/queue-weather-cotton-sweatshirt-patterns.png"
@@ -1000,7 +1681,7 @@
     "commerce": {
       "handle": "queue-weather-cotton-sweatshirt",
       "unitAmount": 8800,
-      "currency": "USD",
+      "currency": "CHF",
       "tags": [
         "codex",
         "sweatshirt",
@@ -1332,10 +2013,362 @@
       "queries": [
         {
           "provider": "x",
-          "query": "(from:thsottiaux OR from:OpenAIDevs OR from:OpenAI) (Codex OR codex OR agents OR \"rate limit\" OR degraded OR uptime OR queue) -is:retweet lang:en"
+          "query": "(Codex OR agents OR \"rate limit\" OR queue) (OpenAI OR developers) lang:en -is:retweet",
+          "maxResults": 25
         }
       ],
-      "sources": []
+      "sources": [
+        {
+          "provider": "x",
+          "id": "2079667600791884016",
+          "url": "https://x.com/i/web/status/2079667600791884016",
+          "createdAt": "2026-07-21T20:39:29.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR agents OR \"rate limit\" OR queue) (OpenAI OR developers) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079667559583100934",
+          "url": "https://x.com/i/web/status/2079667559583100934",
+          "createdAt": "2026-07-21T20:39:19.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR agents OR \"rate limit\" OR queue) (OpenAI OR developers) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079667119256408290",
+          "url": "https://x.com/i/web/status/2079667119256408290",
+          "createdAt": "2026-07-21T20:37:34.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 2,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR agents OR \"rate limit\" OR queue) (OpenAI OR developers) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079666513137578159",
+          "url": "https://x.com/i/web/status/2079666513137578159",
+          "createdAt": "2026-07-21T20:35:09.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 1,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR agents OR \"rate limit\" OR queue) (OpenAI OR developers) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079665524728816116",
+          "url": "https://x.com/i/web/status/2079665524728816116",
+          "createdAt": "2026-07-21T20:31:14.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR agents OR \"rate limit\" OR queue) (OpenAI OR developers) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079665136797659299",
+          "url": "https://x.com/i/web/status/2079665136797659299",
+          "createdAt": "2026-07-21T20:29:41.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 1,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR agents OR \"rate limit\" OR queue) (OpenAI OR developers) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079665115385713029",
+          "url": "https://x.com/i/web/status/2079665115385713029",
+          "createdAt": "2026-07-21T20:29:36.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR agents OR \"rate limit\" OR queue) (OpenAI OR developers) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079665101968208295",
+          "url": "https://x.com/i/web/status/2079665101968208295",
+          "createdAt": "2026-07-21T20:29:33.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR agents OR \"rate limit\" OR queue) (OpenAI OR developers) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079664993570603038",
+          "url": "https://x.com/i/web/status/2079664993570603038",
+          "createdAt": "2026-07-21T20:29:07.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 1,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR agents OR \"rate limit\" OR queue) (OpenAI OR developers) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079664477729853932",
+          "url": "https://x.com/i/web/status/2079664477729853932",
+          "createdAt": "2026-07-21T20:27:04.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 1,
+            "quotes": 1
+          },
+          "matchedQuery": "(Codex OR agents OR \"rate limit\" OR queue) (OpenAI OR developers) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079664460361273739",
+          "url": "https://x.com/i/web/status/2079664460361273739",
+          "createdAt": "2026-07-21T20:27:00.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR agents OR \"rate limit\" OR queue) (OpenAI OR developers) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079664379684147549",
+          "url": "https://x.com/i/web/status/2079664379684147549",
+          "createdAt": "2026-07-21T20:26:41.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR agents OR \"rate limit\" OR queue) (OpenAI OR developers) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079662977079283905",
+          "url": "https://x.com/i/web/status/2079662977079283905",
+          "createdAt": "2026-07-21T20:21:06.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 2,
+            "reposts": 0,
+            "likes": 7,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR agents OR \"rate limit\" OR queue) (OpenAI OR developers) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079662590549188737",
+          "url": "https://x.com/i/web/status/2079662590549188737",
+          "createdAt": "2026-07-21T20:19:34.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 1,
+            "reposts": 0,
+            "likes": 2,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR agents OR \"rate limit\" OR queue) (OpenAI OR developers) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079661723402076600",
+          "url": "https://x.com/i/web/status/2079661723402076600",
+          "createdAt": "2026-07-21T20:16:07.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR agents OR \"rate limit\" OR queue) (OpenAI OR developers) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079661411492397336",
+          "url": "https://x.com/i/web/status/2079661411492397336",
+          "createdAt": "2026-07-21T20:14:53.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR agents OR \"rate limit\" OR queue) (OpenAI OR developers) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079661382643986512",
+          "url": "https://x.com/i/web/status/2079661382643986512",
+          "createdAt": "2026-07-21T20:14:46.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 1,
+            "reposts": 0,
+            "likes": 1,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR agents OR \"rate limit\" OR queue) (OpenAI OR developers) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079661235428372628",
+          "url": "https://x.com/i/web/status/2079661235428372628",
+          "createdAt": "2026-07-21T20:14:11.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR agents OR \"rate limit\" OR queue) (OpenAI OR developers) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079660936739102840",
+          "url": "https://x.com/i/web/status/2079660936739102840",
+          "createdAt": "2026-07-21T20:13:00.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 3,
+            "reposts": 0,
+            "likes": 5,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR agents OR \"rate limit\" OR queue) (OpenAI OR developers) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079660848176623965",
+          "url": "https://x.com/i/web/status/2079660848176623965",
+          "createdAt": "2026-07-21T20:12:39.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR agents OR \"rate limit\" OR queue) (OpenAI OR developers) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079660751547978144",
+          "url": "https://x.com/i/web/status/2079660751547978144",
+          "createdAt": "2026-07-21T20:12:16.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 1,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR agents OR \"rate limit\" OR queue) (OpenAI OR developers) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079660697848570092",
+          "url": "https://x.com/i/web/status/2079660697848570092",
+          "createdAt": "2026-07-21T20:12:03.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR agents OR \"rate limit\" OR queue) (OpenAI OR developers) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079660118057386343",
+          "url": "https://x.com/i/web/status/2079660118057386343",
+          "createdAt": "2026-07-21T20:09:45.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 1,
+            "likes": 3,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR agents OR \"rate limit\" OR queue) (OpenAI OR developers) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079659354601451822",
+          "url": "https://x.com/i/web/status/2079659354601451822",
+          "createdAt": "2026-07-21T20:06:42.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 3,
+            "reposts": 0,
+            "likes": 13,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR agents OR \"rate limit\" OR queue) (OpenAI OR developers) lang:en -is:retweet"
+        },
+        {
+          "provider": "x",
+          "id": "2079659247873429903",
+          "url": "https://x.com/i/web/status/2079659247873429903",
+          "createdAt": "2026-07-21T20:06:17.000Z",
+          "lang": "en",
+          "metrics": {
+            "replies": 0,
+            "reposts": 0,
+            "likes": 0,
+            "quotes": 0
+          },
+          "matchedQuery": "(Codex OR agents OR \"rate limit\" OR queue) (OpenAI OR developers) lang:en -is:retweet"
+        }
+      ]
     }
   },
   {
@@ -1376,9 +2409,24 @@
         "unit": "cm",
         "tolerance": "Supplier measurements may vary by up to 5 cm. Measure a similar garment laid flat.",
         "rows": [
-          {"size": "M", "length": "73.7", "width": "50.8", "sleeve": "66.5"},
-          {"size": "L", "length": "76.2", "width": "55.9", "sleeve": "68.3"},
-          {"size": "XL", "length": "78.7", "width": "61.0", "sleeve": "69.9"}
+          {
+            "size": "M",
+            "length": "73.7",
+            "width": "50.8",
+            "sleeve": "66.5"
+          },
+          {
+            "size": "L",
+            "length": "76.2",
+            "width": "55.9",
+            "sleeve": "68.3"
+          },
+          {
+            "size": "XL",
+            "length": "78.7",
+            "width": "61.0",
+            "sleeve": "69.9"
+          }
         ]
       }
     },

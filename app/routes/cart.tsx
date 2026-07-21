@@ -9,8 +9,9 @@ import {
 } from '~/lib/cart';
 import {
   MERCHANT_POLICY_VERSION,
-  merchantPilot,
-  merchantPilotDisplayAmounts,
+  getApprovedJuryProduct,
+  merchantJuryCatalog,
+  merchantJuryDisplayAmounts,
 } from '~/lib/merchant-policy';
 import {useJurySales, useStorefrontMode} from '~/lib/storefront-mode';
 
@@ -28,13 +29,13 @@ export default function Cart() {
   const preview = storefrontMode === 'preview';
   const checkoutAvailable = !preview && jurySales.enabled;
   const currency = displayLines[0]?.product.commerce.currency || 'USD';
-  const pilotShippingApplies =
+  const juryShippingApplies =
     displayLines.length > 0 &&
     displayLines.every(
-      (line) => line.product.slug === merchantPilot.productSlug,
+      (line) => Boolean(getApprovedJuryProduct(line.product.slug)),
     );
-  const pilotAmounts = merchantPilotDisplayAmounts(subtotal);
-  const displayedTotal = pilotShippingApplies ? pilotAmounts.total : subtotal;
+  const pilotAmounts = merchantJuryDisplayAmounts(subtotal);
+  const displayedTotal = juryShippingApplies ? pilotAmounts.total : subtotal;
   const fulfillmentProvider = displayLines[0]?.product.production.provider || 'printful';
   const fulfillmentLabel =
     fulfillmentProvider.charAt(0).toUpperCase() + fulfillmentProvider.slice(1);
@@ -113,20 +114,22 @@ export default function Cart() {
                 <dt>Fulfillment</dt>
                 <dd>{fulfillmentLabel}</dd>
               </div>
-              {pilotShippingApplies ? (
+              {juryShippingApplies ? (
                 <>
                   <div>
                     <dt>Shipping</dt>
                     <dd>
                       {money(
                         pilotAmounts.shipping,
-                        merchantPilot.currency,
+                        merchantJuryCatalog.currency,
                       )}
                     </dd>
                   </div>
                   <div>
                     <dt>Total</dt>
-                    <dd>{money(displayedTotal, merchantPilot.currency)}</dd>
+                    <dd>
+                      {money(displayedTotal, merchantJuryCatalog.currency)}
+                    </dd>
                   </div>
                 </>
               ) : null}
@@ -184,10 +187,10 @@ export default function Cart() {
               {preview
                 ? 'This deployment cannot create a payment or production order. Terms acceptance will be required when checkout opens.'
                 : checkoutAvailable
-                  ? 'Fan-made, unofficial merchandise. Access is limited to OpenAI Build Week judges; shipping is CHF 9.10 per order. Review the final CHF total in Stripe before paying.'
+                  ? `Fan-made, unofficial merchandise. Access is limited to OpenAI Build Week judges; shipping is ${money(merchantJuryCatalog.shippingAmount / 100, merchantJuryCatalog.currency)} per order. Review the final CHF total in Stripe before paying.`
                   : 'Real checkout is unavailable because the jury-only sales window is closed or not configured.'}
             </p>
-            {pilotShippingApplies ? (
+            {juryShippingApplies ? (
               <p>
                 RITSL bears normal import, customs, and carrier-clearance charges
                 for the approved Switzerland and United States delivery routes.

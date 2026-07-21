@@ -2689,12 +2689,17 @@ function wrapText(text, maxLineLength) {
 async function runMockups(args) {
   const dryRun = hasFlag(args, '--dry-run');
   const pollOnly = hasFlag(args, '--poll');
+  const fromStoreProduct = hasFlag(args, '--from-store-product');
   const siteUrl = readArg(args, '--site-url', process.env.PUBLIC_SITE_URL);
-  if (!dryRun && !pollOnly) assertPrintfulPublicAssetUrl(siteUrl);
+  if (!dryRun && !pollOnly && !fromStoreProduct) {
+    assertPrintfulPublicAssetUrl(siteUrl);
+  }
   const products = await readProducts();
   const bases = await readBaseProducts();
   const selected = selectProducts(products, args);
-  if (!dryRun) assertProviderMutationAllowed(selected, 'Printful mockup generation');
+  if (!dryRun && !fromStoreProduct) {
+    assertProviderMutationAllowed(selected, 'Printful mockup generation');
+  }
   const payloads = selected.map((product) => {
     const base = baseForProduct(bases, product);
     const provider = providerForProduction(productProduction(product).provider);
@@ -2717,6 +2722,54 @@ async function runMockups(args) {
         slug: product.slug,
         endpoint: `POST https://api.printful.com/mockup-generator/create-task/${base.catalogProductId}`,
         payload,
+      })),
+    );
+    return;
+  }
+
+  if (fromStoreProduct) {
+    requireEnv(['PRINTFUL_TOKEN', 'PRINTFUL_STORE_ID']);
+    const {getPrintfulStoreProduct} = await import('./adapters/printful.mjs');
+    for (const item of payloads) {
+      const ref = item.product.providerRefs[item.provider.name];
+      if (!ref?.productId) {
+        throw new Error(
+          `${item.product.slug}: store-product mockup import requires a provider product ID`,
+        );
+      }
+      const response = await getPrintfulStoreProduct(ref.productId);
+      const urls = [
+        ...new Set(
+          printfulStoreSyncVariants(response).flatMap((variant) =>
+            (variant.files || [])
+              .filter((file) => file.type === 'preview' && file.preview_url)
+              .map((file) => file.preview_url),
+          ),
+        ),
+      ];
+      if (!urls.length) {
+        throw new Error(
+          `${item.product.slug}: Printful store product has no downloadable preview`,
+        );
+      }
+      const savedMockups = await persistMockupsFromTask(item.product, {
+        mockups: urls.map((mockupUrl) => ({mockup_url: mockupUrl})),
+      });
+      if (!savedMockups.length) {
+        throw new Error(
+          `${item.product.slug}: Printful store product preview import saved no files`,
+        );
+      }
+      advanceWorkflowStatus(item.product, 'mockups_ready');
+    }
+
+    await writeProducts(products);
+    printJson(
+      selected.map((product) => ({
+        slug: product.slug,
+        source: 'existing-store-product',
+        status: workflowStatus(product),
+        mockups: product.assets.mockups,
       })),
     );
     return;

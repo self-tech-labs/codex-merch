@@ -1,18 +1,10 @@
 export const MERCHANT_POLICY_VERSION = '2026-07-21';
 export const MERCHANT_CONTACT_EMAIL = 'elliot@ritsl.com';
 
-export const merchantPilot = {
+const rateResetJuryProduct = {
   productSlug: 'codex-rate-reset-long-sleeve',
   productTitle: 'Codex Rate Reset Long Sleeve Tee',
-  currency: 'CHF',
   unitAmount: 5800,
-  shippingAmount: 910,
-  shippingCountries: ['CH', 'US'],
-  deliveryEstimateBusinessDays: {minimum: 7, maximum: 15},
-  maximumItemsPerOrder: 10,
-  stripeTaxBehavior: 'inclusive',
-  stripeProductTaxCode: 'txcd_99999999',
-  stripeShippingTaxCode: 'txcd_92010001',
   printfulProductId: 436601984,
   printfulVariants: [
     {
@@ -64,10 +56,48 @@ export const merchantPilot = {
   },
 } as const;
 
-export function merchantPilotDisplayAmounts(subtotal: number) {
-  const shipping = merchantPilot.shippingAmount / 100;
+/**
+ * Exact merchant-approved catalog contract. Every product added here must pin
+ * its local manifest revision, public assets, Printful product, and Printful
+ * variants before production checkout can accept it.
+ */
+export const merchantJuryCatalog = {
+  currency: 'CHF',
+  shippingAmount: 910,
+  shippingCountries: ['CH', 'US'],
+  deliveryEstimateBusinessDays: {minimum: 7, maximum: 15},
+  maximumItemsPerOrder: 10,
+  stripeTaxBehavior: 'inclusive',
+  stripeProductTaxCode: 'txcd_99999999',
+  stripeShippingTaxCode: 'txcd_92010001',
+  products: [rateResetJuryProduct],
+} as const;
+
+export type MerchantJuryProduct =
+  (typeof merchantJuryCatalog.products)[number];
+
+export function getApprovedJuryProduct(productSlug: string) {
+  return merchantJuryCatalog.products.find(
+    (product) => product.productSlug === productSlug,
+  );
+}
+
+/**
+ * Compatibility alias for policy copy and integrations that still use the
+ * original pilot name. Product authorization must use merchantJuryCatalog.
+ */
+export const merchantPilot = {
+  ...merchantJuryCatalog,
+  ...rateResetJuryProduct,
+} as const;
+
+export function merchantJuryDisplayAmounts(subtotal: number) {
+  const shipping = merchantJuryCatalog.shippingAmount / 100;
   return {shipping, total: subtotal + shipping};
 }
+
+/** @deprecated Use merchantJuryDisplayAmounts for the multi-product catalog. */
+export const merchantPilotDisplayAmounts = merchantJuryDisplayAmounts;
 
 export const merchantIdentity = {
   legalName: 'RITSL Elliot Vaucher',

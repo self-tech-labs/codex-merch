@@ -8,12 +8,15 @@ import {
 import {
   allowedShippingCountries,
   assertCheckoutConfiguration,
-  assertMerchantPilotLines,
+  assertMerchantJuryLines,
   normalizeCheckoutLines,
   shippingOptions,
 } from '~/lib/stripe.server';
 import {probeCheckoutDependencies} from '~/lib/readiness.server';
-import {merchantPilot} from '~/lib/merchant-policy';
+import {
+  getApprovedJuryProduct,
+  merchantJuryCatalog,
+} from '~/lib/merchant-policy';
 import {
   JURY_SALES_AUDIENCE,
   jurySalesEndAt,
@@ -57,6 +60,13 @@ export function createReadinessLoader({
         {status: 404, headers: responseHeaders},
       );
     }
+    const approvedProduct = getApprovedJuryProduct(product.slug);
+    if (!approvedProduct) {
+      return Response.json(
+        {ready: false, code: 'product_not_approved_for_jury_sale'},
+        {status: 404, headers: responseHeaders},
+      );
+    }
 
     const env = getEnv(context);
     let liveReadiness;
@@ -68,12 +78,12 @@ export function createReadinessLoader({
       if (env.PRINTFUL_AUTO_CONFIRM !== 'false') {
         throw new Error('Printful auto-confirm must remain disabled');
       }
-      const pilotLines = normalizeCheckoutLines([
+      const juryLines = normalizeCheckoutLines([
         {productSlug: product.slug, variantId: variant.id, quantity: 1},
       ]);
-      assertMerchantPilotLines(pilotLines);
+      assertMerchantJuryLines(juryLines);
       await shippingOptions(env, product.commerce.currency);
-      liveReadiness = await probeDependencies(env);
+      liveReadiness = await probeDependencies(env, {}, approvedProduct);
     } catch {
       return Response.json(
         {ready: false, code: 'checkout_not_configured'},
@@ -93,10 +103,10 @@ export function createReadinessLoader({
         provider: product.production.provider,
         policyVersion: env.STOREFRONT_POLICY_VERSION,
         shippingCountries: allowedShippingCountries(env),
-        shippingAmount: merchantPilot.shippingAmount,
-        maximumItemsPerOrder: merchantPilot.maximumItemsPerOrder,
+        shippingAmount: merchantJuryCatalog.shippingAmount,
+        maximumItemsPerOrder: merchantJuryCatalog.maximumItemsPerOrder,
         deliveryEstimateBusinessDays:
-          merchantPilot.deliveryEstimateBusinessDays,
+          merchantJuryCatalog.deliveryEstimateBusinessDays,
         paymentMode: liveReadiness.paymentMode,
         salesAudience: JURY_SALES_AUDIENCE,
         accessCodeRequired: true,

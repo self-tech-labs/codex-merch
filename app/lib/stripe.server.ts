@@ -20,8 +20,9 @@ import {
 import {
   MERCHANT_CONTACT_EMAIL,
   MERCHANT_POLICY_VERSION,
+  getApprovedJuryProduct,
   merchantIdentity,
-  merchantPilot,
+  merchantJuryCatalog,
 } from '~/lib/merchant-policy';
 import {
   assertJuryAccessCode,
@@ -117,7 +118,8 @@ export function assertCheckoutConfiguration(env: AppEnv) {
     }
     if (
       env.STRIPE_FLAT_SHIPPING_AMOUNT &&
-      Number(env.STRIPE_FLAT_SHIPPING_AMOUNT) !== merchantPilot.shippingAmount
+      Number(env.STRIPE_FLAT_SHIPPING_AMOUNT) !==
+        merchantJuryCatalog.shippingAmount
     ) {
       throw new Error('Production checkout shipping does not match the approved pilot');
     }
@@ -204,9 +206,9 @@ export function normalizeCheckoutLines(lines: unknown): StripeCheckoutLine[] {
     throw new Error('Cart has too many unique lines');
   }
   const totalQuantity = result.reduce((sum, line) => sum + line.quantity, 0);
-  if (totalQuantity > merchantPilot.maximumItemsPerOrder) {
+  if (totalQuantity > merchantJuryCatalog.maximumItemsPerOrder) {
     throw new Error(
-      `A pilot order may contain at most ${merchantPilot.maximumItemsPerOrder} items`,
+      `A jury order may contain at most ${merchantJuryCatalog.maximumItemsPerOrder} items`,
     );
   }
   const currencies = new Set(result.map((line) => line.product.commerce.currency));
@@ -216,49 +218,66 @@ export function normalizeCheckoutLines(lines: unknown): StripeCheckoutLine[] {
   return result;
 }
 
-export function assertMerchantPilotLines(lines: StripeCheckoutLine[]) {
-  if (
-    !lines.length ||
-    lines.some(
-      (line) =>
-        line.product.slug !== merchantPilot.productSlug ||
-        line.product.title !== merchantPilot.productTitle ||
-        line.product.commerce.unitAmount !== merchantPilot.unitAmount ||
-        line.product.commerce.currency !== merchantPilot.currency,
-    )
-  ) {
-    throw new Error('Checkout lines do not match the approved merchant pilot');
+export function assertMerchantJuryLines(lines: StripeCheckoutLine[]) {
+  if (!lines.length) {
+    throw new Error('Checkout lines do not match the approved jury catalog');
   }
-  const products = new Set(lines.map((line) => line.product));
-  if (products.size !== 1) {
-    throw new Error('Checkout lines must use one approved pilot product snapshot');
-  }
-  const [product] = products;
-  const revision = createHash('sha256')
-    .update(JSON.stringify(product))
-    .digest('hex');
-  if (revision !== merchantPilot.approvedProductRevision) {
-    throw new Error('Pilot product revision does not match merchant sign-off');
-  }
-  if (
-    product.production.provider !== 'printful' ||
-    product.providerRefs.printful?.productId !== merchantPilot.printfulProductId
-  ) {
-    throw new Error('Pilot Printful product does not match merchant sign-off');
-  }
+
+  const products = new Map<string, MerchProduct>();
   for (const line of lines) {
-    const approved = merchantPilot.printfulVariants.find(
+    const approvedProduct = getApprovedJuryProduct(line.product.slug);
+    if (
+      !approvedProduct ||
+      line.product.title !== approvedProduct.productTitle ||
+      line.product.commerce.unitAmount !== approvedProduct.unitAmount ||
+      line.product.commerce.currency !== merchantJuryCatalog.currency
+    ) {
+      throw new Error('Checkout lines do not match the approved jury catalog');
+    }
+
+    const previous = products.get(line.product.slug);
+    if (previous && previous !== line.product) {
+      throw new Error(
+        'Checkout lines must use one approved snapshot per jury product',
+      );
+    }
+    products.set(line.product.slug, line.product);
+
+    const approvedVariant = approvedProduct.printfulVariants.find(
       (variant) => variant.variantId === line.variantId,
     );
     if (
-      !approved ||
-      line.catalogVariantId !== approved.catalogVariantId ||
-      line.syncVariantId !== approved.syncVariantId
+      !approvedVariant ||
+      line.catalogVariantId !== approvedVariant.catalogVariantId ||
+      line.syncVariantId !== approvedVariant.syncVariantId
     ) {
-      throw new Error('Pilot Printful variant does not match merchant sign-off');
+      throw new Error('Jury Printful variant does not match merchant sign-off');
+    }
+  }
+
+  for (const [productSlug, product] of products) {
+    const approvedProduct = getApprovedJuryProduct(productSlug);
+    if (!approvedProduct) {
+      throw new Error('Checkout contains an unapproved jury product');
+    }
+    const revision = createHash('sha256')
+      .update(JSON.stringify(product))
+      .digest('hex');
+    if (revision !== approvedProduct.approvedProductRevision) {
+      throw new Error('Jury product revision does not match merchant sign-off');
+    }
+    if (
+      product.production.provider !== 'printful' ||
+      product.providerRefs.printful?.productId !==
+        approvedProduct.printfulProductId
+    ) {
+      throw new Error('Jury Printful product does not match merchant sign-off');
     }
   }
 }
+
+/** @deprecated Use assertMerchantJuryLines for the multi-product catalog. */
+export const assertMerchantPilotLines = assertMerchantJuryLines;
 
 export async function createCheckoutSession({
   env,
@@ -277,7 +296,7 @@ export async function createCheckoutSession({
   const catalogRevision = createHash('sha256')
     .update(JSON.stringify(merchProducts))
     .digest('hex');
-  assertMerchantPilotLines(lines);
+  assertMerchantJuryLines(lines);
   const currency = lines[0].product.commerce.currency;
   const provider = lines[0].provider;
   const checkoutShippingOptions = await shippingOptions(env, currency);
@@ -339,10 +358,10 @@ export async function createCheckoutSession({
           price_data: {
             currency: currency.toLowerCase(),
             unit_amount: line.product.commerce.unitAmount,
-            tax_behavior: merchantPilot.stripeTaxBehavior,
+            tax_behavior: merchantJuryCatalog.stripeTaxBehavior,
             product_data: {
               name: line.product.title,
-              tax_code: merchantPilot.stripeProductTaxCode,
+              tax_code: merchantJuryCatalog.stripeProductTaxCode,
               images: [new URL(getPrimaryCustomerMockup(line.product), baseUrl).toString()],
               metadata: {
                 slug: line.product.slug,
@@ -397,15 +416,16 @@ export async function checkoutSessionForPaymentIntent(
 export function allowedShippingCountries(env: AppEnv) {
   const configured =
     env.STRIPE_ALLOWED_SHIPPING_COUNTRIES ||
-    merchantPilot.shippingCountries.join(',');
+    merchantJuryCatalog.shippingCountries.join(',');
   const countries = configured
     .split(',')
     .map((country) => country.trim().toUpperCase())
     .filter(Boolean);
   if (
-    countries.length !== merchantPilot.shippingCountries.length ||
+    countries.length !== merchantJuryCatalog.shippingCountries.length ||
     countries.some(
-      (country, index) => country !== merchantPilot.shippingCountries[index],
+      (country, index) =>
+        country !== merchantJuryCatalog.shippingCountries[index],
     )
   ) {
     throw new Error('The jury pilot supports shipping to CH and US only');
@@ -426,14 +446,14 @@ export async function shippingOptions(
     if (rate.fixed_amount?.currency?.toUpperCase() !== currency.toUpperCase()) {
       throw new Error('Configured Stripe shipping rate currency does not match the order');
     }
-    if (rate.fixed_amount?.amount !== merchantPilot.shippingAmount) {
+    if (rate.fixed_amount?.amount !== merchantJuryCatalog.shippingAmount) {
       throw new Error('Configured Stripe shipping rate amount does not match the pilot');
     }
     const rateTaxCode =
       typeof rate.tax_code === 'string' ? rate.tax_code : rate.tax_code?.id;
     if (
-      rate.tax_behavior !== merchantPilot.stripeTaxBehavior ||
-      rateTaxCode !== merchantPilot.stripeShippingTaxCode
+      rate.tax_behavior !== merchantJuryCatalog.stripeTaxBehavior ||
+      rateTaxCode !== merchantJuryCatalog.stripeShippingTaxCode
     ) {
       throw new Error(
         'Configured Stripe shipping rate tax treatment does not match the pilot',
@@ -442,10 +462,10 @@ export async function shippingOptions(
     if (
       rate.delivery_estimate?.minimum?.unit !== 'business_day' ||
       rate.delivery_estimate.minimum.value !==
-        merchantPilot.deliveryEstimateBusinessDays.minimum ||
+        merchantJuryCatalog.deliveryEstimateBusinessDays.minimum ||
       rate.delivery_estimate?.maximum?.unit !== 'business_day' ||
       rate.delivery_estimate.maximum.value !==
-        merchantPilot.deliveryEstimateBusinessDays.maximum
+        merchantJuryCatalog.deliveryEstimateBusinessDays.maximum
     ) {
       throw new Error(
         'Configured Stripe shipping rate delivery estimate does not match the pilot',
@@ -458,7 +478,7 @@ export async function shippingOptions(
     if (!Number.isInteger(amount) || amount < 0) {
       throw new Error('STRIPE_FLAT_SHIPPING_AMOUNT must be a non-negative integer');
     }
-    if (amount !== merchantPilot.shippingAmount) {
+    if (amount !== merchantJuryCatalog.shippingAmount) {
       throw new Error('Flat shipping amount does not match the approved pilot');
     }
     return [
@@ -467,16 +487,16 @@ export async function shippingOptions(
           type: 'fixed_amount' as const,
           fixed_amount: {amount, currency: currency.toLowerCase()},
           display_name: 'Standard shipping',
-          tax_behavior: merchantPilot.stripeTaxBehavior,
-          tax_code: merchantPilot.stripeShippingTaxCode,
+          tax_behavior: merchantJuryCatalog.stripeTaxBehavior,
+          tax_code: merchantJuryCatalog.stripeShippingTaxCode,
           delivery_estimate: {
             minimum: {
               unit: 'business_day' as const,
-              value: merchantPilot.deliveryEstimateBusinessDays.minimum,
+              value: merchantJuryCatalog.deliveryEstimateBusinessDays.minimum,
             },
             maximum: {
               unit: 'business_day' as const,
-              value: merchantPilot.deliveryEstimateBusinessDays.maximum,
+              value: merchantJuryCatalog.deliveryEstimateBusinessDays.maximum,
             },
           },
         },
