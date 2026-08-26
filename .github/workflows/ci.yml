@@ -43,3 +43,8 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
       - run: npm run submission:verify:repository
+        env:
+          # Actions checks out a synthetic merge commit for pull requests. Verify
+          # provenance against the immutable PR head while keeping every build and
+          # browser check above on the synthetic merge result.
+          SUBMISSION_VERIFY_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}

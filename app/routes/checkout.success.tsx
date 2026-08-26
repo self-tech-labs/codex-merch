@@ -1,10 +1,11 @@
 import {useEffect} from 'react';
-import {Link, useLoaderData} from 'react-router';
+import {Link, useLoaderData, useRevalidator} from 'react-router';
 import type {Route} from './+types/checkout.success';
 import {useCart} from '~/lib/cart';
 import {getEnv} from '~/lib/env.server';
 import {getOrderBySession, getOrderItems} from '~/lib/orders.server';
 import {retrieveCheckoutSession} from '~/lib/stripe.server';
+import {merchantCatalog} from '~/lib/merchant-catalog';
 
 export const meta: Route.MetaFunction = () => [
   {title: 'Codex Merch | Checkout status'},
@@ -25,13 +26,27 @@ export async function loader({context, request}: Route.LoaderArgs) {
       session.metadata?.source !== 'codex-merch' ||
       session.metadata.order_id !== order.id ||
       session.metadata.catalog_revision !== order.catalogRevision ||
+      session.metadata.policy_version !== order.policyVersion ||
       session.payment_status !== 'paid' ||
-      order.paymentStatus !== 'paid' ||
+      session.consent?.terms_of_service !== 'accepted' ||
       session.currency?.toUpperCase() !== order.currency ||
       session.amount_subtotal !== order.subtotalAmount ||
-      session.amount_total !== order.totalAmount
+      session.total_details?.amount_shipping !== merchantCatalog.shippingAmount ||
+      session.amount_total !== order.subtotalAmount + merchantCatalog.shippingAmount
     ) {
       return {state: 'unverified' as const};
+    }
+    if (order.paymentStatus === 'pending') {
+      return {
+        state: 'processing' as const,
+        reference: order.publicReference,
+      };
+    }
+    if (order.paymentStatus !== 'paid' || session.amount_total !== order.totalAmount) {
+      return {
+        state: 'review' as const,
+        reference: order.publicReference,
+      };
     }
     const items = await getOrderItems(order.id, env);
     return {
@@ -52,6 +67,7 @@ export async function loader({context, request}: Route.LoaderArgs) {
 export default function CheckoutSuccess() {
   const data = useLoaderData<typeof loader>();
   const {removePurchasedLines} = useCart();
+  const revalidator = useRevalidator();
 
   useEffect(() => {
     if (data.state === 'paid') {
@@ -59,7 +75,44 @@ export default function CheckoutSuccess() {
     }
   }, [data, removePurchasedLines]);
 
-  if (data.state !== 'paid') {
+  useEffect(() => {
+    if (data.state !== 'processing' || revalidator.state !== 'idle') return;
+    const timeout = window.setTimeout(
+      () => void revalidator.revalidate(),
+      2_000,
+    );
+    return () => window.clearTimeout(timeout);
+  }, [data.state, revalidator]);
+
+  if (data.state === 'processing') {
+    return (
+      <section className="checkout-result" aria-live="polite">
+        <h1>Payment received.</h1>
+        <p>
+          Stripe confirmed your payment. We are securely recording the order;
+          this page will update automatically.
+        </p>
+        <p>Reference: <strong>{data.reference}</strong></p>
+        <Link to="/">Back to the shop</Link>
+      </section>
+    );
+  }
+
+  if (data.state === 'review') {
+    return (
+      <section className="checkout-result">
+        <h1>Order under review.</h1>
+        <p>
+          Stripe matched this payment, but the order needs attention before
+          fulfillment. Keep your receipt and reference for support.
+        </p>
+        <p>Reference: <strong>{data.reference}</strong></p>
+        <Link to="/policies/contact">Contact</Link>
+      </section>
+    );
+  }
+
+  if (data.state === 'unverified') {
     return (
       <section className="checkout-result">
         <h1>Payment not verified.</h1>

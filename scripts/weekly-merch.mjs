@@ -62,7 +62,7 @@ const DEFAULT_LIST_ID = '2067819170989854863';
 const REQUIRED_POST_COUNT = 30;
 const PREPARATION_RECOVERY_ARTIFACT = 'preparation-recovery';
 const PREPARATION_RECOVERY_VERSION = 1;
-const CURRENT_MERCHANT_POLICY_VERSION = '2026-07-21';
+const CURRENT_MERCHANT_POLICY_VERSION = '2026-08-26';
 const PROVIDER_MOCKUP_PATTERN = /(?:^|-)printful-\d+\.(?:jpe?g|png|webp)$/i;
 const WORKFLOW_STATUS_ORDER = [
   'draft',
@@ -2083,26 +2083,25 @@ async function pollPrintfulMockups(slug) {
   throw new Error(`Printful mockups did not complete after ${attempts} polls`);
 }
 
-function requireReleaseEnvironment() {
-  if (process.env.MERCH_WEEKLY_RELEASE_ENABLED !== 'true') {
+export function requireReleaseEnvironment(env = process.env) {
+  if (env.MERCH_WEEKLY_RELEASE_ENABLED !== 'true') {
     throw new Error('MERCH_WEEKLY_RELEASE_ENABLED=true is required for release');
   }
-  if (process.env.STOREFRONT_MODE !== 'production') {
+  if (env.STOREFRONT_MODE !== 'production') {
     throw new Error('STOREFRONT_MODE=production is required before release mutations');
   }
-  if (process.env.PRINTFUL_AUTO_CONFIRM !== 'false') {
+  if (env.PRINTFUL_AUTO_CONFIRM !== 'false') {
     throw new Error('PRINTFUL_AUTO_CONFIRM must remain false during the pilot');
   }
-  deploymentProviderConfig();
+  deploymentProviderConfig(env);
   const requiredTrue = [
     'MERCH_PILOT_APPROVED',
     'MERCH_EXPANSION_APPROVED',
     'CHECKOUT_ENABLED',
-    'JURY_SALES_ENABLED',
     'STOREFRONT_LEGAL_APPROVED',
     'STOREFRONT_TAX_SHIPPING_APPROVED',
   ];
-  const disabled = requiredTrue.filter((name) => process.env[name] !== 'true');
+  const disabled = requiredTrue.filter((name) => env[name] !== 'true');
   if (disabled.length) {
     throw new Error(`Release gates must be true: ${disabled.join(', ')}`);
   }
@@ -2113,6 +2112,7 @@ function requireReleaseEnvironment() {
     'OPENAI_API_KEY',
     'STRIPE_SECRET_KEY',
     'STRIPE_WEBHOOK_SECRET',
+    'STRIPE_EXPECTED_MODE',
     'DATABASE_URL',
     'INNGEST_EVENT_KEY',
     'INNGEST_SIGNING_KEY',
@@ -2120,37 +2120,31 @@ function requireReleaseEnvironment() {
     'STOREFRONT_POLICY_VERSION',
     'STRIPE_ALLOWED_SHIPPING_COUNTRIES',
     'STRIPE_AUTOMATIC_TAX',
-    'JURY_ACCESS_CODE',
-    'JURY_SALES_END_AT',
   ];
-  const missing = required.filter((name) => !process.env[name]);
+  const missing = required.filter((name) => !String(env[name] || '').trim());
   if (missing.length) throw new Error(`Missing release env vars: ${missing.join(', ')}`);
-  if (!/^https:\/\//.test(process.env.PUBLIC_SITE_URL)) {
+  if (!/^https:\/\//.test(env.PUBLIC_SITE_URL)) {
     throw new Error('Release requires a public HTTPS site URL');
   }
-  if (process.env.STOREFRONT_POLICY_VERSION !== CURRENT_MERCHANT_POLICY_VERSION) {
+  if (env.STOREFRONT_POLICY_VERSION !== CURRENT_MERCHANT_POLICY_VERSION) {
     throw new Error(
       `STOREFRONT_POLICY_VERSION must be ${CURRENT_MERCHANT_POLICY_VERSION}`,
     );
   }
-  if (process.env.STRIPE_ALLOWED_SHIPPING_COUNTRIES !== 'CH,US') {
+  if (String(env.STRIPE_EXPECTED_MODE).trim().toLowerCase() !== 'live') {
+    throw new Error('STRIPE_EXPECTED_MODE=live is required for production release');
+  }
+  if (env.STRIPE_ALLOWED_SHIPPING_COUNTRIES !== 'CH,US') {
     throw new Error(
-      'The jury pilot requires STRIPE_ALLOWED_SHIPPING_COUNTRIES=CH,US',
+      'Production checkout requires STRIPE_ALLOWED_SHIPPING_COUNTRIES=CH,US',
     );
   }
-  const jurySalesEndAt = Date.parse(process.env.JURY_SALES_END_AT);
-  if (!Number.isFinite(jurySalesEndAt) || Date.now() >= jurySalesEndAt) {
-    throw new Error('JURY_SALES_END_AT must be a future ISO timestamp');
-  }
-  if (process.env.JURY_ACCESS_CODE.trim().length < 16) {
-    throw new Error('JURY_ACCESS_CODE must contain at least 16 characters');
-  }
-  if (!['true', 'false'].includes(process.env.STRIPE_AUTOMATIC_TAX)) {
+  if (!['true', 'false'].includes(env.STRIPE_AUTOMATIC_TAX)) {
     throw new Error('STRIPE_AUTOMATIC_TAX must be explicitly true or false');
   }
   if (
-    Boolean(process.env.STRIPE_SHIPPING_RATE_ID) ===
-    Boolean(process.env.STRIPE_FLAT_SHIPPING_AMOUNT)
+    Boolean(env.STRIPE_SHIPPING_RATE_ID) ===
+    Boolean(env.STRIPE_FLAT_SHIPPING_AMOUNT)
   ) {
     throw new Error('Release requires exactly one approved Stripe shipping rate');
   }

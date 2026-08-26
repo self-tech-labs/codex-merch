@@ -4,7 +4,7 @@ import path from 'node:path';
 import {defineConfig, type Plugin} from 'vite';
 import {reactRouter} from '@react-router/dev/vite';
 import products from './merch/products.json';
-import {merchantJuryCatalog} from './app/lib/merchant-policy';
+import {merchantCatalog} from './app/lib/merchant-catalog';
 import {validateCatalog} from './scripts/validate-catalog.mjs';
 
 function copyMerchAssets(): Plugin {
@@ -14,13 +14,13 @@ function copyMerchAssets(): Plugin {
       const {errors} = await validateCatalog();
       if (errors.length) this.error(errors.join('\n'));
 
-      for (const approvedProduct of merchantJuryCatalog.products) {
+      for (const approvedProduct of merchantCatalog.products) {
         const product = products.find(
           (candidate) => candidate.slug === approvedProduct.productSlug,
         );
         if (!product) {
           this.error(
-            `Approved jury product is missing: ${approvedProduct.productSlug}`,
+            `Approved merchant product is missing: ${approvedProduct.productSlug}`,
           );
         }
         const revision = createHash('sha256')
@@ -28,7 +28,7 @@ function copyMerchAssets(): Plugin {
           .digest('hex');
         if (revision !== approvedProduct.approvedProductRevision) {
           this.error(
-            `Jury product changed after sign-off: ${approvedProduct.productSlug}`,
+            `Merchant product changed after sign-off: ${approvedProduct.productSlug}`,
           );
         }
         const referencedAssets = new Set([
@@ -45,7 +45,7 @@ function copyMerchAssets(): Plugin {
           [...referencedAssets].some((asset) => !approvedAssets.has(asset))
         ) {
           this.error(
-            `Jury product asset set changed after sign-off: ${approvedProduct.productSlug}`,
+            `Merchant product asset set changed after sign-off: ${approvedProduct.productSlug}`,
           );
         }
         for (const asset of referencedAssets) {
@@ -54,7 +54,7 @@ function copyMerchAssets(): Plugin {
             .digest('hex');
           if (digest !== approvedAssetSha256[asset]) {
             this.error(
-              `Jury product asset changed after sign-off: ${approvedProduct.productSlug} (${asset})`,
+              `Merchant product asset changed after sign-off: ${approvedProduct.productSlug} (${asset})`,
             );
           }
         }

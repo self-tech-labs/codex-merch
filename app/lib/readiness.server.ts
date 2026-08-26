@@ -1,21 +1,33 @@
 import {sql} from 'drizzle-orm';
 import {getDatabase} from '~/db/client.server';
 import {
-  merchantJuryCatalog,
-  type MerchantJuryProduct,
-} from '~/lib/merchant-policy';
-import {stripeClient} from '~/lib/stripe.server';
+  merchantCatalog,
+  type MerchantCatalogProduct,
+} from '~/lib/merchant-catalog';
+import {assertStripePaymentMode, stripeClient} from '~/lib/stripe.server';
 
 type ProbeDependencies = {
   databaseProbe?: (env: AppEnv) => Promise<void>;
   printfulProbe?: (
     env: AppEnv,
-    approvedProduct: MerchantJuryProduct,
+    approvedProduct: MerchantCatalogProduct,
   ) => Promise<void>;
-  stripeProbe?: (env: AppEnv) => Promise<{livemode: boolean}>;
+  stripeProbe?: (env: AppEnv) => Promise<{
+    livemode: boolean;
+    webhookReady: boolean;
+  }>;
 };
 
 const LIVE_PROBE_TIMEOUT_MS = 10_000;
+export const REQUIRED_STRIPE_WEBHOOK_EVENTS = [
+  'checkout.session.completed',
+  'checkout.session.async_payment_succeeded',
+  'checkout.session.async_payment_failed',
+  'checkout.session.expired',
+  'charge.refunded',
+  'charge.dispute.created',
+  'charge.dispute.closed',
+] as const;
 
 export async function probeCheckoutDependencies(
   env: AppEnv,
@@ -24,9 +36,9 @@ export async function probeCheckoutDependencies(
     printfulProbe = probePrintful,
     stripeProbe = probeStripe,
   }: ProbeDependencies = {},
-  approvedProduct: MerchantJuryProduct = merchantJuryCatalog.products[0],
+  approvedProduct: MerchantCatalogProduct = merchantCatalog.products[0],
 ) {
-  const paymentMode = stripePaymentMode(env.STRIPE_SECRET_KEY);
+  const paymentMode = assertStripePaymentMode(env);
   const [, , stripe] = await Promise.all([
     withTimeout(databaseProbe(env), 'database'),
     withTimeout(printfulProbe(env, approvedProduct), 'Printful'),
@@ -41,16 +53,9 @@ export async function probeCheckoutDependencies(
     databaseReady: true,
     printfulReady: true,
     stripeReady: true,
+    stripeWebhookReady: stripe.webhookReady,
     paymentMode,
   } as const;
-}
-
-export function stripePaymentMode(secretKey: string | undefined) {
-  const match = String(secretKey || '').match(
-    /^sk_(test|live)_[A-Za-z0-9_]{16,}$/,
-  );
-  if (!match) throw new Error('Stripe secret key is not a live or test secret key');
-  return match[1] as 'test' | 'live';
 }
 
 async function probeDatabase(env: AppEnv) {
@@ -80,19 +85,32 @@ async function probeDatabase(env: AppEnv) {
         where table_schema = 'public'
           and table_name = 'stripe_events'
           and column_name = 'processing_token'
-      ) as webhook_lease_ready
+      ) as webhook_lease_ready,
+      exists (
+        select 1
+        from information_schema.columns
+        where table_schema = 'public'
+          and table_name = 'order_items'
+          and column_name = 'sync_variant_id'
+          and data_type = 'bigint'
+      ) as sync_variant_bigint_ready
   `);
-  const row = result.rows[0] as
-    | {
-        ready?: number;
-        orders_table?: string | null;
-        order_items_table?: string | null;
-        stripe_events_table?: string | null;
-        refund_tracking_ready?: boolean;
-        policy_version_ready?: boolean;
-        webhook_lease_ready?: boolean;
-      }
-    | undefined;
+  assertDatabaseReadinessRow(result.rows[0]);
+}
+
+type DatabaseReadinessRow = {
+  ready?: number;
+  orders_table?: string | null;
+  order_items_table?: string | null;
+  stripe_events_table?: string | null;
+  refund_tracking_ready?: boolean;
+  policy_version_ready?: boolean;
+  webhook_lease_ready?: boolean;
+  sync_variant_bigint_ready?: boolean;
+};
+
+export function assertDatabaseReadinessRow(value: unknown) {
+  const row = value as DatabaseReadinessRow | undefined;
   if (
     Number(row?.ready) !== 1 ||
     !row?.orders_table ||
@@ -100,20 +118,53 @@ async function probeDatabase(env: AppEnv) {
     !row.stripe_events_table ||
     !row.refund_tracking_ready ||
     !row.policy_version_ready ||
-    !row.webhook_lease_ready
+    !row.webhook_lease_ready ||
+    !row.sync_variant_bigint_ready
   ) {
     throw new Error('Database is missing required checkout migrations');
   }
 }
 
 async function probeStripe(env: AppEnv) {
-  const balance = await stripeClient(env).balance.retrieve();
-  return {livemode: balance.livemode};
+  if (!env.PUBLIC_SITE_URL) {
+    throw new Error('Stripe readiness requires the canonical public site URL');
+  }
+  const client = stripeClient(env);
+  const [account, balance, endpoints] = await Promise.all([
+    client.accounts.retrieveCurrent(),
+    client.balance.retrieve(),
+    client.webhookEndpoints.list({limit: 100}),
+  ]);
+  const expectedWebhookUrl = new URL(
+    '/api/stripe/webhook',
+    env.PUBLIC_SITE_URL,
+  ).toString();
+  const webhook = endpoints.data.find((endpoint) => {
+    const events = new Set(endpoint.enabled_events);
+    return (
+      endpoint.status === 'enabled' &&
+      endpoint.url === expectedWebhookUrl &&
+      (events.has('*') ||
+        REQUIRED_STRIPE_WEBHOOK_EVENTS.every((event) => events.has(event)))
+    );
+  });
+  if (!webhook) {
+    throw new Error(
+      'Stripe is missing the enabled canonical webhook destination or required events',
+    );
+  }
+  if (!account.charges_enabled || !account.payouts_enabled) {
+    throw new Error('Stripe live charges or payouts are not enabled');
+  }
+  return {
+    livemode: balance.livemode,
+    webhookReady: true,
+  };
 }
 
 async function probePrintful(
   env: AppEnv,
-  approvedProduct: MerchantJuryProduct,
+  approvedProduct: MerchantCatalogProduct,
 ) {
   const response = await fetch(
     `https://api.printful.com/store/products/${approvedProduct.printfulProductId}`,

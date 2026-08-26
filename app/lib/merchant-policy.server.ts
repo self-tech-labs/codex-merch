@@ -1,93 +1,38 @@
-import signedJuryProducts from '../../merch/merchant-jury-catalog.json';
-
-export const MERCHANT_POLICY_VERSION = '2026-07-21';
-export const MERCHANT_CONTACT_EMAIL = 'elliot@ritsl.com';
-
-/**
- * Exact merchant-approved catalog contract. Every product added here must pin
- * its local manifest revision, public assets, Printful product, and Printful
- * variants before production checkout can accept it.
- */
-export const merchantJuryCatalog = {
-  currency: 'CHF',
-  shippingAmount: 910,
-  shippingCountries: ['CH', 'US'],
-  deliveryEstimateBusinessDays: {minimum: 7, maximum: 15},
-  maximumItemsPerOrder: 10,
-  stripeTaxBehavior: 'inclusive',
-  stripeProductTaxCode: 'txcd_99999999',
-  stripeShippingTaxCode: 'txcd_92010001',
-  products: signedJuryProducts,
-} as const;
-
-export type MerchantJuryProduct =
-  (typeof merchantJuryCatalog.products)[number];
-
-export function getApprovedJuryProduct(productSlug: string) {
-  return merchantJuryCatalog.products.find(
-    (product) => product.productSlug === productSlug,
-  );
-}
-
-/**
- * Compatibility alias for policy copy and integrations that still use the
- * original pilot name. Product authorization must use merchantJuryCatalog.
- */
-export const merchantPilot = {
-  ...merchantJuryCatalog,
-  ...signedJuryProducts[0],
-} as const;
-
-export function merchantJuryDisplayAmounts(subtotal: number) {
-  const shipping = merchantJuryCatalog.shippingAmount / 100;
-  return {shipping, total: subtotal + shipping};
-}
-
-/** @deprecated Use merchantJuryDisplayAmounts for the multi-product catalog. */
-export const merchantPilotDisplayAmounts = merchantJuryDisplayAmounts;
+import {
+  MERCHANT_POLICY_PAGE_IDS,
+  type MerchantPolicyPage,
+  type MerchantPolicyPageId,
+} from './merchant-policy.shared';
 
 export const merchantIdentity = {
-  legalName: 'RITSL Elliot Vaucher',
-  legalForm: 'Sole proprietorship',
-  proprietor: 'Elliot Richard Vaucher',
+  legalName: 'Elliot Richard Vaucher',
+  legalForm: 'Swiss sole proprietor',
   address: {
     street: 'Avenue Virgile-Rossel 18',
     postalCode: '1012',
     city: 'Lausanne',
     country: 'Switzerland',
   },
-  uid: 'CHE-205.406.793',
-  commercialRegisterNumber: 'CH-550.1.243.579-7',
-  email: MERCHANT_CONTACT_EMAIL,
 } as const;
 
-export const MERCHANT_POLICY_PAGE_IDS = [
-  'shipping',
-  'returns',
-  'privacy',
-  'terms',
-  'contact',
-] as const;
+export function merchantContactEmail(env: AppEnv) {
+  const email = env.STOREFRONT_CONTACT_EMAIL?.trim() || '';
+  return isValidMerchantContactEmail(email) ? email : null;
+}
 
-export type MerchantPolicyPageId =
-  (typeof MERCHANT_POLICY_PAGE_IDS)[number];
-
-type PolicySection = {
-  heading: string;
-  paragraphs: readonly string[];
-};
-
-type MerchantPolicyPage = {
-  title: string;
-  summary: string;
-  sections: readonly PolicySection[];
-};
+export function isValidMerchantContactEmail(value: string | undefined) {
+  const email = value?.trim() || '';
+  return (
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) &&
+    !/(?:ritsl|self[-_.]?tech[-_.]?labs)/i.test(email)
+  );
+}
 
 export const merchantPolicyPages = {
   shipping: {
     title: 'Shipping policy',
     summary:
-      'This OpenAI Build Week jury pilot accepts delivery addresses in Switzerland and the United States. Storefront prices and checkout charges are in Swiss francs (CHF).',
+      'This independently operated storefront accepts delivery addresses in Switzerland and the United States. Storefront prices and checkout charges are in Swiss francs (CHF).',
     sections: [
       {
         heading: 'Made-to-order production',
@@ -101,7 +46,7 @@ export const merchantPolicyPages = {
         paragraphs: [
           'Allow an estimated 7–15 business days from order confirmation to delivery in Switzerland or the United States. These timings are estimates, not guarantees, and can be affected by production demand, public holidays, carrier disruption, customs, or the destination.',
           'The shipping charge and any other non-optional charge are shown in checkout before payment. Tracking is provided when the fulfillment partner and carrier make it available.',
-          'RITSL is responsible for normal import, customs, and carrier-clearance charges required to deliver the parcel under the approved Switzerland or United States route. If a carrier asks you to pay an unexpected import or clearance charge, contact us before paying so we can investigate and arrange payment or reimbursement where appropriate.',
+          'The seller is responsible for normal import, customs, and carrier-clearance charges required to deliver the parcel under the supported Switzerland or United States route. If a carrier asks you to pay an unexpected import or clearance charge, contact us before paying so we can investigate and arrange payment or reimbursement where appropriate.',
         ],
       },
       {
@@ -114,7 +59,7 @@ export const merchantPolicyPages = {
       {
         heading: 'Where we deliver',
         paragraphs: [
-          'This time-limited pilot storefront serves OpenAI Build Week judges using delivery addresses in Switzerland or the United States only. An order with an unsupported destination may be cancelled and refunded rather than fulfilled.',
+          'The storefront currently serves delivery addresses in Switzerland and the United States only. An order with an unsupported destination may be cancelled and refunded rather than fulfilled.',
         ],
       },
     ],
@@ -128,7 +73,7 @@ export const merchantPolicyPages = {
         heading: 'Voluntary 14-day returns',
         paragraphs: [
           'You may ask to return a non-personalized item within 14 calendar days after delivery if it is unused, unworn, unwashed, and in its original condition. Email us before sending anything back and include the order reference, the item, and the reason for the return.',
-          'A return requires our prior authorization and the return instructions we provide. An authorized return must be dispatched within 14 calendar days after authorization. Do not send a return to the fulfillment partner or the registered business address unless the instructions expressly tell you to do so.',
+          'A return requires our prior authorization and the return instructions we provide. An authorized return must be dispatched within 14 calendar days after authorization. Do not send a return to the fulfillment partner or the seller address unless the instructions expressly tell you to do so.',
           'For a change-of-mind return, you pay the return postage and remain responsible for the parcel until it is received. After an eligible return is received and inspected, we refund the returned item price to the original payment method. Original outbound shipping and return postage are not refunded unless the item was defective, damaged, misprinted, or incorrect.',
         ],
       },
@@ -158,7 +103,7 @@ export const merchantPolicyPages = {
   privacy: {
     title: 'Privacy notice',
     summary:
-      'RITSL Elliot Vaucher is responsible for personal data used to operate this shop. This notice explains what is processed, why it is needed, and who helps us process it.',
+      'Elliot Richard Vaucher is the controller responsible for personal data used to operate this shop. This notice explains what is processed, why it is needed, and who helps process it.',
     sections: [
       {
         heading: 'Data we process',
@@ -185,13 +130,13 @@ export const merchantPolicyPages = {
         heading: 'International processing',
         paragraphs: [
           'Some providers, their affiliates, fulfillment facilities, or carriers may process data outside Switzerland. Where required, we rely on an applicable legal transfer mechanism or contractual and organizational safeguards. Provider locations and subprocessors can change over time.',
-          'RITSL reviews the processor terms, data-processing terms, current subprocessor lists, relevant processing countries, and transfer safeguards for Stripe, Printful and its carriers, Vercel, Neon/Postgres, Inngest, and the support-email provider. You may request the current transfer information using the contact details below.',
+          'The operator reviews the processor terms, data-processing terms, current subprocessor lists, relevant processing countries, and transfer safeguards for Stripe, Printful and its carriers, Vercel, Neon/Postgres, Inngest, and the support-email provider. You may request current transfer information using the contact details below.',
         ],
       },
       {
         heading: 'Security measures',
         paragraphs: [
-          'We use measures appropriate to this pilot such as HTTPS in transit, restricted production access, separate environment credentials, least-privilege provider tokens, signed webhook verification, limited operational logging, database access controls, dependency and deployment review, and documented incident and credential-rotation procedures. No internet service can guarantee absolute security.',
+          'We use measures appropriate to this shop such as HTTPS in transit, restricted production access, separate environment credentials, least-privilege provider tokens, signed webhook verification, limited operational logging, database access controls, dependency and deployment review, and documented incident and credential-rotation procedures. No internet service can guarantee absolute security.',
         ],
       },
       {
@@ -213,13 +158,13 @@ export const merchantPolicyPages = {
   terms: {
     title: 'Terms of sale',
     summary:
-      'These terms govern orders placed by OpenAI Build Week judges with RITSL Elliot Vaucher through this independently operated CH/US jury pilot.',
+      'These terms govern orders placed with Elliot Richard Vaucher through this independently operated storefront for delivery in Switzerland or the United States.',
     sections: [
       {
-        heading: 'Merchant and scope',
+        heading: 'Seller and scope',
         paragraphs: [
-          'The seller is RITSL Elliot Vaucher, a Swiss sole proprietorship operated by Elliot Richard Vaucher. The registered identity and contact details appear below.',
-          'The shop currently accepts orders only from OpenAI Build Week judges for delivery in Switzerland or the United States and contracts only in Swiss francs (CHF). You must be able to enter into the purchase contract, hold the private jury access code, and provide accurate checkout information.',
+          'The seller is Elliot Richard Vaucher, a Swiss sole proprietor. The seller identity and contact details appear below.',
+          'The shop currently accepts orders for delivery in Switzerland or the United States and contracts only in Swiss francs (CHF). You must be able to enter into the purchase contract and provide accurate checkout information.',
         ],
       },
       {
@@ -250,10 +195,12 @@ export const merchantPolicyPages = {
         ],
       },
       {
-        heading: 'Intellectual property and independence',
+        heading: 'Independent project and OpenAI rights',
         paragraphs: [
-          'This fan-made shop is independently operated by RITSL Elliot Vaucher. Its merchandise is not official OpenAI merchandise, and the shop is not affiliated with, sponsored by, or endorsed by OpenAI or any other third-party mark owner.',
-          'OpenAI, Codex, and other names, logos, product identifiers, and marks belong to their respective owners. Their appearance does not transfer any ownership or license to a purchaser. Storefront text, original artwork, photographs, and site materials remain protected by their respective owners and may not be commercially reproduced without permission.',
+          'Codex Merch is an independent, fan-made project created for OpenAI Build Week. It is not an OpenAI product or official OpenAI merchandise and is not affiliated with, authorized, sponsored, approved, or endorsed by OpenAI. Participation in OpenAI Build Week did not create any partnership, agency, licence, or endorsement.',
+          'OpenAI, Codex, and any OpenAI-owned names, marks, logos, images, product identifiers, or other brand assets remain the property of OpenAI. Elliot Vaucher and Codex Merch claim no ownership, licence, authorization, or other rights in those assets. A purchase transfers only the physical item and no intellectual-property right or licence.',
+          'Upon OpenAI’s first notice or request through any reasonable contact channel, we will immediately suspend sale of the affected product, design, image, or reference and promptly remove it from the storefront; no cease-and-desist letter or further notice is required. If OpenAI instead specifically requests a modification, we will comply promptly. A paid but unfulfilled affected order may be cancelled and refunded. This commitment does not admit infringement and does not reduce any mandatory customer right.',
+          'Other third-party names, marks, and materials remain the property of their respective owners. Storefront text, original artwork, photographs, and site materials may not be commercially reproduced without permission from the applicable rights holder.',
         ],
       },
       {
@@ -272,20 +219,20 @@ export const merchantPolicyPages = {
     ],
   },
   contact: {
-    title: 'Contact and legal notice',
+    title: 'Contact',
     summary:
-      'Contact the registered merchant directly for order support, returns, privacy requests, or legal notices.',
+      'Order support, return requests, privacy requests, and legal notices are handled directly by the independent shop operator.',
     sections: [
       {
         heading: 'Order and customer support',
         paragraphs: [
-          'Email us at the address below and include the public order reference for order-specific help. For a product issue, include a short description and clear photographs where relevant. Please request authorization before returning any item.',
+          'Use the contact email listed in the Terms of sale and include the public order reference for order-specific help. For a product issue, include a short description and clear photographs where relevant. Please request authorization before returning any item.',
         ],
       },
       {
-        heading: 'Independent operation',
+        heading: 'Privacy and rights notices',
         paragraphs: [
-          'This is a fan-made shop independently operated by RITSL Elliot Vaucher. Its merchandise is not official OpenAI merchandise, and the shop is not affiliated with, sponsored by, or endorsed by OpenAI. OpenAI, Codex, and other third-party marks remain the property of their respective owners.',
+          'Use the contact email listed in the Privacy notice for a data request. OpenAI or another rights holder may use the contact email in the Terms of sale for a removal or other legal notice.',
         ],
       },
     ],
@@ -295,5 +242,8 @@ export const merchantPolicyPages = {
 export function isMerchantPolicyPageId(
   value: string | undefined,
 ): value is MerchantPolicyPageId {
-  return typeof value === 'string' && Object.hasOwn(merchantPolicyPages, value);
+  return (
+    typeof value === 'string' &&
+    (MERCHANT_POLICY_PAGE_IDS as readonly string[]).includes(value)
+  );
 }

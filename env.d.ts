@@ -18,15 +18,13 @@ declare global {
     STOREFRONT_MODE?: string;
     DATABASE_URL?: string;
     CHECKOUT_ENABLED?: string;
-    JURY_SALES_ENABLED?: string;
-    JURY_ACCESS_CODE?: string;
-    JURY_SALES_END_AT?: string;
     MERCH_PILOT_APPROVED?: string;
     MERCH_EXPANSION_APPROVED?: string;
     STOREFRONT_LEGAL_APPROVED?: string;
     STOREFRONT_TAX_SHIPPING_APPROVED?: string;
     STOREFRONT_CONTACT_EMAIL?: string;
     STOREFRONT_POLICY_VERSION?: string;
+    STRIPE_EXPECTED_MODE?: string;
     STRIPE_SECRET_KEY?: string;
     STRIPE_WEBHOOK_SECRET?: string;
     STRIPE_ALLOWED_SHIPPING_COUNTRIES?: string;

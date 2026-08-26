@@ -12,6 +12,7 @@ import {
   SUBMISSION_DOCUMENT_FILES,
   buildSubmissionReport,
   configurationPresence,
+  evaluateCiHeadBinding,
   evaluateGitProvenance,
   evaluatePackageScripts,
   evaluatePushedHead,
@@ -19,6 +20,7 @@ import {
   findUnresolvedPlaceholders,
   hasThirtyPostFixture,
   isForbiddenTrackedSecretFilename,
+  isCommitAncestor,
   isTimestampWithinBuildWeek,
   parseEnvFile,
   runtimeGpt56Contract,
@@ -86,6 +88,8 @@ function validGitFacts(overrides = {}) {
     upstream: 'origin/codex/build-week-weekly-studio',
     upstreamSha: headSha,
     ciHeadSha: null,
+    ciVerifiedHeadSha: null,
+    ciHeadBinding: null,
     ...overrides,
   };
 }
@@ -145,6 +149,14 @@ test('required artifacts cover weekly runtime, prompts, schemas, fixtures, right
     true,
   );
   assert.equal(BUILD_WEEK_PREVIEW_FILES.includes('app/lib/fulfillment.server.ts'), true);
+  for (const retiredFile of [
+    'app/lib/jury-access.server.ts',
+    'app/lib/jury-access.test.ts',
+  ]) {
+    assert.equal(BUILD_WEEK_PREVIEW_FILES.includes(retiredFile), true, retiredFile);
+    assert.equal(REQUIRED_BUILD_WEEK_DELTA_FILES.includes(retiredFile), false, retiredFile);
+    assert.equal(REQUIRED_TRACKED_FILES.includes(retiredFile), false, retiredFile);
+  }
   assert.equal(
     BUILD_WEEK_PREVIEW_FILES.includes('app/routes/api.stripe.webhook.ts'),
     true,
@@ -274,7 +286,7 @@ test('package scripts make the final verifier run functional checks before repos
   assert.equal(weak.missing.includes('repositoryVerifier'), true);
 });
 
-test('Build Week provenance window includes exact boundaries and excludes late commits', () => {
+test('Build Week provenance preserves the exact window and accepts later maintenance descendants', () => {
   assert.equal(isTimestampWithinBuildWeek(BUILD_WEEK_PROVENANCE_START), true);
   assert.equal(isTimestampWithinBuildWeek(BUILD_WEEK_PROVENANCE_END), true);
   assert.equal(isTimestampWithinBuildWeek('2026-07-13T08:59:59-07:00'), false);
@@ -285,6 +297,12 @@ test('Build Week provenance window includes exact boundaries and excludes late c
   assert.equal(
     evaluateGitProvenance(
       validGitFacts({headCommittedAt: '2026-07-21T17:00:01-07:00'}),
+    ).ok,
+    true,
+  );
+  assert.equal(
+    evaluateGitProvenance(
+      validGitFacts({headCommittedAt: '2026-07-13T08:59:59-07:00'}),
     ).ok,
     false,
   );
@@ -306,18 +324,180 @@ test('provenance requires meaningful core delta, baseline ancestry, and annotate
   );
 });
 
-test('pushed HEAD accepts matching upstream or CI SHA and rejects local-only commits', () => {
+test('pushed HEAD accepts matching upstream or a bound CI head and rejects local-only commits', () => {
   assert.equal(evaluatePushedHead(validGitFacts()).ok, true);
+  const mergeSha = 'b'.repeat(40);
   assert.equal(
     evaluatePushedHead(
-      validGitFacts({upstream: null, upstreamSha: null, ciHeadSha: 'a'.repeat(40)}),
+      validGitFacts({
+        upstream: null,
+        upstreamSha: null,
+        ciHeadSha: mergeSha,
+        ciVerifiedHeadSha: 'a'.repeat(40),
+        ciHeadBinding: 'pull-request-merge-second-parent',
+      }),
     ).ok,
     true,
   );
   assert.equal(
     evaluatePushedHead(
-      validGitFacts({upstreamSha: 'b'.repeat(40), ciHeadSha: null}),
+      validGitFacts({
+        upstream: null,
+        upstreamSha: null,
+        ciHeadSha: mergeSha,
+        ciVerifiedHeadSha: null,
+      }),
     ).ok,
+    false,
+  );
+});
+
+test('CI head binding accepts only the exact PR merge parent or push checkout', () => {
+  const baseSha = 'a'.repeat(40);
+  const prHeadSha = 'b'.repeat(40);
+  const mergeSha = 'c'.repeat(40);
+  const arbitrarySha = 'd'.repeat(40);
+  const common = {
+    githubActions: 'true',
+    checkoutSha: mergeSha,
+    checkoutParents: [baseSha, prHeadSha],
+    ciHeadSha: mergeSha,
+  };
+
+  assert.deepEqual(
+    evaluateCiHeadBinding({
+      ...common,
+      eventName: 'pull_request',
+      requestedHead: prHeadSha,
+    }),
+    {
+      verifiedHeadSha: prHeadSha,
+      binding: 'pull-request-merge-second-parent',
+    },
+  );
+  assert.deepEqual(
+    evaluateCiHeadBinding({
+      ...common,
+      eventName: 'pull_request',
+      requestedHead: arbitrarySha,
+    }),
+    {verifiedHeadSha: null, binding: null},
+  );
+  assert.deepEqual(
+    evaluateCiHeadBinding({
+      githubActions: 'true',
+      eventName: 'push',
+      checkoutSha: prHeadSha,
+      checkoutParents: [baseSha],
+      requestedHead: prHeadSha,
+      ciHeadSha: prHeadSha,
+    }),
+    {verifiedHeadSha: prHeadSha, binding: 'push-checkout'},
+  );
+  assert.deepEqual(
+    evaluateCiHeadBinding({
+      ...common,
+      eventName: 'pull_request',
+      requestedHead: prHeadSha,
+      ciHeadSha: arbitrarySha,
+    }),
+    {verifiedHeadSha: null, binding: null},
+  );
+});
+
+test('commit ancestry traversal follows parent objects and fails closed', () => {
+  const baselineSha = 'a'.repeat(40);
+  const middleSha = 'b'.repeat(40);
+  const headSha = 'c'.repeat(40);
+  const unrelatedSha = 'd'.repeat(40);
+  const parents = new Map([
+    [headSha, [middleSha]],
+    [middleSha, [baselineSha]],
+    [baselineSha, []],
+    [unrelatedSha, []],
+  ]);
+  const readParents = (sha) => parents.get(sha) ?? null;
+
+  assert.equal(
+    isCommitAncestor({
+      ancestorSha: baselineSha,
+      descendantSha: headSha,
+      readParents,
+    }),
+    true,
+  );
+  assert.equal(
+    isCommitAncestor({
+      ancestorSha: unrelatedSha,
+      descendantSha: headSha,
+      readParents,
+    }),
+    false,
+  );
+  assert.equal(
+    isCommitAncestor({
+      ancestorSha: baselineSha,
+      descendantSha: headSha,
+      readParents: () => null,
+    }),
+    false,
+  );
+  assert.equal(
+    isCommitAncestor({
+      ancestorSha: baselineSha,
+      descendantSha: headSha,
+      readParents,
+      maxCommits: 1,
+    }),
+    false,
+  );
+});
+
+test('commit ancestry traversal bounds fan-out, duplicate work, and elapsed time', () => {
+  const ancestorSha = 'a'.repeat(40);
+  const parentSha = 'b'.repeat(40);
+  const headSha = 'c'.repeat(40);
+  const extraSha = 'd'.repeat(40);
+
+  assert.equal(
+    isCommitAncestor({
+      ancestorSha,
+      descendantSha: headSha,
+      readParents: (sha) =>
+        sha === headSha ? [parentSha, extraSha, ancestorSha] : [],
+      maxParentsPerCommit: 2,
+    }),
+    false,
+  );
+
+  let duplicateReads = 0;
+  assert.equal(
+    isCommitAncestor({
+      ancestorSha,
+      descendantSha: headSha,
+      readParents: (sha) => {
+        duplicateReads += 1;
+        return sha === headSha ? [parentSha, parentSha, parentSha] : [];
+      },
+      maxParentsPerCommit: 4,
+      maxEdges: 2,
+    }),
+    false,
+  );
+  assert.equal(duplicateReads, 1);
+
+  let currentTime = 0;
+  assert.equal(
+    isCommitAncestor({
+      ancestorSha,
+      descendantSha: headSha,
+      readParents: () => {
+        currentTime = 6;
+        return [ancestorSha];
+      },
+      maxDurationMs: 5,
+      now: () => currentTime,
+    }),
     false,
   );
 });
@@ -374,6 +554,7 @@ test('configuration report is explicitly presence-only and covers site, approval
     publicHttpsSite: false,
     deployment: false,
     stripe: false,
+    stripeLiveMode: false,
     database: false,
     inngest: false,
     printful: false,
@@ -390,11 +571,12 @@ test('configuration report is explicitly presence-only and covers site, approval
     X_BEARER_TOKEN: 'x-secret-value',
     PUBLIC_SITE_URL: 'https://shop.example',
     MERCH_DEPLOY_PROVIDER: 'vercel',
-    MERCH_VERCEL_SCOPE: 'ritsl',
+    MERCH_VERCEL_SCOPE: 'merchant-team',
     MERCH_VERCEL_PROJECT_ID: 'prj_Example123',
     VERCEL_TOKEN: 'vercel-secret-value',
     STRIPE_SECRET_KEY: 'stripe-secret-value',
     STRIPE_WEBHOOK_SECRET: 'webhook-secret-value',
+    STRIPE_EXPECTED_MODE: 'live',
     DATABASE_URL: 'postgres-secret-value',
     INNGEST_EVENT_KEY: 'inngest-event-secret-value',
     INNGEST_SIGNING_KEY: 'inngest-signing-secret-value',
@@ -403,15 +585,12 @@ test('configuration report is explicitly presence-only and covers site, approval
     PRINTFUL_AUTO_CONFIRM: 'false',
     MERCH_WEEKLY_RELEASE_ENABLED: 'true',
     CHECKOUT_ENABLED: 'true',
-    JURY_SALES_ENABLED: 'true',
-    JURY_ACCESS_CODE: ['jury', 'secret', 'value'].join('-'),
-    JURY_SALES_END_AT: '2026-08-06T00:00:00Z',
     MERCH_PILOT_APPROVED: 'true',
-    MERCH_EXPANSION_APPROVED: 'true',
+    MERCH_EXPANSION_APPROVED: 'false',
     STOREFRONT_LEGAL_APPROVED: 'true',
     STOREFRONT_TAX_SHIPPING_APPROVED: 'true',
-    STOREFRONT_CONTACT_EMAIL: 'elliot@ritsl.com',
-    STOREFRONT_POLICY_VERSION: '2026-07-21',
+    STOREFRONT_CONTACT_EMAIL: 'merchant@example.com',
+    STOREFRONT_POLICY_VERSION: '2026-08-26',
     STRIPE_FLAT_SHIPPING_AMOUNT: '910',
     STRIPE_ALLOWED_SHIPPING_COUNTRIES: 'CH,US',
     STRIPE_AUTOMATIC_TAX: 'false',
@@ -420,12 +599,28 @@ test('configuration report is explicitly presence-only and covers site, approval
   assert.equal(Object.values(report.configurationPresence).every(Boolean), true);
   const serialized = JSON.stringify(report);
   for (const secret of Object.values(configured)) {
-    if (['false', 'true', 'gpt-5.6', '910', 'CH,US', '2026-07-21'].includes(secret)) continue;
+    if (['false', 'true', 'live', 'gpt-5.6', '910', 'CH,US', '2026-08-26'].includes(secret)) continue;
     assert.equal(serialized.includes(secret), false);
   }
 
   assert.equal(
     configurationPresence({...configured, OPENAI_TEXT_MODEL: 'gpt-4.1'}).openai,
+    false,
+  );
+  assert.equal(
+    configurationPresence({...configured, STRIPE_EXPECTED_MODE: 'test'}).stripeLiveMode,
+    false,
+  );
+  assert.equal(
+    configurationPresence({...configured, CHECKOUT_ENABLED: 'false'}).commerceApprovals,
+    false,
+  );
+  assert.equal(
+    configurationPresence({...configured, STOREFRONT_CONTACT_EMAIL: ''}).merchantPolicies,
+    false,
+  );
+  assert.equal(
+    configurationPresence({...configured, STOREFRONT_POLICY_VERSION: '2026-07-21'}).merchantPolicies,
     false,
   );
 });

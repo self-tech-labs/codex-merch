@@ -1,20 +1,15 @@
 import {redirect} from 'react-router';
 import type {Route} from './+types/api.checkout';
 import {getEnv} from '~/lib/env.server';
-import {
-  assertJuryAccessCode,
-  JuryAccessError,
-} from '~/lib/jury-access.server';
-import {MERCHANT_POLICY_VERSION} from '~/lib/merchant-policy';
+import {MERCHANT_POLICY_VERSION} from '~/lib/merchant-policy.shared';
+import {readRequestTextWithLimit} from '~/lib/request-body.server';
 import {createCheckoutSession, normalizeCheckoutLines} from '~/lib/stripe.server';
+
+const MAX_CHECKOUT_BYTES = 32_768;
 
 export async function action({context, request}: Route.ActionArgs) {
   const env = getEnv(context);
   const requestId = request.headers.get('x-request-id') || crypto.randomUUID();
-  const contentLength = Number(request.headers.get('content-length') || 0);
-  if (contentLength > 32_768) {
-    throw new Response('Checkout payload is too large', {status: 413});
-  }
   const origin = request.headers.get('origin');
   if (origin !== new URL(request.url).origin) {
     throw new Response('Cross-origin checkout is not allowed', {status: 403});
@@ -23,26 +18,15 @@ export async function action({context, request}: Route.ActionArgs) {
   if (contentType !== 'application/x-www-form-urlencoded') {
     throw new Response('Unsupported checkout content type', {status: 415});
   }
-  const body = await request.text();
-  if (new TextEncoder().encode(body).byteLength > 32_768) {
-    throw new Response('Checkout payload is too large', {status: 413});
-  }
+  const body = await readRequestTextWithLimit(request, {
+    maxBytes: MAX_CHECKOUT_BYTES,
+    tooLargeMessage: 'Checkout payload is too large',
+  });
   const fields = new URLSearchParams(body);
   if (fields.get('merchantTermsAccepted') !== MERCHANT_POLICY_VERSION) {
     throw new Response('Accept the current merchant terms before checkout', {
       status: 400,
     });
-  }
-  const juryAccessCode = fields.get('juryAccessCode');
-  try {
-    assertJuryAccessCode(env, juryAccessCode);
-  } catch (error) {
-    if (error instanceof JuryAccessError) {
-      throw new Response('Jury purchase access could not be verified', {
-        status: 403,
-      });
-    }
-    throw error;
   }
   const rawCart = fields.get('cart');
   if (!rawCart) {
@@ -61,7 +45,6 @@ export async function action({context, request}: Route.ActionArgs) {
   try {
     ({session} = await createCheckoutSession({
       env,
-      juryAccessCode,
       lines,
       request,
     }));

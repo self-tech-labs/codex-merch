@@ -1,4 +1,4 @@
-import {CartProvider} from '~/lib/cart';
+import {CartProvider, type CartCatalogProduct} from '~/lib/cart';
 import {Header} from '~/components/Header';
 import {Footer} from '~/components/Footer';
 import {
@@ -8,22 +8,21 @@ import {
 
 export function PageLayout({
   children = null,
-  jurySalesEnabled,
-  jurySalesEndAt,
+  cartCatalog,
+  checkoutEnabled,
   storefrontMode,
 }: {
   children?: React.ReactNode;
-  jurySalesEnabled: boolean;
-  jurySalesEndAt: string | null;
+  cartCatalog: CartCatalogProduct[];
+  checkoutEnabled: boolean;
   storefrontMode: StorefrontMode;
 }) {
   return (
     <StorefrontModeProvider
-      jurySalesEnabled={jurySalesEnabled}
-      jurySalesEndAt={jurySalesEndAt}
+      checkoutEnabled={checkoutEnabled}
       mode={storefrontMode}
     >
-      <CartProvider>
+      <CartProvider catalog={cartCatalog}>
         <Header />
         <main>{children}</main>
         <Footer />

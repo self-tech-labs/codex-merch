@@ -54,9 +54,6 @@ if (
   throw new Error('Retry/reconcile requires the target Inngest Event Key');
 }
 if (command === 'reconcile') {
-  if (process.env.STOREFRONT_MODE !== 'production') {
-    throw new Error('Reconcile requires STOREFRONT_MODE=production');
-  }
   if (process.env.PRINTFUL_AUTO_CONFIRM !== 'false') {
     throw new Error('Reconcile requires PRINTFUL_AUTO_CONFIRM=false');
   }
@@ -119,7 +116,9 @@ try {
     if (!order.stripeSessionId) throw new Error('Order has no Stripe session');
     const attempt = await requeueOrder(order.id, process.env);
     if (attempt === null) {
-      throw new Error('Only paid orders can be requeued');
+      throw new Error(
+        'Only paid or partially refunded queued/failed orders can be requeued',
+      );
     }
     await enqueueFulfillment(
       {orderId: order.id, sessionId: order.stripeSessionId},
@@ -146,6 +145,22 @@ try {
         process.env,
       );
       console.log(`Reconciled and queued ${order.publicReference}.`);
+    } else if (
+      session.payment_status === 'paid' &&
+      ['paid', 'partially_refunded'].includes(order.paymentStatus) &&
+      !order.providerOrderId &&
+      ['queued', 'failed'].includes(order.fulfillmentStatus)
+    ) {
+      const attempt = await requeueOrder(order.id, process.env);
+      if (attempt === null) {
+        throw new Error('Paid fulfillment could not be queued for recovery');
+      }
+      await enqueueFulfillment(
+        {orderId: order.id, sessionId: session.id},
+        process.env,
+        attempt,
+      );
+      console.log(`Recovered fulfillment queue for ${order.publicReference}.`);
     } else if (order.providerOrderId) {
       if (!process.env.PRINTFUL_TOKEN || !process.env.PRINTFUL_STORE_ID) {
         throw new Error(

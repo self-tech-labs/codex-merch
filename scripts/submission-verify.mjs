@@ -55,6 +55,11 @@ export const BUILD_WEEK_PREVIEW_FILES = [
   'merch/products.json',
 ];
 
+const RETIRED_BUILD_WEEK_PREVIEW_FILES = new Set([
+  'app/lib/jury-access.server.ts',
+  'app/lib/jury-access.test.ts',
+]);
+
 export const SUBMISSION_DOCUMENT_FILES = [
   'README.md',
   'docs/build-week/README.md',
@@ -69,7 +74,9 @@ export const SUBMISSION_DOCUMENT_FILES = [
 ];
 
 export const CORE_WEEKLY_FILES = [
-  ...BUILD_WEEK_PREVIEW_FILES,
+  ...BUILD_WEEK_PREVIEW_FILES.filter(
+    (file) => !RETIRED_BUILD_WEEK_PREVIEW_FILES.has(file),
+  ),
   'app/lib/merch.ts',
   'app/lib/weekly-visibility.test.ts',
   'fixtures/openai/weekly-happy-path.synthetic.json',
@@ -116,7 +123,9 @@ export const REQUIRED_TRACKED_FILES = [
 
 export const REQUIRED_BUILD_WEEK_DELTA_FILES = [
   'README.md',
-  ...BUILD_WEEK_PREVIEW_FILES,
+  ...BUILD_WEEK_PREVIEW_FILES.filter(
+    (file) => !RETIRED_BUILD_WEEK_PREVIEW_FILES.has(file),
+  ),
   'app/lib/merch.ts',
   'app/lib/weekly-visibility.test.ts',
   'fixtures/openai/weekly-happy-path.synthetic.json',
@@ -458,7 +467,10 @@ export function evaluateGitProvenance(gitFacts = {}) {
     changed: changed.has(file),
   }));
   const checks = {
-    headCommittedDuringBuildWeek: isTimestampWithinBuildWeek(gitFacts.headCommittedAt),
+    headCommittedOnOrAfterBuildWeekStart:
+      Number.isFinite(Date.parse(String(gitFacts.headCommittedAt || ''))) &&
+      Date.parse(String(gitFacts.headCommittedAt)) >=
+        Date.parse(BUILD_WEEK_PROVENANCE_START),
     hasCommitDuringBuildWeek: (gitFacts.commitsInWindow || []).length > 0,
     hasCoreCommitDuringBuildWeek: (gitFacts.coreCommitsInWindow || []).length > 0,
     baselineIsAncestor: gitFacts.baselineAncestor === true,
@@ -488,12 +500,14 @@ export function evaluatePushedHead(gitFacts = {}) {
       gitFacts.upstreamSha === gitFacts.headSha,
   );
   const ciRemoteCommitMatches = Boolean(
-    gitFacts.headSha && gitFacts.ciHeadSha === gitFacts.headSha,
+    gitFacts.headSha && gitFacts.ciVerifiedHeadSha === gitFacts.headSha,
   );
   return {
     ok: localUpstreamMatches || ciRemoteCommitMatches,
     headSha: gitFacts.headSha || null,
     upstream: gitFacts.upstream || null,
+    ciHeadSha: gitFacts.ciHeadSha || null,
+    ciHeadBinding: gitFacts.ciHeadBinding || null,
     evidence: localUpstreamMatches
       ? 'local-upstream-ref'
       : ciRemoteCommitMatches
@@ -502,14 +516,109 @@ export function evaluatePushedHead(gitFacts = {}) {
   };
 }
 
+export function evaluateCiHeadBinding({
+  githubActions,
+  eventName,
+  checkoutSha,
+  checkoutParents = [],
+  requestedHead,
+  ciHeadSha,
+} = {}) {
+  const trustedCheckout =
+    githubActions === 'true' &&
+    Boolean(checkoutSha) &&
+    checkoutSha === ciHeadSha;
+  if (!trustedCheckout || !requestedHead) {
+    return {verifiedHeadSha: null, binding: null};
+  }
+
+  if (
+    eventName === 'pull_request' &&
+    checkoutParents.length === 2 &&
+    requestedHead === checkoutParents[1]
+  ) {
+    return {
+      verifiedHeadSha: requestedHead,
+      binding: 'pull-request-merge-second-parent',
+    };
+  }
+
+  if (eventName === 'push' && requestedHead === checkoutSha) {
+    return {verifiedHeadSha: requestedHead, binding: 'push-checkout'};
+  }
+
+  return {verifiedHeadSha: null, binding: null};
+}
+
+export function isCommitAncestor({
+  ancestorSha,
+  descendantSha,
+  readParents,
+  maxCommits = 512,
+  maxWorkItems = 1_024,
+  maxEdges = 1_024,
+  maxParentsPerCommit = 16,
+  maxDurationMs = 5_000,
+  now = Date.now,
+} = {}) {
+  const isSha = (value) => /^[0-9a-f]{40}$/i.test(String(value || ''));
+  if (
+    !isSha(ancestorSha) ||
+    !isSha(descendantSha) ||
+    typeof readParents !== 'function'
+  ) {
+    return false;
+  }
+
+  const startedAt = now();
+  const pending = [descendantSha];
+  const visited = new Set();
+  let workItems = 0;
+  let edges = 0;
+  while (pending.length > 0) {
+    workItems += 1;
+    if (workItems > maxWorkItems || now() - startedAt > maxDurationMs) return false;
+
+    const commit = pending.pop();
+    if (visited.has(commit)) continue;
+    if (commit === ancestorSha) return true;
+    visited.add(commit);
+    if (visited.size > maxCommits) return false;
+
+    let parents;
+    try {
+      parents = readParents(commit);
+    } catch {
+      return false;
+    }
+    if (now() - startedAt > maxDurationMs) return false;
+    if (
+      !Array.isArray(parents) ||
+      parents.length > maxParentsPerCommit ||
+      parents.some((parent) => !isSha(parent))
+    ) {
+      return false;
+    }
+    for (const parent of parents) {
+      edges += 1;
+      if (edges > maxEdges) return false;
+      if (!visited.has(parent)) pending.push(parent);
+    }
+    if (pending.length > maxWorkItems) return false;
+  }
+  return false;
+}
+
 export function configurationPresence(env = {}) {
   const present = (key) => typeof env[key] === 'string' && env[key].trim().length > 0;
   const enabled = (key) => String(env[key] || '').trim().toLowerCase() === 'true';
   const disabled = (key) => String(env[key] || '').trim().toLowerCase() === 'false';
   const gpt56Model = !present('OPENAI_TEXT_MODEL') || env.OPENAI_TEXT_MODEL.trim() === 'gpt-5.6';
   const merchantPolicies =
-    env.STOREFRONT_CONTACT_EMAIL?.trim() === 'elliot@ritsl.com' &&
-    env.STOREFRONT_POLICY_VERSION?.trim() === '2026-07-21';
+    present('STOREFRONT_CONTACT_EMAIL') &&
+    env.STOREFRONT_POLICY_VERSION?.trim() === '2026-08-26';
+  const stripeLiveMode =
+    String(env.STRIPE_EXPECTED_MODE || '').trim().toLowerCase() === 'live';
   const shipping =
     present('STRIPE_SHIPPING_RATE_ID') !== present('STRIPE_FLAT_SHIPPING_AMOUNT') &&
     env.STRIPE_ALLOWED_SHIPPING_COUNTRIES?.trim() === 'CH,US' &&
@@ -532,6 +641,7 @@ export function configurationPresence(env = {}) {
       present('PUBLIC_SITE_URL') && /^https:\/\//i.test(env.PUBLIC_SITE_URL.trim()),
     deployment,
     stripe: present('STRIPE_SECRET_KEY') && present('STRIPE_WEBHOOK_SECRET'),
+    stripeLiveMode,
     database: present('DATABASE_URL'),
     inngest: present('INNGEST_EVENT_KEY') && present('INNGEST_SIGNING_KEY'),
     printful: present('PRINTFUL_TOKEN') && present('PRINTFUL_STORE_ID'),
@@ -539,11 +649,7 @@ export function configurationPresence(env = {}) {
     releaseEnabled: enabled('MERCH_WEEKLY_RELEASE_ENABLED'),
     commerceApprovals:
       enabled('CHECKOUT_ENABLED') &&
-      enabled('JURY_SALES_ENABLED') &&
-      present('JURY_ACCESS_CODE') &&
-      present('JURY_SALES_END_AT') &&
       enabled('MERCH_PILOT_APPROVED') &&
-      enabled('MERCH_EXPANSION_APPROVED') &&
       enabled('STOREFRONT_LEGAL_APPROVED') &&
       enabled('STOREFRONT_TAX_SHIPPING_APPROVED'),
     merchantPolicies,
@@ -687,16 +793,17 @@ function deduplicateFindings(findings) {
   });
 }
 
-function git(rootDir, args) {
+function git(rootDir, args, options = {}) {
   return execFileSync('git', ['-C', rootDir, ...args], {
     encoding: 'utf8',
     stdio: ['ignore', 'pipe', 'pipe'],
+    ...options,
   });
 }
 
-function gitOptional(rootDir, args) {
+function gitOptional(rootDir, args, options) {
   try {
-    return git(rootDir, args).trim() || null;
+    return git(rootDir, args, options).trim() || null;
   } catch {
     return null;
   }
@@ -716,23 +823,73 @@ function gitSucceeds(rootDir, args) {
   }
 }
 
+function readCommitParents(rootDir, sha) {
+  const commit = gitOptional(
+    rootDir,
+    ['cat-file', '-p', `${sha}^{commit}`],
+    {timeout: 1_000, maxBuffer: 1024 * 1024},
+  );
+  if (commit == null) return null;
+  const header = commit.split(/\r?\n\r?\n/, 1)[0];
+  return header
+    .split(/\r?\n/)
+    .filter((line) => line.startsWith('parent '))
+    .map((line) => line.slice('parent '.length).trim());
+}
+
 export function inspectGitFacts(rootDir, processEnvironment = process.env) {
-  const headSha = gitOptional(rootDir, ['rev-parse', 'HEAD']);
-  const upstream = gitOptional(rootDir, [
+  const checkoutSha = gitOptional(rootDir, ['rev-parse', 'HEAD']);
+  const checkoutParents = (
+    gitOptional(rootDir, ['show', '-s', '--format=%P', 'HEAD']) || ''
+  )
+    .split(/\s+/)
+    .filter(Boolean);
+  const requestedHeadValue = String(
+    processEnvironment.SUBMISSION_VERIFY_HEAD_SHA || '',
+  ).trim();
+  const requestedHead = /^[0-9a-f]{40}$/i.test(requestedHeadValue)
+    ? requestedHeadValue
+    : null;
+  const verificationRef = requestedHeadValue
+    ? requestedHead || 'refs/invalid-submission-verification-head'
+    : 'HEAD';
+  const headSha = gitOptional(rootDir, [
     'rev-parse',
-    '--abbrev-ref',
-    '--symbolic-full-name',
-    '@{upstream}',
+    '--verify',
+    `${verificationRef}^{commit}`,
   ]);
+  const upstream = requestedHead
+    ? null
+    : gitOptional(rootDir, [
+        'rev-parse',
+        '--abbrev-ref',
+        '--symbolic-full-name',
+        '@{upstream}',
+      ]);
   const baselineTagRef = `refs/tags/${BUILD_WEEK_BASELINE_TAG}`;
   const baselineTagSha = gitOptional(rootDir, [
     'rev-parse',
     `${baselineTagRef}^{commit}`,
   ]);
+  const ciHeadSha =
+    processEnvironment.GITHUB_SHA || processEnvironment.CI_COMMIT_SHA || null;
+  const ciHeadBinding = evaluateCiHeadBinding({
+    githubActions: processEnvironment.GITHUB_ACTIONS,
+    eventName: processEnvironment.GITHUB_EVENT_NAME,
+    checkoutSha,
+    checkoutParents,
+    requestedHead,
+    ciHeadSha,
+  });
 
   return {
     headSha,
-    headCommittedAt: gitOptional(rootDir, ['show', '-s', '--format=%cI', 'HEAD']),
+    headCommittedAt: gitOptional(rootDir, [
+      'show',
+      '-s',
+      '--format=%cI',
+      verificationRef,
+    ]),
     workingTreeClean:
       git(rootDir, ['status', '--porcelain=v1', '--untracked-files=all']).trim()
         .length === 0,
@@ -741,12 +898,14 @@ export function inspectGitFacts(rootDir, processEnvironment = process.env) {
       `--since=${BUILD_WEEK_PROVENANCE_START}`,
       `--until=${BUILD_WEEK_PROVENANCE_END}`,
       '--format=%H',
+      verificationRef,
     ]),
     coreCommitsInWindow: gitLines(rootDir, [
       'log',
       `--since=${BUILD_WEEK_PROVENANCE_START}`,
       `--until=${BUILD_WEEK_PROVENANCE_END}`,
       '--format=%H',
+      verificationRef,
       '--',
       ...REQUIRED_BUILD_WEEK_DELTA_FILES,
     ]),
@@ -758,24 +917,26 @@ export function inspectGitFacts(rootDir, processEnvironment = process.env) {
       ? gitLines(rootDir, [
           'diff',
           '--name-only',
-          `${BUILD_WEEK_BASELINE_COMMIT}..HEAD`,
+          `${BUILD_WEEK_BASELINE_COMMIT}..${verificationRef}`,
           '--',
         ])
       : [],
-    baselineAncestor: gitSucceeds(rootDir, [
-      'merge-base',
-      '--is-ancestor',
-      BUILD_WEEK_BASELINE_COMMIT,
-      'HEAD',
-    ]),
+    // Read commit parents directly so provenance does not depend on a host
+    // Git revision-walk implementation. Missing or malformed objects fail closed.
+    baselineAncestor: isCommitAncestor({
+      ancestorSha: BUILD_WEEK_BASELINE_COMMIT,
+      descendantSha: headSha,
+      readParents: (sha) => readCommitParents(rootDir, sha),
+    }),
     baselineTagSha,
     baselineTagAnnotated:
       baselineTagSha != null &&
       gitOptional(rootDir, ['cat-file', '-t', baselineTagRef]) === 'tag',
     upstream,
     upstreamSha: upstream ? gitOptional(rootDir, ['rev-parse', upstream]) : null,
-    ciHeadSha:
-      processEnvironment.GITHUB_SHA || processEnvironment.CI_COMMIT_SHA || null,
+    ciHeadSha,
+    ciVerifiedHeadSha: ciHeadBinding.verifiedHeadSha,
+    ciHeadBinding: ciHeadBinding.binding,
   };
 }
 

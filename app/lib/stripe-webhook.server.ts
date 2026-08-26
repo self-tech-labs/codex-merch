@@ -5,7 +5,9 @@ import {
   getOrderById,
   markCheckoutExpired,
   markOrderPaid,
+  markPrintfulCancelled,
   markPrintfulCommitted,
+  recordDispute,
   recordRefund,
   restorePaymentAfterWonDispute,
   setPaymentState,
@@ -18,12 +20,14 @@ import {
   cancelPrintfulOrder,
   getPrintfulOrderState,
 } from '~/lib/fulfillment.server';
+import {merchantCatalog} from '~/lib/merchant-catalog';
 
 export async function processStripeEvent(
   event: Stripe.Event,
   env: AppEnv,
   handoff = enqueueFulfillment,
   sendReceipt = sendStripeReceipt,
+  retrieveDispute = retrieveCurrentDispute,
 ) {
   switch (event.type) {
     case 'checkout.session.completed':
@@ -69,46 +73,107 @@ export async function processStripeEvent(
         totalAmount: refund.totalAmount,
       });
       if (!updated) throw new Error('Refund does not match a refundable local order');
-      await reconcileRefundedFulfillment(
-        {...updated, orderId: context.order.id},
-        env,
-      );
+      if (updated.fullyRefunded) {
+        await reconcileStoppedFulfillment(
+          {...updated, orderId: context.order.id},
+          env,
+        );
+      } else if (updated.fulfillmentStatus === 'queued') {
+        await handoff(
+          {orderId: context.order.id, sessionId: context.session.id},
+          env,
+          updated.retryCount,
+        );
+      }
       return context.order.id;
     }
-    case 'charge.dispute.created': {
-      const dispute = event.data.object;
-      const charge =
-        typeof dispute.charge === 'string'
-          ? await stripeClient(env).charges.retrieve(dispute.charge)
-          : dispute.charge;
-      const orderId = charge
-        ? (await orderContextFromCharge(charge, env))?.order.id || null
-        : null;
-      if (orderId) await setPaymentState(orderId, 'disputed', env);
-      return orderId;
-    }
-    case 'charge.dispute.closed': {
-      const dispute = event.data.object;
-      const charge =
-        typeof dispute.charge === 'string'
-          ? await stripeClient(env).charges.retrieve(dispute.charge)
-          : dispute.charge;
-      const orderId = charge
-        ? (await orderContextFromCharge(charge, env))?.order.id || null
-        : null;
-      if (orderId && dispute.status === 'won') {
-        await restorePaymentAfterWonDispute(orderId, env);
-      }
-      return orderId;
-    }
+    case 'charge.dispute.created':
+    case 'charge.dispute.closed':
+      return processDispute(
+        event.data.object,
+        env,
+        handoff,
+        retrieveDispute,
+      );
     default:
       return null;
   }
 }
 
-export async function reconcileRefundedFulfillment(
+type DisputeRetriever = (
+  disputeId: string,
+  env: AppEnv,
+) => Promise<Stripe.Dispute>;
+
+async function retrieveCurrentDispute(disputeId: string, env: AppEnv) {
+  return stripeClient(env).disputes.retrieve(disputeId, {expand: ['charge']});
+}
+
+async function processDispute(
+  eventDispute: Stripe.Dispute,
+  env: AppEnv,
+  handoff: typeof enqueueFulfillment,
+  retrieveDispute: DisputeRetriever,
+) {
+  // Stripe does not guarantee event ordering. Fetching the current dispute
+  // prevents a delayed `created` event from undoing an already-won closure.
+  const dispute = await retrieveDispute(eventDispute.id, env);
+  const charge =
+    typeof dispute.charge === 'string'
+      ? await stripeClient(env).charges.retrieve(dispute.charge)
+      : dispute.charge;
+  if (!charge) return null;
+  const context = await orderContextFromCharge(charge, env);
+  if (!context) return null;
+  const payment = paidCheckoutSnapshot(context.session, context.order);
+  if (
+    !payment ||
+    payment.paymentIntentId !== context.paymentIntentId ||
+    charge.amount !== payment.totalAmount
+  ) {
+    throw new Error('Disputed charge does not match a paid Checkout Session');
+  }
+  const updated = await recordDispute({
+    env,
+    orderId: context.order.id,
+    paymentIntentId: payment.paymentIntentId,
+    shippingAmount: payment.shippingAmount,
+    taxAmount: payment.taxAmount,
+    totalAmount: payment.totalAmount,
+  });
+  if (!updated) throw new Error('Dispute does not match a local order');
+
+  const outcome = disputeOutcome(dispute.status);
+  if (outcome === 'restore') {
+    if (updated.paymentStatus === 'refunded') return context.order.id;
+    const restored = await restorePaymentAfterWonDispute(context.order.id, env);
+    if (!restored) throw new Error('Won dispute could not restore the local order');
+    if (restored.fulfillmentStatus === 'queued' && restored.stripeSessionId) {
+      await handoff(
+        {orderId: context.order.id, sessionId: restored.stripeSessionId},
+        env,
+        restored.retryCount,
+      );
+    }
+  } else if (outcome === 'cancel') {
+    await reconcileStoppedFulfillment(
+      {...updated, orderId: context.order.id},
+      env,
+    );
+  }
+  return context.order.id;
+}
+
+export function disputeOutcome(status: Stripe.Dispute['status']) {
+  if (['won', 'warning_closed', 'prevented'].includes(status)) {
+    return 'restore' as const;
+  }
+  if (status === 'lost') return 'cancel' as const;
+  return 'hold' as const;
+}
+
+export async function reconcileStoppedFulfillment(
   updated: {
-    fullyRefunded: boolean;
     fulfillmentStatus: string;
     orderId: string;
     providerOrderId: string | null;
@@ -117,18 +182,27 @@ export async function reconcileRefundedFulfillment(
   operations = {
     cancel: cancelPrintfulOrder,
     getState: getPrintfulOrderState,
+    markCancelled: markPrintfulCancelled,
     markCommitted: markPrintfulCommitted,
   },
 ) {
-  if (!updated.providerOrderId || updated.fulfillmentStatus === 'confirmed') {
+  if (!updated.providerOrderId) return;
+  const providerState = await operations.getState(updated.providerOrderId, env);
+  if (['canceled', 'cancelled'].includes(providerState.status)) {
+    await operations.markCancelled(
+      updated.orderId,
+      updated.providerOrderId,
+      env,
+    );
     return;
   }
-  const providerState = await operations.getState(updated.providerOrderId, env);
-  if (
-    updated.fullyRefunded &&
-    ['draft', 'pending'].includes(providerState.status)
-  ) {
+  if (['draft', 'pending'].includes(providerState.status)) {
     await operations.cancel(updated.providerOrderId, env);
+    await operations.markCancelled(
+      updated.orderId,
+      updated.providerOrderId,
+      env,
+    );
     return;
   }
   if (providerState.committed) {
@@ -176,18 +250,6 @@ async function processPaidSession(
   }
   const payment = paidCheckoutSnapshot(session, order);
   if (!payment) return orderId;
-  const receiptEmail = session.customer_details?.email;
-  if (!receiptEmail) {
-    throw new Error('Paid checkout is missing receipt details');
-  }
-  await sendReceipt(
-    {
-      email: receiptEmail,
-      paymentIntentId: payment.paymentIntentId,
-      sessionId: session.id,
-    },
-    env,
-  );
   const newlyPaid = await markOrderPaid({
     env,
     orderId,
@@ -199,8 +261,27 @@ async function processPaidSession(
   const currentPaymentStatus = newlyPaid
     ? 'paid'
     : (await getOrderById(orderId, env))?.paymentStatus;
-  if (currentPaymentStatus === 'paid') {
+  if (['paid', 'partially_refunded'].includes(currentPaymentStatus || '')) {
+    const receiptEmail = session.customer_details?.email;
     await handoff({orderId, sessionId: session.id}, env);
+    if (receiptEmail) {
+      try {
+        await sendReceipt(
+          {
+            email: receiptEmail,
+            paymentIntentId: payment.paymentIntentId,
+            sessionId: session.id,
+          },
+          env,
+        );
+      } catch (error) {
+        console.error(JSON.stringify({
+          event: 'stripe_receipt_update_failed',
+          orderId,
+          error: error instanceof Error ? error.message : String(error),
+        }));
+      }
+    }
   }
   return orderId;
 }
@@ -217,6 +298,9 @@ export function paidCheckoutSnapshot(
     throw new Error('Checkout session metadata does not match the order');
   }
   if (session.payment_status !== 'paid') return null;
+  if (session.consent?.terms_of_service !== 'accepted') {
+    throw new Error('Paid checkout is missing terms consent');
+  }
   if (session.currency?.toUpperCase() !== order.currency) {
     throw new Error('Checkout currency does not match the order');
   }
@@ -232,6 +316,7 @@ export function paidCheckoutSnapshot(
   const discountAmount = session.total_details?.amount_discount || 0;
   if (
     discountAmount !== 0 ||
+    shippingAmount !== merchantCatalog.shippingAmount ||
     taxAmount < 0 ||
     taxAmount > totalAmount ||
     order.subtotalAmount + shippingAmount !== totalAmount

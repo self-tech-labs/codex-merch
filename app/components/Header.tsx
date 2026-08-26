@@ -1,23 +1,26 @@
 import {Link, NavLink} from 'react-router';
 import {useCart} from '~/lib/cart';
-import {useJurySales, useStorefrontMode} from '~/lib/storefront-mode';
+import {
+  useCheckoutAvailability,
+  useStorefrontMode,
+} from '~/lib/storefront-mode';
 
 export function Header() {
   const {count} = useCart();
   const storefrontMode = useStorefrontMode();
-  const jurySales = useJurySales();
+  const checkout = useCheckoutAvailability();
   const preview = storefrontMode === 'preview';
 
   return (
     <>
-      <aside className="jury-ribbon" aria-label="Fan project and purchase access">
+      <aside className="project-ribbon" aria-label="Fan project and checkout status">
         <strong>Fan-made Build Week project · Not official OpenAI merch</strong>
         <span>
-          {jurySales.enabled
-            ? 'Real checkout is reserved exclusively for OpenAI Build Week judges.'
+          {checkout.enabled
+            ? 'Secure live checkout is available through Stripe.'
             : preview
-              ? 'The judge demo is free and requires no purchase; checkout is disabled.'
-              : 'Jury checkout is currently closed.'}
+              ? 'The public preview requires no purchase; checkout is disabled.'
+              : 'Checkout is currently closed.'}
         </span>
       </aside>
       <header className="site-header">
@@ -30,23 +33,19 @@ export function Header() {
           aria-label={
             preview
               ? 'Prototype preview. Checkout disabled.'
-              : jurySales.enabled
-                ? 'OpenAI Build Week jury pilot. Access code required.'
-                : 'Production storefront. Jury checkout closed.'
+              : checkout.enabled
+                ? 'Production storefront. Live Stripe checkout enabled.'
+                : 'Production storefront. Checkout closed.'
           }
         >
           <span>
-            {preview
-              ? 'Prototype preview'
-              : jurySales.enabled
-                ? 'Jury sales pilot'
-                : 'Production storefront'}
+            {preview ? 'Prototype preview' : 'Production storefront'}
           </span>
           <span>
             {preview
               ? 'Checkout disabled'
-              : jurySales.enabled
-                ? 'Judge code required'
+              : checkout.enabled
+                ? 'Live checkout'
                 : 'Checkout closed'}
           </span>
         </p>

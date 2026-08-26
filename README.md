@@ -14,8 +14,9 @@ external or commercial action.
 · [Inspect the architecture](docs/build-week/architecture.md)
 
 **Current Vercel production:** [`codex-merch.vercel.app`](https://codex-merch.vercel.app).
-The storefront is free to browse and test. Its only real checkout is a separate,
-private-code path reserved for OpenAI Build Week judges; no purchase is required.
+The storefront is free to browse and test. Public checkout remains fail-closed
+unless every production approval and provider readiness check passes; no
+purchase is required to inspect the Build Week project.
 
 ![Codex Merch product Preview](docs/build-week/media/devpost-product-preview.png)
 
@@ -46,8 +47,8 @@ flowchart LR
 - Production-intent: the output is a complete provider-sized garment system
   with repeatable files and hashes.
 - Fail-closed: `no_trend` is a valid outcome, Preview cannot charge or fulfill,
-  and the jury-only production path requires explicit human authority and live
-  readiness checks.
+  and production checkout requires explicit human authority, an expected
+  Stripe payment mode, and live readiness checks.
 
 ## Judge path — five minutes
 
@@ -70,10 +71,9 @@ flowchart LR
 The canonical Vercel deployment demonstrates the complete creative pipeline and
 is free to browse, install, test, and evaluate. Commerce is an optional proof,
 not part of the required judge path. Only the signed **Codex Rate Reset Long
-Sleeve Tee** can enter live Stripe Checkout; delivery is limited to Switzerland
-and the United States, checkout requires a private OpenAI Build Week jury code,
-and access expires automatically when judging ends. Printful orders remain
-unconfirmed for human review before manufacturing.
+Sleeve Tee** can enter Stripe Checkout; delivery is limited to Switzerland and
+the United States, Checkout requires acceptance of the current Terms, and
+Printful orders remain unconfirmed for human review before manufacturing.
 
 This is a fan-made project and its products are not official OpenAI merchandise;
 it is not affiliated with, sponsored by, or endorsed by OpenAI.
@@ -221,16 +221,24 @@ readiness again on the server. A production release requires the literal
 valid provider and commerce configuration, and `PRINTFUL_AUTO_CONFIRM=false`.
 The weekly release never creates a customer order.
 
-Real Build Week purchases add another independent boundary:
-`JURY_SALES_ENABLED=true`, an unexpired `JURY_SALES_END_AT`, and a private
-`JURY_ACCESS_CODE` of at least 16 characters. The server verifies that code
-before creating an order record or Stripe Checkout Session. Readiness reports
-the jury-only audience and expiry without exposing the code.
+Public checkout adds independent fail-closed boundaries:
+`STOREFRONT_MODE=production`, `CHECKOUT_ENABLED=true`, explicit catalog/legal/
+tax-and-shipping approvals, policy version `2026-08-26`, and a
+`STRIPE_EXPECTED_MODE` matching the configured secret key. Vercel Production
+additionally requires `STRIPE_EXPECTED_MODE=live` with an `sk_live_…` key, and
+signed webhook events must have the same live/test mode. The readiness endpoint
+is a configuration preflight: it probes Stripe account/webhook configuration,
+Postgres, and Printful read access without charging or creating an order.
 
 The canonical [Vercel production deployment](https://codex-merch.vercel.app)
-was last verified on 2026-07-21 with live Stripe, Printful, and database
-readiness; CH/US shipping; code-protected jury access; automatic expiry; and
-`PRINTFUL_AUTO_CONFIRM=false`.
+passes that preflight only when
+`/api/readiness?product=codex-rate-reset-long-sleeve` returns HTTP 200 with
+`ready: true`, `paymentMode: live`, database/Stripe/Stripe-webhook/Printful
+checks true, CH/US shipping, policy `2026-08-26`, and
+`printfulAutoConfirm: false`. Payment readiness additionally requires the
+controlled live end-to-end payment, signed delivery, Inngest, receipt, and
+Printful-draft proof in section 10 of the production deployment guide; the
+read-only endpoint cannot prove those mutations by itself.
 
 Operational details live in the [production deployment guide](docs/production-deployment.md)
 and [runbook](docs/production-runbook.md). Build Week architecture, evidence,

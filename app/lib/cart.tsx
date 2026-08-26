@@ -7,26 +7,32 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import {
-  assetUrl,
-  getPrimaryCustomerMockup,
-  getMerchProduct,
-  getProductVariant,
-  isPurchasableProduct,
-  isPurchasableVariant,
-  type CommerceVariant,
-  type MerchProduct,
-} from '~/lib/merch';
-
 export type CartLine = {
   productSlug: string;
   variantId: string;
   quantity: number;
 };
 
+export type CartCatalogVariant = {
+  id: string;
+  size: string;
+  purchasable: boolean;
+};
+
+export type CartCatalogProduct = {
+  slug: string;
+  title: string;
+  currency: string;
+  imageUrl: string;
+  provider: string;
+  purchasable: boolean;
+  unitAmount: number;
+  variants: CartCatalogVariant[];
+};
+
 export type CartDisplayLine = CartLine & {
-  product: MerchProduct;
-  variant: CommerceVariant;
+  product: CartCatalogProduct;
+  variant: CartCatalogVariant;
   lineTotal: number;
 };
 
@@ -46,9 +52,19 @@ const CLEARED_ORDERS_KEY = 'codex-merch-cleared-orders-v1';
 const STORAGE_VERSION = 1;
 const CartContext = createContext<CartContextValue | null>(null);
 
-export function CartProvider({children}: {children: ReactNode}) {
+export function CartProvider({
+  catalog,
+  children,
+}: {
+  catalog: CartCatalogProduct[];
+  children: ReactNode;
+}) {
   const [lines, setLines] = useState<CartLine[]>([]);
   const [loaded, setLoaded] = useState(false);
+  const catalogBySlug = useMemo(
+    () => new Map(catalog.map((product) => [product.slug, product])),
+    [catalog],
+  );
 
   useEffect(() => {
     const raw = window.localStorage.getItem(STORAGE_KEY);
@@ -68,7 +84,10 @@ export function CartProvider({children}: {children: ReactNode}) {
           ? record.lines
           : [];
       if (Array.isArray(storedLines)) {
-        const migratedLines = prunePurchasableLines(normalizeLines(storedLines));
+        const migratedLines = prunePurchasableLines(
+          normalizeLines(storedLines),
+          catalogBySlug,
+        );
         window.localStorage.setItem(
           STORAGE_KEY,
           JSON.stringify({version: STORAGE_VERSION, lines: migratedLines}),
@@ -80,7 +99,7 @@ export function CartProvider({children}: {children: ReactNode}) {
     } finally {
       setLoaded(true);
     }
-  }, []);
+  }, [catalogBySlug]);
 
   useEffect(() => {
     if (!loaded) return;
@@ -93,13 +112,15 @@ export function CartProvider({children}: {children: ReactNode}) {
   const addLine = useCallback((line: CartLine) => {
     setLines((current) => {
       const next = normalizeLine(line);
-      const product = getMerchProduct(next.productSlug);
-      const variant = product && getProductVariant(product, next.variantId);
+      const product = catalogBySlug.get(next.productSlug);
+      const variant = product?.variants.find(
+        (candidate) => candidate.id === next.variantId,
+      );
       if (
         !product ||
         !variant ||
-        !isPurchasableProduct(product) ||
-        !isPurchasableVariant(product, variant)
+        !product.purchasable ||
+        !variant.purchasable
       ) {
         return current;
       }
@@ -111,7 +132,7 @@ export function CartProvider({children}: {children: ReactNode}) {
           : item,
       );
     });
-  }, []);
+  }, [catalogBySlug]);
 
   const updateQuantity = useCallback((
     productSlug: string,
@@ -163,7 +184,10 @@ export function CartProvider({children}: {children: ReactNode}) {
     );
   }, [loaded]);
 
-  const displayLines = useMemo(() => hydrateLines(lines), [lines]);
+  const displayLines = useMemo(
+    () => hydrateLines(lines, catalogBySlug),
+    [catalogBySlug, lines],
+  );
   const count = displayLines.reduce((sum, line) => sum + line.quantity, 0);
   const subtotal = displayLines.reduce((sum, line) => sum + line.lineTotal, 0);
 
@@ -219,7 +243,7 @@ export function money(amount: number, currency = 'USD') {
 }
 
 export function lineImage(line: CartDisplayLine) {
-  return assetUrl(getPrimaryCustomerMockup(line.product));
+  return line.product.imageUrl;
 }
 
 export function lineTitle(line: CartDisplayLine) {
@@ -242,13 +266,18 @@ function normalizeLine(line: CartLine): CartLine {
   };
 }
 
-function hydrateLines(lines: CartLine[]): CartDisplayLine[] {
+function hydrateLines(
+  lines: CartLine[],
+  catalog: Map<string, CartCatalogProduct>,
+): CartDisplayLine[] {
   return lines.flatMap((line) => {
-    const product = getMerchProduct(line.productSlug);
-    if (!product || !isPurchasableProduct(product)) return [];
-    const variant = getProductVariant(product, line.variantId);
-    if (!variant || !isPurchasableVariant(product, variant)) return [];
-    const price = product.commerce.unitAmount / 100;
+    const product = catalog.get(line.productSlug);
+    if (!product?.purchasable) return [];
+    const variant = product.variants.find(
+      (candidate) => candidate.id === line.variantId,
+    );
+    if (!variant?.purchasable) return [];
+    const price = product.unitAmount / 100;
     return [
       {
         ...line,
@@ -260,12 +289,18 @@ function hydrateLines(lines: CartLine[]): CartDisplayLine[] {
   });
 }
 
-function prunePurchasableLines(lines: CartLine[]) {
+function prunePurchasableLines(
+  lines: CartLine[],
+  catalog: Map<string, CartCatalogProduct>,
+) {
   return lines.filter((line) => {
-    const product = getMerchProduct(line.productSlug);
-    if (!product || !isPurchasableProduct(product)) return false;
-    const variant = getProductVariant(product, line.variantId);
-    return Boolean(variant && isPurchasableVariant(product, variant));
+    const product = catalog.get(line.productSlug);
+    if (!product?.purchasable) return false;
+    return Boolean(
+      product.variants.find(
+        (variant) => variant.id === line.variantId && variant.purchasable,
+      ),
+    );
   });
 }
 

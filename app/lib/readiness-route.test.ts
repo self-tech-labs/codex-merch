@@ -2,18 +2,19 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {merchProducts} from './merch';
 import {createReadinessLoader} from './readiness-route.server';
-import {probeCheckoutDependencies} from './readiness.server';
+import {
+  assertDatabaseReadinessRow,
+  probeCheckoutDependencies,
+} from './readiness.server';
 import {loader} from '~/routes/api.readiness';
 
 const configuredEnv: AppEnv = {
   NODE_ENV: 'production',
   STOREFRONT_MODE: 'production',
   CHECKOUT_ENABLED: 'true',
-  JURY_SALES_ENABLED: 'true',
-  JURY_ACCESS_CODE: ['unit', 'test', 'jury', 'access'].join('-'),
-  JURY_SALES_END_AT: '2099-08-06T00:00:00Z',
   MERCH_PILOT_APPROVED: 'true',
   PUBLIC_SITE_URL: 'https://shop.example',
+  STRIPE_EXPECTED_MODE: 'test',
   STRIPE_SECRET_KEY: ['sk', 'test', 'unit', '1234567890abcdef'].join('_'),
   STRIPE_WEBHOOK_SECRET: 'whsec_example',
   STRIPE_ALLOWED_SHIPPING_COUNTRIES: 'CH,US',
@@ -24,12 +25,39 @@ const configuredEnv: AppEnv = {
   PRINTFUL_TOKEN: 'printful-token',
   PRINTFUL_STORE_ID: 'printful-store',
   PRINTFUL_AUTO_CONFIRM: 'false',
-  STOREFRONT_CONTACT_EMAIL: 'elliot@ritsl.com',
-  STOREFRONT_POLICY_VERSION: '2026-07-21',
+  STOREFRONT_CONTACT_EMAIL: 'shop@example.com',
+  STOREFRONT_POLICY_VERSION: '2026-08-26',
   STOREFRONT_LEGAL_APPROVED: 'true',
   STOREFRONT_TAX_SHIPPING_APPROVED: 'true',
   STRIPE_FLAT_SHIPPING_AMOUNT: '910',
 };
+
+const stripeProbeResult = (livemode: boolean) => ({
+  livemode,
+  webhookReady: true,
+});
+
+test('database readiness requires bigint Printful sync IDs', () => {
+  const readyRow = {
+    ready: 1,
+    orders_table: 'orders',
+    order_items_table: 'order_items',
+    stripe_events_table: 'stripe_events',
+    refund_tracking_ready: true,
+    policy_version_ready: true,
+    webhook_lease_ready: true,
+    sync_variant_bigint_ready: true,
+  };
+  assert.doesNotThrow(() => assertDatabaseReadinessRow(readyRow));
+  assert.throws(
+    () =>
+      assertDatabaseReadinessRow({
+        ...readyRow,
+        sync_variant_bigint_ready: false,
+      }),
+    /required checkout migrations/,
+  );
+});
 
 test('readiness route proves one deployed variant without creating checkout', async () => {
   const product = merchProducts.find(
@@ -43,6 +71,7 @@ test('readiness route proves one deployed variant without creating checkout', as
         databaseReady: true,
         printfulReady: true,
         stripeReady: true,
+        stripeWebhookReady: true,
         paymentMode: 'test' as const,
       }),
     });
@@ -63,18 +92,16 @@ test('readiness route proves one deployed variant without creating checkout', as
       currency: product.commerce.currency,
       unitAmount: product.commerce.unitAmount,
       provider: 'printful',
-      policyVersion: '2026-07-21',
+      policyVersion: '2026-08-26',
       shippingCountries: ['CH', 'US'],
       shippingAmount: 910,
       maximumItemsPerOrder: 10,
       deliveryEstimateBusinessDays: {minimum: 7, maximum: 15},
       paymentMode: 'test',
-      salesAudience: 'OpenAI Build Week judges',
-      accessCodeRequired: true,
-      salesEndAt: '2099-08-06T00:00:00Z',
       databaseReady: true,
       printfulReady: true,
       stripeReady: true,
+      stripeWebhookReady: true,
       printfulAutoConfirm: false,
     });
   } finally {
@@ -118,23 +145,36 @@ test('live dependency probes require database success and matching Stripe mode',
     },
     stripeProbe: async () => {
       events.push('stripe');
-      return {livemode: false};
+      return stripeProbeResult(false);
     },
   });
   assert.deepEqual(ready, {
     databaseReady: true,
     printfulReady: true,
     stripeReady: true,
+    stripeWebhookReady: true,
     paymentMode: 'test',
   });
   assert.deepEqual(events.sort(), ['database', 'printful', 'stripe']);
 
   await assert.rejects(
     () =>
+      probeCheckoutDependencies(
+        {...configuredEnv, STRIPE_EXPECTED_MODE: 'live'},
+        {
+          databaseProbe: async () => {},
+          printfulProbe: async () => {},
+          stripeProbe: async () => stripeProbeResult(false),
+        },
+      ),
+    /expected payment mode/,
+  );
+  await assert.rejects(
+    () =>
       probeCheckoutDependencies(configuredEnv, {
         databaseProbe: async () => {},
         printfulProbe: async () => {},
-        stripeProbe: async () => ({livemode: true}),
+        stripeProbe: async () => stripeProbeResult(true),
       }),
     /mode does not match/,
   );
@@ -145,7 +185,7 @@ test('live dependency probes require database success and matching Stripe mode',
           throw new Error('required checkout migrations missing');
         },
         printfulProbe: async () => {},
-        stripeProbe: async () => ({livemode: false}),
+        stripeProbe: async () => stripeProbeResult(false),
       }),
     /migrations missing/,
   );
@@ -156,7 +196,7 @@ test('live dependency probes require database success and matching Stripe mode',
         printfulProbe: async () => {
           throw new Error('invalid provider token');
         },
-        stripeProbe: async () => ({livemode: false}),
+        stripeProbe: async () => stripeProbeResult(false),
       }),
     /invalid provider token/,
   );

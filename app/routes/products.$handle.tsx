@@ -3,15 +3,19 @@ import {Link, useLoaderData} from 'react-router';
 import type {Route} from './+types/products.$handle';
 import {money, useCart} from '~/lib/cart';
 import {
-  getApprovedJuryProduct,
-  merchantJuryCatalog,
-  merchantJuryDisplayAmounts,
-} from '~/lib/merchant-policy';
+  getApprovedProduct,
+  merchantCatalog,
+  merchantDisplayAmounts,
+} from '~/lib/merchant-catalog';
 import {
   canInitiateStorefrontCheckout,
-  useJurySales,
+  useCheckoutAvailability,
   useStorefrontMode,
 } from '~/lib/storefront-mode';
+import {
+  isApprovedProductPurchasable,
+  isApprovedVariantPurchasable,
+} from '~/lib/storefront-sale';
 import {
   assetUrl,
   defaultProductVariant,
@@ -19,11 +23,6 @@ import {
   getCustomerMockups,
   getMerchProduct,
   getProductVariants,
-  isPurchasableProduct,
-  isPurchasableVariant,
-  variantLabel,
-  type CommerceVariant,
-  type MerchProduct,
 } from '~/lib/merch';
 
 export const meta: Route.MetaFunction = ({data}) => {
@@ -34,7 +33,7 @@ export const meta: Route.MetaFunction = ({data}) => {
       content: data?.product.description ?? 'Codex meme merch product.',
     },
   ];
-  if (data?.product && !isPurchasableProduct(data.product)) {
+  if (data?.product && !data.product.purchasable) {
     metadata.push({name: 'robots', content: 'noindex,nofollow'});
   }
   return metadata;
@@ -47,35 +46,64 @@ export async function loader({params}: Route.LoaderArgs) {
   const product = getMerchProduct(handle);
   if (!product) throw new Response('Product not found', {status: 404});
 
-  return {product};
+  const variants = getProductVariants(product);
+  const approvedForSale = Boolean(getApprovedProduct(product.slug));
+  return {
+    product: {
+      approvedForSale,
+      defaultVariantId: defaultProductVariant(product)?.id || null,
+      description: product.description,
+      formattedPrice: formatPrice(product),
+      mockups: getCustomerMockups(product).map(assetUrl),
+      productDetails: product.productDetails,
+      purchasable: isApprovedProductPurchasable(product),
+      rightsNote: product.meme.rightsNote,
+      slug: product.slug,
+      technique: product.production.technique,
+      title: product.title,
+      unitAmount: product.commerce.unitAmount,
+      variants: variants.map((variant) => ({
+        availableForSale: variant.availableForSale,
+        color: variant.color,
+        id: variant.id,
+        purchasable: isApprovedVariantPurchasable(product, variant),
+        size: variant.size,
+      })),
+    },
+  };
 }
+
+type PublicVariant = Awaited<
+  ReturnType<typeof loader>
+>['product']['variants'][number];
 
 export default function Product() {
   const {product} = useLoaderData<typeof loader>();
   const [activeMockup, setActiveMockup] = useState(0);
   const [zoomed, setZoomed] = useState(false);
-  const variants = getProductVariants(product);
-  const defaultVariant = defaultProductVariant(product);
+  const variants = product.variants;
+  const defaultVariant =
+    variants.find((variant) => variant.id === product.defaultVariantId) ||
+    variants[0] ||
+    null;
   const [selectedVariantId, setSelectedVariantId] = useState(
     defaultVariant?.id || '',
   );
   const selectedVariant =
     variants.find((variant) => variant.id === selectedVariantId) ||
     defaultVariant;
-  const mockups = getCustomerMockups(product);
+  const mockups = product.mockups;
   const currentMockup = mockups[activeMockup] || mockups[0];
   const {addLine} = useCart();
   const storefrontMode = useStorefrontMode();
-  const jurySales = useJurySales();
+  const checkout = useCheckoutAvailability();
   const purchasable = canInitiateStorefrontCheckout(
     storefrontMode,
-    isPurchasableProduct(product),
-    jurySales.enabled,
+    product.purchasable,
+    checkout.enabled,
   );
-  const approvedForJury = Boolean(getApprovedJuryProduct(product.slug));
-  const pilotAmounts = merchantJuryDisplayAmounts(
-    product.commerce.unitAmount / 100,
-  );
+  const approvedForSale = product.approvedForSale;
+  const displayAmounts = merchantDisplayAmounts(product.unitAmount / 100);
 
   return (
     <div className="product-page">
@@ -107,10 +135,7 @@ export default function Product() {
               aria-label={zoomed ? 'Zoom out' : 'Zoom in'}
               onClick={() => setZoomed((value) => !value)}
             >
-              <img
-                src={assetUrl(currentMockup)}
-                alt={`${product.title} mockup`}
-              />
+              <img src={currentMockup} alt={`${product.title} mockup`} />
             </button>
             <button
               className="media-arrow next"
@@ -129,18 +154,18 @@ export default function Product() {
           <MockupStrip
             activeMockup={activeMockup}
             mockups={mockups}
-            product={product}
+            productTitle={product.title}
             setActiveMockup={setActiveMockup}
           />
 
           <div className="product-copy">
             {purchasable ? (
-              <p className="preview-badge">OpenAI Build Week jury-only sale</p>
+              <p className="preview-badge">Made to order · Live checkout</p>
             ) : (
               <p className="preview-badge">
                 {storefrontMode === 'preview'
                   ? 'Prototype preview — checkout disabled'
-                  : 'Jury checkout closed'}
+                  : 'Checkout closed'}
               </p>
             )}
             <p>{product.description}</p>
@@ -151,20 +176,20 @@ export default function Product() {
             <dl>
               <div>
                 <dt>Technique</dt>
-                <dd>{product.production.technique}</dd>
+                <dd>{product.technique}</dd>
               </div>
               <div>
                 <dt>Price</dt>
-                <dd>{formatPrice(product)}</dd>
+                <dd>{product.formattedPrice}</dd>
               </div>
-              {approvedForJury ? (
+              {approvedForSale ? (
                 <>
                   <div>
                     <dt>Shipping</dt>
                     <dd>
                       {money(
-                        pilotAmounts.shipping,
-                        merchantJuryCatalog.currency,
+                        displayAmounts.shipping,
+                        merchantCatalog.currency,
                       )}{' '}
                       per order
                     </dd>
@@ -173,19 +198,19 @@ export default function Product() {
                     <dt>One-item total</dt>
                     <dd>
                       {money(
-                        pilotAmounts.total,
-                        merchantJuryCatalog.currency,
+                        displayAmounts.total,
+                        merchantCatalog.currency,
                       )}
                     </dd>
                   </div>
                 </>
               ) : null}
             </dl>
-            {approvedForJury ? (
+            {approvedForSale ? (
               <p>
-                Switzerland and United States delivery only. RITSL bears normal
-                import, customs, and carrier-clearance charges for the approved
-                routes. Review the final CHF total before paying.
+                Switzerland and United States delivery only. The seller bears
+                normal import, customs, and carrier-clearance charges for the
+                supported routes. Review the final CHF total before paying.
               </p>
             ) : null}
           </div>
@@ -200,7 +225,9 @@ export default function Product() {
           <div className="product-actions">
             <button
               className="add-to-cart-button"
-              disabled={!selectedVariant || !purchasable || !isPurchasableVariant(product, selectedVariant)}
+              disabled={
+                !selectedVariant || !purchasable || !selectedVariant.purchasable
+              }
               type="button"
               onClick={() => {
                 if (!selectedVariant) return;
@@ -212,10 +239,10 @@ export default function Product() {
               }}
             >
               {purchasable
-                ? 'Add to jury cart'
+                ? 'Add to cart'
                 : storefrontMode === 'preview'
                   ? 'Checkout disabled'
-                  : 'Jury checkout closed'}
+                  : 'Checkout closed'}
             </button>
             <Link className="buy-link" to="/cart">
               View cart
@@ -223,7 +250,10 @@ export default function Product() {
           </div>
 
           {product.productDetails ? (
-            <section className="product-information" aria-labelledby="product-information-title">
+            <section
+              className="product-information"
+              aria-labelledby="product-information-title"
+            >
               <h2 id="product-information-title">Product information</h2>
               <dl>
                 <div>
@@ -245,7 +275,7 @@ export default function Product() {
                 <div>
                   <dt>Made to order</dt>
                   <dd>
-                    {approvedForJury
+                    {approvedForSale
                       ? 'Production usually takes 2–5 business days. Delivery to Switzerland or the United States is estimated at 7–15 business days in total and is not guaranteed.'
                       : product.productDetails.productionTime}
                   </dd>
@@ -300,13 +330,15 @@ export default function Product() {
                   ))}
                 </ul>
               </details>
-              <p className="mockup-notice">{product.productDetails.mockupNotice}</p>
+              <p className="mockup-notice">
+                {product.productDetails.mockupNotice}
+              </p>
             </section>
           ) : null}
 
           <details className="rights-panel">
             <summary>Rights note</summary>
-            <p>{product.meme.rightsNote}</p>
+            <p>{product.rightsNote}</p>
           </details>
         </div>
       </section>
@@ -317,12 +349,12 @@ export default function Product() {
 function MockupStrip({
   activeMockup,
   mockups,
-  product,
+  productTitle,
   setActiveMockup,
 }: {
   activeMockup: number;
   mockups: string[];
-  product: MerchProduct;
+  productTitle: string;
   setActiveMockup: (index: number) => void;
 }) {
   return (
@@ -334,10 +366,7 @@ function MockupStrip({
           type="button"
           onClick={() => setActiveMockup(index)}
         >
-          <img
-            src={assetUrl(mockup)}
-            alt={`${product.title} view ${index + 1}`}
-          />
+          <img src={mockup} alt={`${productTitle} view ${index + 1}`} />
         </button>
       ))}
     </div>
@@ -353,7 +382,7 @@ function SizeRow({
   disabled: boolean;
   onSelect: (variantId: string) => void;
   selectedVariantId: string;
-  variants: CommerceVariant[];
+  variants: PublicVariant[];
 }) {
   if (!variants.length) return null;
 
@@ -368,7 +397,10 @@ function SizeRow({
   return (
     <div className="size-row" aria-label="Size options">
       {variants.map((variant) => {
-        const label = variantLabel(variant, sizeCounts[variant.size] > 1);
+        const label = publicVariantLabel(
+          variant,
+          sizeCounts[variant.size] > 1,
+        );
         const isSelected = variant.id === selectedVariantId;
 
         return (
@@ -387,4 +419,9 @@ function SizeRow({
       })}
     </div>
   );
+}
+
+function publicVariantLabel(variant: PublicVariant, duplicateSize = false) {
+  if (variant.size && !duplicateSize) return variant.size;
+  return [variant.color, variant.size].filter(Boolean).join(' / ') || 'OS';
 }

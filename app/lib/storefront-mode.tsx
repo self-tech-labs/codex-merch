@@ -3,9 +3,8 @@ import {createContext, useContext, type ReactNode} from 'react';
 export type StorefrontMode = 'preview' | 'production';
 
 const StorefrontModeContext = createContext<StorefrontMode>('preview');
-const JurySalesContext = createContext({
+const CheckoutAvailabilityContext = createContext({
   enabled: false,
-  endAt: null as string | null,
 });
 
 export function resolveStorefrontMode(value: string | undefined): StorefrontMode {
@@ -15,29 +14,25 @@ export function resolveStorefrontMode(value: string | undefined): StorefrontMode
 export function canInitiateStorefrontCheckout(
   mode: StorefrontMode,
   catalogEligible: boolean,
-  jurySalesEnabled = false,
+  checkoutEnabled = false,
 ) {
-  return mode === 'production' && catalogEligible && jurySalesEnabled;
+  return mode === 'production' && catalogEligible && checkoutEnabled;
 }
 
 export function StorefrontModeProvider({
   children,
-  jurySalesEnabled = false,
-  jurySalesEndAt = null,
+  checkoutEnabled = false,
   mode,
 }: {
   children: ReactNode;
-  jurySalesEnabled?: boolean;
-  jurySalesEndAt?: string | null;
+  checkoutEnabled?: boolean;
   mode: StorefrontMode;
 }) {
   return (
     <StorefrontModeContext.Provider value={mode}>
-      <JurySalesContext.Provider
-        value={{enabled: jurySalesEnabled, endAt: jurySalesEndAt}}
-      >
+      <CheckoutAvailabilityContext.Provider value={{enabled: checkoutEnabled}}>
         {children}
-      </JurySalesContext.Provider>
+      </CheckoutAvailabilityContext.Provider>
     </StorefrontModeContext.Provider>
   );
 }
@@ -46,6 +41,6 @@ export function useStorefrontMode() {
   return useContext(StorefrontModeContext);
 }
 
-export function useJurySales() {
-  return useContext(JurySalesContext);
+export function useCheckoutAvailability() {
+  return useContext(CheckoutAvailabilityContext);
 }
