@@ -10,6 +10,7 @@ import {
   REQUIRED_TRACKED_FILES,
   REQUIRED_X_FIXTURE,
   SUBMISSION_DOCUMENT_FILES,
+  buildCommitWindowArgs,
   buildSubmissionReport,
   configurationPresence,
   evaluateCiHeadBinding,
@@ -27,6 +28,20 @@ import {
   scanTrackedSecrets,
   validateThirtyPostFixture,
 } from './submission-verify.mjs';
+
+test('provenance date filtering traverses non-monotonic merge history', () => {
+  const args = buildCommitWindowArgs('HEAD', ['README.md']);
+  assert.deepEqual(args, [
+    'log',
+    `--since-as-filter=${BUILD_WEEK_PROVENANCE_START}`,
+    `--until=${BUILD_WEEK_PROVENANCE_END}`,
+    '--format=%H',
+    'HEAD',
+    '--',
+    'README.md',
+  ]);
+  assert.equal(args.some((argument) => argument.startsWith('--since=')), false);
+});
 
 const validReadme = `
 # Weekly Signal Studio

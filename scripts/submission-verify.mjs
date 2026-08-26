@@ -460,6 +460,19 @@ export function isTimestampWithinBuildWeek(timestamp) {
   );
 }
 
+export function buildCommitWindowArgs(verificationRef, paths = []) {
+  return [
+    'log',
+    // Unlike --since, --since-as-filter does not stop traversal when merge
+    // history contains non-monotonic commit timestamps.
+    `--since-as-filter=${BUILD_WEEK_PROVENANCE_START}`,
+    `--until=${BUILD_WEEK_PROVENANCE_END}`,
+    '--format=%H',
+    verificationRef,
+    ...(paths.length ? ['--', ...paths] : []),
+  ];
+}
+
 export function evaluateGitProvenance(gitFacts = {}) {
   const changed = new Set(gitFacts.changedSinceBaseline || []);
   const requiredDeltaFiles = REQUIRED_BUILD_WEEK_DELTA_FILES.map((file) => ({
@@ -893,22 +906,17 @@ export function inspectGitFacts(rootDir, processEnvironment = process.env) {
     workingTreeClean:
       git(rootDir, ['status', '--porcelain=v1', '--untracked-files=all']).trim()
         .length === 0,
-    commitsInWindow: gitLines(rootDir, [
-      'log',
-      `--since=${BUILD_WEEK_PROVENANCE_START}`,
-      `--until=${BUILD_WEEK_PROVENANCE_END}`,
-      '--format=%H',
-      verificationRef,
-    ]),
-    coreCommitsInWindow: gitLines(rootDir, [
-      'log',
-      `--since=${BUILD_WEEK_PROVENANCE_START}`,
-      `--until=${BUILD_WEEK_PROVENANCE_END}`,
-      '--format=%H',
-      verificationRef,
-      '--',
-      ...REQUIRED_BUILD_WEEK_DELTA_FILES,
-    ]),
+    commitsInWindow: gitLines(
+      rootDir,
+      buildCommitWindowArgs(verificationRef),
+    ),
+    coreCommitsInWindow: gitLines(
+      rootDir,
+      buildCommitWindowArgs(
+        verificationRef,
+        REQUIRED_BUILD_WEEK_DELTA_FILES,
+      ),
+    ),
     changedSinceBaseline: gitSucceeds(rootDir, [
       'cat-file',
       '-e',
