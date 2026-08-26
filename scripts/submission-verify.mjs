@@ -123,7 +123,9 @@ export const REQUIRED_TRACKED_FILES = [
 
 export const REQUIRED_BUILD_WEEK_DELTA_FILES = [
   'README.md',
-  ...BUILD_WEEK_PREVIEW_FILES,
+  ...BUILD_WEEK_PREVIEW_FILES.filter(
+    (file) => !RETIRED_BUILD_WEEK_PREVIEW_FILES.has(file),
+  ),
   'app/lib/merch.ts',
   'app/lib/weekly-visibility.test.ts',
   'fixtures/openai/weekly-happy-path.synthetic.json',
@@ -465,7 +467,10 @@ export function evaluateGitProvenance(gitFacts = {}) {
     changed: changed.has(file),
   }));
   const checks = {
-    headCommittedDuringBuildWeek: isTimestampWithinBuildWeek(gitFacts.headCommittedAt),
+    headCommittedOnOrAfterBuildWeekStart:
+      Number.isFinite(Date.parse(String(gitFacts.headCommittedAt || ''))) &&
+      Date.parse(String(gitFacts.headCommittedAt)) >=
+        Date.parse(BUILD_WEEK_PROVENANCE_START),
     hasCommitDuringBuildWeek: (gitFacts.commitsInWindow || []).length > 0,
     hasCoreCommitDuringBuildWeek: (gitFacts.coreCommitsInWindow || []).length > 0,
     baselineIsAncestor: gitFacts.baselineAncestor === true,

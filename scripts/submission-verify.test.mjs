@@ -150,7 +150,7 @@ test('required artifacts cover weekly runtime, prompts, schemas, fixtures, right
     'app/lib/jury-access.test.ts',
   ]) {
     assert.equal(BUILD_WEEK_PREVIEW_FILES.includes(retiredFile), true, retiredFile);
-    assert.equal(REQUIRED_BUILD_WEEK_DELTA_FILES.includes(retiredFile), true, retiredFile);
+    assert.equal(REQUIRED_BUILD_WEEK_DELTA_FILES.includes(retiredFile), false, retiredFile);
     assert.equal(REQUIRED_TRACKED_FILES.includes(retiredFile), false, retiredFile);
   }
   assert.equal(
@@ -282,7 +282,7 @@ test('package scripts make the final verifier run functional checks before repos
   assert.equal(weak.missing.includes('repositoryVerifier'), true);
 });
 
-test('Build Week provenance window includes exact boundaries and excludes late commits', () => {
+test('Build Week provenance preserves the exact window and accepts later maintenance descendants', () => {
   assert.equal(isTimestampWithinBuildWeek(BUILD_WEEK_PROVENANCE_START), true);
   assert.equal(isTimestampWithinBuildWeek(BUILD_WEEK_PROVENANCE_END), true);
   assert.equal(isTimestampWithinBuildWeek('2026-07-13T08:59:59-07:00'), false);
@@ -293,6 +293,12 @@ test('Build Week provenance window includes exact boundaries and excludes late c
   assert.equal(
     evaluateGitProvenance(
       validGitFacts({headCommittedAt: '2026-07-21T17:00:01-07:00'}),
+    ).ok,
+    true,
+  );
+  assert.equal(
+    evaluateGitProvenance(
+      validGitFacts({headCommittedAt: '2026-07-13T08:59:59-07:00'}),
     ).ok,
     false,
   );
