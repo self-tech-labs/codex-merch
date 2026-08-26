@@ -20,6 +20,7 @@ import {
   findUnresolvedPlaceholders,
   hasThirtyPostFixture,
   isForbiddenTrackedSecretFilename,
+  isCommitAncestor,
   isTimestampWithinBuildWeek,
   parseEnvFile,
   runtimeGpt56Contract,
@@ -401,6 +402,103 @@ test('CI head binding accepts only the exact PR merge parent or push checkout', 
       ciHeadSha: arbitrarySha,
     }),
     {verifiedHeadSha: null, binding: null},
+  );
+});
+
+test('commit ancestry traversal follows parent objects and fails closed', () => {
+  const baselineSha = 'a'.repeat(40);
+  const middleSha = 'b'.repeat(40);
+  const headSha = 'c'.repeat(40);
+  const unrelatedSha = 'd'.repeat(40);
+  const parents = new Map([
+    [headSha, [middleSha]],
+    [middleSha, [baselineSha]],
+    [baselineSha, []],
+    [unrelatedSha, []],
+  ]);
+  const readParents = (sha) => parents.get(sha) ?? null;
+
+  assert.equal(
+    isCommitAncestor({
+      ancestorSha: baselineSha,
+      descendantSha: headSha,
+      readParents,
+    }),
+    true,
+  );
+  assert.equal(
+    isCommitAncestor({
+      ancestorSha: unrelatedSha,
+      descendantSha: headSha,
+      readParents,
+    }),
+    false,
+  );
+  assert.equal(
+    isCommitAncestor({
+      ancestorSha: baselineSha,
+      descendantSha: headSha,
+      readParents: () => null,
+    }),
+    false,
+  );
+  assert.equal(
+    isCommitAncestor({
+      ancestorSha: baselineSha,
+      descendantSha: headSha,
+      readParents,
+      maxCommits: 1,
+    }),
+    false,
+  );
+});
+
+test('commit ancestry traversal bounds fan-out, duplicate work, and elapsed time', () => {
+  const ancestorSha = 'a'.repeat(40);
+  const parentSha = 'b'.repeat(40);
+  const headSha = 'c'.repeat(40);
+  const extraSha = 'd'.repeat(40);
+
+  assert.equal(
+    isCommitAncestor({
+      ancestorSha,
+      descendantSha: headSha,
+      readParents: (sha) =>
+        sha === headSha ? [parentSha, extraSha, ancestorSha] : [],
+      maxParentsPerCommit: 2,
+    }),
+    false,
+  );
+
+  let duplicateReads = 0;
+  assert.equal(
+    isCommitAncestor({
+      ancestorSha,
+      descendantSha: headSha,
+      readParents: (sha) => {
+        duplicateReads += 1;
+        return sha === headSha ? [parentSha, parentSha, parentSha] : [];
+      },
+      maxParentsPerCommit: 4,
+      maxEdges: 2,
+    }),
+    false,
+  );
+  assert.equal(duplicateReads, 1);
+
+  let currentTime = 0;
+  assert.equal(
+    isCommitAncestor({
+      ancestorSha,
+      descendantSha: headSha,
+      readParents: () => {
+        currentTime = 6;
+        return [ancestorSha];
+      },
+      maxDurationMs: 5,
+      now: () => currentTime,
+    }),
+    false,
   );
 });
 

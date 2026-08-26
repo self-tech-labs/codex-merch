@@ -550,6 +550,65 @@ export function evaluateCiHeadBinding({
   return {verifiedHeadSha: null, binding: null};
 }
 
+export function isCommitAncestor({
+  ancestorSha,
+  descendantSha,
+  readParents,
+  maxCommits = 512,
+  maxWorkItems = 1_024,
+  maxEdges = 1_024,
+  maxParentsPerCommit = 16,
+  maxDurationMs = 5_000,
+  now = Date.now,
+} = {}) {
+  const isSha = (value) => /^[0-9a-f]{40}$/i.test(String(value || ''));
+  if (
+    !isSha(ancestorSha) ||
+    !isSha(descendantSha) ||
+    typeof readParents !== 'function'
+  ) {
+    return false;
+  }
+
+  const startedAt = now();
+  const pending = [descendantSha];
+  const visited = new Set();
+  let workItems = 0;
+  let edges = 0;
+  while (pending.length > 0) {
+    workItems += 1;
+    if (workItems > maxWorkItems || now() - startedAt > maxDurationMs) return false;
+
+    const commit = pending.pop();
+    if (visited.has(commit)) continue;
+    if (commit === ancestorSha) return true;
+    visited.add(commit);
+    if (visited.size > maxCommits) return false;
+
+    let parents;
+    try {
+      parents = readParents(commit);
+    } catch {
+      return false;
+    }
+    if (now() - startedAt > maxDurationMs) return false;
+    if (
+      !Array.isArray(parents) ||
+      parents.length > maxParentsPerCommit ||
+      parents.some((parent) => !isSha(parent))
+    ) {
+      return false;
+    }
+    for (const parent of parents) {
+      edges += 1;
+      if (edges > maxEdges) return false;
+      if (!visited.has(parent)) pending.push(parent);
+    }
+    if (pending.length > maxWorkItems) return false;
+  }
+  return false;
+}
+
 export function configurationPresence(env = {}) {
   const present = (key) => typeof env[key] === 'string' && env[key].trim().length > 0;
   const enabled = (key) => String(env[key] || '').trim().toLowerCase() === 'true';
@@ -734,16 +793,17 @@ function deduplicateFindings(findings) {
   });
 }
 
-function git(rootDir, args) {
+function git(rootDir, args, options = {}) {
   return execFileSync('git', ['-C', rootDir, ...args], {
     encoding: 'utf8',
     stdio: ['ignore', 'pipe', 'pipe'],
+    ...options,
   });
 }
 
-function gitOptional(rootDir, args) {
+function gitOptional(rootDir, args, options) {
   try {
-    return git(rootDir, args).trim() || null;
+    return git(rootDir, args, options).trim() || null;
   } catch {
     return null;
   }
@@ -761,6 +821,20 @@ function gitSucceeds(rootDir, args) {
   } catch {
     return false;
   }
+}
+
+function readCommitParents(rootDir, sha) {
+  const commit = gitOptional(
+    rootDir,
+    ['cat-file', '-p', `${sha}^{commit}`],
+    {timeout: 1_000, maxBuffer: 1024 * 1024},
+  );
+  if (commit == null) return null;
+  const header = commit.split(/\r?\n\r?\n/, 1)[0];
+  return header
+    .split(/\r?\n/)
+    .filter((line) => line.startsWith('parent '))
+    .map((line) => line.slice('parent '.length).trim());
 }
 
 export function inspectGitFacts(rootDir, processEnvironment = process.env) {
@@ -847,12 +921,13 @@ export function inspectGitFacts(rootDir, processEnvironment = process.env) {
           '--',
         ])
       : [],
-    baselineAncestor: gitSucceeds(rootDir, [
-      'merge-base',
-      '--is-ancestor',
-      BUILD_WEEK_BASELINE_COMMIT,
-      verificationRef,
-    ]),
+    // Read commit parents directly so provenance does not depend on a host
+    // Git revision-walk implementation. Missing or malformed objects fail closed.
+    baselineAncestor: isCommitAncestor({
+      ancestorSha: BUILD_WEEK_BASELINE_COMMIT,
+      descendantSha: headSha,
+      readParents: (sha) => readCommitParents(rootDir, sha),
+    }),
     baselineTagSha,
     baselineTagAnnotated:
       baselineTagSha != null &&
