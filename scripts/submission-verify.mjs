@@ -460,17 +460,28 @@ export function isTimestampWithinBuildWeek(timestamp) {
   );
 }
 
-export function buildCommitWindowArgs(verificationRef, paths = []) {
+export function buildCommitHistoryArgs(verificationRef, paths = []) {
   return [
-    'log',
-    // Unlike --since, --since-as-filter does not stop traversal when merge
-    // history contains non-monotonic commit timestamps.
-    `--since-as-filter=${BUILD_WEEK_PROVENANCE_START}`,
-    `--until=${BUILD_WEEK_PROVENANCE_END}`,
-    '--format=%H',
+    'rev-list',
+    '--timestamp',
     verificationRef,
     ...(paths.length ? ['--', ...paths] : []),
   ];
+}
+
+export function commitsWithinBuildWeek(records = []) {
+  const startSeconds = Date.parse(BUILD_WEEK_PROVENANCE_START) / 1_000;
+  const endSeconds = Date.parse(BUILD_WEEK_PROVENANCE_END) / 1_000;
+
+  return records.flatMap((record) => {
+    const match = String(record).match(/^(\d+)\s+([0-9a-f]{40})$/i);
+    if (!match) return [];
+
+    const committedAtSeconds = Number(match[1]);
+    return committedAtSeconds >= startSeconds && committedAtSeconds <= endSeconds
+      ? [match[2]]
+      : [];
+  });
 }
 
 export function evaluateGitProvenance(gitFacts = {}) {
@@ -906,15 +917,19 @@ export function inspectGitFacts(rootDir, processEnvironment = process.env) {
     workingTreeClean:
       git(rootDir, ['status', '--porcelain=v1', '--untracked-files=all']).trim()
         .length === 0,
-    commitsInWindow: gitLines(
-      rootDir,
-      buildCommitWindowArgs(verificationRef),
+    // Walk the complete reachable history first and apply the event window in
+    // JavaScript. Git date-limited walks can prune older parents when a newer
+    // maintenance merge sits above non-monotonic historical timestamps.
+    commitsInWindow: commitsWithinBuildWeek(
+      gitLines(rootDir, buildCommitHistoryArgs(verificationRef)),
     ),
-    coreCommitsInWindow: gitLines(
-      rootDir,
-      buildCommitWindowArgs(
-        verificationRef,
-        REQUIRED_BUILD_WEEK_DELTA_FILES,
+    coreCommitsInWindow: commitsWithinBuildWeek(
+      gitLines(
+        rootDir,
+        buildCommitHistoryArgs(
+          verificationRef,
+          REQUIRED_BUILD_WEEK_DELTA_FILES,
+        ),
       ),
     ),
     changedSinceBaseline: gitSucceeds(rootDir, [

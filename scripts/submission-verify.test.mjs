@@ -10,8 +10,9 @@ import {
   REQUIRED_TRACKED_FILES,
   REQUIRED_X_FIXTURE,
   SUBMISSION_DOCUMENT_FILES,
-  buildCommitWindowArgs,
+  buildCommitHistoryArgs,
   buildSubmissionReport,
+  commitsWithinBuildWeek,
   configurationPresence,
   evaluateCiHeadBinding,
   evaluateGitProvenance,
@@ -29,18 +30,35 @@ import {
   validateThirtyPostFixture,
 } from './submission-verify.mjs';
 
-test('provenance date filtering traverses non-monotonic merge history', () => {
-  const args = buildCommitWindowArgs('HEAD', ['README.md']);
+test('provenance walks complete history before filtering commit timestamps', () => {
+  const args = buildCommitHistoryArgs('HEAD', ['README.md']);
   assert.deepEqual(args, [
-    'log',
-    `--since-as-filter=${BUILD_WEEK_PROVENANCE_START}`,
-    `--until=${BUILD_WEEK_PROVENANCE_END}`,
-    '--format=%H',
+    'rev-list',
+    '--timestamp',
     'HEAD',
     '--',
     'README.md',
   ]);
-  assert.equal(args.some((argument) => argument.startsWith('--since=')), false);
+  assert.equal(args.some((argument) => argument.startsWith('--since')), false);
+  assert.equal(args.some((argument) => argument.startsWith('--until')), false);
+
+  const beforeWindow = Math.floor(Date.parse(BUILD_WEEK_PROVENANCE_START) / 1_000) - 1;
+  const windowStart = Math.floor(Date.parse(BUILD_WEEK_PROVENANCE_START) / 1_000);
+  const windowEnd = Math.floor(Date.parse(BUILD_WEEK_PROVENANCE_END) / 1_000);
+  const afterWindow = Math.floor(Date.parse(BUILD_WEEK_PROVENANCE_END) / 1_000) + 1;
+  const includedAtStart = 'a'.repeat(40);
+  const includedAtEnd = 'b'.repeat(40);
+
+  assert.deepEqual(
+    commitsWithinBuildWeek([
+      `${afterWindow} ${'c'.repeat(40)}`,
+      `${windowEnd} ${includedAtEnd}`,
+      `${windowStart} ${includedAtStart}`,
+      `${beforeWindow} ${'d'.repeat(40)}`,
+      'malformed record',
+    ]),
+    [includedAtEnd, includedAtStart],
+  );
 });
 
 const validReadme = `
