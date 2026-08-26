@@ -3,11 +3,13 @@
 Complete [`production-deployment.md`](production-deployment.md), close every
 runtime blocker, and record current owner approval before operating real
 checkout. The signed catalog currently permits the Codex Rate Reset Long Sleeve
-Tee for public sale to Switzerland and the United States at CHF 58.00 plus CHF
-9.10 shipping (CHF 67.10 one-item total, including any applicable tax), under
-customer-policy version `2026-08-26` and manual Printful draft confirmation.
-It is an independent, fan-made project, not official OpenAI merchandise and not
-affiliated with, authorized, sponsored, approved, or endorsed by OpenAI.
+Tee at CHF 58.00 and ten cotton sweatshirts at CHF 88.00 for public sale to
+Switzerland and the United States. Shipping is CHF 9.10 once per order, making
+the respective one-item totals CHF 67.10 and CHF 97.10, including any
+applicable tax. Customer-policy version `2026-08-26` and manual Printful draft
+confirmation apply to all eleven products. It is an independent, fan-made
+project, not official OpenAI merchandise and not affiliated with, authorized,
+sponsored, approved, or endorsed by OpenAI.
 
 ## Non-negotiable production state
 
@@ -33,19 +35,21 @@ affiliated with, authorized, sponsored, approved, or endorsed by OpenAI.
 1. Use Stripe test mode, a dedicated Neon branch, a dedicated Inngest
    environment, `STRIPE_EXPECTED_MODE=test`, CH/US and CHF settings, and
    `PRINTFUL_AUTO_CONFIRM=false`.
-2. Confirm `npm run merch:printful:verify -- --slug
-   codex-rate-reset-long-sleeve` returns `ok: true` for Printful product
-   `436601984` and all three sync variants. Run the fulfillment dry-run and
-   require top-level draft intent `confirm: false`, no `confirm` field in the
-   request body, no `confirm=1` query, and no created order.
-3. Confirm the published product remains CHF 58.00, approved for the exact
-   immutable assets/variant mappings, and policy version `2026-08-26` is
-   visible on deployed shipping, returns, privacy, terms, and contact pages.
-4. Complete one CH- or US-address Stripe test payment for CHF 58.00 plus CHF 9.10.
-   Verify the policy disclosure, `receipt_email`, the receipt preview, and a
-   Dashboard test receipt to a verified test-account email. Automatic test
-   receipts are not generally delivered; prove automatic delivery with a
-   controlled live order.
+2. For every slug in `merch/merchant-jury-catalog.json`, run
+   `npm run merch:printful:verify -- --slug <slug>` and the fulfillment dry-run.
+   Require `ok: true`, the exact signed Printful product and variant mappings,
+   top-level draft intent `confirm: false`, no `confirm` field in the request
+   body, no `confirm=1` query, and no created order.
+3. Confirm all eleven published products retain their signed CHF 58.00 or CHF
+   88.00 prices and exact immutable assets/variant mappings, and policy version
+   `2026-08-26` is visible on deployed shipping, returns, privacy, terms, and
+   contact pages.
+4. Complete a CH- or US-address Stripe test payment containing both a CHF 58.00
+   and a CHF 88.00 signed product. Verify the CHF 146.00 subtotal, single CHF
+   9.10 shipping charge, CHF 155.10 total, each selected variant, policy
+   disclosure, `receipt_email`, receipt preview, and a Dashboard test receipt
+   to a verified test-account email. Automatic test receipts are not generally
+   delivered; prove automatic delivery with a controlled live order.
 5. Verify exactly one local order, one processed webhook event, one successful
    Inngest run, one unconfirmed Printful draft, a verified `CM-…` success page,
    and removal of only purchased cart lines.

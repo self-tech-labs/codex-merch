@@ -178,24 +178,53 @@ async function probePrintful(
   if (!response.ok) {
     throw new Error(`Printful readiness probe failed (${response.status})`);
   }
-  const body = (await response.json()) as {
-    result?: {
-      sync_product?: {id?: number};
-      sync_variants?: Array<{id?: number}>;
-    };
+  assertPrintfulProductReadiness(approvedProduct, await response.json());
+}
+
+type PrintfulReadinessResponse = {
+  result?: {
+    sync_product?: {id?: number; is_ignored?: boolean};
+    sync_variants?: Array<{
+      id?: number;
+      variant_id?: number;
+      synced?: boolean;
+      is_ignored?: boolean;
+      availability_status?: string;
+    }>;
   };
-  if (body.result?.sync_product?.id !== approvedProduct.printfulProductId) {
+};
+
+export function assertPrintfulProductReadiness(
+  approvedProduct: MerchantCatalogProduct,
+  value: unknown,
+) {
+  const body = value as PrintfulReadinessResponse;
+  const liveProduct = body.result?.sync_product;
+  if (liveProduct?.id !== approvedProduct.printfulProductId) {
     throw new Error('Printful readiness probe returned the wrong product');
   }
-  const liveVariants = new Set(
-    (body.result.sync_variants || []).map((variant) => variant.id),
+  if (liveProduct.is_ignored !== false) {
+    throw new Error('Printful readiness product is ignored or unconfigured');
+  }
+
+  const liveVariants = new Map(
+    (body.result?.sync_variants || []).map((variant) => [variant.id, variant]),
   );
-  if (
-    approvedProduct.printfulVariants.some(
-      (variant) => !liveVariants.has(variant.syncVariantId),
-    )
-  ) {
-    throw new Error('Printful readiness probe is missing an approved variant');
+  for (const approvedVariant of approvedProduct.printfulVariants) {
+    const liveVariant = liveVariants.get(approvedVariant.syncVariantId);
+    if (
+      !liveVariant ||
+      liveVariant.variant_id !== approvedVariant.catalogVariantId
+    ) {
+      throw new Error('Printful readiness variant mapping does not match sign-off');
+    }
+    if (
+      liveVariant.synced !== true ||
+      liveVariant.is_ignored !== false ||
+      liveVariant.availability_status !== 'active'
+    ) {
+      throw new Error('Printful readiness variant is unavailable or unconfigured');
+    }
   }
 }
 

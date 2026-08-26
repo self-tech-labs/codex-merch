@@ -70,10 +70,11 @@ flowchart LR
 
 The canonical Vercel deployment demonstrates the complete creative pipeline and
 is free to browse, install, test, and evaluate. Commerce is an optional proof,
-not part of the required judge path. Only the signed **Codex Rate Reset Long
-Sleeve Tee** can enter Stripe Checkout; delivery is limited to Switzerland and
-the United States, Checkout requires acceptance of the current Terms, and
-Printful orders remain unconfirmed for human review before manufacturing.
+not part of the required judge path. The eleven products pinned in
+`merch/merchant-jury-catalog.json` can enter Stripe Checkout; delivery is
+limited to Switzerland and the United States, Checkout requires acceptance of
+the current Terms, and Printful orders remain unconfirmed for human review
+before manufacturing.
 
 This is a fan-made project and its products are not official OpenAI merchandise;
 it is not affiliated with, sponsored by, or endorsed by OpenAI.
@@ -231,14 +232,15 @@ is a configuration preflight: it probes Stripe account/webhook configuration,
 Postgres, and Printful read access without charging or creating an order.
 
 The canonical [Vercel production deployment](https://codex-merch.vercel.app)
-passes that preflight only when
-`/api/readiness?product=codex-rate-reset-long-sleeve` returns HTTP 200 with
-`ready: true`, `paymentMode: live`, database/Stripe/Stripe-webhook/Printful
-checks true, CH/US shipping, policy `2026-08-26`, and
-`printfulAutoConfirm: false`. Payment readiness additionally requires the
-controlled live end-to-end payment, signed delivery, Inngest, receipt, and
-Printful-draft proof in section 10 of the production deployment guide; the
-read-only endpoint cannot prove those mutations by itself.
+passes that preflight only when the readiness endpoint returns HTTP 200 for
+every slug in the signed catalog (for example,
+`/api/readiness?product=codex-rate-reset-long-sleeve`) with `ready: true`,
+`paymentMode: live`, database/Stripe/Stripe-webhook/Printful checks true, CH/US
+shipping, policy `2026-08-26`, and `printfulAutoConfirm: false`. Payment
+readiness additionally requires the controlled live end-to-end payment, signed
+delivery, Inngest, receipt, and Printful-draft proof in section 10 of the
+production deployment guide; the read-only endpoint cannot prove those
+mutations by itself.
 
 Operational details live in the [production deployment guide](docs/production-deployment.md)
 and [runbook](docs/production-runbook.md). Build Week architecture, evidence,

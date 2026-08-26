@@ -27,6 +27,7 @@ import {
   FIXED_CURRENCY_CHECKOUT_CONTROLS,
   normalizeCheckoutLines,
   shippingOptions,
+  stripeCheckoutLineItem,
 } from './stripe.server';
 import {merchantCatalog} from './merchant-catalog';
 import {
@@ -52,22 +53,37 @@ test('preview products are visible but not purchasable', () => {
   assert.equal(isPurchasableProduct(preview), false);
 });
 
-test('storefront purchase controls expose only the approved live product', () => {
+test('storefront purchase controls expose every signed live product', () => {
   const approvedSlugs = merchantCatalog.products.map(
     (product) => product.productSlug,
   );
   assert.deepEqual(
     merchProducts
       .filter((product) => isApprovedProductPurchasable(product))
-      .map((product) => product.slug),
-    approvedSlugs,
+      .map((product) => product.slug)
+      .sort(),
+    [...approvedSlugs].sort(),
   );
 
-  const unapproved = merchProducts.find(
-    (product) =>
-      isPurchasableProduct(product) && !approvedSlugs.includes(product.slug),
+  const previews = merchProducts.filter(
+    (product) => product.automation?.previewOnly,
   );
-  assert.ok(unapproved);
+  assert.equal(previews.length, 7);
+  assert.ok(
+    previews.every(
+      (product) =>
+        !isApprovedProductPurchasable(product) &&
+        getProductVariants(product).every(
+          (variant) => !isApprovedVariantPurchasable(product, variant),
+        ),
+    ),
+  );
+
+  const unapproved = structuredClone(
+    merchProducts.find((product) => isPurchasableProduct(product))!,
+  ) as MerchProduct;
+  unapproved.slug = 'unsigned-test-product';
+  assert.equal(isPurchasableProduct(unapproved), true);
   assert.equal(
     isApprovedProductPurchasable(unapproved),
     false,
@@ -77,6 +93,62 @@ test('storefront purchase controls expose only the approved live product', () =>
       isApprovedVariantPurchasable(unapproved, variant),
     ),
     false,
+  );
+});
+
+test('checkout accepts every signed product', () => {
+  for (const approvedProduct of merchantCatalog.products) {
+    const product = merchProducts.find(
+      (candidate) => candidate.slug === approvedProduct.productSlug,
+    );
+    assert.ok(product, `Missing signed product ${approvedProduct.productSlug}`);
+    const variant = getProductVariants(product)[0];
+    assert.ok(variant, `Missing variant for ${approvedProduct.productSlug}`);
+    const [line] = normalizeCheckoutLines([
+      {productSlug: product.slug, variantId: variant.id, quantity: 1},
+    ]);
+    assert.doesNotThrow(() => assertApprovedCatalogLines([line]));
+  }
+});
+
+test('checkout accepts a mixed signed cart and rejects mapping tampering', () => {
+  const lines = normalizeCheckoutLines([
+    {
+      productSlug: 'codex-rate-reset-long-sleeve',
+      variantId: 'codex-rate-reset-long-sleeve:10095',
+      quantity: 1,
+    },
+    {
+      productSlug: 'research-deployment-co-sweatshirt',
+      variantId: 'research-deployment-co-sweatshirt:33963',
+      quantity: 1,
+    },
+  ]);
+  assert.deepEqual(
+    lines.map((line) => line.product.slug).sort(),
+    [
+      'codex-rate-reset-long-sleeve',
+      'research-deployment-co-sweatshirt',
+    ].sort(),
+  );
+  assert.doesNotThrow(() => assertApprovedCatalogLines(lines));
+  const stripeItems = lines.map((line) =>
+    stripeCheckoutLineItem({
+      baseUrl: 'https://shop.example',
+      currency: 'CHF',
+      line,
+    }),
+  );
+  assert.deepEqual(
+    stripeItems.map((item) => item.price_data.product_data.description),
+    ['Black / M', 'White / 2XS'],
+  );
+
+  const tampered = lines.map((line) => ({...line}));
+  tampered[1].syncVariantId += 1;
+  assert.throws(
+    () => assertApprovedCatalogLines(tampered),
+    /Printful variant does not match merchant sign-off/,
   );
 });
 

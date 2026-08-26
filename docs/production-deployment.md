@@ -18,9 +18,11 @@ every runtime dependency and approval is live.
 - Merchant identity and contact: the identity shown on the current Terms and
   Privacy pages, with a valid merchant-controlled contact email supplied by
   `STOREFRONT_CONTACT_EMAIL`.
-- Signed product: `codex-rate-reset-long-sleeve`, CH/US delivery, **CHF 58.00**
-  plus **CHF 9.10** shipping: **CHF 67.10 one-item customer total**, including
-  any applicable tax.
+- Signed catalog: all eleven entries in `merch/merchant-jury-catalog.json`,
+  with CH/US delivery. The long sleeve is **CHF 58.00** and the ten cotton
+  sweatshirts are **CHF 88.00**; **CHF 9.10** shipping is charged once per
+  order, making the respective one-item totals **CHF 67.10** and **CHF 97.10**,
+  including any applicable tax.
 - Customer-policy version: **2026-08-26**.
 - Identity: independent fan-made content, not official OpenAI merchandise; no
   affiliation, authorization, sponsorship, approval, or endorsement. The
@@ -38,7 +40,9 @@ for each of M, L, and XL delivered to Lausanne was CHF 29.35 item/print, CHF
 3.11 vendor tax, and CHF 9.10 shipping, or CHF 41.56 total. At a CHF 67.10 customer charge
 and an illustrative Swiss-card Stripe fee of 2.9% + CHF 0.30, estimated
 contribution is about CHF 23.29 before returns, disputes, discounts, and
-overhead. Requote every size and verify the account's actual Stripe pricing
+overhead. That historical verification covers only the long sleeve. Reverify
+every signed product and variant, requote representative sizes for the restored
+sweatshirts and mixed/bulk carts, and verify the account's actual Stripe pricing
 before launch.
 
 The same signed M variant was also quoted read-only to OpenAI's published San
@@ -67,10 +71,11 @@ the readiness endpoint enforces the same fail-closed checkout contract.
    takedown disclosures, and record owner approval for public checkout.
 5. **Post-enable canonical readiness:** after owner authorization and the
    section 10 flag sequence, deploy the exact reviewed commit and require HTTP
-   200 from `/api/readiness?product=codex-rate-reset-long-sleeve`. Then verify
-   `paymentMode: live`, database/Stripe/Stripe-webhook/Printful checks, the fan
-   disclaimer, CH/US address selection, CHF 67.10 one-item Checkout total,
-   required terms consent, and Stripe policy links in a signed-out browser.
+   200 from `/api/readiness?product=<signed-slug>` for every signed catalog
+   entry. Then verify `paymentMode: live`, database/Stripe/Stripe-webhook/
+   Printful checks, the fan disclaimer, CH/US address selection, product-
+   specific pricing plus one CHF 9.10 shipping charge, required terms consent,
+   and Stripe policy links in a signed-out browser.
 
 Do not widen availability until item 5 and one controlled end-to-end live
 payment pass. If either fails, restore the checkout and approval flags to
@@ -210,7 +215,7 @@ coherent batch and verify the deployment—not just the Settings table.
    the current Terms and Privacy pages, and verify the customer return address
    and support instructions.
 4. Confirm store currency, CHF retail values, Swiss shipping coverage,
-   production region, inventory for all three sizes, required garment/product
+   production region, inventory for every signed variant, required garment/product
    safety information, care/fibre labeling, and the supplier's current claims
    process. Confirm the approved Swiss route does not bill the recipient for
    import/customs/carrier clearance; the merchant bears and reimburses any
@@ -218,23 +223,25 @@ coherent batch and verify the deployment—not just the Settings table.
 5. Keep `PRINTFUL_AUTO_CONFIRM=false`. A paid order may create one draft; an
    operator must compare its address, variant, retail amount, print files, and
    cost before manually confirming it.
-6. Re-run the read-only and no-order checks from a credentialed environment:
+6. Re-run the read-only and no-order checks from a credentialed environment for
+   every slug in `merch/merchant-jury-catalog.json`:
 
    ```bash
-   npm run merch:printful:verify -- --slug codex-rate-reset-long-sleeve
-   npm run merch:fulfillment:order:dry-run -- --slug codex-rate-reset-long-sleeve
+   npm run merch:printful:verify -- --slug <signed-slug>
+   npm run merch:fulfillment:order:dry-run -- --slug <signed-slug>
    ```
 
-   Require `ok: true`, product `436601984`, exact live/local matches for all
-   three sync-variant IDs, top-level draft intent `confirm: false`,
-   `retailCurrency: CHF`, CHF 58.00 retail pricing, a sanitized Swiss recipient,
-   and no created order. The documented order body itself must not contain a
+   Require `ok: true`, the exact signed Printful product ID and live/local
+   variant mappings, top-level draft intent `confirm: false`, `retailCurrency:
+   CHF`, the signed CHF 58.00 or CHF 88.00 retail price, a sanitized Swiss
+   recipient, and no created order. The documented order body must not contain a
    `confirm` field and the endpoint must not contain `confirm=1`; POST `/orders`
    therefore creates a draft. Its synthetic `CM-DRY-…` `external_id` must also
    be no more than Printful's 32-character limit. This dry run proves payload shape only; the
    separate estimate and physical sample prove the actual Swiss route and cost.
-7. Obtain fresh Printful cost/shipping estimates for M, L, and XL to a Swiss
-   address. Compare them with the 2026-07-21 CHF 41.56 one-item quote and
+7. Obtain fresh Printful cost/shipping estimates for representative variants of
+   every signed product, plus a mixed and maximum-size cart, to a Swiss address.
+   Compare the long sleeve with the 2026-07-21 CHF 41.56 one-item quote and
    investigate any difference before sign-off.
 8. Order a physical sample and inspect artwork, print placement/quality,
    garment, size, label, packing slip, packaging, safety information, return
@@ -265,14 +272,16 @@ coherent batch and verify the deployment—not just the Settings table.
 3. Enable only payment methods the merchant supports. The application lets Stripe
    dynamically select methods eligible for the CHF, CH/US Checkout Session.
 4. Confirm actual Swiss account fees. The CHF 2.25 fee in the sign-off record
-   is only the stated 2.9% + CHF 0.30 planning assumption on CHF 67.10.
+   is only the stated 2.9% + CHF 0.30 planning assumption on the historical CHF
+   67.10 long-sleeve order; recalculate for each actual cart.
 5. The fixed consumer amounts are tax-inclusive by code: product
    `tax_behavior=inclusive` with General Tangible Goods
    (`txcd_99999999`), and shipping `tax_behavior=inclusive` with Shipping
    (`txcd_92010001`). The owner selected
    `STRIPE_AUTOMATIC_TAX=false` for the current signed catalog. Do not label the
-   price “VAT included”; present CHF 58.00 plus CHF 9.10 as the final configured
-   amounts. One-item Checkout must remain CHF 67.10.
+   price “VAT included”; present each signed product price plus the single CHF
+   9.10 shipping charge as the final configured amounts. One-item Checkout must
+   remain CHF 67.10 for the long sleeve or CHF 97.10 for a sweatshirt.
 
 6. Use exactly one live CHF shipping configuration. The signed catalog uses
    `STRIPE_FLAT_SHIPPING_AMOUNT=910` and no `STRIPE_SHIPPING_RATE_ID`. If a
@@ -332,7 +341,7 @@ launch procedure in section 10.
 | `STRIPE_ALLOWED_SHIPPING_COUNTRIES` | `CH,US` |
 | `STRIPE_SHIPPING_RATE_ID` | Unset when using the recorded flat amount |
 | `STRIPE_FLAT_SHIPPING_AMOUNT` | `910` CHF centimes; set this or a live rate, never both |
-| `STRIPE_AUTOMATIC_TAX` | Explicit owner-approved `true` or `false`; current catalog uses `false` and one-item total remains CHF 67.10 |
+| `STRIPE_AUTOMATIC_TAX` | Explicit owner-approved `true` or `false`; current catalog uses `false`, with one-item totals of CHF 67.10 or CHF 97.10 depending on product |
 | `PRINTFUL_TOKEN` | Sensitive single-store token with required scopes |
 | `PRINTFUL_STORE_ID` | `18277037` for the currently verified Manual/API store |
 | `PRINTFUL_AUTO_CONFIRM` | `false` throughout live sales |
@@ -375,19 +384,22 @@ provider authentication and retry semantics.
    `STRIPE_EXPECTED_MODE=test`, a matching Stripe sandbox key/webhook, staging
    database/Inngest, CH/US and CHF settings, policy version `2026-08-26`, and
    `PRINTFUL_AUTO_CONFIRM=false`.
-2. Run the staging migration, deploy, then call:
+2. Run the staging migration, deploy, then call the endpoint once for every
+   signed catalog slug:
 
    ```text
-   GET /api/readiness?product=codex-rate-reset-long-sleeve
+   GET /api/readiness?product=<signed-slug>
    ```
 
    Require HTTP 200, `ready: true`, `paymentMode: test`, database, Stripe, and
    Printful readiness, CH/US shipping, CHF 9.10 shipping, policy `2026-08-26`,
    and `printfulAutoConfirm: false`.
-3. Place a Stripe test payment to a Swiss test address. Verify CHF 58.00 plus
-   CHF 9.10 and the terms/policy disclosure. Verify `receipt_email`, the
-   receipt preview, and a Dashboard test receipt to a verified testing email;
-   reserve automatic-delivery proof for a controlled live order.
+3. Place a Stripe test payment to a Swiss test address with at least two
+   different signed products. Verify every product and variant, the exact
+   subtotal, one CHF 9.10 shipping charge, and the terms/policy disclosure.
+   Verify `receipt_email`, the receipt preview, and a Dashboard test receipt to
+   a verified testing email; reserve automatic-delivery proof for a controlled
+   live order.
 4. Verify exactly one local order, one processed Stripe event, one successful
    Inngest run, and one unconfirmed Printful draft whose `external_id` is the
    same `CM-…` public order reference (never the longer Checkout Session ID)
@@ -425,16 +437,18 @@ provider authentication and retry semantics.
    live endpoint secret, set `STOREFRONT_MODE=production`, and, last,
    `CHECKOUT_ENABLED=true`. Redeploy the coherent configuration once.
    Keep `MERCH_EXPANSION_APPROVED=false`; it is not part of opening the signed
-   first product and must not be enabled until a revised catalog has been
+   eleven-product catalog and must not be enabled until a revised catalog has been
    separately reviewed.
-6. Require the readiness endpoint to return HTTP 200, `ready: true`,
-   `paymentMode: live`, `databaseReady: true`, `stripeReady: true`,
-   `stripeWebhookReady: true`, `printfulReady: true`, CH/US shipping,
-   CHF 9.10 shipping, policy
-   `2026-08-26`, and `printfulAutoConfirm: false`.
-7. In a signed-out browser, verify public checkout creates a live Stripe
-   Checkout Session. Confirm CHF 58.00 plus CHF 9.10, required terms consent,
-   policy links, and fan/non-affiliation disclosure before wider availability.
+6. For every signed catalog slug, require the readiness endpoint to return HTTP
+   200, `ready: true`, `paymentMode: live`, `databaseReady: true`,
+   `stripeReady: true`, `stripeWebhookReady: true`, `printfulReady: true`,
+   CH/US shipping, CHF 9.10 shipping, policy `2026-08-26`, and
+   `printfulAutoConfirm: false`.
+7. In a signed-out browser, verify all eleven products appear and public
+   checkout creates a live Stripe Checkout Session for the chosen signed
+   product. Confirm its exact price plus CHF 9.10 shipping, required terms
+   consent, policy links, and fan/non-affiliation disclosure before wider
+   availability.
 8. Complete one controlled real payment and verify its receipt, local order,
    signed live-mode webhook, Inngest run, and exactly one unconfirmed Printful
    draft before manually confirming it. Retain sanitized evidence in the
