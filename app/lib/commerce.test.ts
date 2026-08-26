@@ -1,15 +1,18 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import type Stripe from 'stripe';
-import type {Order} from '~/db/schema.server';
+import type {Order, OrderItem} from '~/db/schema.server';
 import {
   buildPrintfulOrderPayload,
   cancelPrintfulOrder,
   createOrFindPrintfulOrder,
   getPrintfulOrderState,
+  assertFulfillmentConfiguration,
   printfulExternalId,
+  printfulRecoveryExternalId,
 } from './fulfillment.server';
 import {
+  getProductVariants,
   isPubliclyVisibleProduct,
   isPurchasableProduct,
   merchProducts,
@@ -17,16 +20,64 @@ import {
 } from './merch';
 import {
   allowedShippingCountries,
+  assertApprovedCatalogLines,
   assertCheckoutConfiguration,
-  assertMerchantJuryLines,
+  assertStripeWebhookConfiguration,
+  checkoutSessionExpiresAt,
+  FIXED_CURRENCY_CHECKOUT_CONTROLS,
   normalizeCheckoutLines,
   shippingOptions,
 } from './stripe.server';
+import {merchantCatalog} from './merchant-catalog';
+import {
+  isApprovedProductPurchasable,
+  isApprovedVariantPurchasable,
+} from './storefront-sale';
+
+test('checkout expiry keeps a safe margin above Stripe minimum', () => {
+  const now = Date.UTC(2026, 7, 26, 12, 0, 0);
+  assert.equal(checkoutSessionExpiresAt(now), now / 1000 + 35 * 60);
+});
+
+test('fixed CHF checkout disables localization and requires hosted terms', () => {
+  assert.deepEqual(FIXED_CURRENCY_CHECKOUT_CONTROLS, {
+    adaptive_pricing: {enabled: false},
+    consent_collection: {terms_of_service: 'required'},
+  });
+});
 
 test('preview products are visible but not purchasable', () => {
   const preview = merchProducts.find((product) => product.automation?.previewOnly)!;
   assert.equal(isPubliclyVisibleProduct(preview), true);
   assert.equal(isPurchasableProduct(preview), false);
+});
+
+test('storefront purchase controls expose only the approved live product', () => {
+  const approvedSlugs = merchantCatalog.products.map(
+    (product) => product.productSlug,
+  );
+  assert.deepEqual(
+    merchProducts
+      .filter((product) => isApprovedProductPurchasable(product))
+      .map((product) => product.slug),
+    approvedSlugs,
+  );
+
+  const unapproved = merchProducts.find(
+    (product) =>
+      isPurchasableProduct(product) && !approvedSlugs.includes(product.slug),
+  );
+  assert.ok(unapproved);
+  assert.equal(
+    isApprovedProductPurchasable(unapproved),
+    false,
+  );
+  assert.equal(
+    getProductVariants(unapproved).some((variant) =>
+      isApprovedVariantPurchasable(unapproved, variant),
+    ),
+    false,
+  );
 });
 
 test('published products require an available sync mapping', () => {
@@ -141,7 +192,7 @@ test('checkout enforces aggregate quantities, availability, currencies, and uniq
   }
 });
 
-test('jury catalog pins approved products, prices, and whole-cart quantity', () => {
+test('merchant catalog pins approved products, prices, and whole-cart quantity', () => {
   const product = merchProducts.find(
     (candidate) => candidate.slug === 'codex-rate-reset-long-sleeve',
   )!;
@@ -160,14 +211,14 @@ test('jury catalog pins approved products, prices, and whole-cart quantity', () 
     const lines = normalizeCheckoutLines([
       {productSlug: product.slug, variantId: variants[0].id, quantity: 1},
     ]);
-    assert.doesNotThrow(() => assertMerchantJuryLines(lines));
+    assert.doesNotThrow(() => assertApprovedCatalogLines(lines));
     product.commerce.unitAmount = 5900;
-    assert.throws(() => assertMerchantJuryLines(lines), /approved jury catalog/);
+    assert.throws(() => assertApprovedCatalogLines(lines), /approved catalog/);
     product.commerce.unitAmount = 5800;
     product.providerRefs.printful!.variants[0].syncVariantId += 1;
     assert.throws(
-      () => assertMerchantJuryLines(lines),
-      /product revision does not match/,
+      () => assertApprovedCatalogLines(lines),
+      /product revision does not match/i,
     );
   } finally {
     product.commerce.unitAmount = 5800;
@@ -181,11 +232,9 @@ test('production checkout configuration fails closed', () => {
     NODE_ENV: 'production',
     STOREFRONT_MODE: 'production',
     CHECKOUT_ENABLED: 'true',
-    JURY_SALES_ENABLED: 'true',
-    JURY_ACCESS_CODE: ['unit', 'test', 'jury', 'access'].join('-'),
-    JURY_SALES_END_AT: '2099-08-06T00:00:00Z',
     MERCH_PILOT_APPROVED: 'true',
-    STRIPE_SECRET_KEY: 'sk_test',
+    STRIPE_EXPECTED_MODE: 'test',
+    STRIPE_SECRET_KEY: 'sk_test_unit_1234567890abcdef',
     STRIPE_WEBHOOK_SECRET: 'whsec_test',
     STRIPE_ALLOWED_SHIPPING_COUNTRIES: 'CH,US',
     STRIPE_AUTOMATIC_TAX: 'false',
@@ -202,24 +251,19 @@ test('production checkout configuration fails closed', () => {
   assert.throws(() => assertCheckoutConfiguration(configured), /public site URL/);
   configured.PUBLIC_SITE_URL = 'https://shop.example';
   assert.throws(() => assertCheckoutConfiguration(configured), /contact email/);
-  configured.STOREFRONT_CONTACT_EMAIL = 'support@example.com';
+  configured.STOREFRONT_CONTACT_EMAIL = 'not-an-email';
   assert.throws(() => assertCheckoutConfiguration(configured), /contact email/);
-  configured.STOREFRONT_CONTACT_EMAIL = 'elliot@ritsl.com';
+  configured.STOREFRONT_CONTACT_EMAIL = 'shop@example.com';
   assert.throws(() => assertCheckoutConfiguration(configured), /policy version/);
-  configured.STOREFRONT_POLICY_VERSION = '2026-07-21';
+  configured.STOREFRONT_POLICY_VERSION = '2026-08-26';
   assert.doesNotThrow(() => assertCheckoutConfiguration(configured));
   assert.throws(
-    () =>
-      assertCheckoutConfiguration({...configured, JURY_SALES_ENABLED: 'false'}),
-    /Jury sales are disabled/,
-  );
-  assert.throws(
-    () => assertCheckoutConfiguration({...configured, JURY_ACCESS_CODE: ''}),
-    /Jury access is not configured/,
+    () => assertCheckoutConfiguration({...configured, CHECKOUT_ENABLED: 'false'}),
+    /Checkout is disabled/,
   );
   assert.throws(
     () => assertCheckoutConfiguration({...configured, MERCH_PILOT_APPROVED: 'false'}),
-    /pilot approval/,
+    /catalog approval/,
   );
   assert.throws(
     () => assertCheckoutConfiguration({...configured, PRINTFUL_AUTO_CONFIRM: 'true'}),
@@ -239,13 +283,14 @@ test('production checkout configuration fails closed', () => {
         ...configured,
         VERCEL_ENV: 'production',
       }),
-    /live Stripe secret key/,
+    /live Stripe mode/,
   );
   assert.doesNotThrow(() =>
     assertCheckoutConfiguration({
       ...configured,
       VERCEL_ENV: 'production',
-      STRIPE_SECRET_KEY: 'sk_live_unit',
+      STRIPE_EXPECTED_MODE: 'live',
+      STRIPE_SECRET_KEY: 'sk_live_unit_1234567890abcdef',
     }),
   );
   assert.throws(
@@ -261,10 +306,8 @@ test('production checkout configuration fails closed', () => {
 test('checkout requires explicit production storefront mode', () => {
   const configured: AppEnv = {
     STOREFRONT_MODE: 'production',
-    JURY_SALES_ENABLED: 'true',
-    JURY_ACCESS_CODE: ['unit', 'test', 'jury', 'access'].join('-'),
-    JURY_SALES_END_AT: '2099-08-06T00:00:00Z',
-    STRIPE_SECRET_KEY: 'sk_test',
+    CHECKOUT_ENABLED: 'true',
+    STRIPE_SECRET_KEY: 'sk_test_unit_1234567890abcdef',
     STRIPE_WEBHOOK_SECRET: 'whsec_test',
     DATABASE_URL: 'postgres://test',
     INNGEST_EVENT_KEY: 'event',
@@ -287,6 +330,27 @@ test('checkout requires explicit production storefront mode', () => {
   assert.throws(
     () => assertCheckoutConfiguration({...configured, STOREFRONT_MODE: 'PRODUCTION'}),
     /explicit production storefront mode/,
+  );
+});
+
+test('paid-order webhooks and fulfillment survive storefront shutdown', () => {
+  const lifecycleEnv: AppEnv = {
+    NODE_ENV: 'production',
+    STOREFRONT_MODE: 'preview',
+    CHECKOUT_ENABLED: 'false',
+    STRIPE_EXPECTED_MODE: 'live',
+    STRIPE_SECRET_KEY: 'sk_live_unit_1234567890abcdef',
+    STRIPE_WEBHOOK_SECRET: 'whsec_unit',
+    DATABASE_URL: 'postgres://example',
+    PRINTFUL_TOKEN: 'printful-token',
+    PRINTFUL_STORE_ID: 'printful-store',
+    PRINTFUL_AUTO_CONFIRM: 'false',
+  };
+  assert.doesNotThrow(() => assertStripeWebhookConfiguration(lifecycleEnv));
+  assert.doesNotThrow(() => assertFulfillmentConfiguration(lifecycleEnv));
+  assert.throws(
+    () => assertCheckoutConfiguration(lifecycleEnv),
+    /production storefront mode/,
   );
 });
 
@@ -516,6 +580,66 @@ test('Printful draft creation is idempotent and never calls confirmation', async
   }
 });
 
+test('Printful recovery never mistakes a cancelled order for a live draft', async () => {
+  const originalFetch = globalThis.fetch;
+  const postedExternalIds: string[] = [];
+  globalThis.fetch = async (input, init) => {
+    const url = String(input);
+    if (url.endsWith('/orders/@CM-RECOVERY')) {
+      return Response.json({result: {id: 40, status: 'canceled'}});
+    }
+    if (url.endsWith('/orders/@CM-RECOVERY-R2')) {
+      return new Response('', {status: 404});
+    }
+    if (url.endsWith('/orders') && init?.method === 'POST') {
+      const body = JSON.parse(String(init.body)) as {external_id: string};
+      postedExternalIds.push(body.external_id);
+      return Response.json({result: {id: 41, status: 'draft'}});
+    }
+    throw new Error(`Unexpected Printful request: ${url}`);
+  };
+  const session = {
+    collected_information: {
+      shipping_details: {
+        name: 'Test Customer',
+        address: {
+          line1: 'Test street 1',
+          city: 'Zurich',
+          country: 'CH',
+          postal_code: '8000',
+        },
+      },
+    },
+    customer_details: {email: 'test@example.com'},
+  } as unknown as Stripe.Checkout.Session;
+  const order = {
+    publicReference: 'CM-RECOVERY',
+    providerOrderId: null,
+    retryCount: 2,
+  } as Order;
+  try {
+    assert.equal(printfulRecoveryExternalId(order), 'CM-RECOVERY-R2');
+    assert.deepEqual(
+      await createOrFindPrintfulOrder({
+        env: {
+          PRINTFUL_TOKEN: 'token',
+          PRINTFUL_STORE_ID: 'store',
+          PRINTFUL_AUTO_CONFIRM: 'false',
+        },
+        items: [
+          {syncVariantId: 55, quantity: 1, unitAmount: 5800},
+        ] as OrderItem[],
+        order,
+        session,
+      }),
+      {id: '41', confirmed: false},
+    );
+    assert.deepEqual(postedExternalIds, ['CM-RECOVERY-R2']);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
 test('Printful cancellation only acts on cancellable unconfirmed orders', async () => {
   const originalFetch = globalThis.fetch;
   const methods: string[] = [];
@@ -594,29 +718,26 @@ test('Printful defers long Retry-After windows to the caller', async () => {
   }
 });
 
-test('preview mode blocks Printful fulfillment before any provider request', async () => {
+test('Printful reconciliation remains available after storefront shutdown', async () => {
   const originalFetch = globalThis.fetch;
   let requests = 0;
   globalThis.fetch = async () => {
     requests += 1;
-    throw new Error('Preview mode must not reach Printful');
+    return Response.json({result: {id: 101, status: 'draft'}});
   };
 
   try {
-    await assert.rejects(
-      createOrFindPrintfulOrder({
-        env: {
-          STOREFRONT_MODE: 'preview',
-          PRINTFUL_TOKEN: 'token',
-          PRINTFUL_STORE_ID: 'store',
-        },
-        items: [] as any,
-        order: {providerOrderId: null} as Order,
-        session: {id: 'cs_preview_blocked'} as Stripe.Checkout.Session,
+    assert.deepEqual(
+      await getPrintfulOrderState('101', {
+        STOREFRONT_MODE: 'preview',
+        CHECKOUT_ENABLED: 'false',
+        PRINTFUL_TOKEN: 'token',
+        PRINTFUL_STORE_ID: 'store',
+        PRINTFUL_AUTO_CONFIRM: 'false',
       }),
-      /explicit production storefront mode/,
+      {status: 'draft', committed: false},
     );
-    assert.equal(requests, 0);
+    assert.equal(requests, 1);
   } finally {
     globalThis.fetch = originalFetch;
   }

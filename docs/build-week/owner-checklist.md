@@ -45,13 +45,13 @@ Never paste secret values into Git, Codex chat, logs, screenshots, or this docum
 - [x] Confirm OpenAI API access with live GPT-5.6 art-direction and actual-render critic calls; monitor billing and rate limits during any additional demo run.
 - [ ] Confirm `X_BEARER_TOKEN` can call the list-post endpoint for list `2067819170989854863` and that use of the selected posts is authorized.
 - [x] Confirm the current `PRINTFUL_TOKEN` and `PRINTFUL_STORE_ID` have read access to the Manual order/API store and exact pilot mapping; billing, merchant settings, product safety, and the physical sample remain production owner actions.
-- [ ] Add a live Stripe secret and live webhook secret as Vercel Sensitive Production variables; verify RITSL live charges/payouts and the endpoint before opening the optional jury pilot.
+- [ ] Add a live Stripe secret and live webhook secret as Vercel Sensitive Production variables; verify the merchant account's live charges, payouts, and endpoint before opening public checkout.
 - [ ] Confirm the Production Neon database exists and contains every migration.
 - [ ] Confirm Production Inngest event/signing keys and served function URL.
-- [ ] Verify `codex-merch` is linked to this Git repository under Vercel scope `ritsl`; install a least-privilege `VERCEL_TOKEN`; configure `MERCH_DEPLOY_PROVIDER=vercel`, `MERCH_VERCEL_SCOPE`, `MERCH_VERCEL_PROJECT_ID`, production environment variables, canonical `PUBLIC_SITE_URL`, and the checkout WAF rule.
+- [ ] Verify `codex-merch` is linked to this Git repository under the intended Vercel scope; install a least-privilege `VERCEL_TOKEN`; configure `MERCH_DEPLOY_PROVIDER=vercel`, `MERCH_VERCEL_SCOPE`, `MERCH_VERCEL_PROJECT_ID`, production environment variables, canonical `PUBLIC_SITE_URL`, and the checkout WAF rule.
 - [x] `.gitignore` excludes `.env.*` variants while retaining `.env.example`; verify no secret-bearing env file is tracked before submission.
-- [x] Keep reviewed merchant policy copy version-controlled in `app/lib/merchant-policy.ts`; set the matching `STOREFRONT_CONTACT_EMAIL` and `STOREFRONT_POLICY_VERSION` in each deployment environment.
-- [x] Keep `CHECKOUT_ENABLED=false` for the submitted Preview. The separate canonical pilot additionally requires a private jury code and unexpired sales window before checkout can render or execute.
+- [x] Keep reviewed merchant policy copy version-controlled in `app/lib/merchant-policy.server.ts` and `app/lib/merchant-policy.shared.ts`; set the matching `STOREFRONT_CONTACT_EMAIL` and `STOREFRONT_POLICY_VERSION` in each deployment environment.
+- [x] Keep `CHECKOUT_ENABLED=false` for Preview. Public checkout additionally requires every production approval, live Stripe mode, readiness preflight, and controlled launch check.
 
 Expected secret/configuration names include:
 
@@ -76,13 +76,11 @@ MERCH_WEEKLY_RELEASE_ENABLED
 MERCH_PILOT_APPROVED
 MERCH_EXPANSION_APPROVED
 CHECKOUT_ENABLED
-JURY_SALES_ENABLED
-JURY_ACCESS_CODE
-JURY_SALES_END_AT
 STOREFRONT_LEGAL_APPROVED
 STOREFRONT_TAX_SHIPPING_APPROVED
 STOREFRONT_CONTACT_EMAIL
 STOREFRONT_POLICY_VERSION
+STRIPE_EXPECTED_MODE
 STRIPE_SHIPPING_RATE_ID or STRIPE_FLAT_SHIPPING_AMOUNT
 STRIPE_ALLOWED_SHIPPING_COUNTRIES
 STRIPE_AUTOMATIC_TAX
@@ -105,14 +103,14 @@ to be present.
 - [x] Verify the Preview exposes `/how-it-works`, keeps every product non-purchasable, and hard-blocks Stripe, Printful, order, and Inngest mutations.
 - [ ] Record the exact tested commands and final SHA in `evidence/README.md`.
 
-## Optional Build Week jury-pilot proof
+## Optional public-checkout proof
 
 - [ ] Run the release command once in staging with its explicit `--release` flag, weekly release kill switch, pilot approval, non-default branch, clean expected worktree, public HTTPS URL, and `PRINTFUL_AUTO_CONFIRM=false`.
 - [ ] Verify both deployments, all public asset URLs, one Printful product, complete variant mappings, provider mockups, and one published catalog entry.
 - [ ] Complete a Stripe test payment and verify exactly one Neon order, one processed webhook event, one Inngest run, and one Printful draft.
 - [x] Obtain a read-only U.S. Printful estimate for the exact signed M sync variant; on 2026-07-21 it returned CHF 39.29 estimated provider cost and no order was created.
-- [x] Require the private jury code on the server before any local order or Stripe session; set expiry to `2026-08-06T00:00:00Z`; unit tests and rendered local QA verify wrong/missing codes return a generic HTTP 403.
-- [ ] Probe the canonical deployment and require HTTP 200, `ready: true`, `paymentMode: live`, `salesAudience: OpenAI Build Week judges`, `accessCodeRequired: true`, and CH/US shipping before sharing the pilot.
+- [x] Require every generic checkout, legal, catalog, tax/shipping, mode, provider, and policy gate on the server before any local order or Stripe session.
+- [ ] In a controlled launch window, probe the canonical deployment and require HTTP 200, `ready: true`, `paymentMode: live`, `stripeWebhookReady: true`, and CH/US shipping before wider availability.
 - [ ] Replay the same webhook, fulfillment event, and weekly run ID and confirm no duplicate product, publication, or order.
 - [ ] Verify a repeated scheduled task treats a current-week `published` run as a no-op and never re-enters prepare; verify retries after provider sync and after the final push use stage-appropriate hashes before enabling unattended release.
 

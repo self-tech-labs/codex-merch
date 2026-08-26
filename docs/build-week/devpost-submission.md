@@ -13,14 +13,14 @@ Devpost before the deadline: **2026-07-22 02:00 CEST** (2026-07-21 17:00 PDT).
 - **Entrant:** Elliot Vaucher
 - **Country:** Switzerland
 - **Thumbnail:** [`media/devpost-thumbnail.png`](media/devpost-thumbnail.png) (3:2 PNG, below Devpost's 5 MB limit)
-- **Try it out:** [https://codex-merch-git-codex-build-week-weekly-studio-ritsl.vercel.app](https://codex-merch-git-codex-build-week-weekly-studio-ritsl.vercel.app)
+- **Try it out:** [https://codex-merch.vercel.app](https://codex-merch.vercel.app)
 - **Optional jury purchase pilot:** [https://codex-merch.vercel.app](https://codex-merch.vercel.app) — a separate, time-limited real checkout for OpenAI Build Week judges only. The access code belongs only in Devpost's private testing instructions. No purchase is required to judge or use the project.
 - **Code repository:** [https://github.com/self-tech-labs/codex-merch](https://github.com/self-tech-labs/codex-merch) (private; finalized implementation/evidence commit `8017b9f0a28b9918e03b345d0cf669ebdd75998b`; push the final descendant and grant judge access as described below). The last independently recorded judged Preview before final freeze was bound to `4050aec0c0bf925f6f2dded7ea7a9fc28f8ddca2`.
 - **Demo video:** [`../../video/out/codex-merch-signal-to-product-1080p.mp4`](../../video/out/codex-merch-signal-to-product-1080p.mp4) is the verified 2:51 “Signal In. Merch Out.” upload master. **Owner action — upload it publicly to YouTube and paste the URL.**
 - **YouTube package:** [`../../video/out/youtube-description-v2.md`](../../video/out/youtube-description-v2.md), [`../../video/out/codex-merch-signal-to-product-thumbnail.png`](../../video/out/codex-merch-signal-to-product-thumbnail.png), and [`../../video/out/codex-merch-signal-to-product.en.srt`](../../video/out/codex-merch-signal-to-product.en.srt)
 - **Primary Codex task/session:** `019f7fb1-9352-7b30-ac89-076c94b2eeeb`
 - **Codex `/feedback` session ID:** `019f7fb1-9352-7b30-ac89-076c94b2eeeb` (verified by a no-logs feedback submission on 2026-07-21)
-- **Judge support:** `elliot@ritsl.com`
+- **Judge support:** use the Contact page on the live storefront.
 
 ## Project story
 
@@ -85,11 +85,10 @@ desktop and mobile behavior.
 
 The production adapters for Printful, Stripe, Neon, and Inngest are implemented
 behind fail-closed gates. The judged Preview remains free and cannot initiate a
-payment. Separately, the canonical site may expose one time-limited,
-code-protected pilot product to Build Week judges after live readiness passes.
-That optional pilot is fan-made, not official OpenAI merchandise, and expires
-when judging ends. No payment or fulfillment order is claimed until it has
-actually been observed.
+payment. Separately, the canonical site may expose one owner-gated production
+product after live readiness passes. That checkout is fan-made and not official
+OpenAI merchandise. No payment or fulfillment order is claimed until a
+controlled live order has actually been observed end to end.
 
 ### Challenges we ran into
 
@@ -117,7 +116,7 @@ products or publishing stale assets.
 - The complete signal, judgment, render, proof, and release path is open to inspect and replace at repository level.
 - GPT-5.6 sees and critiques the real renders while deterministic software keeps final production authority.
 - The workflow can safely return `no_trend`, quarantine a defective render, or replay a completed run without duplication.
-- The public Preview is a coherent, accountless product experience; an independent jury-only pilot can prove the same stack with a real Stripe Checkout without making purchase part of judging.
+- The public Preview is a coherent, accountless product experience; the separately owner-gated production mode can prove the same stack with a real Stripe Checkout without making purchase part of judging.
 - Sanitized evidence preserves model identifiers, response IDs, prompt/schema hashes, decisions, critic results, prepress checks, and artifact hashes without exposing raw social content or credentials.
 
 ### What we learned
@@ -137,12 +136,12 @@ creative acceptance, rights clearance, and release authority.
 
 ### What's next
 
-After the Build Week judging period, the jury access window closes
-automatically. The next milestone is one external design-partner fork: replace
+After the Build Week judging period, checkout remains closed until the owner
+completes the production launch contract. The next milestone is one external design-partner fork: replace
 the X adapter with a second authorized signal source, add one new physical
 product contract, and apply the same model, renderer, provenance, idempotency,
 and human-release contracts. The public judged Preview remains free and
-accountless regardless of the optional pilot.
+accountless regardless of production-checkout status.
 
 ## Built with
 
@@ -187,24 +186,22 @@ evidence pack.
 4. Review the sanitized run files under `docs/build-week/evidence/`.
 5. From a clean checkout with Node.js 22 or 24, run `npm ci`,
    `npm run submission:verify`, and `npm run test:e2e`.
-6. Optional: open the canonical jury pilot and enter the private code supplied
-   in Devpost. A real checkout is limited to judges, CH/US delivery, the signed
-   pilot garment, and the judging window. Do not purchase unless you want the
-   physical fan-made garment; purchase is never required.
+6. Checkout is not part of evaluation. If the owner has separately activated
+   canonical production mode, a real purchase is limited to CH/US delivery and
+   the signed garment. Do not purchase unless you want the physical fan-made
+   garment; purchase is never required.
 
 No account, payment, API key, purchase, or rebuild is needed for the web
 Preview. The credential-free synthetic replay is documented in the root
-README. The optional pilot uses a private access code and is clearly marked as
-fan-made content that is not official, sponsored, endorsed, or affiliated with
-OpenAI.
+README. Any separately activated checkout is clearly marked as fan-made content
+that is not official, sponsored, endorsed, or affiliated with OpenAI.
 
 ### Repository access
 
 The repository is private. Before submitting, grant read access to both
 `testing@devpost.com` and `build-week-event@openai.com`, then verify both
-invitations are pending or accepted. Put the jury access code only in Devpost's
-private testing instructions; never put provider credentials in Devpost, Git,
-the video, or public screenshots.
+invitations are pending or accepted. Never put provider credentials in Devpost,
+Git, the video, or public screenshots.
 
 ## Media upload order
 
@@ -216,7 +213,7 @@ the video, or public screenshots.
 
 Recommended captions:
 
-- “One owner-supplied team trend becomes an original six-panel garment; the judged Preview is free, while a separate optional jury-only pilot is code-protected and time-limited.”
+- “One owner-supplied team trend becomes an original six-panel garment; the judged Preview is free, while a separately owner-gated production mode can support live checkout.”
 - “The public explainer separates GPT-5.6 judgment from deterministic rights, rendering, prepress, idempotency, and release gates.”
 - “Exact provider-sized panels and typography are composed deterministically, then reviewed from the actual rendered output.”
 

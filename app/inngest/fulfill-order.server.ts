@@ -57,7 +57,10 @@ export const fulfillOrder = inngest.createFunction(
             'Fulfillment order does not match the Stripe session',
           );
         }
-        if (order.paymentStatus !== 'paid' || session.payment_status !== 'paid') {
+        if (
+          !['paid', 'partially_refunded'].includes(order.paymentStatus) ||
+          session.payment_status !== 'paid'
+        ) {
           throw new NonRetriableError('Fulfillment requires a paid Stripe session');
         }
         return createOrFindPrintfulOrder({

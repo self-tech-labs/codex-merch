@@ -1,33 +1,32 @@
 # Production deployment guide
 
-This is the release contract for `ritsl/codex-merch`. It keeps real checkout
-disabled until the time-limited OpenAI Build Week jury pilot has valid payment,
-database, worker, fulfillment, policy, access-code, and expiry configuration.
-Secret values belong in the provider
+This is the release contract for `self-tech-labs/codex-merch`. It keeps real
+checkout disabled until the signed catalog has valid payment, database, worker,
+fulfillment, policy, legal, tax, and shipping configuration. Secret values
+belong in the provider
 dashboards, Vercel, or an approved password manager—never Git, issues, PR
 text, screenshots, or shell history.
 
-The detailed merchant decision record is
-[`merchant-signoff.md`](merchant-signoff.md). The owner accepted the fan-brand,
-VAT, and pre-sample risks for this competition pilot on 2026-07-21. The current
-deployment still remains fail-closed until every runtime dependency is live.
+The owner must record a current public-checkout authorization after every hard
+blocker below is closed. The dated [`merchant-signoff.md`](merchant-signoff.md)
+describes the former jury-only pilot and is historical evidence, not authority
+for the current public storefront. The deployment remains fail-closed until
+every runtime dependency and approval is live.
 
-## Recorded merchant and pilot
+## Current public-checkout contract
 
-- Merchant of record: **RITSL Elliot Vaucher**, Swiss sole proprietorship.
-- Proprietor: **Elliot Richard Vaucher**.
-- Registered address: **Avenue Virgile-Rossel 18, 1012 Lausanne,
-  Switzerland**.
-- UID: **CHE-205.406.793**; commercial-register number:
-  **CH-550.1.243.579-7**.
-- Customer/privacy contact: **elliot@ritsl.com**.
-- Pilot: `codex-rate-reset-long-sleeve`, OpenAI Build Week judges only, CH/US delivery, **CHF
-  58.00** plus **CHF 9.10** shipping: **CHF 67.10 final customer total** for
-  one item, including any applicable tax.
-- Customer-policy version: **2026-07-21**.
-- Automatic pilot close: **2026-08-06 00:00 UTC**.
-- Identity: fan-made content, not official OpenAI merchandise; no affiliation,
-  sponsorship, or endorsement.
+- Merchant identity and contact: the identity shown on the current Terms and
+  Privacy pages, with a valid merchant-controlled contact email supplied by
+  `STOREFRONT_CONTACT_EMAIL`.
+- Signed product: `codex-rate-reset-long-sleeve`, CH/US delivery, **CHF 58.00**
+  plus **CHF 9.10** shipping: **CHF 67.10 one-item customer total**, including
+  any applicable tax.
+- Customer-policy version: **2026-08-26**.
+- Identity: independent fan-made content, not official OpenAI merchandise; no
+  affiliation, authorization, sponsorship, approval, or endorsement. The
+  project claims no rights in OpenAI names, marks, logos, or imagery and will
+  promptly remove affected products or references on OpenAI's first notice.
+- Checkout: public only after all explicit approvals and readiness checks pass.
 - Printful remains manual: `PRINTFUL_AUTO_CONFIRM=false`.
 
 The configured Printful Manual/API store and product/catalog-variant mapping
@@ -48,12 +47,14 @@ tax, CHF 39.29 total. No order was created.
 
 ## Current hard blockers
 
-Do not turn the approval or checkout flags on until all runtime gates below are
-closed. The jury code supplements these gates; it never bypasses one.
+Close the non-mutating prerequisites in items 1–4 before a controlled launch.
+Item 5 can run only after the coherent flags are temporarily enabled because
+the readiness endpoint enforces the same fail-closed checkout contract.
 
-1. **Stripe live account:** complete RITSL KYC, proprietor/representative and
-   bank verification; confirm live charges and payouts; create a live key and
-   live event destination; and verify customer receipt/order-confirmation
+1. **Stripe live account:** complete the merchant account's KYC,
+   proprietor/representative and bank verification; confirm live charges and
+   payouts; create a live key and live event destination; set
+   `STRIPE_EXPECTED_MODE=live`; and verify customer receipt/order-confirmation
    email behavior.
 2. **Production database and worker:** install the production Neon URL, run the
    committed migrations, configure production Inngest event/signing keys and
@@ -61,17 +62,23 @@ closed. The jury code supplements these gates; it never bypasses one.
 3. **Printful merchant setup:** confirm billing/Wallet, return address, packing
    slip identity, CH/US product availability, product-safety information, claim
    handling, and manual-confirmation ownership.
-4. **Jury access contract:** store an unpredictable access code of at least 16
-   characters as a Sensitive Production variable, set the fixed judging-end
-   timestamp, and copy the code only into Devpost private testing instructions.
-5. **Canonical readiness:** deploy the exact submission commit and require HTTP
+4. **Policy and owner approval:** deploy policy `2026-08-26`, a valid
+   merchant-controlled contact email, the persistent non-affiliation/no-rights/
+   takedown disclosures, and record owner approval for public checkout.
+5. **Post-enable canonical readiness:** after owner authorization and the
+   section 10 flag sequence, deploy the exact reviewed commit and require HTTP
    200 from `/api/readiness?product=codex-rate-reset-long-sleeve`. Then verify
-   the fan disclaimer, access-code form, CH/US address selection, CHF 67.10
-   one-item Checkout total, and Stripe policy links in a signed-out browser.
+   `paymentMode: live`, database/Stripe/Stripe-webhook/Printful checks, the fan
+   disclaimer, CH/US address selection, CHF 67.10 one-item Checkout total,
+   required terms consent, and Stripe policy links in a signed-out browser.
 
-Brand-rights, VAT, full processor, register-purpose, and physical-sample review
-remain sensible prerequisites for any broader public sale, but the owner has
-explicitly accepted those risks for this judge-only competition pilot.
+Do not widen availability until item 5 and one controlled end-to-end live
+payment pass. If either fails, restore the checkout and approval flags to
+`false`, redeploy, and reconcile any paid order.
+
+The non-affiliation and takedown terms do not grant a licence or eliminate
+brand, tax, privacy, product, or consumer-law risk. Record the owner's current
+decision and obtain appropriate professional advice before opening public sale.
 
 ## Release topology
 
@@ -95,15 +102,13 @@ redeploy:
 ```dotenv
 STOREFRONT_MODE=preview
 CHECKOUT_ENABLED=false
-JURY_SALES_ENABLED=false
-JURY_ACCESS_CODE=
-JURY_SALES_END_AT=2026-08-06T00:00:00Z
 MERCH_PILOT_APPROVED=false
 MERCH_EXPANSION_APPROVED=false
 STOREFRONT_LEGAL_APPROVED=false
 STOREFRONT_TAX_SHIPPING_APPROVED=false
-STOREFRONT_CONTACT_EMAIL=elliot@ritsl.com
-STOREFRONT_POLICY_VERSION=2026-07-21
+STOREFRONT_CONTACT_EMAIL=
+STOREFRONT_POLICY_VERSION=2026-08-26
+STRIPE_EXPECTED_MODE=live
 STRIPE_ALLOWED_SHIPPING_COUNTRIES=CH,US
 STRIPE_FLAT_SHIPPING_AMOUNT=910
 STRIPE_AUTOMATIC_TAX=false
@@ -112,9 +117,11 @@ PRINTFUL_ALLOW_NON_PUBLIC_ASSET_URLS=false
 ```
 
 Leave `STRIPE_SHIPPING_RATE_ID` unset when using the CHF 9.10 flat amount.
-Setting `STRIPE_AUTOMATIC_TAX=false` here records the owner's competition-pilot
-decision. `STOREFRONT_TAX_SHIPPING_APPROVED=false` remains fail-closed until the
-full CH/US checkout configuration is deliberately enabled.
+Set `STOREFRONT_CONTACT_EMAIL` to the valid merchant-controlled address shown on
+the deployed policy pages before approval. `STRIPE_EXPECTED_MODE=live` does not
+enable checkout by itself; it ensures any subsequently installed Stripe secret
+must be live. `STOREFRONT_TAX_SHIPPING_APPROVED=false` remains fail-closed until
+the full CH/US checkout configuration is deliberately enabled.
 
 ## 2. Use the supported Vercel workflow
 
@@ -129,9 +136,9 @@ administration, pin the currently checked CLI and explicitly select the
 project and scope:
 
 ```bash
-npx --yes vercel@56.4.1 link --project codex-merch --scope ritsl
-npx --yes vercel@56.4.1 env ls production --project codex-merch --scope ritsl
-npx --yes vercel@56.4.1 env add VARIABLE_NAME production --project codex-merch --scope ritsl --sensitive
+npx --yes vercel@56.4.1 link --project codex-merch --scope your-vercel-scope
+npx --yes vercel@56.4.1 env ls production --project codex-merch --scope your-vercel-scope
+npx --yes vercel@56.4.1 env add VARIABLE_NAME production --project codex-merch --scope your-vercel-scope --sensitive
 ```
 
 The last command prompts for the value. Omit `--sensitive` only for a
@@ -199,14 +206,15 @@ coherent batch and verify the deployment—not just the Settings table.
    only the required `orders` and `sync_products` scopes. Record its expiry.
 2. Configure a primary billing method and sufficient Wallet/auto-recharge so
    an operator-confirmed order is not rejected for lack of fulfillment funds.
-3. Set the store/packing-slip merchant identity to RITSL Elliot Vaucher and
-   verify the customer return address and support instructions.
+3. Set the store/packing-slip identity to the same merchant identity shown on
+   the current Terms and Privacy pages, and verify the customer return address
+   and support instructions.
 4. Confirm store currency, CHF retail values, Swiss shipping coverage,
    production region, inventory for all three sizes, required garment/product
    safety information, care/fibre labeling, and the supplier's current claims
    process. Confirm the approved Swiss route does not bill the recipient for
-   import/customs/carrier clearance; RITSL bears and reimburses any normal
-   delivery charge that nevertheless reaches the customer.
+   import/customs/carrier clearance; the merchant bears and reimburses any
+   normal delivery charge that nevertheless reaches the customer.
 5. Keep `PRINTFUL_AUTO_CONFIRM=false`. A paid order may create one draft; an
    operator must compare its address, variant, retail amount, print files, and
    cost before manually confirming it.
@@ -237,15 +245,15 @@ coherent batch and verify the deployment—not just the Settings table.
 
 ## 6. Activate and configure Stripe
 
-1. Activate the Stripe account as **RITSL Elliot Vaucher**, including legal
-   identity, proprietor/representative verification, registered address, UID,
-   payout bank account, support email/site, and requested documents. Require
-   both live charges and payouts to show enabled.
+1. Activate the Stripe merchant account using its current legal identity,
+   proprietor/representative verification, registered address, applicable
+   registration details, payout bank account, support email/site, and requested
+   documents. Require both live charges and payouts to show enabled.
 2. Configure the public business details and a truthful, recognizable statement
-   descriptor. Use `RITSL MERCH` if Stripe accepts it; do not imply that OpenAI
-   is the merchant. Verify the final descriptor on the
-   controlled live card statement and receipt. Set `elliot@ritsl.com` as the
-   support email and use these exact
+   descriptor that does not imply OpenAI is the merchant or endorses the
+   products. Verify the final descriptor on the controlled live card statement
+   and receipt. Use the same merchant-controlled support email configured in
+   `STOREFRONT_CONTACT_EMAIL` and these exact
    canonical HTTPS URLs (replace only the origin if the domain changes):
 
    - Terms: `https://codex-merch.vercel.app/policies/terms`
@@ -254,7 +262,7 @@ coherent batch and verify the deployment—not just the Settings table.
 
    The Terms URL is required because Checkout collects required terms consent.
    Verify the details and links shown by Stripe match the storefront.
-3. Enable only payment methods RITSL supports. The application lets Stripe
+3. Enable only payment methods the merchant supports. The application lets Stripe
    dynamically select methods eligible for the CHF, CH/US Checkout Session.
 4. Confirm actual Swiss account fees. The CHF 2.25 fee in the sign-off record
    is only the stated 2.9% + CHF 0.30 planning assumption on CHF 67.10.
@@ -262,11 +270,11 @@ coherent batch and verify the deployment—not just the Settings table.
    `tax_behavior=inclusive` with General Tangible Goods
    (`txcd_99999999`), and shipping `tax_behavior=inclusive` with Shipping
    (`txcd_92010001`). The owner selected
-   `STRIPE_AUTOMATIC_TAX=false` for the competition pilot. Do not label the
+   `STRIPE_AUTOMATIC_TAX=false` for the current signed catalog. Do not label the
    price “VAT included”; present CHF 58.00 plus CHF 9.10 as the final configured
    amounts. One-item Checkout must remain CHF 67.10.
 
-6. Use exactly one live CHF shipping configuration. The recorded pilot uses
+6. Use exactly one live CHF shipping configuration. The signed catalog uses
    `STRIPE_FLAT_SHIPPING_AMOUNT=910` and no `STRIPE_SHIPPING_RATE_ID`. If a
    Stripe Shipping Rate is used instead, create it in live mode for CHF 9.10,
    inclusive tax behavior, Shipping tax code `txcd_92010001`, and the exact
@@ -277,7 +285,7 @@ coherent batch and verify the deployment—not just the Settings table.
 
    `https://<canonical-domain>/api/stripe/webhook`
 
-   Select Account events, API version `2026-06-24.dahlia`, and exactly:
+   Select Account events, API version `2026-07-29.dahlia`, and exactly:
 
    - `checkout.session.completed`
    - `checkout.session.async_payment_succeeded`
@@ -288,7 +296,9 @@ coherent batch and verify the deployment—not just the Settings table.
    - `charge.dispute.closed`
 
 8. Store the live `sk_live_…` server secret and that live endpoint's unique
-   `whsec_…` secret as Sensitive Production variables. The application does
+   `whsec_…` secret as Sensitive Production variables, and set the non-secret
+   `STRIPE_EXPECTED_MODE=live`. The application rejects a test key in Vercel
+   Production and rejects webhook events whose live/test mode differs. It does
    not require a publishable key. Leave `STRIPE_API_VERSION` unset; code pins
    and type-checks the version.
 9. Enable Stripe's successful-payment/receipt email as required. In test mode,
@@ -299,10 +309,10 @@ coherent batch and verify the deployment—not just the Settings table.
 
 ## 7. Add the complete Vercel Production contract
 
-Open **Vercel → ritsl → codex-merch → Settings → Environment Variables**. Add
-secrets as Sensitive and target **Production only**. Use different values for
-staging. The fail-closed flags remain `false` until the jury-pilot launch
-procedure in section 10.
+Open **Vercel → your scope → codex-merch → Settings → Environment Variables**.
+Add secrets as Sensitive and target **Production only**. Use different values
+for staging. The fail-closed flags remain `false` until the public-checkout
+launch procedure in section 10.
 
 | Variable | Production value or rule |
 | --- | --- |
@@ -310,24 +320,22 @@ procedure in section 10.
 | `STOREFRONT_MODE` | `preview` now; `production` only after all runtime gates pass |
 | `DATABASE_URL` | Production pooled Neon/Postgres URL with TLS |
 | `CHECKOUT_ENABLED` | `false` now; set `true` last after readiness prerequisites are complete |
-| `JURY_SALES_ENABLED` | `true` only for the Build Week judging window |
-| `JURY_ACCESS_CODE` | Sensitive, unpredictable value of at least 16 characters; copy only to Devpost private testing instructions |
-| `JURY_SALES_END_AT` | `2026-08-06T00:00:00Z` |
-| `MERCH_PILOT_APPROVED` | `false` until the owner closes every runtime gate and authorizes the judge pilot |
-| `MERCH_EXPANSION_APPROVED` | `false` throughout the first pilot; separate post-pilot authority for any additional sellable product |
-| `STOREFRONT_LEGAL_APPROVED` | `true` only after the deployed policies and persistent fan/non-affiliation disclaimer are inspected |
-| `STOREFRONT_TAX_SHIPPING_APPROVED` | `true` only after the owner confirms the CH/US, CHF, flat-shipping, and automatic-tax-off pilot contract |
-| `STOREFRONT_CONTACT_EMAIL` | `elliot@ritsl.com` |
-| `STOREFRONT_POLICY_VERSION` | `2026-07-21` |
-| `STRIPE_SECRET_KEY` | Sensitive live `sk_live_…` for the activated RITSL account; absence blocks checkout |
+| `MERCH_PILOT_APPROVED` | `false` until the owner closes every runtime gate and approves the current signed catalog |
+| `MERCH_EXPANSION_APPROVED` | `false` unless a separately reviewed catalog revision adds another sellable product |
+| `STOREFRONT_LEGAL_APPROVED` | `true` only after policy `2026-08-26` and the persistent non-affiliation/no-rights/takedown disclosures are inspected |
+| `STOREFRONT_TAX_SHIPPING_APPROVED` | `true` only after the owner confirms the CH/US, CHF, shipping, and automatic-tax contract |
+| `STOREFRONT_CONTACT_EMAIL` | Valid merchant-controlled address shown on the current policy pages |
+| `STOREFRONT_POLICY_VERSION` | `2026-08-26` |
+| `STRIPE_EXPECTED_MODE` | `live`; Vercel Production rejects any other mode |
+| `STRIPE_SECRET_KEY` | Sensitive live `sk_live_…` for the activated merchant account; absence or mode mismatch blocks checkout |
 | `STRIPE_WEBHOOK_SECRET` | Sensitive `whsec_…` from the live event destination |
 | `STRIPE_ALLOWED_SHIPPING_COUNTRIES` | `CH,US` |
 | `STRIPE_SHIPPING_RATE_ID` | Unset when using the recorded flat amount |
 | `STRIPE_FLAT_SHIPPING_AMOUNT` | `910` CHF centimes; set this or a live rate, never both |
-| `STRIPE_AUTOMATIC_TAX` | `false` for the owner-approved competition pilot; one-item total remains CHF 67.10 |
+| `STRIPE_AUTOMATIC_TAX` | Explicit owner-approved `true` or `false`; current catalog uses `false` and one-item total remains CHF 67.10 |
 | `PRINTFUL_TOKEN` | Sensitive single-store token with required scopes |
 | `PRINTFUL_STORE_ID` | `18277037` for the currently verified Manual/API store |
-| `PRINTFUL_AUTO_CONFIRM` | `false` throughout the pilot |
+| `PRINTFUL_AUTO_CONFIRM` | `false` throughout live sales |
 | `PRINTFUL_MAX_RETRIES` | `3` |
 | `PRINTFUL_RETRY_BASE_MS` | `1000` |
 | `PRINTFUL_TIMEOUT_MS` | `10000` |
@@ -342,7 +350,7 @@ Do not create or override Vercel's `NODE_ENV`, `VERCEL`, or `VERCEL_ENV`.
 requirements. Do not grant the deployed storefront a deployment token unless
 the separately gated weekly production workflow requires it.
 
-## 8. Configure checkout rate limiting
+## 8. Configure checkout and readiness rate limiting
 
 In **Vercel → codex-merch → Firewall → Configure**:
 
@@ -352,29 +360,34 @@ In **Vercel → codex-merch → Firewall → Configure**:
 4. Run in Log mode during staging, review legitimate behavior, then enable and
    publish the rule.
 
-Do not apply this rule to `/api/stripe/webhook` or `/api/inngest`; those have
+Create a separate rule for method `GET` and path `/api/readiness`. Prefer an
+operator-IP allowlist; otherwise start with 2 requests per 60 seconds per IP.
+The endpoint performs authenticated database, Stripe, and Printful readiness
+checks, so it must not be left as an unbounded public provider-call surface.
+
+Do not apply either rule to `/api/stripe/webhook` or `/api/inngest`; those have
 provider authentication and retry semantics.
 
 ## 9. Prove the staging path
 
 1. Use branch-scoped Preview/custom staging with `STOREFRONT_MODE=production`,
-   `CHECKOUT_ENABLED=true`, `JURY_SALES_ENABLED=true`, a disposable staging
-   access code/end time, the deliberate staging approval flags, a Stripe
-   sandbox key/webhook, staging database/Inngest, CH/US and CHF settings, policy
-   version `2026-07-21`, and `PRINTFUL_AUTO_CONFIRM=false`.
+   `CHECKOUT_ENABLED=true`, deliberate staging approval flags,
+   `STRIPE_EXPECTED_MODE=test`, a matching Stripe sandbox key/webhook, staging
+   database/Inngest, CH/US and CHF settings, policy version `2026-08-26`, and
+   `PRINTFUL_AUTO_CONFIRM=false`.
 2. Run the staging migration, deploy, then call:
 
    ```text
    GET /api/readiness?product=codex-rate-reset-long-sleeve
    ```
 
-   Require HTTP 200, `ready: true`, `paymentMode: test`, database and Stripe
-   readiness, judge-only CH/US pilot configuration, and
-   `printfulAutoConfirm: false`.
+   Require HTTP 200, `ready: true`, `paymentMode: test`, database, Stripe, and
+   Printful readiness, CH/US shipping, CHF 9.10 shipping, policy `2026-08-26`,
+   and `printfulAutoConfirm: false`.
 3. Place a Stripe test payment to a Swiss test address. Verify CHF 58.00 plus
    CHF 9.10 and the terms/policy disclosure. Verify `receipt_email`, the
    receipt preview, and a Dashboard test receipt to a verified testing email;
-   reserve automatic-delivery proof for the first live jury order.
+   reserve automatic-delivery proof for a controlled live order.
 4. Verify exactly one local order, one processed Stripe event, one successful
    Inngest run, and one unconfirmed Printful draft whose `external_id` is the
    same `CM-…` public order reference (never the longer Checkout Session ID)
@@ -389,52 +402,53 @@ provider authentication and retry semantics.
    its explicit target guard and password-manager-injected provider values;
    never use Vercel `env run`, `env pull`, or a repository `.env` for these
    operations.
-8. Cancel the staging draft before it is confirmed and attach sanitized
-   evidence to the merchant sign-off record.
+8. Cancel the staging draft before it is confirmed and retain sanitized
+   evidence in the controlled operations record.
 
-## 10. Launch the jury pilot
+## 10. Launch public checkout
 
 1. Merge the reviewed PR to `main` while Production remains
    `STOREFRONT_MODE=preview` and `CHECKOUT_ENABLED=false`.
-2. Confirm the deployment is healthy, all policy/contact pages display RITSL
-   identity and version `2026-07-21`, migrations exist, Inngest is synced,
-   Printful verification passes, and the Stripe live endpoint is enabled.
+2. Confirm the deployment is healthy, Terms and Privacy display the current
+   merchant identity, every policy page displays version `2026-08-26`, the
+   contact route uses the valid configured email, migrations exist, Inngest is
+   synced, Printful verification passes, and the Stripe live endpoint is enabled.
 3. Confirm live Stripe charges/payouts and webhook, the migrated production
    database, production Inngest, Printful billing/manual-draft operation, and
-   the signed pilot mapping. Keep the fan/non-affiliation disclaimer visible.
-4. Complete the **prelaunch jury-pilot authorization** in
-   [`merchant-signoff.md`](merchant-signoff.md). Only then set
+   the signed catalog mapping. Keep the fan/non-affiliation/no-rights/takedown
+   disclosures visible.
+4. Record a current owner authorization for public checkout. Only then set
    `MERCH_PILOT_APPROVED=true`,
    `STOREFRONT_LEGAL_APPROVED=true`, and
    `STOREFRONT_TAX_SHIPPING_APPROVED=true`.
-5. Store `JURY_ACCESS_CODE` as Sensitive, set
-   `JURY_SALES_END_AT=2026-08-06T00:00:00Z`, and set
-   `JURY_SALES_ENABLED=true`. Put the code only in Devpost private testing
-   instructions. Set `STOREFRONT_MODE=production` and, last,
-   `CHECKOUT_ENABLED=true`, then redeploy the coherent configuration once.
+5. Set `STRIPE_EXPECTED_MODE=live`, install the matching live Stripe key and
+   live endpoint secret, set `STOREFRONT_MODE=production`, and, last,
+   `CHECKOUT_ENABLED=true`. Redeploy the coherent configuration once.
    Keep `MERCH_EXPANSION_APPROVED=false`; it is not part of opening the signed
-   first product and must not be enabled until the pilot has been reviewed.
-6. Require the readiness endpoint to return `paymentMode: live` and the exact
-   judges-only, access-code-required, CH/US, CHF, and automatic-close contract.
-7. In a signed-out browser, verify the free Preview still needs no account or
-   payment; verify the canonical pilot rejects a missing/wrong code and creates
-   a live Stripe Session only for the correct code. Confirm CHF 58.00 plus CHF
-   9.10, policy links, and fan/non-affiliation disclosure before sharing it.
-8. If a judge purchases, verify the payment/receipt, local order, webhook,
-   Inngest run, and exactly one unconfirmed Printful draft before manually
-   confirming it. Record the result in `merchant-signoff.md`. If any result
-   differs or the pilot is aborted,
+   first product and must not be enabled until a revised catalog has been
+   separately reviewed.
+6. Require the readiness endpoint to return HTTP 200, `ready: true`,
+   `paymentMode: live`, `databaseReady: true`, `stripeReady: true`,
+   `stripeWebhookReady: true`, `printfulReady: true`, CH/US shipping,
+   CHF 9.10 shipping, policy
+   `2026-08-26`, and `printfulAutoConfirm: false`.
+7. In a signed-out browser, verify public checkout creates a live Stripe
+   Checkout Session. Confirm CHF 58.00 plus CHF 9.10, required terms consent,
+   policy links, and fan/non-affiliation disclosure before wider availability.
+8. Complete one controlled real payment and verify its receipt, local order,
+   signed live-mode webhook, Inngest run, and exactly one unconfirmed Printful
+   draft before manually confirming it. Retain sanitized evidence in the
+   controlled operations record. If any result differs or the launch is aborted,
    immediately reset `CHECKOUT_ENABLED`, `MERCH_PILOT_APPROVED`,
    `STOREFRONT_LEGAL_APPROVED`, and
    `STOREFRONT_TAX_SHIPPING_APPROVED` to `false` and redeploy. Keep
    `STOREFRONT_MODE=production` only long enough to reconcile an already-paid
-   test order, then restore it to `preview` and redeploy. Never remove the jury
-   code gate or broaden the authorized audience during this pilot.
+   order, then restore it to `preview` and redeploy.
 9. Verify physical dispatch/tracking and exercise a controlled refund if the
    launch test plan requires it.
-10. Keep Printful manual confirmation throughout the pilot. Close checkout at
-   or before the configured judging-end timestamp. Multiple real orders, address
-   formats, costs, claims, refunds, and margins have been reviewed.
+10. Keep Printful manual confirmation throughout live sales. Reassess wider
+   fulfillment automation only after multiple real orders, address formats,
+   costs, claims, refunds, and margins have been reviewed.
    `PRINTFUL_AUTO_CONFIRM=true` is a separate future operational release.
 
 ## 11. Roll back
@@ -447,7 +461,6 @@ is fixed.
 
 ## Primary references
 
-- [Swiss UID register record](https://www.uid.admin.ch/Detail.aspx?lang=en&uid_id=CHE205406793)
 - [Swiss e-commerce statutory obligations](https://www.kmu.admin.ch/en/statutory-obligations-swiss-and-european-e-commerce-laws)
 - [Swiss cancellation/return-right guidance](https://www.kmu.admin.ch/en/what-is-a-cancellation-right)
 - [Swiss FDPIC privacy-statement guidance](https://www.edoeb.admin.ch/en/privacy-statements-on-the-internet)

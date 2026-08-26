@@ -7,20 +7,17 @@ import {
 } from '~/lib/merch';
 import {
   allowedShippingCountries,
+  assertApprovedCatalogLines,
   assertCheckoutConfiguration,
-  assertMerchantJuryLines,
   normalizeCheckoutLines,
   shippingOptions,
 } from '~/lib/stripe.server';
 import {probeCheckoutDependencies} from '~/lib/readiness.server';
 import {
-  getApprovedJuryProduct,
-  merchantJuryCatalog,
-} from '~/lib/merchant-policy';
-import {
-  JURY_SALES_AUDIENCE,
-  jurySalesEndAt,
-} from '~/lib/jury-access.server';
+  getApprovedProduct,
+  merchantCatalog,
+} from '~/lib/merchant-catalog';
+import {MERCHANT_POLICY_VERSION} from '~/lib/merchant-policy.shared';
 
 const responseHeaders = {'Cache-Control': 'no-store'};
 
@@ -60,10 +57,10 @@ export function createReadinessLoader({
         {status: 404, headers: responseHeaders},
       );
     }
-    const approvedProduct = getApprovedJuryProduct(product.slug);
+    const approvedProduct = getApprovedProduct(product.slug);
     if (!approvedProduct) {
       return Response.json(
-        {ready: false, code: 'product_not_approved_for_jury_sale'},
+        {ready: false, code: 'product_not_approved_for_sale'},
         {status: 404, headers: responseHeaders},
       );
     }
@@ -78,10 +75,10 @@ export function createReadinessLoader({
       if (env.PRINTFUL_AUTO_CONFIRM !== 'false') {
         throw new Error('Printful auto-confirm must remain disabled');
       }
-      const juryLines = normalizeCheckoutLines([
+      const checkoutLines = normalizeCheckoutLines([
         {productSlug: product.slug, variantId: variant.id, quantity: 1},
       ]);
-      assertMerchantJuryLines(juryLines);
+      assertApprovedCatalogLines(checkoutLines);
       await shippingOptions(env, product.commerce.currency);
       liveReadiness = await probeDependencies(env, {}, approvedProduct);
     } catch {
@@ -101,19 +98,17 @@ export function createReadinessLoader({
         currency: product.commerce.currency,
         unitAmount: product.commerce.unitAmount,
         provider: product.production.provider,
-        policyVersion: env.STOREFRONT_POLICY_VERSION,
+        policyVersion: MERCHANT_POLICY_VERSION,
         shippingCountries: allowedShippingCountries(env),
-        shippingAmount: merchantJuryCatalog.shippingAmount,
-        maximumItemsPerOrder: merchantJuryCatalog.maximumItemsPerOrder,
+        shippingAmount: merchantCatalog.shippingAmount,
+        maximumItemsPerOrder: merchantCatalog.maximumItemsPerOrder,
         deliveryEstimateBusinessDays:
-          merchantJuryCatalog.deliveryEstimateBusinessDays,
+          merchantCatalog.deliveryEstimateBusinessDays,
         paymentMode: liveReadiness.paymentMode,
-        salesAudience: JURY_SALES_AUDIENCE,
-        accessCodeRequired: true,
-        salesEndAt: jurySalesEndAt(env)?.value,
         databaseReady: liveReadiness.databaseReady,
         printfulReady: liveReadiness.printfulReady,
         stripeReady: liveReadiness.stripeReady,
+        stripeWebhookReady: liveReadiness.stripeWebhookReady,
         printfulAutoConfirm: false,
       },
       {headers: responseHeaders},

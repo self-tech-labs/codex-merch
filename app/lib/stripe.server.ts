@@ -18,17 +18,11 @@ import {
   markCheckoutCreationFailed,
 } from '~/lib/orders.server';
 import {
-  MERCHANT_CONTACT_EMAIL,
-  MERCHANT_POLICY_VERSION,
-  getApprovedJuryProduct,
-  merchantIdentity,
-  merchantJuryCatalog,
-} from '~/lib/merchant-policy';
-import {
-  assertJuryAccessCode,
-  assertJurySalesConfiguration,
-  JURY_SALES_AUDIENCE,
-} from '~/lib/jury-access.server';
+  getApprovedProduct,
+  merchantCatalog,
+} from '~/lib/merchant-catalog';
+import {isValidMerchantContactEmail} from '~/lib/merchant-policy.server';
+import {MERCHANT_POLICY_VERSION} from '~/lib/merchant-policy.shared';
 
 export type CheckoutLineInput = {
   productSlug: string;
@@ -52,6 +46,57 @@ const stripeClients = new Map<string, Stripe>();
 const MAX_UNIQUE_LINES = 10;
 const MAX_INPUT_LINES = 100;
 const MAX_QUANTITY = 10;
+const CHECKOUT_SESSION_TTL_SECONDS = 35 * 60;
+
+export type StripePaymentMode = 'test' | 'live';
+
+export const FIXED_CURRENCY_CHECKOUT_CONTROLS = {
+  adaptive_pricing: {enabled: false},
+  consent_collection: {terms_of_service: 'required'},
+} as const satisfies Pick<
+  Stripe.Checkout.SessionCreateParams,
+  'adaptive_pricing' | 'consent_collection'
+>;
+
+export function checkoutSessionExpiresAt(nowMilliseconds = Date.now()) {
+  return Math.floor(nowMilliseconds / 1000) + CHECKOUT_SESSION_TTL_SECONDS;
+}
+
+export function stripePaymentMode(secretKey: string | undefined) {
+  const match = String(secretKey || '').match(
+    /^sk_(test|live)_[A-Za-z0-9_]{16,}$/,
+  );
+  if (!match) throw new Error('Stripe secret key is not a live or test secret key');
+  return match[1] as StripePaymentMode;
+}
+
+export function expectedStripePaymentMode(env: AppEnv): StripePaymentMode {
+  const expected = env.STRIPE_EXPECTED_MODE?.trim().toLowerCase();
+  if (expected === 'test' || expected === 'live') return expected;
+  if (env.NODE_ENV === 'production') {
+    throw new Error('Production checkout requires an explicit Stripe payment mode');
+  }
+  return stripePaymentMode(env.STRIPE_SECRET_KEY);
+}
+
+export function assertStripePaymentMode(env: AppEnv) {
+  const actual = stripePaymentMode(env.STRIPE_SECRET_KEY);
+  const expected = expectedStripePaymentMode(env);
+  if (actual !== expected) {
+    throw new Error('Stripe secret key does not match the expected payment mode');
+  }
+  if (env.VERCEL_ENV === 'production' && expected !== 'live') {
+    throw new Error('Vercel production checkout requires live Stripe mode');
+  }
+  return actual;
+}
+
+export function assertStripeEventMode(event: Stripe.Event, env: AppEnv) {
+  const expected = assertStripePaymentMode(env);
+  if (event.livemode !== (expected === 'live')) {
+    throw new Error('Stripe webhook event mode does not match checkout mode');
+  }
+}
 
 export function stripeClient(env: AppEnv) {
   requireEnv(env, ['STRIPE_SECRET_KEY']);
@@ -59,7 +104,7 @@ export function stripeClient(env: AppEnv) {
   let client = stripeClients.get(key);
   if (!client) {
     client = new Stripe(key, {
-      apiVersion: '2026-06-24.dahlia',
+      apiVersion: '2026-07-29.dahlia',
       maxNetworkRetries: 2,
       timeout: 10_000,
     });
@@ -70,7 +115,9 @@ export function stripeClient(env: AppEnv) {
 
 export function assertCheckoutConfiguration(env: AppEnv) {
   assertProductionStorefrontMode(env);
-  assertJurySalesConfiguration(env);
+  if (env.CHECKOUT_ENABLED !== 'true') {
+    throw new Error('Checkout is disabled');
+  }
   requireEnv(env, [
     'STRIPE_SECRET_KEY',
     'STRIPE_WEBHOOK_SECRET',
@@ -80,26 +127,20 @@ export function assertCheckoutConfiguration(env: AppEnv) {
     'PRINTFUL_TOKEN',
     'PRINTFUL_STORE_ID',
   ]);
+  assertStripePaymentMode(env);
   if (env.MERCH_PILOT_APPROVED !== 'true') {
-    throw new Error('Checkout requires explicit pilot approval');
+    throw new Error('Checkout requires explicit catalog approval');
   }
   if (env.PRINTFUL_AUTO_CONFIRM !== 'false') {
     throw new Error('Checkout requires manual Printful confirmation');
   }
   if (env.NODE_ENV === 'production') {
-    if (env.CHECKOUT_ENABLED !== 'true') throw new Error('Production checkout is disabled');
     if (!env.PUBLIC_SITE_URL) {
       throw new Error('Production checkout requires a canonical public site URL');
     }
     assertCanonicalProductionSiteUrl(env.PUBLIC_SITE_URL);
-    if (
-      env.VERCEL_ENV === 'production' &&
-      !env.STRIPE_SECRET_KEY?.startsWith('sk_live_')
-    ) {
-      throw new Error('Vercel production checkout requires a live Stripe secret key');
-    }
-    if (env.STOREFRONT_CONTACT_EMAIL !== MERCHANT_CONTACT_EMAIL) {
-      throw new Error('Production checkout requires the reviewed merchant contact email');
+    if (!isValidMerchantContactEmail(env.STOREFRONT_CONTACT_EMAIL)) {
+      throw new Error('Production checkout requires a valid merchant contact email');
     }
     if (env.STOREFRONT_POLICY_VERSION !== MERCHANT_POLICY_VERSION) {
       throw new Error('Production checkout requires the deployed merchant policy version');
@@ -119,9 +160,9 @@ export function assertCheckoutConfiguration(env: AppEnv) {
     if (
       env.STRIPE_FLAT_SHIPPING_AMOUNT &&
       Number(env.STRIPE_FLAT_SHIPPING_AMOUNT) !==
-        merchantJuryCatalog.shippingAmount
+        merchantCatalog.shippingAmount
     ) {
-      throw new Error('Production checkout shipping does not match the approved pilot');
+      throw new Error('Production checkout shipping does not match the approved catalog');
     }
     if (!['true', 'false'].includes(env.STRIPE_AUTOMATIC_TAX || '')) {
       throw new Error('Production checkout requires an explicit automatic-tax decision');
@@ -133,6 +174,15 @@ export function assertCheckoutConfiguration(env: AppEnv) {
       throw new Error('Production checkout requires legal and tax/shipping approval');
     }
   }
+}
+
+export function assertStripeWebhookConfiguration(env: AppEnv) {
+  requireEnv(env, [
+    'STRIPE_SECRET_KEY',
+    'STRIPE_WEBHOOK_SECRET',
+    'DATABASE_URL',
+  ]);
+  assertStripePaymentMode(env);
 }
 
 function assertCanonicalProductionSiteUrl(value: string) {
@@ -206,9 +256,9 @@ export function normalizeCheckoutLines(lines: unknown): StripeCheckoutLine[] {
     throw new Error('Cart has too many unique lines');
   }
   const totalQuantity = result.reduce((sum, line) => sum + line.quantity, 0);
-  if (totalQuantity > merchantJuryCatalog.maximumItemsPerOrder) {
+  if (totalQuantity > merchantCatalog.maximumItemsPerOrder) {
     throw new Error(
-      `A jury order may contain at most ${merchantJuryCatalog.maximumItemsPerOrder} items`,
+      `An order may contain at most ${merchantCatalog.maximumItemsPerOrder} items`,
     );
   }
   const currencies = new Set(result.map((line) => line.product.commerce.currency));
@@ -218,27 +268,27 @@ export function normalizeCheckoutLines(lines: unknown): StripeCheckoutLine[] {
   return result;
 }
 
-export function assertMerchantJuryLines(lines: StripeCheckoutLine[]) {
+export function assertApprovedCatalogLines(lines: StripeCheckoutLine[]) {
   if (!lines.length) {
-    throw new Error('Checkout lines do not match the approved jury catalog');
+    throw new Error('Checkout lines do not match the approved catalog');
   }
 
   const products = new Map<string, MerchProduct>();
   for (const line of lines) {
-    const approvedProduct = getApprovedJuryProduct(line.product.slug);
+    const approvedProduct = getApprovedProduct(line.product.slug);
     if (
       !approvedProduct ||
       line.product.title !== approvedProduct.productTitle ||
       line.product.commerce.unitAmount !== approvedProduct.unitAmount ||
-      line.product.commerce.currency !== merchantJuryCatalog.currency
+      line.product.commerce.currency !== merchantCatalog.currency
     ) {
-      throw new Error('Checkout lines do not match the approved jury catalog');
+      throw new Error('Checkout lines do not match the approved catalog');
     }
 
     const previous = products.get(line.product.slug);
     if (previous && previous !== line.product) {
       throw new Error(
-        'Checkout lines must use one approved snapshot per jury product',
+        'Checkout lines must use one approved snapshot per product',
       );
     }
     products.set(line.product.slug, line.product);
@@ -251,52 +301,46 @@ export function assertMerchantJuryLines(lines: StripeCheckoutLine[]) {
       line.catalogVariantId !== approvedVariant.catalogVariantId ||
       line.syncVariantId !== approvedVariant.syncVariantId
     ) {
-      throw new Error('Jury Printful variant does not match merchant sign-off');
+      throw new Error('Printful variant does not match merchant sign-off');
     }
   }
 
   for (const [productSlug, product] of products) {
-    const approvedProduct = getApprovedJuryProduct(productSlug);
+    const approvedProduct = getApprovedProduct(productSlug);
     if (!approvedProduct) {
-      throw new Error('Checkout contains an unapproved jury product');
+      throw new Error('Checkout contains an unapproved product');
     }
     const revision = createHash('sha256')
       .update(JSON.stringify(product))
       .digest('hex');
     if (revision !== approvedProduct.approvedProductRevision) {
-      throw new Error('Jury product revision does not match merchant sign-off');
+      throw new Error('Product revision does not match merchant sign-off');
     }
     if (
       product.production.provider !== 'printful' ||
       product.providerRefs.printful?.productId !==
         approvedProduct.printfulProductId
     ) {
-      throw new Error('Jury Printful product does not match merchant sign-off');
+      throw new Error('Printful product does not match merchant sign-off');
     }
   }
 }
 
-/** @deprecated Use assertMerchantJuryLines for the multi-product catalog. */
-export const assertMerchantPilotLines = assertMerchantJuryLines;
-
 export async function createCheckoutSession({
   env,
-  juryAccessCode,
   lines,
   request,
 }: {
   env: AppEnv;
-  juryAccessCode: string | null | undefined;
   lines: StripeCheckoutLine[];
   request: Request;
 }) {
   assertCheckoutConfiguration(env);
-  assertJuryAccessCode(env, juryAccessCode);
   const baseUrl = siteUrl(env, request);
   const catalogRevision = createHash('sha256')
     .update(JSON.stringify(merchProducts))
     .digest('hex');
-  assertMerchantJuryLines(lines);
+  assertApprovedCatalogLines(lines);
   const currency = lines[0].product.commerce.currency;
   const provider = lines[0].provider;
   const checkoutShippingOptions = await shippingOptions(env, currency);
@@ -328,24 +372,26 @@ export async function createCheckoutSession({
   try {
     const metadata = {
       source: 'codex-merch',
-      sales_audience: 'openai-build-week-jury',
+      sales_channel: 'public-storefront',
       order_id: order.id,
       catalog_revision: catalogRevision,
       policy_version: MERCHANT_POLICY_VERSION,
     };
     const session = await stripeClient(env).checkout.sessions.create(
       {
+        ...FIXED_CURRENCY_CHECKOUT_CONTROLS,
         mode: 'payment',
+        expires_at: checkoutSessionExpiresAt(),
         success_url: `${baseUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${baseUrl}/cart`,
         client_reference_id: order.id,
         metadata,
         payment_intent_data: {metadata},
-        branding_settings: {display_name: merchantIdentity.legalName},
+        branding_settings: {display_name: 'Independent Build Week Merch'},
         phone_number_collection: {enabled: true},
         custom_text: {
           submit: {
-            message: `Fan-made, unofficial merch reserved for ${JURY_SALES_AUDIENCE}. By paying, you agree to the RITSL Elliot Vaucher Terms and Privacy Policy (version ${MERCHANT_POLICY_VERSION}).`,
+            message: `Independent, fan-made merchandise created for OpenAI Build Week. Not official or endorsed by OpenAI. By paying, you agree to the Terms and Privacy Policy (version ${MERCHANT_POLICY_VERSION}).`,
           },
         },
         automatic_tax: {enabled: env.STRIPE_AUTOMATIC_TAX === 'true'},
@@ -358,10 +404,10 @@ export async function createCheckoutSession({
           price_data: {
             currency: currency.toLowerCase(),
             unit_amount: line.product.commerce.unitAmount,
-            tax_behavior: merchantJuryCatalog.stripeTaxBehavior,
+            tax_behavior: merchantCatalog.stripeTaxBehavior,
             product_data: {
               name: line.product.title,
-              tax_code: merchantJuryCatalog.stripeProductTaxCode,
+              tax_code: merchantCatalog.stripeProductTaxCode,
               images: [new URL(getPrimaryCustomerMockup(line.product), baseUrl).toString()],
               metadata: {
                 slug: line.product.slug,
@@ -416,19 +462,19 @@ export async function checkoutSessionForPaymentIntent(
 export function allowedShippingCountries(env: AppEnv) {
   const configured =
     env.STRIPE_ALLOWED_SHIPPING_COUNTRIES ||
-    merchantJuryCatalog.shippingCountries.join(',');
+    merchantCatalog.shippingCountries.join(',');
   const countries = configured
     .split(',')
     .map((country) => country.trim().toUpperCase())
     .filter(Boolean);
   if (
-    countries.length !== merchantJuryCatalog.shippingCountries.length ||
+    countries.length !== merchantCatalog.shippingCountries.length ||
     countries.some(
       (country, index) =>
-        country !== merchantJuryCatalog.shippingCountries[index],
+        country !== merchantCatalog.shippingCountries[index],
     )
   ) {
-    throw new Error('The jury pilot supports shipping to CH and US only');
+    throw new Error('The storefront supports shipping to CH and US only');
   }
   return countries as Stripe.Checkout.SessionCreateParams.ShippingAddressCollection.AllowedCountry[];
 }
@@ -446,29 +492,29 @@ export async function shippingOptions(
     if (rate.fixed_amount?.currency?.toUpperCase() !== currency.toUpperCase()) {
       throw new Error('Configured Stripe shipping rate currency does not match the order');
     }
-    if (rate.fixed_amount?.amount !== merchantJuryCatalog.shippingAmount) {
-      throw new Error('Configured Stripe shipping rate amount does not match the pilot');
+    if (rate.fixed_amount?.amount !== merchantCatalog.shippingAmount) {
+      throw new Error('Configured Stripe shipping rate amount does not match the catalog');
     }
     const rateTaxCode =
       typeof rate.tax_code === 'string' ? rate.tax_code : rate.tax_code?.id;
     if (
-      rate.tax_behavior !== merchantJuryCatalog.stripeTaxBehavior ||
-      rateTaxCode !== merchantJuryCatalog.stripeShippingTaxCode
+      rate.tax_behavior !== merchantCatalog.stripeTaxBehavior ||
+      rateTaxCode !== merchantCatalog.stripeShippingTaxCode
     ) {
       throw new Error(
-        'Configured Stripe shipping rate tax treatment does not match the pilot',
+        'Configured Stripe shipping rate tax treatment does not match the catalog',
       );
     }
     if (
       rate.delivery_estimate?.minimum?.unit !== 'business_day' ||
       rate.delivery_estimate.minimum.value !==
-        merchantJuryCatalog.deliveryEstimateBusinessDays.minimum ||
+        merchantCatalog.deliveryEstimateBusinessDays.minimum ||
       rate.delivery_estimate?.maximum?.unit !== 'business_day' ||
       rate.delivery_estimate.maximum.value !==
-        merchantJuryCatalog.deliveryEstimateBusinessDays.maximum
+        merchantCatalog.deliveryEstimateBusinessDays.maximum
     ) {
       throw new Error(
-        'Configured Stripe shipping rate delivery estimate does not match the pilot',
+        'Configured Stripe shipping rate delivery estimate does not match the catalog',
       );
     }
     return [{shipping_rate: env.STRIPE_SHIPPING_RATE_ID}];
@@ -478,8 +524,8 @@ export async function shippingOptions(
     if (!Number.isInteger(amount) || amount < 0) {
       throw new Error('STRIPE_FLAT_SHIPPING_AMOUNT must be a non-negative integer');
     }
-    if (amount !== merchantJuryCatalog.shippingAmount) {
-      throw new Error('Flat shipping amount does not match the approved pilot');
+    if (amount !== merchantCatalog.shippingAmount) {
+      throw new Error('Flat shipping amount does not match the approved catalog');
     }
     return [
       {
@@ -487,16 +533,16 @@ export async function shippingOptions(
           type: 'fixed_amount' as const,
           fixed_amount: {amount, currency: currency.toLowerCase()},
           display_name: 'Standard shipping',
-          tax_behavior: merchantJuryCatalog.stripeTaxBehavior,
-          tax_code: merchantJuryCatalog.stripeShippingTaxCode,
+          tax_behavior: merchantCatalog.stripeTaxBehavior,
+          tax_code: merchantCatalog.stripeShippingTaxCode,
           delivery_estimate: {
             minimum: {
               unit: 'business_day' as const,
-              value: merchantJuryCatalog.deliveryEstimateBusinessDays.minimum,
+              value: merchantCatalog.deliveryEstimateBusinessDays.minimum,
             },
             maximum: {
               unit: 'business_day' as const,
-              value: merchantJuryCatalog.deliveryEstimateBusinessDays.maximum,
+              value: merchantCatalog.deliveryEstimateBusinessDays.maximum,
             },
           },
         },

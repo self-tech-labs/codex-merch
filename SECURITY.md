@@ -4,7 +4,8 @@
 
 Please do not open a public issue for a suspected vulnerability, exposed secret,
 payment problem, provider mutation, or customer-data concern. Email
-`elliot@ritsl.com` with:
+the merchant-controlled address listed on the live storefront's Contact page
+with:
 
 - a concise description and affected route, command, or file;
 - reproduction steps that do not create a real payment or order;

@@ -8,12 +8,15 @@ import {
   useCart,
 } from '~/lib/cart';
 import {
-  MERCHANT_POLICY_VERSION,
-  getApprovedJuryProduct,
-  merchantJuryCatalog,
-  merchantJuryDisplayAmounts,
-} from '~/lib/merchant-policy';
-import {useJurySales, useStorefrontMode} from '~/lib/storefront-mode';
+  getApprovedProduct,
+  merchantCatalog,
+  merchantDisplayAmounts,
+} from '~/lib/merchant-catalog';
+import {MERCHANT_POLICY_VERSION} from '~/lib/merchant-policy.shared';
+import {
+  useCheckoutAvailability,
+  useStorefrontMode,
+} from '~/lib/storefront-mode';
 
 export const meta: Route.MetaFunction = () => {
   return [
@@ -23,20 +26,20 @@ export const meta: Route.MetaFunction = () => {
 };
 
 export default function Cart() {
-  const {displayLines, lines, removeLine, subtotal, updateQuantity} = useCart();
+  const {displayLines, removeLine, subtotal, updateQuantity} = useCart();
   const storefrontMode = useStorefrontMode();
-  const jurySales = useJurySales();
+  const checkout = useCheckoutAvailability();
   const preview = storefrontMode === 'preview';
-  const checkoutAvailable = !preview && jurySales.enabled;
-  const currency = displayLines[0]?.product.commerce.currency || 'USD';
-  const juryShippingApplies =
+  const currency = displayLines[0]?.product.currency || 'USD';
+  const shippingApplies =
     displayLines.length > 0 &&
     displayLines.every(
-      (line) => Boolean(getApprovedJuryProduct(line.product.slug)),
+      (line) => Boolean(getApprovedProduct(line.product.slug)),
     );
-  const pilotAmounts = merchantJuryDisplayAmounts(subtotal);
-  const displayedTotal = juryShippingApplies ? pilotAmounts.total : subtotal;
-  const fulfillmentProvider = displayLines[0]?.product.production.provider || 'printful';
+  const checkoutAvailable = !preview && checkout.enabled && shippingApplies;
+  const displayAmounts = merchantDisplayAmounts(subtotal);
+  const displayedTotal = shippingApplies ? displayAmounts.total : subtotal;
+  const fulfillmentProvider = displayLines[0]?.product.provider || 'printful';
   const fulfillmentLabel =
     fulfillmentProvider.charAt(0).toUpperCase() + fulfillmentProvider.slice(1);
   const navigation = useNavigation();
@@ -62,7 +65,7 @@ export default function Cart() {
                 <div>
                   <h2>{line.product.title}</h2>
                   <p>{lineTitle(line)}</p>
-                  <p>{money(line.lineTotal, line.product.commerce.currency)}</p>
+                  <p>{money(line.lineTotal, line.product.currency)}</p>
                 </div>
                 <div className="quantity-stepper">
                   <button
@@ -114,21 +117,21 @@ export default function Cart() {
                 <dt>Fulfillment</dt>
                 <dd>{fulfillmentLabel}</dd>
               </div>
-              {juryShippingApplies ? (
+              {shippingApplies ? (
                 <>
                   <div>
                     <dt>Shipping</dt>
                     <dd>
                       {money(
-                        pilotAmounts.shipping,
-                        merchantJuryCatalog.currency,
+                        displayAmounts.shipping,
+                        merchantCatalog.currency,
                       )}
                     </dd>
                   </div>
                   <div>
                     <dt>Total</dt>
                     <dd>
-                      {money(displayedTotal, merchantJuryCatalog.currency)}
+                      {money(displayedTotal, merchantCatalog.currency)}
                     </dd>
                   </div>
                 </>
@@ -139,22 +142,8 @@ export default function Cart() {
                 <input
                   type="hidden"
                   name="cart"
-                  value={checkoutCartValue(lines)}
+                  value={checkoutCartValue(displayLines)}
                 />
-                <label className="jury-access-field">
-                  <span>OpenAI Build Week jury access code</span>
-                  <input
-                    required
-                    autoComplete="one-time-code"
-                    maxLength={128}
-                    name="juryAccessCode"
-                    type="password"
-                  />
-                  <small>
-                    Real purchases are reserved exclusively for judges. The
-                    free project demo does not require this code or a purchase.
-                  </small>
-                </label>
                 <label className="checkout-consent">
                   <input
                     required
@@ -173,27 +162,28 @@ export default function Cart() {
                 <button disabled={checkingOut} type="submit">
                   {checkingOut
                     ? 'Opening secure checkout…'
-                    : 'Open jury checkout with Stripe'}
+                    : 'Pay securely with Stripe'}
                 </button>
               </Form>
             ) : (
               <button disabled type="button">
                 {preview
                   ? 'Checkout disabled in preview'
-                  : 'Jury checkout closed'}
+                  : 'Checkout closed'}
               </button>
             )}
             <p>
               {preview
                 ? 'This deployment cannot create a payment or production order. Terms acceptance will be required when checkout opens.'
                 : checkoutAvailable
-                  ? `Fan-made, unofficial merchandise. Access is limited to OpenAI Build Week judges; shipping is ${money(merchantJuryCatalog.shippingAmount / 100, merchantJuryCatalog.currency)} per order. Review the final CHF total in Stripe before paying.`
-                  : 'Real checkout is unavailable because the jury-only sales window is closed or not configured.'}
+                  ? `Fan-made, unofficial merchandise. Shipping is ${money(merchantCatalog.shippingAmount / 100, merchantCatalog.currency)} per order. Review the final CHF total in Stripe before paying.`
+                  : 'Real checkout is currently unavailable.'}
             </p>
-            {juryShippingApplies ? (
+            {shippingApplies ? (
               <p>
-                RITSL bears normal import, customs, and carrier-clearance charges
-                for the approved Switzerland and United States delivery routes.
+                The seller bears normal import, customs, and carrier-clearance
+                charges for the supported Switzerland and United States delivery
+                routes.
               </p>
             ) : null}
             {preview ? (
@@ -212,9 +202,9 @@ export default function Cart() {
           <p>
             {preview
               ? 'Prototype preview — checkout is disabled in this public build.'
-              : jurySales.enabled
-                ? 'Real purchases require the private OpenAI Build Week jury access code.'
-                : 'Jury checkout is currently closed.'}
+              : checkout.enabled
+                ? 'Add a product to continue to secure Stripe Checkout.'
+                : 'Checkout is currently closed.'}
           </p>
           <Link to="/">Browse drops</Link>
         </section>

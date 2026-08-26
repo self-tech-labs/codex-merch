@@ -15,11 +15,19 @@ import resetStyles from '~/styles/reset.css?url';
 import appStyles from '~/styles/app.css?url';
 import {PageLayout} from './components/PageLayout';
 import {getEnv} from '~/lib/env.server';
-import {
-  isJurySalesWindowOpen,
-  jurySalesEndAt,
-} from '~/lib/jury-access.server';
 import {resolveStorefrontMode} from '~/lib/storefront-mode';
+import {assertCheckoutConfiguration} from '~/lib/stripe.server';
+import type {CartCatalogProduct} from '~/lib/cart';
+import {
+  isApprovedProductPurchasable,
+  isApprovedVariantPurchasable,
+} from '~/lib/storefront-sale';
+import {
+  assetUrl,
+  getMerchProducts,
+  getPrimaryCustomerMockup,
+  getProductVariants,
+} from '~/lib/merch';
 
 export const meta: Route.MetaFunction = () => [
   {title: 'Codex Merch'},
@@ -32,11 +40,37 @@ export const meta: Route.MetaFunction = () => [
 
 export function loader({context, request}: Route.LoaderArgs) {
   const env = getEnv(context);
+  const storefrontMode = resolveStorefrontMode(env.STOREFRONT_MODE);
+  let checkoutEnabled = false;
+  if (storefrontMode === 'production') {
+    try {
+      assertCheckoutConfiguration(env);
+      checkoutEnabled = true;
+    } catch {
+      checkoutEnabled = false;
+    }
+  }
+  const cartCatalog: CartCatalogProduct[] = getMerchProducts().map((product) => {
+    return {
+      slug: product.slug,
+      title: product.title,
+      currency: product.commerce.currency,
+      imageUrl: assetUrl(getPrimaryCustomerMockup(product)),
+      provider: product.production.provider,
+      purchasable: isApprovedProductPurchasable(product),
+      unitAmount: product.commerce.unitAmount,
+      variants: getProductVariants(product).map((variant) => ({
+        id: variant.id,
+        size: variant.size,
+        purchasable: isApprovedVariantPurchasable(product, variant),
+      })),
+    };
+  });
   return {
+    cartCatalog,
     requestId: request.headers.get('x-request-id'),
-    storefrontMode: resolveStorefrontMode(env.STOREFRONT_MODE),
-    jurySalesEnabled: isJurySalesWindowOpen(env),
-    jurySalesEndAt: jurySalesEndAt(env)?.value || null,
+    storefrontMode,
+    checkoutEnabled,
   };
 }
 
@@ -65,13 +99,13 @@ export function Layout({children}: {children?: React.ReactNode}) {
 }
 
 export default function App() {
-  const {jurySalesEnabled, jurySalesEndAt, storefrontMode} =
+  const {cartCatalog, checkoutEnabled, storefrontMode} =
     useLoaderData<typeof loader>();
 
   return (
     <PageLayout
-      jurySalesEnabled={jurySalesEnabled}
-      jurySalesEndAt={jurySalesEndAt}
+      checkoutEnabled={checkoutEnabled}
+      cartCatalog={cartCatalog}
       storefrontMode={storefrontMode}
     >
       <Outlet />

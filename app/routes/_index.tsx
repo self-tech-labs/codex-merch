@@ -2,10 +2,10 @@ import {Link, useLoaderData, useSearchParams} from 'react-router';
 import type {Route} from './+types/_index';
 import {money} from '~/lib/cart';
 import {
-  getApprovedJuryProduct,
-  merchantJuryCatalog,
-  merchantJuryDisplayAmounts,
-} from '~/lib/merchant-policy';
+  getApprovedProduct,
+  merchantCatalog,
+  merchantDisplayAmounts,
+} from '~/lib/merchant-catalog';
 import {
   assetUrl,
   formatPrice,
@@ -13,9 +13,11 @@ import {
   getMerchProducts,
   getPrimaryCustomerMockup,
   isPurchasableProduct,
-  type MerchProduct,
 } from '~/lib/merch';
-import {useJurySales, useStorefrontMode} from '~/lib/storefront-mode';
+import {
+  useCheckoutAvailability,
+  useStorefrontMode,
+} from '~/lib/storefront-mode';
 
 export const meta: Route.MetaFunction = () => {
   return [
@@ -32,10 +34,21 @@ export async function loader() {
   const products = getMerchProducts();
 
   return {
-    products,
+    products: products.map((product) => ({
+      approvedForSale: Boolean(getApprovedProduct(product.slug)),
+      category: product.category,
+      formattedPrice: formatPrice(product),
+      handle: product.commerce.handle,
+      id: product.id,
+      imageUrl: assetUrl(getPrimaryCustomerMockup(product)),
+      purchasable: isPurchasableProduct(product),
+      title: product.title,
+    })),
     categories: getMerchCategories(products),
   };
 }
+
+type PublicProduct = Awaited<ReturnType<typeof loader>>['products'][number];
 
 export default function Homepage() {
   const {products, categories} = useLoaderData<typeof loader>();
@@ -46,14 +59,14 @@ export default function Homepage() {
     storefrontMode === 'preview'
       ? products
       : products.filter(
-          (product) =>
-            isPurchasableProduct(product) &&
-            Boolean(getApprovedJuryProduct(product.slug)),
+          (product) => product.purchasable && product.approvedForSale,
         );
   const storefrontCategories =
     storefrontMode === 'preview'
       ? categories
-      : getMerchCategories(storefrontProducts);
+      : Array.from(
+          new Set(storefrontProducts.map((product) => product.category)),
+        );
   const filteredProducts = selectedCategory
     ? storefrontProducts.filter(
         (product) => product.category === selectedCategory,
@@ -83,7 +96,7 @@ function StoreRail({
   selectedCategory: string | null;
 }) {
   const storefrontMode = useStorefrontMode();
-  const jurySales = useJurySales();
+  const checkout = useCheckoutAvailability();
   const preview = storefrontMode === 'preview';
 
   return (
@@ -110,57 +123,49 @@ function StoreRail({
         ))}
       </nav>
       <div className="rail-status">
-        <span>
-          {preview
-            ? 'Prototype preview'
-            : jurySales.enabled
-              ? 'OpenAI jury pilot'
-              : 'Production storefront'}
-        </span>
+        <span>{preview ? 'Prototype preview' : 'Production storefront'}</span>
         <span>
           {preview
             ? 'Checkout disabled'
-            : jurySales.enabled
-              ? 'Jury code required'
+            : checkout.enabled
+              ? 'Live checkout'
               : 'Checkout closed'}
         </span>
       </div>
       <p className="rail-note">
         {preview
           ? 'Open signal-to-product proof. Browse real garment outputs; payment and production orders are disabled.'
-          : jurySales.enabled
-            ? 'Fan-made, unofficial merch. Real purchases are temporarily reserved for OpenAI Build Week judges.'
+          : checkout.enabled
+            ? 'Fan-made, unofficial merchandise with secure payment through Stripe.'
             : 'Product and checkout eligibility are verified individually by server-side commerce gates.'}
       </p>
     </aside>
   );
 }
 
-function ProductTile({product}: {product: MerchProduct}) {
-  const primaryMockup = assetUrl(getPrimaryCustomerMockup(product));
-  const approvedForJury = Boolean(getApprovedJuryProduct(product.slug));
-  const pilotShipping = merchantJuryDisplayAmounts(0).shipping;
-  const shippingDisclosure = approvedForJury
-    ? ` + ${money(pilotShipping, merchantJuryCatalog.currency)} shipping`
+function ProductTile({product}: {product: PublicProduct}) {
+  const shipping = merchantDisplayAmounts(0).shipping;
+  const shippingDisclosure = product.approvedForSale
+    ? ` + ${money(shipping, merchantCatalog.currency)} shipping`
     : '';
 
   return (
     <article className="product-tile">
       <Link
-        aria-label={`${product.title}, ${formatPrice(product)}${shippingDisclosure}`}
+        aria-label={`${product.title}, ${product.formattedPrice}${shippingDisclosure}`}
         prefetch="intent"
-        to={`/products/${product.commerce.handle}`}
+        to={`/products/${product.handle}`}
       >
-        <img src={primaryMockup} alt="" loading="lazy" />
-        {!isPurchasableProduct(product) ? (
+        <img src={product.imageUrl} alt="" loading="lazy" />
+        {!product.purchasable ? (
           <span className="preview-badge">Preview</span>
         ) : null}
         <span className="tile-meta">
           <span>{product.title}</span>
-          <span>{formatPrice(product)}</span>
-          {approvedForJury ? (
+          <span>{product.formattedPrice}</span>
+          {product.approvedForSale ? (
             <span>
-              + {money(pilotShipping, merchantJuryCatalog.currency)} shipping
+              + {money(shipping, merchantCatalog.currency)} shipping
             </span>
           ) : null}
         </span>

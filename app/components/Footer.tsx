@@ -1,5 +1,4 @@
 import {Link} from 'react-router';
-import {merchantIdentity} from '~/lib/merchant-policy';
 
 export function Footer() {
   return (
@@ -7,11 +6,19 @@ export function Footer() {
       <div className="site-footer-identity">
         <Link to="/">Codex Merch · Signal → Product</Link>
         <span>
-          Operated by {merchantIdentity.legalName} · UID {merchantIdentity.uid}
-        </span>
-        <span>
           Fan-made project · Not official OpenAI merchandise · Not affiliated
           with, sponsored by, or endorsed by OpenAI
+        </span>
+        <span>
+          Made with love by{' '}
+          <a
+            href="https://www.linkedin.com/in/elliotvaucher"
+            rel="noreferrer"
+            target="_blank"
+          >
+            Elliot Vaucher
+          </a>{' '}
+          for the OpenAI Build Week
         </span>
       </div>
       <div className="site-footer-links">
@@ -23,7 +30,6 @@ export function Footer() {
           <Link to="/policies/terms">Terms</Link>
           <Link to="/policies/contact">Contact</Link>
         </nav>
-        <a href={`mailto:${merchantIdentity.email}`}>{merchantIdentity.email}</a>
       </div>
     </footer>
   );

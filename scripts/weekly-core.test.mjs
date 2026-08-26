@@ -45,6 +45,7 @@ import {
   liveReleaseProvenance,
   publicCommerceReadinessMatches,
   recoverPreparationRecovery,
+  requireReleaseEnvironment,
   releaseStage,
   restorePreparationRecoveryAssets,
   runVerifiedProviderMutation,
@@ -864,6 +865,53 @@ test('release provenance rejects fixtures and failed runs resume from their chec
       resumeFrom: 'awaiting_final_deployment',
     }),
     'awaiting_final_deployment',
+  );
+});
+
+test('production release environment requires generic checkout gates and live Stripe mode', () => {
+  const configured = {
+    MERCH_WEEKLY_RELEASE_ENABLED: 'true',
+    STOREFRONT_MODE: 'production',
+    PRINTFUL_AUTO_CONFIRM: 'false',
+    MERCH_DEPLOY_PROVIDER: 'external',
+    MERCH_PILOT_APPROVED: 'true',
+    MERCH_EXPANSION_APPROVED: 'true',
+    CHECKOUT_ENABLED: 'true',
+    STOREFRONT_LEGAL_APPROVED: 'true',
+    STOREFRONT_TAX_SHIPPING_APPROVED: 'true',
+    PUBLIC_SITE_URL: 'https://shop.example',
+    PRINTFUL_TOKEN: 'printful-token',
+    PRINTFUL_STORE_ID: 'printful-store',
+    OPENAI_API_KEY: 'openai-key',
+    STRIPE_SECRET_KEY: 'stripe-key',
+    STRIPE_WEBHOOK_SECRET: 'webhook-secret-value',
+    STRIPE_EXPECTED_MODE: 'live',
+    DATABASE_URL: 'postgres://test',
+    INNGEST_EVENT_KEY: 'inngest-event-secret-value',
+    INNGEST_SIGNING_KEY: 'inngest-signing-secret-value',
+    STOREFRONT_CONTACT_EMAIL: 'merchant@example.com',
+    STOREFRONT_POLICY_VERSION: '2026-08-26',
+    STRIPE_ALLOWED_SHIPPING_COUNTRIES: 'CH,US',
+    STRIPE_FLAT_SHIPPING_AMOUNT: '910',
+    STRIPE_AUTOMATIC_TAX: 'false',
+  };
+
+  assert.doesNotThrow(() => requireReleaseEnvironment(configured));
+  assert.throws(
+    () => requireReleaseEnvironment({...configured, CHECKOUT_ENABLED: 'false'}),
+    /CHECKOUT_ENABLED/,
+  );
+  assert.throws(
+    () => requireReleaseEnvironment({...configured, STRIPE_EXPECTED_MODE: 'test'}),
+    /STRIPE_EXPECTED_MODE=live/,
+  );
+  assert.throws(
+    () =>
+      requireReleaseEnvironment({
+        ...configured,
+        STOREFRONT_POLICY_VERSION: '2026-07-21',
+      }),
+    /2026-08-26/,
   );
 });
 

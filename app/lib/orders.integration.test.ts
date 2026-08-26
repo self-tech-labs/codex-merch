@@ -7,13 +7,18 @@ import {orders, stripeEvents} from '~/db/schema.server';
 import {
   createPendingOrder,
   attachStripeSession,
+  claimFulfillment,
   finishStripeEvent,
   getOrderById,
   getOrderItems,
   markFulfillmentFailed,
+  markOrderPaid,
+  markPrintfulCreated,
+  recordDispute,
   recordRefund,
   recordStripeEvent,
   requeueOrder,
+  restorePaymentAfterWonDispute,
 } from './orders.server';
 import {processStripeEvent} from './stripe-webhook.server';
 
@@ -154,10 +159,10 @@ test(
         payment_status: 'paid',
         currency: 'usd',
         amount_subtotal: 5800,
-        amount_total: 5800,
+        amount_total: 6710,
         total_details: {
           amount_discount: 0,
-          amount_shipping: 0,
+          amount_shipping: 910,
           amount_tax: 0,
         },
         payment_intent: 'pi_test',
@@ -202,7 +207,7 @@ test(
       assert.equal(paidOrder?.paymentStatus, 'paid');
       assert.equal(paidOrder?.checkoutStatus, 'complete');
       assert.equal(paidOrder?.fulfillmentStatus, 'queued');
-      assert.equal(await requeueOrder(order.id, env), null);
+      assert.notEqual(await requeueOrder(order.id, env), null);
       await markFulfillmentFailed(order.id, new Error('retry test'), env);
       assert.equal(
         (await getOrderById(order.id, env))?.fulfillmentStatus,
@@ -219,46 +224,149 @@ test(
         env,
         orderId: order.id,
         paymentIntentId: 'pi_test',
-        shippingAmount: 0,
+        shippingAmount: 910,
         taxAmount: 0,
-        totalAmount: 5800,
+        totalAmount: 6710,
       });
       assert.equal(partial?.paymentStatus, 'partially_refunded');
       assert.equal(partial?.refundedAmount, 1000);
-      assert.equal(partial?.fulfillmentStatus, 'cancelled');
+      assert.equal(partial?.fulfillmentStatus, 'queued');
+      const partiallyRefundedItems = await getOrderItems(order.id, env);
+      assert.deepEqual(
+        partiallyRefundedItems.map(({quantity, variantId}) => ({
+          quantity,
+          variantId,
+        })),
+        [{quantity: 1, variantId: 'test-product:1'}],
+        'a partial refund is a discount; the original order still ships unchanged',
+      );
 
       const stalePartial = await recordRefund({
         amountRefunded: 500,
         env,
         orderId: order.id,
         paymentIntentId: 'pi_test',
-        shippingAmount: 0,
+        shippingAmount: 910,
         taxAmount: 0,
-        totalAmount: 5800,
+        totalAmount: 6710,
       });
       assert.equal(stalePartial?.refundedAmount, 1000);
 
       const full = await recordRefund({
-        amountRefunded: 5800,
+        amountRefunded: 6710,
         env,
         orderId: order.id,
         paymentIntentId: 'pi_test',
-        shippingAmount: 0,
+        shippingAmount: 910,
         taxAmount: 0,
-        totalAmount: 5800,
+        totalAmount: 6710,
       });
       assert.equal(full?.fullyRefunded, true);
       assert.equal(full?.paymentStatus, 'refunded');
       const fullReplay = await recordRefund({
-        amountRefunded: 5800,
+        amountRefunded: 6710,
         env,
         orderId: order.id,
         paymentIntentId: 'pi_test',
-        shippingAmount: 0,
+        shippingAmount: 910,
         taxAmount: 0,
-        totalAmount: 5800,
+        totalAmount: 6710,
       });
       assert.equal(fullReplay?.fullyRefunded, true);
+      const disputeAfterRefund = await recordDispute({
+        env,
+        orderId: order.id,
+        paymentIntentId: 'pi_test',
+        shippingAmount: 910,
+        taxAmount: 0,
+        totalAmount: 6710,
+      });
+      assert.equal(disputeAfterRefund?.paymentStatus, 'refunded');
+      assert.equal(
+        (await getOrderById(order.id, env))?.paymentStatus,
+        'refunded',
+      );
+
+      const replaySafeOrder = await createPendingOrder({
+        catalogRevision: 'test-printful-replay',
+        currency: 'CHF',
+        env,
+        policyVersion: '2026-08-26',
+        provider: 'printful',
+        items: [
+          {
+            productSlug: 'test-printful-replay',
+            productTitle: 'Test Printful Replay',
+            variantId: 'test-printful-replay:1',
+            variantLabel: 'Black / M',
+            quantity: 1,
+            unitAmount: 5800,
+            currency: 'CHF',
+            provider: 'printful',
+            catalogVariantId: 1,
+            syncVariantId: 2,
+          },
+        ],
+      });
+      createdOrderIds.push(replaySafeOrder.id);
+      await attachStripeSession(
+        replaySafeOrder.id,
+        `cs_test_${replaySafeOrder.id}`,
+        env,
+      );
+      assert.equal(
+        await markOrderPaid({
+          env,
+          orderId: replaySafeOrder.id,
+          paymentIntentId: 'pi_printful_replay',
+          shippingAmount: 910,
+          taxAmount: 0,
+          totalAmount: 6710,
+        }),
+        true,
+      );
+      assert.equal(
+        await claimFulfillment(replaySafeOrder.id, 'run-replay', env),
+        true,
+      );
+      assert.equal(
+        await markPrintfulCreated(replaySafeOrder.id, 'pf-replay', false, env),
+        true,
+      );
+      assert.equal(
+        await markPrintfulCreated(replaySafeOrder.id, 'pf-replay', false, env),
+        true,
+      );
+      assert.equal(
+        (await getOrderById(replaySafeOrder.id, env))?.fulfillmentStatus,
+        'draft_created',
+      );
+      assert.equal(
+        await markPrintfulCreated(replaySafeOrder.id, 'pf-replay', true, env),
+        true,
+      );
+      assert.equal(
+        await markPrintfulCreated(replaySafeOrder.id, 'pf-replay', true, env),
+        true,
+      );
+      assert.equal(
+        (await getOrderById(replaySafeOrder.id, env))?.fulfillmentStatus,
+        'confirmed',
+      );
+      await recordRefund({
+        amountRefunded: 6710,
+        env,
+        orderId: replaySafeOrder.id,
+        paymentIntentId: 'pi_printful_replay',
+        shippingAmount: 910,
+        taxAmount: 0,
+        totalAmount: 6710,
+      });
+      assert.equal(
+        await markPrintfulCreated(replaySafeOrder.id, 'pf-replay', false, env),
+        false,
+        'a refund/dispute state must not be accepted as a harmless worker replay',
+      );
 
       const refundedBeforeCompletion = await createPendingOrder({
         catalogRevision: 'test-refund-first',
@@ -343,10 +451,84 @@ test(
         },
         async () => undefined,
       );
-      assert.equal(refundFirstHandoffs, 0);
+      assert.equal(refundFirstHandoffs, 1);
       assert.equal(
         (await getOrderById(refundedBeforeCompletion.id, env))?.paymentStatus,
         'partially_refunded',
+      );
+      await recordDispute({
+        env,
+        orderId: refundedBeforeCompletion.id,
+        paymentIntentId: 'pi_refund_first',
+        shippingAmount: 910,
+        taxAmount: 500,
+        totalAmount: 6710,
+      });
+      assert.equal(
+        (await getOrderById(refundedBeforeCompletion.id, env))?.paymentStatus,
+        'disputed',
+      );
+      await restorePaymentAfterWonDispute(refundedBeforeCompletion.id, env);
+      assert.equal(
+        (await getOrderById(refundedBeforeCompletion.id, env))?.paymentStatus,
+        'partially_refunded',
+      );
+
+      const disputedBeforeCompletion = await createPendingOrder({
+        catalogRevision: 'test-dispute-first',
+        currency: 'CHF',
+        env,
+        policyVersion: '2026-08-26',
+        provider: 'printful',
+        items: [
+          {
+            productSlug: 'test-dispute-first',
+            productTitle: 'Test Dispute First',
+            variantId: 'test-dispute-first:1',
+            variantLabel: 'Black / M',
+            quantity: 1,
+            unitAmount: 5800,
+            currency: 'CHF',
+            provider: 'printful',
+            catalogVariantId: 1,
+            syncVariantId: 2,
+          },
+        ],
+      });
+      createdOrderIds.push(disputedBeforeCompletion.id);
+      await recordDispute({
+        env,
+        orderId: disputedBeforeCompletion.id,
+        paymentIntentId: 'pi_dispute_first',
+        shippingAmount: 910,
+        taxAmount: 0,
+        totalAmount: 6710,
+      });
+      assert.equal(
+        (await getOrderById(disputedBeforeCompletion.id, env))?.paymentStatus,
+        'disputed',
+      );
+      await restorePaymentAfterWonDispute(disputedBeforeCompletion.id, env);
+      const restoredDispute = await getOrderById(
+        disputedBeforeCompletion.id,
+        env,
+      );
+      assert.equal(restoredDispute?.paymentStatus, 'paid');
+      assert.equal(restoredDispute?.fulfillmentStatus, 'queued');
+      assert.equal(
+        await markOrderPaid({
+          env,
+          orderId: disputedBeforeCompletion.id,
+          paymentIntentId: 'pi_dispute_first',
+          shippingAmount: 910,
+          taxAmount: 0,
+          totalAmount: 6710,
+        }),
+        false,
+      );
+      assert.equal(
+        (await getOrderById(disputedBeforeCompletion.id, env))?.paymentStatus,
+        'paid',
       );
     } finally {
       const db = getDatabase(env);

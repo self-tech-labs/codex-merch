@@ -1,7 +1,6 @@
 import type Stripe from 'stripe';
 import type {Order, OrderItem} from '~/db/schema.server';
 import {requireEnv} from '~/lib/env.server';
-import {assertProductionStorefrontMode} from '~/lib/stripe.server';
 
 const PRINTFUL_API_BASE = 'https://api.printful.com';
 const MAX_IN_REQUEST_RETRY_DELAY_MS = 5_000;
@@ -14,7 +13,9 @@ export class PermanentFulfillmentError extends Error {}
 
 export function assertFulfillmentConfiguration(env: AppEnv) {
   try {
-    assertProductionStorefrontMode(env);
+    // Storefront shutdown blocks new Checkout Sessions, not reconciliation of
+    // orders that customers have already paid for.
+    requireEnv(env, ['PRINTFUL_TOKEN', 'PRINTFUL_STORE_ID']);
   } catch (error) {
     throw new PermanentFulfillmentError(
       error instanceof Error ? error.message : 'Fulfillment configuration is incomplete',
@@ -39,12 +40,32 @@ export async function createOrFindPrintfulOrder({
   session: Stripe.Checkout.Session;
 }) {
   assertFulfillmentConfiguration(env);
+  let needsRecoveryOrder = false;
   if (order.providerOrderId) {
     const state = await getPrintfulOrderState(order.providerOrderId, env);
-    return {id: order.providerOrderId, confirmed: state.committed};
+    if (!isUnusablePrintfulStatus(state.status)) {
+      return {id: order.providerOrderId, confirmed: state.committed};
+    }
+    needsRecoveryOrder = true;
   }
-  const externalId = printfulExternalId(order);
-  const existing = await findPrintfulOrder(externalId, env);
+  let externalId = needsRecoveryOrder
+    ? printfulRecoveryExternalId(order)
+    : printfulExternalId(order);
+  let existing = await findPrintfulOrder(externalId, env);
+  if (existing && isUnusablePrintfulStatus(existing.result?.status)) {
+    if (needsRecoveryOrder) {
+      throw new PermanentFulfillmentError(
+        'Printful recovery order is cancelled or failed; requeue with a new recovery attempt',
+      );
+    }
+    externalId = printfulRecoveryExternalId(order);
+    existing = await findPrintfulOrder(externalId, env);
+    if (existing && isUnusablePrintfulStatus(existing.result?.status)) {
+      throw new PermanentFulfillmentError(
+        'Printful recovery order is cancelled or failed; requeue with a new recovery attempt',
+      );
+    }
+  }
   const created = existing || (await printfulRequest('/orders', {
     env,
     method: 'POST',
@@ -52,6 +73,11 @@ export async function createOrFindPrintfulOrder({
   }));
   const id = created.result?.id;
   if (!id) throw new Error('Printful order ID missing after order creation');
+  if (isUnusablePrintfulStatus(created.result?.status)) {
+    throw new PermanentFulfillmentError(
+      'Printful returned a cancelled or failed order instead of a usable draft',
+    );
+  }
   return {
     id: String(id),
     confirmed: isCommittedPrintfulStatus(created.result?.status),
@@ -90,7 +116,13 @@ export async function getPrintfulOrderState(
 }
 
 function isCommittedPrintfulStatus(status: string | undefined) {
-  return Boolean(status && !['canceled', 'draft', 'failed'].includes(status));
+  return Boolean(
+    status && !['canceled', 'cancelled', 'draft', 'failed'].includes(status),
+  );
+}
+
+function isUnusablePrintfulStatus(status: string | undefined) {
+  return ['canceled', 'cancelled', 'failed'].includes(status || '');
 }
 
 export function printfulExternalId(
@@ -100,6 +132,19 @@ export function printfulExternalId(
   if (!externalId || externalId.length > 32) {
     throw new PermanentFulfillmentError(
       'Printful external order ID must be a non-empty public reference of at most 32 characters',
+    );
+  }
+  return externalId;
+}
+
+export function printfulRecoveryExternalId(
+  order: Pick<Order, 'publicReference' | 'retryCount'>,
+) {
+  const attempt = Math.max(1, order.retryCount || 0);
+  const externalId = `${printfulExternalId(order)}-R${attempt}`;
+  if (externalId.length > 32) {
+    throw new PermanentFulfillmentError(
+      'Printful recovery order ID must be at most 32 characters',
     );
   }
   return externalId;
@@ -177,7 +222,10 @@ async function printfulRequest(
       error instanceof Error ? error.message : 'Printful configuration is incomplete',
     );
   }
-  const maxRetries = Math.max(0, Number(env.PRINTFUL_MAX_RETRIES) || 3);
+  const configuredRetries = Math.max(0, Number(env.PRINTFUL_MAX_RETRIES) || 3);
+  // Never replay an ambiguous create in the same request. Inngest retries the
+  // whole create-or-find step, which first looks up the stable external ID.
+  const maxRetries = method === 'POST' ? 0 : configuredRetries;
   const baseDelay = Math.max(100, Number(env.PRINTFUL_RETRY_BASE_MS) || 500);
 
   for (let attempt = 0; attempt <= maxRetries; attempt += 1) {
@@ -194,11 +242,11 @@ async function printfulRequest(
       });
       if (response.ok) return response.json() as Promise<PrintfulOrderResponse>;
 
-      const text = (await response.text()).slice(0, 1000);
+      await response.body?.cancel();
       const retriable = response.status === 429 || response.status >= 500;
       if (!retriable || attempt === maxRetries) {
         throw new PrintfulRequestError(
-          `Printful request failed (${response.status}): ${text}`,
+          `Printful request failed (${response.status})`,
           response.status,
           retriable,
         );
@@ -211,7 +259,7 @@ async function printfulRequest(
       if (error instanceof PrintfulRequestError) throw error;
       if (attempt === maxRetries) {
         throw new PrintfulRequestError(
-          `Printful network request failed: ${error instanceof Error ? error.message : String(error)}`,
+          `Printful network request failed (${error instanceof Error ? error.name : 'unknown error'})`,
           0,
           true,
         );
@@ -238,13 +286,23 @@ function printfulRecipient(session: Stripe.Checkout.Session) {
       'Stripe checkout session is missing a complete shipping address',
     );
   }
+  const countryCode = address.country.toUpperCase();
+  if (!['CH', 'US'].includes(countryCode)) {
+    throw new PermanentFulfillmentError('Shipping country is not supported');
+  }
+  const stateCode = address.state?.trim().toUpperCase() || '';
+  if (countryCode === 'US' && !/^[A-Z]{2}$/.test(stateCode)) {
+    throw new PermanentFulfillmentError(
+      'United States shipping requires a two-letter state code',
+    );
+  }
   return {
     name: shipping?.name || session.customer_details?.name || 'Codex Merch Customer',
     address1: address.line1,
     address2: address.line2 || '',
     city: address.city,
-    state_code: address.state || '',
-    country_code: address.country,
+    state_code: stateCode,
+    country_code: countryCode,
     zip: address.postal_code,
     email: session.customer_details?.email || '',
     phone: session.customer_details?.phone || '',

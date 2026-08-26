@@ -1,6 +1,9 @@
 import {Link} from 'react-router';
 import type {Route} from './+types/how-it-works';
-import {useJurySales, useStorefrontMode} from '~/lib/storefront-mode';
+import {
+  useCheckoutAvailability,
+  useStorefrontMode,
+} from '~/lib/storefront-mode';
 
 export const meta: Route.MetaFunction = () => [
   {title: 'Codex Merch | How it works'},
@@ -41,7 +44,7 @@ const pipeline = [
   {
     verb: 'Release',
     title: 'Stop safely—or ship',
-    body: 'The judged path stops at a non-purchasable Vercel Preview. A production run needs separate human authority before provider sync, publication, checkout, and fulfillment can open.',
+    body: 'A preview run stops before payment or fulfillment. A production run opens only after separate human approval, signed catalog checks, Stripe configuration, and provider readiness all pass.',
     output: 'Preview or gated product',
   },
 ] as const;
@@ -123,7 +126,7 @@ const opportunities = [
 
 export default function HowItWorks() {
   const storefrontMode = useStorefrontMode();
-  const jurySales = useJurySales();
+  const checkout = useCheckoutAvailability();
   const preview = storefrontMode === 'preview';
 
   return (
@@ -162,17 +165,17 @@ export default function HowItWorks() {
             <p>
               {preview
                 ? 'Explore the products and the complete creative proof. Checkout, provider mutation, and production orders are disabled.'
-                : jurySales.enabled
-                  ? 'The free judge demo remains open. Optional real checkout is time-limited, access-code protected, and reserved exclusively for OpenAI Build Week judges.'
-                  : 'Commerce is fail-closed because the jury-only sales window is closed or not fully configured.'}
+                : checkout.enabled
+                  ? 'Secure live payment runs through Stripe. Paid orders are verified by signed webhooks, stored durably, and handed to the fulfillment workflow for a final production review.'
+                  : 'Commerce is fail-closed because checkout is disabled or not fully configured.'}
             </p>
           </div>
         </div>
         <span>
           {preview
             ? 'No payment · No order'
-            : jurySales.enabled
-              ? 'Jury code · Real order'
+            : checkout.enabled
+              ? 'Live payment · Real order'
               : 'Commerce · Closed'}
         </span>
       </section>
@@ -313,23 +316,17 @@ export default function HowItWorks() {
           </section>
           <section>
             <span>
-              {jurySales.enabled
-                ? 'Now / Jury-only pilot'
+              {checkout.enabled
+                ? 'Now / Live storefront'
                 : 'Later / Explicit authority'}
             </span>
             <h3>Production release</h3>
             <p>
-              {jurySales.enabled
-                ? 'Optional real purchases are reserved for OpenAI Build Week judges behind a private access code. This is fan-made, unofficial merchandise; browsing and evaluation never require payment.'
+              {checkout.enabled
+                ? 'Real purchases use Stripe Checkout, verified webhooks, durable order state, and an idempotent Printful draft for manual production review. This is fan-made, unofficial merchandise.'
                 : 'A live run adds immutable deployment checks, provider assets, idempotent Printful sync, publication, Stripe, Neon, and Inngest. Every external mutation remains fail-closed by default.'}
             </p>
-            <a
-              href="https://github.com/self-tech-labs/codex-merch"
-              rel="noreferrer"
-              target="_blank"
-            >
-              Inspect the source repository
-            </a>
+            <Link to="/policies/terms">Review the independent-shop terms</Link>
           </section>
         </div>
       </section>

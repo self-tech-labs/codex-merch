@@ -145,6 +145,14 @@ test('required artifacts cover weekly runtime, prompts, schemas, fixtures, right
     true,
   );
   assert.equal(BUILD_WEEK_PREVIEW_FILES.includes('app/lib/fulfillment.server.ts'), true);
+  for (const retiredFile of [
+    'app/lib/jury-access.server.ts',
+    'app/lib/jury-access.test.ts',
+  ]) {
+    assert.equal(BUILD_WEEK_PREVIEW_FILES.includes(retiredFile), true, retiredFile);
+    assert.equal(REQUIRED_BUILD_WEEK_DELTA_FILES.includes(retiredFile), true, retiredFile);
+    assert.equal(REQUIRED_TRACKED_FILES.includes(retiredFile), false, retiredFile);
+  }
   assert.equal(
     BUILD_WEEK_PREVIEW_FILES.includes('app/routes/api.stripe.webhook.ts'),
     true,
@@ -374,6 +382,7 @@ test('configuration report is explicitly presence-only and covers site, approval
     publicHttpsSite: false,
     deployment: false,
     stripe: false,
+    stripeLiveMode: false,
     database: false,
     inngest: false,
     printful: false,
@@ -390,11 +399,12 @@ test('configuration report is explicitly presence-only and covers site, approval
     X_BEARER_TOKEN: 'x-secret-value',
     PUBLIC_SITE_URL: 'https://shop.example',
     MERCH_DEPLOY_PROVIDER: 'vercel',
-    MERCH_VERCEL_SCOPE: 'ritsl',
+    MERCH_VERCEL_SCOPE: 'merchant-team',
     MERCH_VERCEL_PROJECT_ID: 'prj_Example123',
     VERCEL_TOKEN: 'vercel-secret-value',
     STRIPE_SECRET_KEY: 'stripe-secret-value',
     STRIPE_WEBHOOK_SECRET: 'webhook-secret-value',
+    STRIPE_EXPECTED_MODE: 'live',
     DATABASE_URL: 'postgres-secret-value',
     INNGEST_EVENT_KEY: 'inngest-event-secret-value',
     INNGEST_SIGNING_KEY: 'inngest-signing-secret-value',
@@ -403,15 +413,12 @@ test('configuration report is explicitly presence-only and covers site, approval
     PRINTFUL_AUTO_CONFIRM: 'false',
     MERCH_WEEKLY_RELEASE_ENABLED: 'true',
     CHECKOUT_ENABLED: 'true',
-    JURY_SALES_ENABLED: 'true',
-    JURY_ACCESS_CODE: ['jury', 'secret', 'value'].join('-'),
-    JURY_SALES_END_AT: '2026-08-06T00:00:00Z',
     MERCH_PILOT_APPROVED: 'true',
-    MERCH_EXPANSION_APPROVED: 'true',
+    MERCH_EXPANSION_APPROVED: 'false',
     STOREFRONT_LEGAL_APPROVED: 'true',
     STOREFRONT_TAX_SHIPPING_APPROVED: 'true',
-    STOREFRONT_CONTACT_EMAIL: 'elliot@ritsl.com',
-    STOREFRONT_POLICY_VERSION: '2026-07-21',
+    STOREFRONT_CONTACT_EMAIL: 'merchant@example.com',
+    STOREFRONT_POLICY_VERSION: '2026-08-26',
     STRIPE_FLAT_SHIPPING_AMOUNT: '910',
     STRIPE_ALLOWED_SHIPPING_COUNTRIES: 'CH,US',
     STRIPE_AUTOMATIC_TAX: 'false',
@@ -420,12 +427,28 @@ test('configuration report is explicitly presence-only and covers site, approval
   assert.equal(Object.values(report.configurationPresence).every(Boolean), true);
   const serialized = JSON.stringify(report);
   for (const secret of Object.values(configured)) {
-    if (['false', 'true', 'gpt-5.6', '910', 'CH,US', '2026-07-21'].includes(secret)) continue;
+    if (['false', 'true', 'live', 'gpt-5.6', '910', 'CH,US', '2026-08-26'].includes(secret)) continue;
     assert.equal(serialized.includes(secret), false);
   }
 
   assert.equal(
     configurationPresence({...configured, OPENAI_TEXT_MODEL: 'gpt-4.1'}).openai,
+    false,
+  );
+  assert.equal(
+    configurationPresence({...configured, STRIPE_EXPECTED_MODE: 'test'}).stripeLiveMode,
+    false,
+  );
+  assert.equal(
+    configurationPresence({...configured, CHECKOUT_ENABLED: 'false'}).commerceApprovals,
+    false,
+  );
+  assert.equal(
+    configurationPresence({...configured, STOREFRONT_CONTACT_EMAIL: ''}).merchantPolicies,
+    false,
+  );
+  assert.equal(
+    configurationPresence({...configured, STOREFRONT_POLICY_VERSION: '2026-07-21'}).merchantPolicies,
     false,
   );
 });

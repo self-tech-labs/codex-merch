@@ -55,6 +55,11 @@ export const BUILD_WEEK_PREVIEW_FILES = [
   'merch/products.json',
 ];
 
+const RETIRED_BUILD_WEEK_PREVIEW_FILES = new Set([
+  'app/lib/jury-access.server.ts',
+  'app/lib/jury-access.test.ts',
+]);
+
 export const SUBMISSION_DOCUMENT_FILES = [
   'README.md',
   'docs/build-week/README.md',
@@ -69,7 +74,9 @@ export const SUBMISSION_DOCUMENT_FILES = [
 ];
 
 export const CORE_WEEKLY_FILES = [
-  ...BUILD_WEEK_PREVIEW_FILES,
+  ...BUILD_WEEK_PREVIEW_FILES.filter(
+    (file) => !RETIRED_BUILD_WEEK_PREVIEW_FILES.has(file),
+  ),
   'app/lib/merch.ts',
   'app/lib/weekly-visibility.test.ts',
   'fixtures/openai/weekly-happy-path.synthetic.json',
@@ -508,8 +515,10 @@ export function configurationPresence(env = {}) {
   const disabled = (key) => String(env[key] || '').trim().toLowerCase() === 'false';
   const gpt56Model = !present('OPENAI_TEXT_MODEL') || env.OPENAI_TEXT_MODEL.trim() === 'gpt-5.6';
   const merchantPolicies =
-    env.STOREFRONT_CONTACT_EMAIL?.trim() === 'elliot@ritsl.com' &&
-    env.STOREFRONT_POLICY_VERSION?.trim() === '2026-07-21';
+    present('STOREFRONT_CONTACT_EMAIL') &&
+    env.STOREFRONT_POLICY_VERSION?.trim() === '2026-08-26';
+  const stripeLiveMode =
+    String(env.STRIPE_EXPECTED_MODE || '').trim().toLowerCase() === 'live';
   const shipping =
     present('STRIPE_SHIPPING_RATE_ID') !== present('STRIPE_FLAT_SHIPPING_AMOUNT') &&
     env.STRIPE_ALLOWED_SHIPPING_COUNTRIES?.trim() === 'CH,US' &&
@@ -532,6 +541,7 @@ export function configurationPresence(env = {}) {
       present('PUBLIC_SITE_URL') && /^https:\/\//i.test(env.PUBLIC_SITE_URL.trim()),
     deployment,
     stripe: present('STRIPE_SECRET_KEY') && present('STRIPE_WEBHOOK_SECRET'),
+    stripeLiveMode,
     database: present('DATABASE_URL'),
     inngest: present('INNGEST_EVENT_KEY') && present('INNGEST_SIGNING_KEY'),
     printful: present('PRINTFUL_TOKEN') && present('PRINTFUL_STORE_ID'),
@@ -539,11 +549,7 @@ export function configurationPresence(env = {}) {
     releaseEnabled: enabled('MERCH_WEEKLY_RELEASE_ENABLED'),
     commerceApprovals:
       enabled('CHECKOUT_ENABLED') &&
-      enabled('JURY_SALES_ENABLED') &&
-      present('JURY_ACCESS_CODE') &&
-      present('JURY_SALES_END_AT') &&
       enabled('MERCH_PILOT_APPROVED') &&
-      enabled('MERCH_EXPANSION_APPROVED') &&
       enabled('STOREFRONT_LEGAL_APPROVED') &&
       enabled('STOREFRONT_TAX_SHIPPING_APPROVED'),
     merchantPolicies,

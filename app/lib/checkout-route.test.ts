@@ -24,6 +24,27 @@ async function responseFrom(promise: Promise<unknown>) {
   }
 }
 
+function streamedRequest(
+  url: string,
+  chunks: string[],
+  headers: Record<string, string>,
+) {
+  const encoder = new TextEncoder();
+  let index = 0;
+  return new Request(url, {
+    method: 'POST',
+    headers,
+    body: new ReadableStream({
+      pull(controller) {
+        const chunk = chunks[index++];
+        if (chunk === undefined) controller.close();
+        else controller.enqueue(encoder.encode(chunk));
+      },
+    }),
+    duplex: 'half',
+  } as RequestInit);
+}
+
 test('checkout route rejects missing origins and unsupported bodies', async () => {
   const missingOrigin = request('cart=[]');
   missingOrigin.headers.delete('origin');
@@ -46,47 +67,34 @@ test('checkout route rejects malformed and oversized carts before side effects',
   assert.match(await termsResponse.text(), /merchant terms/);
 
   const acceptedMalformed = request(
-    'cart=not-json&merchantTermsAccepted=2026-07-21&juryAccessCode=unit-test-jury-access',
+    'cart=not-json&merchantTermsAccepted=2026-08-26',
   );
   assert.equal(
     (
       await responseFrom(
         action({
-          context: {
-            env: {
-              JURY_SALES_ENABLED: 'true',
-              JURY_ACCESS_CODE: ['unit', 'test', 'jury', 'access'].join('-'),
-              JURY_SALES_END_AT: '2099-08-06T00:00:00Z',
-            },
-          },
           request: acceptedMalformed,
         } as any),
       )
     ).status,
     400,
   );
-
-  const denied = request(
-    'cart=%5B%5D&merchantTermsAccepted=2026-07-21&juryAccessCode=wrong',
-  );
-  const deniedResponse = await responseFrom(
-    action({
-      context: {
-        env: {
-          JURY_SALES_ENABLED: 'true',
-          JURY_ACCESS_CODE: ['unit', 'test', 'jury', 'access'].join('-'),
-          JURY_SALES_END_AT: '2099-08-06T00:00:00Z',
-        },
-      },
-      request: denied,
-    } as any),
-  );
-  assert.equal(deniedResponse.status, 403);
-  assert.equal(await deniedResponse.text(), 'Jury purchase access could not be verified');
-
   const oversized = request(`cart=${'x'.repeat(33_000)}`);
   assert.equal(
     (await responseFrom(action({request: oversized} as any))).status,
+    413,
+  );
+
+  const chunked = streamedRequest(
+    'https://shop.example/api/checkout',
+    ['cart=', 'x'.repeat(20_000), 'x'.repeat(20_000)],
+    {
+      'content-type': 'application/x-www-form-urlencoded',
+      origin: 'https://shop.example',
+    },
+  );
+  assert.equal(
+    (await responseFrom(action({request: chunked} as any))).status,
     413,
   );
 });
