@@ -10,7 +10,6 @@ import {
   REQUIRED_TRACKED_FILES,
   REQUIRED_X_FIXTURE,
   SUBMISSION_DOCUMENT_FILES,
-  buildCommitHistoryArgs,
   buildSubmissionReport,
   commitsWithinBuildWeek,
   configurationPresence,
@@ -28,36 +27,46 @@ import {
   runtimeGpt56Contract,
   scanTrackedSecrets,
   validateThirtyPostFixture,
+  walkCommitHistory,
 } from './submission-verify.mjs';
 
-test('provenance walks complete history before filtering commit timestamps', () => {
-  const args = buildCommitHistoryArgs('HEAD', ['README.md']);
-  assert.deepEqual(args, [
-    'rev-list',
-    '--timestamp',
-    'HEAD',
-    '--',
-    'README.md',
-  ]);
-  assert.equal(args.some((argument) => argument.startsWith('--since')), false);
-  assert.equal(args.some((argument) => argument.startsWith('--until')), false);
-
-  const beforeWindow = Math.floor(Date.parse(BUILD_WEEK_PROVENANCE_START) / 1_000) - 1;
-  const windowStart = Math.floor(Date.parse(BUILD_WEEK_PROVENANCE_START) / 1_000);
+test('provenance walks commit objects before filtering timestamps', () => {
+  const beforeWindow =
+    Math.floor(Date.parse(BUILD_WEEK_PROVENANCE_START) / 1_000) - 1;
+  const windowStart = Math.floor(
+    Date.parse(BUILD_WEEK_PROVENANCE_START) / 1_000,
+  );
   const windowEnd = Math.floor(Date.parse(BUILD_WEEK_PROVENANCE_END) / 1_000);
-  const afterWindow = Math.floor(Date.parse(BUILD_WEEK_PROVENANCE_END) / 1_000) + 1;
+  const afterWindow =
+    Math.floor(Date.parse(BUILD_WEEK_PROVENANCE_END) / 1_000) + 1;
   const includedAtStart = 'a'.repeat(40);
   const includedAtEnd = 'b'.repeat(40);
+  const afterSha = 'c'.repeat(40);
+  const beforeSha = 'd'.repeat(40);
+  const commits = new Map([
+    [afterSha, {committedAtSeconds: afterWindow, parents: [includedAtEnd]}],
+    [
+      includedAtEnd,
+      {committedAtSeconds: windowEnd, parents: [includedAtStart]},
+    ],
+    [includedAtStart, {committedAtSeconds: windowStart, parents: [beforeSha]}],
+    [beforeSha, {committedAtSeconds: beforeWindow, parents: []}],
+  ]);
+  const history = walkCommitHistory({
+    descendantSha: afterSha,
+    readCommit: (sha) => commits.get(sha),
+  });
 
   assert.deepEqual(
-    commitsWithinBuildWeek([
-      `${afterWindow} ${'c'.repeat(40)}`,
-      `${windowEnd} ${includedAtEnd}`,
-      `${windowStart} ${includedAtStart}`,
-      `${beforeWindow} ${'d'.repeat(40)}`,
-      'malformed record',
-    ]),
+    commitsWithinBuildWeek(history),
     [includedAtEnd, includedAtStart],
+  );
+  assert.deepEqual(
+    walkCommitHistory({
+      descendantSha: afterSha,
+      readCommit: () => null,
+    }),
+    [],
   );
 });
 
