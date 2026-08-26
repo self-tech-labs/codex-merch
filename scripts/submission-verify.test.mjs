@@ -12,6 +12,7 @@ import {
   SUBMISSION_DOCUMENT_FILES,
   buildSubmissionReport,
   configurationPresence,
+  evaluateCiHeadBinding,
   evaluateGitProvenance,
   evaluatePackageScripts,
   evaluatePushedHead,
@@ -86,6 +87,8 @@ function validGitFacts(overrides = {}) {
     upstream: 'origin/codex/build-week-weekly-studio',
     upstreamSha: headSha,
     ciHeadSha: null,
+    ciVerifiedHeadSha: null,
+    ciHeadBinding: null,
     ...overrides,
   };
 }
@@ -320,19 +323,84 @@ test('provenance requires meaningful core delta, baseline ancestry, and annotate
   );
 });
 
-test('pushed HEAD accepts matching upstream or CI SHA and rejects local-only commits', () => {
+test('pushed HEAD accepts matching upstream or a bound CI head and rejects local-only commits', () => {
   assert.equal(evaluatePushedHead(validGitFacts()).ok, true);
+  const mergeSha = 'b'.repeat(40);
   assert.equal(
     evaluatePushedHead(
-      validGitFacts({upstream: null, upstreamSha: null, ciHeadSha: 'a'.repeat(40)}),
+      validGitFacts({
+        upstream: null,
+        upstreamSha: null,
+        ciHeadSha: mergeSha,
+        ciVerifiedHeadSha: 'a'.repeat(40),
+        ciHeadBinding: 'pull-request-merge-second-parent',
+      }),
     ).ok,
     true,
   );
   assert.equal(
     evaluatePushedHead(
-      validGitFacts({upstreamSha: 'b'.repeat(40), ciHeadSha: null}),
+      validGitFacts({
+        upstream: null,
+        upstreamSha: null,
+        ciHeadSha: mergeSha,
+        ciVerifiedHeadSha: null,
+      }),
     ).ok,
     false,
+  );
+});
+
+test('CI head binding accepts only the exact PR merge parent or push checkout', () => {
+  const baseSha = 'a'.repeat(40);
+  const prHeadSha = 'b'.repeat(40);
+  const mergeSha = 'c'.repeat(40);
+  const arbitrarySha = 'd'.repeat(40);
+  const common = {
+    githubActions: 'true',
+    checkoutSha: mergeSha,
+    checkoutParents: [baseSha, prHeadSha],
+    ciHeadSha: mergeSha,
+  };
+
+  assert.deepEqual(
+    evaluateCiHeadBinding({
+      ...common,
+      eventName: 'pull_request',
+      requestedHead: prHeadSha,
+    }),
+    {
+      verifiedHeadSha: prHeadSha,
+      binding: 'pull-request-merge-second-parent',
+    },
+  );
+  assert.deepEqual(
+    evaluateCiHeadBinding({
+      ...common,
+      eventName: 'pull_request',
+      requestedHead: arbitrarySha,
+    }),
+    {verifiedHeadSha: null, binding: null},
+  );
+  assert.deepEqual(
+    evaluateCiHeadBinding({
+      githubActions: 'true',
+      eventName: 'push',
+      checkoutSha: prHeadSha,
+      checkoutParents: [baseSha],
+      requestedHead: prHeadSha,
+      ciHeadSha: prHeadSha,
+    }),
+    {verifiedHeadSha: prHeadSha, binding: 'push-checkout'},
+  );
+  assert.deepEqual(
+    evaluateCiHeadBinding({
+      ...common,
+      eventName: 'pull_request',
+      requestedHead: prHeadSha,
+      ciHeadSha: arbitrarySha,
+    }),
+    {verifiedHeadSha: null, binding: null},
   );
 });
 

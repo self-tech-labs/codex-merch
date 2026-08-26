@@ -500,18 +500,54 @@ export function evaluatePushedHead(gitFacts = {}) {
       gitFacts.upstreamSha === gitFacts.headSha,
   );
   const ciRemoteCommitMatches = Boolean(
-    gitFacts.headSha && gitFacts.ciHeadSha === gitFacts.headSha,
+    gitFacts.headSha && gitFacts.ciVerifiedHeadSha === gitFacts.headSha,
   );
   return {
     ok: localUpstreamMatches || ciRemoteCommitMatches,
     headSha: gitFacts.headSha || null,
     upstream: gitFacts.upstream || null,
+    ciHeadSha: gitFacts.ciHeadSha || null,
+    ciHeadBinding: gitFacts.ciHeadBinding || null,
     evidence: localUpstreamMatches
       ? 'local-upstream-ref'
       : ciRemoteCommitMatches
         ? 'ci-remote-commit'
         : null,
   };
+}
+
+export function evaluateCiHeadBinding({
+  githubActions,
+  eventName,
+  checkoutSha,
+  checkoutParents = [],
+  requestedHead,
+  ciHeadSha,
+} = {}) {
+  const trustedCheckout =
+    githubActions === 'true' &&
+    Boolean(checkoutSha) &&
+    checkoutSha === ciHeadSha;
+  if (!trustedCheckout || !requestedHead) {
+    return {verifiedHeadSha: null, binding: null};
+  }
+
+  if (
+    eventName === 'pull_request' &&
+    checkoutParents.length === 2 &&
+    requestedHead === checkoutParents[1]
+  ) {
+    return {
+      verifiedHeadSha: requestedHead,
+      binding: 'pull-request-merge-second-parent',
+    };
+  }
+
+  if (eventName === 'push' && requestedHead === checkoutSha) {
+    return {verifiedHeadSha: requestedHead, binding: 'push-checkout'};
+  }
+
+  return {verifiedHeadSha: null, binding: null};
 }
 
 export function configurationPresence(env = {}) {
@@ -728,22 +764,58 @@ function gitSucceeds(rootDir, args) {
 }
 
 export function inspectGitFacts(rootDir, processEnvironment = process.env) {
-  const headSha = gitOptional(rootDir, ['rev-parse', 'HEAD']);
-  const upstream = gitOptional(rootDir, [
+  const checkoutSha = gitOptional(rootDir, ['rev-parse', 'HEAD']);
+  const checkoutParents = (
+    gitOptional(rootDir, ['show', '-s', '--format=%P', 'HEAD']) || ''
+  )
+    .split(/\s+/)
+    .filter(Boolean);
+  const requestedHeadValue = String(
+    processEnvironment.SUBMISSION_VERIFY_HEAD_SHA || '',
+  ).trim();
+  const requestedHead = /^[0-9a-f]{40}$/i.test(requestedHeadValue)
+    ? requestedHeadValue
+    : null;
+  const verificationRef = requestedHeadValue
+    ? requestedHead || 'refs/invalid-submission-verification-head'
+    : 'HEAD';
+  const headSha = gitOptional(rootDir, [
     'rev-parse',
-    '--abbrev-ref',
-    '--symbolic-full-name',
-    '@{upstream}',
+    '--verify',
+    `${verificationRef}^{commit}`,
   ]);
+  const upstream = requestedHead
+    ? null
+    : gitOptional(rootDir, [
+        'rev-parse',
+        '--abbrev-ref',
+        '--symbolic-full-name',
+        '@{upstream}',
+      ]);
   const baselineTagRef = `refs/tags/${BUILD_WEEK_BASELINE_TAG}`;
   const baselineTagSha = gitOptional(rootDir, [
     'rev-parse',
     `${baselineTagRef}^{commit}`,
   ]);
+  const ciHeadSha =
+    processEnvironment.GITHUB_SHA || processEnvironment.CI_COMMIT_SHA || null;
+  const ciHeadBinding = evaluateCiHeadBinding({
+    githubActions: processEnvironment.GITHUB_ACTIONS,
+    eventName: processEnvironment.GITHUB_EVENT_NAME,
+    checkoutSha,
+    checkoutParents,
+    requestedHead,
+    ciHeadSha,
+  });
 
   return {
     headSha,
-    headCommittedAt: gitOptional(rootDir, ['show', '-s', '--format=%cI', 'HEAD']),
+    headCommittedAt: gitOptional(rootDir, [
+      'show',
+      '-s',
+      '--format=%cI',
+      verificationRef,
+    ]),
     workingTreeClean:
       git(rootDir, ['status', '--porcelain=v1', '--untracked-files=all']).trim()
         .length === 0,
@@ -752,12 +824,14 @@ export function inspectGitFacts(rootDir, processEnvironment = process.env) {
       `--since=${BUILD_WEEK_PROVENANCE_START}`,
       `--until=${BUILD_WEEK_PROVENANCE_END}`,
       '--format=%H',
+      verificationRef,
     ]),
     coreCommitsInWindow: gitLines(rootDir, [
       'log',
       `--since=${BUILD_WEEK_PROVENANCE_START}`,
       `--until=${BUILD_WEEK_PROVENANCE_END}`,
       '--format=%H',
+      verificationRef,
       '--',
       ...REQUIRED_BUILD_WEEK_DELTA_FILES,
     ]),
@@ -769,7 +843,7 @@ export function inspectGitFacts(rootDir, processEnvironment = process.env) {
       ? gitLines(rootDir, [
           'diff',
           '--name-only',
-          `${BUILD_WEEK_BASELINE_COMMIT}..HEAD`,
+          `${BUILD_WEEK_BASELINE_COMMIT}..${verificationRef}`,
           '--',
         ])
       : [],
@@ -777,7 +851,7 @@ export function inspectGitFacts(rootDir, processEnvironment = process.env) {
       'merge-base',
       '--is-ancestor',
       BUILD_WEEK_BASELINE_COMMIT,
-      'HEAD',
+      verificationRef,
     ]),
     baselineTagSha,
     baselineTagAnnotated:
@@ -785,8 +859,9 @@ export function inspectGitFacts(rootDir, processEnvironment = process.env) {
       gitOptional(rootDir, ['cat-file', '-t', baselineTagRef]) === 'tag',
     upstream,
     upstreamSha: upstream ? gitOptional(rootDir, ['rev-parse', upstream]) : null,
-    ciHeadSha:
-      processEnvironment.GITHUB_SHA || processEnvironment.CI_COMMIT_SHA || null,
+    ciHeadSha,
+    ciVerifiedHeadSha: ciHeadBinding.verifiedHeadSha,
+    ciHeadBinding: ciHeadBinding.binding,
   };
 }
 
