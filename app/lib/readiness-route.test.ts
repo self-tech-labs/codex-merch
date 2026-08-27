@@ -1,9 +1,11 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import {merchantCatalog} from './merchant-catalog';
 import {merchProducts} from './merch';
 import {createReadinessLoader} from './readiness-route.server';
 import {
   assertDatabaseReadinessRow,
+  assertPrintfulProductReadiness,
   probeCheckoutDependencies,
 } from './readiness.server';
 import {loader} from '~/routes/api.readiness';
@@ -59,22 +61,59 @@ test('database readiness requires bigint Printful sync IDs', () => {
   );
 });
 
-test('readiness route proves one deployed variant without creating checkout', async () => {
-  const product = merchProducts.find(
-    (candidate) => candidate.slug === 'codex-rate-reset-long-sleeve',
-  )!;
-  const previousStatus = product.workflow.status;
-  product.workflow.status = 'published';
-  try {
-    const liveLoader = createReadinessLoader({
-      probeDependencies: async () => ({
-        databaseReady: true,
-        printfulReady: true,
-        stripeReady: true,
-        stripeWebhookReady: true,
-        paymentMode: 'test' as const,
-      }),
-    });
+test('Printful readiness requires exact active signed variant mappings', () => {
+  const approvedProduct = merchantCatalog.products[1];
+  assert.ok(approvedProduct);
+  const response = {
+    result: {
+      sync_product: {
+        id: approvedProduct.printfulProductId,
+        is_ignored: false,
+      },
+      sync_variants: approvedProduct.printfulVariants.map((variant) => ({
+        id: variant.syncVariantId,
+        variant_id: variant.catalogVariantId,
+        synced: true,
+        is_ignored: false,
+        availability_status: 'active',
+      })),
+    },
+  };
+  assert.doesNotThrow(() =>
+    assertPrintfulProductReadiness(approvedProduct, response),
+  );
+
+  const remapped = structuredClone(response);
+  remapped.result.sync_variants[0].variant_id += 1;
+  assert.throws(
+    () => assertPrintfulProductReadiness(approvedProduct, remapped),
+    /variant mapping does not match sign-off/,
+  );
+
+  const unavailable = structuredClone(response);
+  unavailable.result.sync_variants[0].availability_status = 'out_of_stock';
+  assert.throws(
+    () => assertPrintfulProductReadiness(approvedProduct, unavailable),
+    /variant is unavailable or unconfigured/,
+  );
+});
+
+test('readiness route proves every signed product without creating checkout', async () => {
+  const liveLoader = createReadinessLoader({
+    probeDependencies: async () => ({
+      databaseReady: true,
+      printfulReady: true,
+      stripeReady: true,
+      stripeWebhookReady: true,
+      paymentMode: 'test' as const,
+    }),
+  });
+
+  for (const approvedProduct of merchantCatalog.products) {
+    const product = merchProducts.find(
+      (candidate) => candidate.slug === approvedProduct.productSlug,
+    );
+    assert.ok(product, `Missing signed product ${approvedProduct.productSlug}`);
     const request = new Request(
       `https://shop.example/api/readiness?product=${encodeURIComponent(product.slug)}`,
     );
@@ -104,8 +143,6 @@ test('readiness route proves one deployed variant without creating checkout', as
       stripeWebhookReady: true,
       printfulAutoConfirm: false,
     });
-  } finally {
-    product.workflow.status = previousStatus;
   }
 });
 

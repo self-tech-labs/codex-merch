@@ -460,6 +460,81 @@ export function isTimestampWithinBuildWeek(timestamp) {
   );
 }
 
+export function commitsWithinBuildWeek(records = []) {
+  const startSeconds = Date.parse(BUILD_WEEK_PROVENANCE_START) / 1_000;
+  const endSeconds = Date.parse(BUILD_WEEK_PROVENANCE_END) / 1_000;
+
+  return records.flatMap((record) => {
+    const sha = String(record?.sha || '');
+    const committedAtSeconds = Number(record?.committedAtSeconds);
+    if (!/^[0-9a-f]{40}$/i.test(sha)) return [];
+    return committedAtSeconds >= startSeconds && committedAtSeconds <= endSeconds
+      ? [sha]
+      : [];
+  });
+}
+
+export function walkCommitHistory({
+  descendantSha,
+  readCommit,
+  maxCommits = 512,
+  maxWorkItems = 1_024,
+  maxEdges = 1_024,
+  maxParentsPerCommit = 16,
+  maxDurationMs = 5_000,
+  now = Date.now,
+} = {}) {
+  const isSha = (value) => /^[0-9a-f]{40}$/i.test(String(value || ''));
+  if (!isSha(descendantSha) || typeof readCommit !== 'function') return [];
+
+  const startedAt = now();
+  const pending = [descendantSha];
+  const visited = new Set();
+  const commits = [];
+  let workItems = 0;
+  let edges = 0;
+
+  while (pending.length > 0) {
+    workItems += 1;
+    if (workItems > maxWorkItems || now() - startedAt > maxDurationMs) return [];
+
+    const sha = pending.pop();
+    if (visited.has(sha)) continue;
+    visited.add(sha);
+    if (visited.size > maxCommits) return [];
+
+    let record;
+    try {
+      record = readCommit(sha);
+    } catch {
+      return [];
+    }
+    if (now() - startedAt > maxDurationMs) return [];
+
+    const parents = record?.parents;
+    const committedAtSeconds = Number(record?.committedAtSeconds);
+    if (
+      !Array.isArray(parents) ||
+      parents.length > maxParentsPerCommit ||
+      parents.some((parent) => !isSha(parent)) ||
+      !Number.isSafeInteger(committedAtSeconds) ||
+      committedAtSeconds < 0
+    ) {
+      return [];
+    }
+
+    commits.push({sha, committedAtSeconds});
+    for (const parent of parents) {
+      edges += 1;
+      if (edges > maxEdges) return [];
+      if (!visited.has(parent)) pending.push(parent);
+    }
+    if (pending.length > maxWorkItems) return [];
+  }
+
+  return commits;
+}
+
 export function evaluateGitProvenance(gitFacts = {}) {
   const changed = new Set(gitFacts.changedSinceBaseline || []);
   const requiredDeltaFiles = REQUIRED_BUILD_WEEK_DELTA_FILES.map((file) => ({
@@ -823,7 +898,7 @@ function gitSucceeds(rootDir, args) {
   }
 }
 
-function readCommitParents(rootDir, sha) {
+function readCommitRecord(rootDir, sha) {
   const commit = gitOptional(
     rootDir,
     ['cat-file', '-p', `${sha}^{commit}`],
@@ -831,10 +906,21 @@ function readCommitParents(rootDir, sha) {
   );
   if (commit == null) return null;
   const header = commit.split(/\r?\n\r?\n/, 1)[0];
-  return header
-    .split(/\r?\n/)
-    .filter((line) => line.startsWith('parent '))
-    .map((line) => line.slice('parent '.length).trim());
+  const lines = header.split(/\r?\n/);
+  const committer = lines.find((line) => line.startsWith('committer '));
+  const timestampMatch = committer?.match(/\s(\d+)\s[+-]\d{4}$/);
+  if (!timestampMatch) return null;
+
+  return {
+    committedAtSeconds: Number(timestampMatch[1]),
+    parents: lines
+      .filter((line) => line.startsWith('parent '))
+      .map((line) => line.slice('parent '.length).trim()),
+  };
+}
+
+function readCommitParents(rootDir, sha) {
+  return readCommitRecord(rootDir, sha)?.parents ?? null;
 }
 
 export function inspectGitFacts(rootDir, processEnvironment = process.env) {
@@ -881,6 +967,25 @@ export function inspectGitFacts(rootDir, processEnvironment = process.env) {
     requestedHead,
     ciHeadSha,
   });
+  const commitHistory = walkCommitHistory({
+    descendantSha: headSha,
+    readCommit: (sha) => readCommitRecord(rootDir, sha),
+  });
+  const commitsInWindow = commitsWithinBuildWeek(commitHistory);
+  const coreCommitsInWindow = commitsInWindow.filter(
+    (sha) =>
+      gitLines(rootDir, [
+        'diff-tree',
+        '--root',
+        '-m',
+        '--no-commit-id',
+        '--name-only',
+        '-r',
+        sha,
+        '--',
+        ...REQUIRED_BUILD_WEEK_DELTA_FILES,
+      ]).length > 0,
+  );
 
   return {
     headSha,
@@ -893,22 +998,11 @@ export function inspectGitFacts(rootDir, processEnvironment = process.env) {
     workingTreeClean:
       git(rootDir, ['status', '--porcelain=v1', '--untracked-files=all']).trim()
         .length === 0,
-    commitsInWindow: gitLines(rootDir, [
-      'log',
-      `--since=${BUILD_WEEK_PROVENANCE_START}`,
-      `--until=${BUILD_WEEK_PROVENANCE_END}`,
-      '--format=%H',
-      verificationRef,
-    ]),
-    coreCommitsInWindow: gitLines(rootDir, [
-      'log',
-      `--since=${BUILD_WEEK_PROVENANCE_START}`,
-      `--until=${BUILD_WEEK_PROVENANCE_END}`,
-      '--format=%H',
-      verificationRef,
-      '--',
-      ...REQUIRED_BUILD_WEEK_DELTA_FILES,
-    ]),
+    // Read commit objects directly, then apply the event window. This avoids
+    // host-specific date pruning in Git revision walks above later maintenance
+    // merges while preserving strict timestamp and core-file checks.
+    commitsInWindow,
+    coreCommitsInWindow,
     changedSinceBaseline: gitSucceeds(rootDir, [
       'cat-file',
       '-e',

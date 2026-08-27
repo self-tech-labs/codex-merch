@@ -11,6 +11,7 @@ import {
   REQUIRED_X_FIXTURE,
   SUBMISSION_DOCUMENT_FILES,
   buildSubmissionReport,
+  commitsWithinBuildWeek,
   configurationPresence,
   evaluateCiHeadBinding,
   evaluateGitProvenance,
@@ -26,7 +27,48 @@ import {
   runtimeGpt56Contract,
   scanTrackedSecrets,
   validateThirtyPostFixture,
+  walkCommitHistory,
 } from './submission-verify.mjs';
+
+test('provenance walks commit objects before filtering timestamps', () => {
+  const beforeWindow =
+    Math.floor(Date.parse(BUILD_WEEK_PROVENANCE_START) / 1_000) - 1;
+  const windowStart = Math.floor(
+    Date.parse(BUILD_WEEK_PROVENANCE_START) / 1_000,
+  );
+  const windowEnd = Math.floor(Date.parse(BUILD_WEEK_PROVENANCE_END) / 1_000);
+  const afterWindow =
+    Math.floor(Date.parse(BUILD_WEEK_PROVENANCE_END) / 1_000) + 1;
+  const includedAtStart = 'a'.repeat(40);
+  const includedAtEnd = 'b'.repeat(40);
+  const afterSha = 'c'.repeat(40);
+  const beforeSha = 'd'.repeat(40);
+  const commits = new Map([
+    [afterSha, {committedAtSeconds: afterWindow, parents: [includedAtEnd]}],
+    [
+      includedAtEnd,
+      {committedAtSeconds: windowEnd, parents: [includedAtStart]},
+    ],
+    [includedAtStart, {committedAtSeconds: windowStart, parents: [beforeSha]}],
+    [beforeSha, {committedAtSeconds: beforeWindow, parents: []}],
+  ]);
+  const history = walkCommitHistory({
+    descendantSha: afterSha,
+    readCommit: (sha) => commits.get(sha),
+  });
+
+  assert.deepEqual(
+    commitsWithinBuildWeek(history),
+    [includedAtEnd, includedAtStart],
+  );
+  assert.deepEqual(
+    walkCommitHistory({
+      descendantSha: afterSha,
+      readCommit: () => null,
+    }),
+    [],
+  );
+});
 
 const validReadme = `
 # Weekly Signal Studio

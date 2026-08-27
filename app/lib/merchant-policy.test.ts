@@ -15,6 +15,20 @@ import {
   MERCHANT_POLICY_VERSION,
 } from './merchant-policy.shared';
 
+const expectedApprovedProductSlugs = [
+  'codex-rate-reset-long-sleeve',
+  'research-deployment-co-sweatshirt',
+  'terminal-ritual-sweatshirt',
+  'queue-weather-cotton-sweatshirt',
+  'solward-index-cotton-sweatshirt',
+  'field-clearing-cotton-sweatshirt',
+  'clean-slate-club-cotton-sweatshirt',
+  'parallel-noise-poster-cotton-sweatshirt',
+  'sun-break-victory-cotton-sweatshirt',
+  'tastemaxxing-cutline-cotton-sweatshirt',
+  'archive-monument-cotton-sweatshirt',
+];
+
 test('merchant policy identity and reviewed version stay explicit', () => {
   assert.equal(MERCHANT_POLICY_VERSION, '2026-08-26');
   assert.deepEqual(merchantIdentity, {
@@ -32,7 +46,7 @@ test('merchant policy identity and reviewed version stay explicit', () => {
 test('merchant contact email must be explicitly configured and valid', () => {
   assert.equal(isValidMerchantContactEmail('support@example.com'), true);
   assert.equal(isValidMerchantContactEmail('invalid'), false);
-  assert.equal(isValidMerchantContactEmail('elliot@ritsl.com'), false);
+  assert.equal(isValidMerchantContactEmail('elliot@ritsl.com'), true);
   assert.equal(
     isValidMerchantContactEmail('orders@self-tech-labs.example'),
     false,
@@ -47,12 +61,12 @@ test('merchant contact email must be explicitly configured and valid', () => {
     merchantContactEmail({
       STOREFRONT_CONTACT_EMAIL: 'elliot@ritsl.com',
     } as AppEnv),
-    null,
+    'elliot@ritsl.com',
   );
   assert.equal(merchantContactEmail({} as AppEnv), null);
 });
 
-test('display amounts convert centimes once and preserve the signed total', () => {
+test('display amounts convert centimes once and preserve the signed catalog', () => {
   assert.deepEqual(merchantDisplayAmounts(58), {
     shipping: 9.1,
     total: 67.1,
@@ -65,10 +79,21 @@ test('display amounts convert centimes once and preserve the signed total', () =
     'codex-rate-reset-long-sleeve',
   );
   assert.equal(merchantCatalog.products[0]?.printfulVariants.length, 3);
-  assert.equal(merchantCatalog.products.length, 1);
+  assert.deepEqual(
+    merchantCatalog.products.map((product) => product.productSlug),
+    expectedApprovedProductSlugs,
+  );
   assert.equal(
     new Set(merchantCatalog.products.map((product) => product.productSlug)).size,
-    1,
+    expectedApprovedProductSlugs.length,
+  );
+  assert.ok(
+    merchantCatalog.products.every(
+      (product) =>
+        Number.isInteger(product.printfulProductId) &&
+        product.printfulProductId > 0 &&
+        product.printfulVariants.length > 0,
+    ),
   );
 });
 

@@ -24,7 +24,7 @@ export function isValidMerchantContactEmail(value: string | undefined) {
   const email = value?.trim() || '';
   return (
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) &&
-    !/(?:ritsl|self[-_.]?tech[-_.]?labs)/i.test(email)
+    !/self[-_.]?tech[-_.]?labs/i.test(email)
   );
 }
 

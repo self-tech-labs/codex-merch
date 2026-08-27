@@ -59,10 +59,7 @@ test('preview catalog is browseable but cannot be purchased', async ({page}) => 
   await expect(
     page.getByRole('heading', {name: 'Solward Index Cotton Sweatshirt'}),
   ).toBeVisible();
-  await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
-    'content',
-    'noindex,nofollow',
-  );
+  await expect(page.locator('meta[name="robots"]')).toHaveCount(0);
   await expect(page.locator('.mockup-strip img').first()).toBeVisible();
   await expect(
     page.getByText(/This is not official OpenAI merchandise/i),
@@ -71,6 +68,40 @@ test('preview catalog is browseable but cannot be purchased', async ({page}) => 
 
   await page.goto('/cart');
   await expect(page.getByText(/checkout is disabled in this public build/i)).toBeVisible();
+});
+
+test('production catalog exposes all signed products and no previews', async ({
+  page,
+}) => {
+  test.skip(
+    process.env.STOREFRONT_MODE !== 'production',
+    'Runs in the dedicated production-catalog check.',
+  );
+  const signedProductSlugs = [
+    'codex-rate-reset-long-sleeve',
+    'research-deployment-co-sweatshirt',
+    'terminal-ritual-sweatshirt',
+    'queue-weather-cotton-sweatshirt',
+    'solward-index-cotton-sweatshirt',
+    'field-clearing-cotton-sweatshirt',
+    'clean-slate-club-cotton-sweatshirt',
+    'parallel-noise-poster-cotton-sweatshirt',
+    'sun-break-victory-cotton-sweatshirt',
+    'tastemaxxing-cutline-cotton-sweatshirt',
+    'archive-monument-cotton-sweatshirt',
+  ];
+
+  await page.goto('/');
+  const productLinks = page.locator(
+    'section[aria-label="Codex meme merch products"] article > a',
+  );
+  await expect(productLinks).toHaveCount(signedProductSlugs.length);
+  for (const slug of signedProductSlugs) {
+    await expect(page.locator(`a[href="/products/${slug}"]`)).toBeVisible();
+  }
+  await expect(
+    page.locator('a[href="/products/field-clearing-cotton-sweatshirt-preview"]'),
+  ).toHaveCount(0);
 });
 
 test('research and deployment carousel leads with the supplied worn photo', async ({

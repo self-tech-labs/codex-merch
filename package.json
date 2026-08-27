@@ -12,6 +12,7 @@
     "typecheck": "react-router typegen && tsc --noEmit",
     "test": "node --import tsx --test 'scripts/*.test.mjs' 'app/**/*.test.ts'",
     "test:e2e": "playwright test",
+    "test:e2e:production-catalog": "STOREFRONT_MODE=production CHECKOUT_ENABLED=false playwright test --grep 'production catalog exposes all signed products'",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx scripts/db.migrate.ts",
     "orders:inspect": "tsx scripts/orders.ts inspect",

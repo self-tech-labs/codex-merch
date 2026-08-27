@@ -326,6 +326,42 @@ export function assertApprovedCatalogLines(lines: StripeCheckoutLine[]) {
   }
 }
 
+export function stripeCheckoutLineItem({
+  baseUrl,
+  currency,
+  line,
+}: {
+  baseUrl: string;
+  currency: string;
+  line: StripeCheckoutLine;
+}) {
+  const variant = getProductVariant(line.product, line.variantId);
+  if (!variant) throw new Error(`Unknown variant: ${line.variantId}`);
+  return {
+    quantity: line.quantity,
+    price_data: {
+      currency: currency.toLowerCase(),
+      unit_amount: line.product.commerce.unitAmount,
+      tax_behavior: merchantCatalog.stripeTaxBehavior,
+      product_data: {
+        name: line.product.title,
+        description: variantLabel(variant, true),
+        tax_code: merchantCatalog.stripeProductTaxCode,
+        images: [
+          new URL(getPrimaryCustomerMockup(line.product), baseUrl).toString(),
+        ],
+        metadata: {
+          slug: line.product.slug,
+          variant_id: line.variantId,
+          provider: line.provider,
+          catalog_variant_id: String(line.catalogVariantId),
+          sync_variant_id: String(line.syncVariantId),
+        },
+      },
+    },
+  } satisfies Stripe.Checkout.SessionCreateParams.LineItem;
+}
+
 export async function createCheckoutSession({
   env,
   lines,
@@ -399,26 +435,9 @@ export async function createCheckoutSession({
           allowed_countries: allowedShippingCountries(env),
         },
         shipping_options: checkoutShippingOptions,
-        line_items: lines.map((line) => ({
-          quantity: line.quantity,
-          price_data: {
-            currency: currency.toLowerCase(),
-            unit_amount: line.product.commerce.unitAmount,
-            tax_behavior: merchantCatalog.stripeTaxBehavior,
-            product_data: {
-              name: line.product.title,
-              tax_code: merchantCatalog.stripeProductTaxCode,
-              images: [new URL(getPrimaryCustomerMockup(line.product), baseUrl).toString()],
-              metadata: {
-                slug: line.product.slug,
-                variant_id: line.variantId,
-                provider: line.provider,
-                catalog_variant_id: String(line.catalogVariantId),
-                sync_variant_id: String(line.syncVariantId),
-              },
-            },
-          },
-        })),
+        line_items: lines.map((line) =>
+          stripeCheckoutLineItem({baseUrl, currency, line}),
+        ),
       },
       {idempotencyKey: `checkout:${order.id}`},
     );
