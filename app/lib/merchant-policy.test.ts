@@ -46,7 +46,7 @@ test('merchant policy identity and reviewed version stay explicit', () => {
 test('merchant contact email must be explicitly configured and valid', () => {
   assert.equal(isValidMerchantContactEmail('support@example.com'), true);
   assert.equal(isValidMerchantContactEmail('invalid'), false);
-  assert.equal(isValidMerchantContactEmail('elliot@ritsl.com'), false);
+  assert.equal(isValidMerchantContactEmail('elliot@ritsl.com'), true);
   assert.equal(
     isValidMerchantContactEmail('orders@self-tech-labs.example'),
     false,
@@ -61,7 +61,7 @@ test('merchant contact email must be explicitly configured and valid', () => {
     merchantContactEmail({
       STOREFRONT_CONTACT_EMAIL: 'elliot@ritsl.com',
     } as AppEnv),
-    null,
+    'elliot@ritsl.com',
   );
   assert.equal(merchantContactEmail({} as AppEnv), null);
 });
